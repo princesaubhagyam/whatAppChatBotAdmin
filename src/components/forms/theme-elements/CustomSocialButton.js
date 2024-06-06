@@ -6,9 +6,10 @@ const CustomSocialButton = styled((props) => (
   <Button variant="outlined" size="large" color="inherit" {...props} />
 ))(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
-
+  background: `#1877f2`,
+  color: `white`,
   '&:hover': {
-    color: theme.palette.primary.main,
+    color: `#539eff`,
   },
 }));
 

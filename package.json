@@ -1,6 +1,6 @@
 {
-  "name": "modernize",
-  "version": "0.1.0",
+  "name": "whatapp-chatbot",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@casl/ability": "^6.3.3",

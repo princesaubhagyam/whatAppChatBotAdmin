@@ -1,5 +1,5 @@
 [
-  { "flagname": "English (UK)", "value": "en-GB" },
+  { "flagname": "English (UK)", "value": "en" },
   { "flagname": "English (US)", "value": "en-US" },
   { "flagname": "Spanish", "value": "es" },
   { "flagname": "French", "value": "fr" },

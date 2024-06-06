@@ -26,22 +26,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => (
 
     {subtext}
 
-    {/* <AuthSocialButtons title="Sign in with" /> */}
-    {/* <Box mt={3}>
-      <Divider>
-        <Typography
-          component="span"
-          color="textSecondary"
-          variant="h6"
-          fontWeight="400"
-          position="relative"
-          px={2}
-        >
-          or sign in with
-        </Typography>
-      </Divider>
-    </Box> */}
-
     <Stack>
       <Box>
         <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
@@ -79,10 +63,26 @@ const AuthLogin = ({ title, subtitle, subtext }) => (
         fullWidth
         component={Link}
         to="/"
+        onClick={() => localStorage.setItem('token', 'HJD35350900')}
         type="submit"
       >
         Sign In
-      </Button>
+      </Button>{' '}
+      <Box mt={3}>
+        <Divider>
+          <Typography
+            component="span"
+            color="textSecondary"
+            variant="h6"
+            fontWeight="400"
+            position="relative"
+            px={2}
+          >
+            or sign in with
+          </Typography>
+        </Divider>
+      </Box>
+      <AuthSocialButtons title="Sign in with" />
     </Box>
     {subtitle}
   </>

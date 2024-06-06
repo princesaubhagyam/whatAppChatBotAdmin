@@ -56,13 +56,13 @@ const Profile = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         sx={{
           '& .MuiMenu-paper': {
-            width: '360px',
+            width: '160px',
           },
         }}
       >
         <Scrollbar sx={{ height: '100%', maxHeight: '85vh' }}>
           <Box p={3}>
-            <Typography variant="h5">User Profile</Typography>
+            {/* <Typography variant="h5">User Profile</Typography>
             <Stack direction="row" py={3} spacing={2} alignItems="center">
               <Avatar src={ProfileImg} alt={ProfileImg} sx={{ width: 95, height: 95 }} />
               <Box>
@@ -84,8 +84,8 @@ const Profile = () => {
                 </Typography>
               </Box>
             </Stack>
-            <Divider />
-            {dropdownData.profile.map((profile) => (
+            <Divider /> */}
+            {/* {dropdownData.profile.map((profile) => (
               <Box key={profile.title}>
                 <Box sx={{ py: 2, px: 0 }} className="hover-text-primary">
                   <Link to={profile.href}>
@@ -136,13 +136,14 @@ const Profile = () => {
                   </Link>
                 </Box>
               </Box>
-            ))}
+            ))} */}
             <Box mt={2}>
               <Button
                 to="/auth/login"
                 variant="outlined"
                 color="primary"
                 component={Link}
+                onClick={() => localStorage.removeItem('token')}
                 fullWidth
               >
                 Logout

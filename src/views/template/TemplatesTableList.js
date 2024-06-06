@@ -196,6 +196,7 @@ const EnhancedTableToolbar = (props) => {
                 </InputAdornment>
               ),
             }}
+            sx={{ background: 'white', borderRadius: 4 }}
             placeholder="Search..."
             size="small"
             onChange={handleSearch}
@@ -211,11 +212,12 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <IconFilter size="1.2rem" icon="filter" />
-          </IconButton>
-        </Tooltip>
+        <></>
+        // <Tooltip title="Filter list">
+        //   <IconButton>
+        //     <IconFilter size="1.2rem" icon="filter" />
+        //   </IconButton>
+        // </Tooltip>
       )}
     </Toolbar>
   );
@@ -395,7 +397,10 @@ const TemplatesTableList = () => {
                           <Typography fontWeight="500" variant="h6" fontSize={14}>
                             <Chip
                               sx={{
-                                bgcolor: (theme) => theme.palette.primary.light,
+                                bgcolor: (theme) =>
+                                  row.status === 'PENDING'
+                                    ? theme.palette.info.main
+                                    : theme.palette.primary.light,
                                 color: (theme) => theme.palette.primary.main,
                                 borderRadius: '6px',
                                 // width: 80,
@@ -459,7 +464,7 @@ const TemplatesTableList = () => {
                   return (
                     <CardMedia
                       sx={{ height: 240 }}
-                      image={component.example.header_handle[0]}
+                      image={component.example?.header_handle[0]}
                       title={component.type}
                     />
                   );

@@ -12,6 +12,7 @@ import {
   Radio,
   RadioGroup,
   IconButton,
+  Snackbar,
 } from '@mui/material';
 import React, { useState } from 'react';
 import PageContainer from 'src/components/container/PageContainer';
@@ -27,6 +28,8 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router';
 import { IconMessage2Share } from '@tabler/icons';
 import { Remove } from '@mui/icons-material';
+import axiosClientBm from 'src/api/axiosClientBm';
+import { LoadingButton } from '@mui/lab';
 const BCrumb = [
   {
     to: '/',
@@ -49,9 +52,21 @@ const category = [
     label: 'Authentication',
   },
 ];
-
+yup.addMethod(yup.string, 'containsUnderscore', function (message) {
+  return this.test('contains-underscore', message, function (value) {
+    const { path, createError } = this;
+    return (
+      (value && value.includes('_')) ||
+      createError({ path, message: message || 'Must contain at least one underscore' })
+    );
+  });
+});
 const validationSchema = yup.object({
-  name: yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Display name is Required'),
+  name: yup
+    .string()
+    .required('Display Name is required')
+    .matches(/^[a-z_]+$/, 'Must be in lowercase and contain only underscores')
+    .containsUnderscore('Must contain at least one underscore'),
   category: yup.string().required('Category is Required'),
   language: yup.string().required('Language is Required'),
 });
@@ -60,7 +75,9 @@ export default function CreateTemplate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [HeaderSelect, setHeaderSelect] = useState('TEXT');
-  console.log(HeaderSelect);
+  const [butttonSelect, setButttonSelect] = useState('QUICK_REPLY');
+  const [loading, setLoading] = useState(false);
+  const [preData, setPreData] = useState();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -70,34 +87,74 @@ export default function CreateTemplate() {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       setStep(1);
+      setPreData(values);
     },
   });
   const formikTemplate = useFormik({
     initialValues: {
-      name: '',
-      category: '',
-      language: '',
-      dynamicFields: [{ value: '' }],
+      body: '',
+      buttonText: '',
+      footer: '',
+      text: '',
     },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      // setStep(1);
-      console.log(values);
+    // validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      let reqBody = {
+        name: preData.name,
+        language: preData.language,
+        category: preData.category,
+        components: [
+          {
+            type: 'HEADER',
+            format: 'TEXT',
+            text: values.text,
+            example: {
+              header_text: ['Summer Sale'],
+            },
+          },
+          {
+            type: 'BODY',
+            text: values.body,
+            example: {
+              body_text: [['the end of August', '25OFF', '25%']],
+            },
+          },
+          {
+            type: 'FOOTER',
+            text: values.footer,
+          },
+          {
+            type: 'BUTTONS',
+            buttons: [
+              {
+                type: 'QUICK_REPLY',
+                text: values.buttonText,
+              },
+            ],
+          },
+        ],
+      };
+      console.log(reqBody);
+      const response = await axiosClientBm.post('/message_templates', reqBody);
+      console.log(response);
+      setLoading(false);
+      navigate('/templates');
     },
   });
-  const handleAddVariable = () => {
-    formikTemplate.setFieldValue(
-      'headerContent',
-      formikTemplate.values.headerContent +
-        ' {{' +
-        (formikTemplate.values.dynamicFields.length + 1) +
-        '}}',
-    );
-    formikTemplate.setFieldValue('dynamicFields', [
-      ...formikTemplate.values.dynamicFields,
-      { value: '' },
-    ]);
-  };
+  // const handleAddVariable = () => {
+  //   formikTemplate.setFieldValue(
+  //     'headerContent',
+  //     formikTemplate.values.headerContent +
+  //       ' {{' +
+  //       (formikTemplate.values.dynamicFields.length + 1) +
+  //       '}}',
+  //   );
+  //   formikTemplate.setFieldValue('dynamicFields', [
+  //     ...formikTemplate.values.dynamicFields,
+  //     { value: '' },
+  //   ]);
+  // };
   return (
     <PageContainer title="Create Template" description="this is Search Table page">
       {/* breadcrumb */}
@@ -305,27 +362,7 @@ export default function CreateTemplate() {
                     )}
                   </Grid>
                 </Grid>
-                {/* <FieldArray
-                  name="dynamicFields"
-                  render={(arrayHelpers) => (
-                    <>
-                      {formikTemplate.values.dynamicFields.map((field, index) => (
-                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <CustomTextField
-                            name={`dynamicFields[${index}].value`}
-                            label={`Enter content for {{${index + 1}}}`}
-                            value={field.value}
-                            onChange={formikTemplate.handleChange}
-                            fullWidth
-                          />
-                          <IconButton onClick={() => arrayHelpers.remove(index)}>
-                            <Remove />
-                          </IconButton>
-                        </Box>
-                      ))}
-                    </>
-                  )}
-                /> */}
+
                 <CustomFormLabel htmlFor="body">Body</CustomFormLabel>
                 <Typography variant="subtitle1">
                   Enter the text for your message in the language that you've selected. Enter text
@@ -334,7 +371,9 @@ export default function CreateTemplate() {
 
                 <CustomTextField
                   multiline
+                  placeholder="Enter text"
                   fullWidth
+                  rows={4}
                   id="body"
                   name="body"
                   value={formikTemplate.values.body}
@@ -354,7 +393,7 @@ export default function CreateTemplate() {
                 <CustomTextField
                   fullWidth
                   id="footer"
-                  name="body"
+                  name="footer"
                   value={formikTemplate.values.footer}
                   onChange={formikTemplate.handleChange}
                 />
@@ -367,6 +406,34 @@ export default function CreateTemplate() {
                 <Typography variant="subtitle1">
                   Create buttons that let customers respond to your message or take action.
                 </Typography>
+                <Grid container spacing={2}>
+                  <Grid item lg={4} md={12} sm={12}>
+                    <CustomSelect
+                      fullWidth
+                      id="buttonSelect"
+                      name="buttonSelect"
+                      variant="outlined"
+                      value={butttonSelect}
+                      onChange={(e) => setButttonSelect(e.target.value)}
+                    >
+                      <MenuItem value={'QUICK_REPLY'}>Quick Reply</MenuItem>
+                    </CustomSelect>
+                  </Grid>
+                  <Grid item lg={8} md={12} sm={12}>
+                    <CustomTextField
+                      fullWidth
+                      id="buttonText"
+                      name="buttonText"
+                      value={formikTemplate.values.buttonText}
+                      onChange={formikTemplate.handleChange}
+                    />
+                    {formikTemplate.errors.buttonText && (
+                      <FormHelperText error id="buttonText">
+                        {formikTemplate.errors.buttonText}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item lg={4} md={12} sm={12}>
                 <Box>
@@ -459,16 +526,18 @@ export default function CreateTemplate() {
                 </Box>
               </Grid>
               <Grid item lg={12} md={12} sm={12}>
-                <Button
+                <LoadingButton
                   variant="contained"
                   color="primary"
                   sx={{
                     mr: 1,
                   }}
                   type="submit"
+                  loading={loading}
+                  loadingIndicator="Creating..."
                 >
                   Create Template
-                </Button>
+                </LoadingButton>
                 <Button variant="contained" color="error" onClick={() => setStep(0)}>
                   Back
                 </Button>

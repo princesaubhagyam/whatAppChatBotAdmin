@@ -2,6 +2,7 @@ import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
+import AuthWrapper from 'src/utils/AuthWrapper';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -122,7 +123,11 @@ const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemp
 const Router = [
   {
     path: '/',
-    element: <FullLayout />,
+    element: (
+      <AuthWrapper>
+        <FullLayout />
+      </AuthWrapper>
+    ),
     children: [
       { path: '/', element: <EcommerceDash /> },
       { path: '/home', element: <EcommerceDash /> },
@@ -213,15 +218,15 @@ const Router = [
     children: [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <Login2 /> },
-      { path: '/auth/login2', element: <Login2 /> },
+      // { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/register', element: <Register2 /> },
-      { path: '/auth/register2', element: <Register2 /> },
+      // { path: '/auth/register2', element: <Register2 /> },
       { path: '/auth/forgot-password', element: <ForgotPassword2 /> },
-      { path: '/auth/forgot-password2', element: <ForgotPassword2 /> },
+      // { path: '/auth/forgot-password2', element: <ForgotPassword2 /> },
       { path: '/auth/two-steps', element: <TwoSteps /> },
-      { path: '/auth/two-steps2', element: <TwoSteps2 /> },
+      // { path: '/auth/two-steps2', element: <TwoSteps2 /> },
       { path: '/auth/maintenance', element: <Maintenance /> },
-      { path: '/landingpage', element: <Landingpage /> },
+      // { path: '/landingpage', element: <Landingpage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
