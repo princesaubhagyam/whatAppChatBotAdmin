@@ -71,7 +71,7 @@ const ChatListing = () => {
       {/* ------------------------------------------- */}
       {/* Profile */}
       {/* ------------------------------------------- */}
-      <Box display={'flex'} alignItems="center" gap="10px" p={3}>
+      {/* <Box display={'flex'} alignItems="center" gap="10px" p={3}>
         <Badge
           variant="dot"
           anchorOrigin={{
@@ -89,7 +89,7 @@ const ChatListing = () => {
           </Typography>
           <Typography variant="body2">Marketing Manager</Typography>
         </Box>
-      </Box>
+      </Box> */}
       {/* ------------------------------------------- */}
       {/* Search */}
       {/* ------------------------------------------- */}
@@ -124,7 +124,7 @@ const ChatListing = () => {
             onClick={handleClick}
             color="inherit"
           >
-            Recent Chats <IconChevronDown size="16" />
+            Recent Broadcasts <IconChevronDown size="16" />
           </Button>
           <Menu
             id="basic-menu"
@@ -140,7 +140,7 @@ const ChatListing = () => {
             <MenuItem onClick={handleClose}>Mark as all Read</MenuItem>
           </Menu>
         </Box>
-        <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '600px' }}>
+        <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '370px' }}>
           {chats && chats.length ? (
             chats.map((chat) => (
               <ListItemButton

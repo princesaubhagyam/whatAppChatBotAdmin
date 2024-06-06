@@ -116,23 +116,26 @@ const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landi
 //Admin Page
 const HomePage = Loadable(lazy(() => import('../views/dashboard/Home')));
 const Customers = Loadable(lazy(() => import('../views/customers/Customers')));
+const Templates = Loadable(lazy(() => import('../views/template/templates')));
+const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemplate')));
 
 const Router = [
   {
     path: '/',
     element: <FullLayout />,
     children: [
-      // { path: '/', element: <ModernDash /> },
-      { path: '/', element: <HomePage /> },
-      { path: '/broadcasts', element: <ModernDash /> },
-      { path: '/templates', element: <ModernDash /> },
-      { path: '/scheduled-broadcasts', element: <ModernDash /> },
+      { path: '/', element: <EcommerceDash /> },
+      { path: '/home', element: <EcommerceDash /> },
+      { path: '/broadcasts', element: <Chats /> },
+      { path: '/templates', element: <Templates /> },
+      { path: '/templates/createtemplate', element: <CreateTemplate /> },
+      { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/customers', element: <Customers /> },
-      { path: '/analytics', element: <ModernDash /> },
-      { path: '/integrations', element: <ModernDash /> },
-      { path: '/team', element: <ModernDash /> },
-      { path: '/pending-requests', element: <ModernDash /> },
-      { path: '/settings', element: <ModernDash /> },
+      { path: '/analytics', element: <Templates /> },
+      { path: '/integrations', element: <Templates /> },
+      { path: '/team', element: <Templates /> },
+      { path: '/pending-requests', element: <Templates /> },
+      { path: '/settings', element: <Maintenance /> },
 
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },

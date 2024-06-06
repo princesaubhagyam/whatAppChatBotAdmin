@@ -24,7 +24,7 @@ const AreaChart = () => {
   const optionsareachart = {
     chart: {
       id: 'area-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       zoom: {
         enabled: true,

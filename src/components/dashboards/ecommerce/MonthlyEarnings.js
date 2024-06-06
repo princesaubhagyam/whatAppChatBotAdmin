@@ -18,7 +18,7 @@ const MonthlyEarnings = () => {
   const optionscolumnchart = {
     chart: {
       type: 'area',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

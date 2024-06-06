@@ -16,7 +16,7 @@ const CurrentValue = () => {
   const optionscolumnchart = {
     chart: {
       type: 'bar',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -87,7 +87,7 @@ const CurrentValue = () => {
   const optionscolumn2chart = {
     chart: {
       type: 'bar',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -158,7 +158,7 @@ const CurrentValue = () => {
   const optionscolumn3chart = {
     chart: {
       type: 'donut',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
 
       toolbar: {
         show: false,

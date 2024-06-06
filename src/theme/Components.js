@@ -361,9 +361,7 @@ export default function components(theme) {
             borderColor: theme.palette.grey[300],
           },
         },
-        input: {
-          padding: '12px 14px',
-        },
+        input: {},
         inputSizeSmall: {
           padding: '8px 14px',
         },

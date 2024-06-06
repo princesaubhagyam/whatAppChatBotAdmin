@@ -17,7 +17,6 @@ const NavCollapse = ({ menu, level, pathWithoutLastPart, pathDirect, hideMenu })
   const theme = useTheme();
   const { pathname } = useLocation();
   //const location = pathname.includes(menu.href) ? pathname.substring(0, pathname.indexOf('/')) : '';
-  //console.log(location);
   const [open, setOpen] = React.useState(false);
   const customizer = useSelector((state) => state.customizer);
   const menuIcon =

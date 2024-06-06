@@ -17,7 +17,7 @@ const YearlyBreakup = () => {
   const optionscolumnchart = {
     chart: {
       type: 'donut',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

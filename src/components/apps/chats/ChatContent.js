@@ -20,7 +20,7 @@ import ChatInsideSidebar from './ChatInsideSidebar';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 
 const ChatContent = ({ toggleChatSidebar }) => {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   const chatDetails = useSelector(
@@ -95,7 +95,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
             {/* ------------------------------------------- */}
 
             <Box width="100%">
-              <Scrollbar sx={{ height: '650px', overflow: 'auto', maxHeight: '800px' }}>
+              <Scrollbar sx={{ height: '650px', overflow: 'auto', maxHeight: '350px' }}>
                 <Box p={3}>
                   {chatDetails.messages.map((chat) => {
                     return (

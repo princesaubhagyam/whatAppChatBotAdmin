@@ -42,13 +42,13 @@ const Header = () => {
         {/* ------------------------------------------- */}
         {/* Toggle Button Sidebar */}
         {/* ------------------------------------------- */}
-        <IconButton
+        {/* <IconButton
           color="inherit"
           aria-label="menu"
           onClick={lgUp ? () => dispatch(toggleSidebar()) : () => dispatch(toggleMobileSidebar())}
         >
           <IconMenu2 size="20" />
-        </IconButton>
+        </IconButton> */}
         {/* ------------------------------------------- */}
         {/* Search Dropdown */}
         {/* ------------------------------------------- */}

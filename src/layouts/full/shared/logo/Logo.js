@@ -20,12 +20,12 @@ const Logo = () => {
     return (
       <LinkStyled to="/">
         {customizer.activeMode === 'dark' ? (
-          <Typography variant="h3" color={'primary.main'}>
-            Saubhagyam
+          <Typography variant="h3" color={'primary.main'} fontWeight={700}>
+            {customizer.isCollapse ? 'S' : 'Saubhagyam'}
           </Typography>
         ) : (
-          <Typography variant="h3" color={'primary.main'}>
-            Saubhagyam
+          <Typography variant="h3" color={'primary.main'} fontWeight={700}>
+            {customizer.isCollapse ? 'S' : 'Saubhagyam'}
           </Typography>
         )}
       </LinkStyled>

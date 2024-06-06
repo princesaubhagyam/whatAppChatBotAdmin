@@ -25,7 +25,7 @@ const ColumnChart = () => {
   const optionscolumnchart = {
     chart: {
       id: 'column-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

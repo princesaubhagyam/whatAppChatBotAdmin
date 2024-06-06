@@ -29,7 +29,7 @@ const DoughnutChart = () => {
   const optionsdoughnutchart = {
     chart: {
       id: 'donut-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
     },
     dataLabels: {
@@ -59,7 +59,7 @@ const DoughnutChart = () => {
   const optionspiechart = {
     chart: {
       id: 'pie-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

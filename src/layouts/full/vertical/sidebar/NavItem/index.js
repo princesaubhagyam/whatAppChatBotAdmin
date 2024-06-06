@@ -22,7 +22,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
   const { t } = useTranslation();
   const itemIcon =
     level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
-
+  const isActive = pathDirect.search(item.href) === 0 ? true : false;
   const ListItemStyled = styled(ListItem)(() => ({
     whiteSpace: 'nowrap',
     marginBottom: '2px',
@@ -30,7 +30,9 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
     borderRadius: `${customizer.borderRadius}px`,
     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
     color:
-      level > 1 && pathDirect === item.href ? `${theme.palette.primary.main}!important` : theme.palette.text.secondary,
+      level > 1 && isActive
+        ? `${theme.palette.primary.main}!important`
+        : theme.palette.text.secondary,
     paddingLeft: hideMenu ? '10px' : level > 2 ? `${level * 15}px` : '10px',
     '&:hover': {
       backgroundColor: theme.palette.primary.light,
@@ -54,7 +56,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
         to={item.href}
         href={item.external ? item.href : ''}
         disabled={item.disabled}
-        selected={pathDirect === item.href}
+        selected={isActive}
         target={item.external ? '_blank' : ''}
         onClick={onClick}
       >
@@ -62,10 +64,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
           sx={{
             minWidth: '36px',
             p: '3px 0',
-            color:
-              level > 1 && pathDirect === item.href
-                ? `${theme.palette.primary.main}!important`
-                : 'inherit',
+            color: level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
           }}
         >
           {itemIcon}

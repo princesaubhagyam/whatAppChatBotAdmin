@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  FormControlLabel,
-  Button,
-  Grid,
-  MenuItem,
-  FormControl,
-  Alert
-} from '@mui/material';
+import { Box, FormControlLabel, Button, Grid, MenuItem, FormControl, Alert } from '@mui/material';
 import CustomTextField from '../../forms/theme-elements/CustomTextField';
 import CustomSelect from '../../forms/theme-elements/CustomSelect';
 import CustomRadio from '../../forms/theme-elements/CustomRadio';
@@ -68,23 +60,25 @@ const FbBasicHeaderForm = () => {
       {/* ------------------------------------------------------------------------------------------------ */}
       {/* Basic Checkbox */}
       {/* ------------------------------------------------------------------------------------------------ */}
-      <ParentCard title="Basic Header Form" footer={
-        <>
-          <Button
-            variant="contained"
-            color="error"
-            sx={{
-              mr: 1,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary">
-            Submit
-          </Button>
-        </>
-      }>
-
+      <ParentCard
+        title="Basic Header Form"
+        footer={
+          <>
+            <Button
+              variant="contained"
+              color="error"
+              sx={{
+                mr: 1,
+              }}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" color="primary">
+              Submit
+            </Button>
+          </>
+        }
+      >
         <Alert severity="info">Person Info</Alert>
         <form>
           <Grid container spacing={3} mb={3}>
@@ -98,7 +92,6 @@ const FbBasicHeaderForm = () => {
                 onChange={handleChange2}
                 fullWidth
                 variant="outlined"
-
               >
                 {currencies.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -149,7 +142,6 @@ const FbBasicHeaderForm = () => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-
               />
             </Grid>
           </Grid>
@@ -216,7 +208,6 @@ const FbBasicHeaderForm = () => {
               onChange={handleChange4}
               fullWidth
               variant="outlined"
-
             >
               {countries.map((option) => (
                 <MenuItem key={option.value} value={option.value}>

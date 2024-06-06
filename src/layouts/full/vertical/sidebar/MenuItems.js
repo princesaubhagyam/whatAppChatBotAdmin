@@ -66,7 +66,7 @@ const Menuitems = [
     id: uniqueId(),
     title: 'Home',
     icon: IconHome,
-    href: '/',
+    href: '/home',
   },
   {
     id: uniqueId(),
@@ -80,36 +80,36 @@ const Menuitems = [
     icon: IconTemplate,
     href: '/templates',
   },
-  {
-    id: uniqueId(),
-    title: 'Scheduled Broadcasts',
-    icon: IconTimeline,
-    href: '/scheduled-broadcasts',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Scheduled Broadcasts',
+  //   icon: IconTimeline,
+  //   href: '/scheduled-broadcasts',
+  // },
   {
     id: uniqueId(),
     title: 'Customers',
     icon: IconMan,
     href: '/customers',
   },
-  {
-    id: uniqueId(),
-    title: 'Analytics',
-    icon: IconFileAnalytics,
-    href: '/analytics',
-  },
-  {
-    id: uniqueId(),
-    title: 'Integrations',
-    icon: IconInfinity,
-    href: '/integrations',
-  },
-  {
-    id: uniqueId(),
-    title: 'Team',
-    icon: IconUsers,
-    href: '/team',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Analytics',
+  //   icon: IconFileAnalytics,
+  //   href: '/analytics',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Integrations',
+  //   icon: IconInfinity,
+  //   href: '/integrations',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Team',
+  //   icon: IconUsers,
+  //   href: '/team',
+  // },
   // {
   //   id: uniqueId(),
   //   title: 'Chat Bots',
@@ -122,12 +122,12 @@ const Menuitems = [
   //   icon: 'IconChatGPT',
   //   href: '/chat-gpt',
   // },
-  {
-    id: uniqueId(),
-    title: 'Pending Requests',
-    icon: IconAlertCircle,
-    href: '/pending-requests',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Pending Requests',
+  //   icon: IconAlertCircle,
+  //   href: '/pending-requests',
+  // },
   {
     id: uniqueId(),
     title: 'Settings',

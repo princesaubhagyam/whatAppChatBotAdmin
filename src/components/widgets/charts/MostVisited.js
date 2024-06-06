@@ -22,7 +22,7 @@ const MostVisited = () => {
   const optionscolumnchart = {
     chart: {
       type: 'bar',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

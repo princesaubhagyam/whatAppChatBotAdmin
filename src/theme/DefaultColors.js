@@ -24,7 +24,7 @@ const baselightTheme = {
       contrastText: '#ffffff',
     },
     error: {
-      main: '#FA896B',
+      main: '#de3838',
       light: '#FDEDE8',
       dark: '#f3704d',
       contrastText: '#ffffff',
@@ -90,7 +90,7 @@ const baseDarkTheme = {
       contrastText: '#ffffff',
     },
     error: {
-      main: '#FA896B',
+      main: '#de3838',
       light: '#4B313D',
       dark: '#f3704d',
       contrastText: '#ffffff',

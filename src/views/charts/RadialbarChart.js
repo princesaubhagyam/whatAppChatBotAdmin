@@ -27,7 +27,7 @@ const RadialbarChart = () => {
   const optionsradialchart = {
     chart: {
       id: 'pie-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -63,7 +63,7 @@ const RadialbarChart = () => {
   const optionsradarchart = {
     chart: {
       id: 'pie-chart',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       toolbar: {
         show: false,
       },

@@ -18,7 +18,7 @@ const SalesOverview = () => {
   const optionscolumnchart: any = {
     chart: {
       type: 'donut',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
 
       toolbar: {
         show: false,

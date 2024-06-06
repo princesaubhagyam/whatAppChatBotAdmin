@@ -24,7 +24,7 @@ const CandlestickChart = () => {
   const optionscandlestickchart = {
     chart: {
       height: 350,
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

@@ -42,7 +42,7 @@ const ProductPerformances = () => {
   const optionsrow1chart = {
     chart: {
       type: 'area',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -82,7 +82,7 @@ const ProductPerformances = () => {
   const optionsrow2chart = {
     chart: {
       type: 'area',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -122,7 +122,7 @@ const ProductPerformances = () => {
   const optionsrow3chart = {
     chart: {
       type: 'area',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,
@@ -162,7 +162,7 @@ const ProductPerformances = () => {
   const optionsrow4chart = {
     chart: {
       type: 'area',
-      fontFamily: "'Public Sans', sans-serif;",
+      fontFamily: "'Inter', sans-serif;",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

@@ -24,7 +24,7 @@ const GredientChart = () => {
     chart: {
       height: 350,
       type: 'line',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       toolbar: {
         show: false,

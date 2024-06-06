@@ -11,8 +11,8 @@ const Chats = () => {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <PageContainer title="Chat ui" description="this is Chat page">
-      <Breadcrumb title="Chat app" subtitle="Messenger" />
+    <PageContainer title="Broadcasts" description="this is Chat page">
+      {/* <Breadcrumb title="Broadcasts" subtitle="Broadcasts list" /> */}
       <AppCard>
         {/* ------------------------------------------- */}
         {/* Left part */}

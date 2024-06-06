@@ -21,6 +21,15 @@ import {
   TextField,
   InputAdornment,
   Paper,
+  Button,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Card,
+  CardMedia,
 } from '@mui/material';
 
 import { visuallyHidden } from '@mui/utils';
@@ -28,9 +37,16 @@ import { visuallyHidden } from '@mui/utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from 'src/store/apps/eCommerce/EcommerceSlice';
 import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox';
-import { IconDotsVertical, IconFilter, IconSearch, IconTrash } from '@tabler/icons';
+import {
+  IconDotsVertical,
+  IconEye,
+  IconFilter,
+  IconMessage2Share,
+  IconSearch,
+  IconTrash,
+} from '@tabler/icons';
 import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
-import apiClient from 'src/api/axiosClient';
+import axiosClientBm from 'src/api/axiosClientBm';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -63,21 +79,39 @@ const headCells = [
     id: 'name',
     numeric: false,
     disablePadding: false,
-    label: 'Customer name',
+    label: 'Template name',
   },
   {
-    id: 'city',
+    id: 'category',
     numeric: false,
     disablePadding: false,
-    label: 'City',
+    label: 'Category',
   },
 
   {
-    id: 'number',
+    id: 'language',
     numeric: false,
     disablePadding: false,
-    label: 'Number',
+    label: 'Language',
   },
+  {
+    id: 'status',
+    numeric: false,
+    disablePadding: false,
+    label: 'Status',
+  },
+  {
+    id: 'view',
+    numeric: false,
+    disablePadding: false,
+    label: 'View',
+  },
+  // {
+  //   id: 'edit',
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: 'Edit',
+  // },
 ];
 
 function EnhancedTableHead(props) {
@@ -191,25 +225,34 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-const CustomersTableList = () => {
+const TemplatesTableList = () => {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState([]);
   const [search, setSearch] = React.useState('');
-  //Fetch Products
+  const [open, setOpen] = React.useState(false);
+  const [view, setView] = React.useState([]);
+
+  const handleClickOpen = (row, index) => {
+    setOpen(true);
+    setView(row.components);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   React.useEffect(() => {
-    // dispatch(fetchProducts());
     getApiData();
   }, []);
 
   const getApiData = async () => {
     try {
-      const response = await apiClient.get('/api/contacts/');
-      setRows(response.data.data.results);
+      const response = await axiosClientBm.get('/message_templates');
+      setRows(response.data.data);
       return;
     } catch (error) {
       console.error('Error fetching data from API:', error);
@@ -222,6 +265,9 @@ const CustomersTableList = () => {
     });
     setSearch(event.target.value);
     setRows(filteredRows);
+    if (!event.target.value) {
+      getApiData();
+    }
   };
 
   // This is for the sorting
@@ -263,6 +309,7 @@ const CustomersTableList = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    getApiData();
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -306,18 +353,18 @@ const CustomersTableList = () => {
                 {stableSort(rows, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+                    // const isItemSelected = isSelected(row.id);
+                    // const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
+                        // onClick={(event) => handleClick(event, row.id)}
+                        // role="checkbox"
+                        // aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.title}
-                        selected={isItemSelected}
+                        key={row.name}
+                        // selected={isItemSelected}
                       >
                         {/* <TableCell padding="checkbox">
                           <CustomCheckbox
@@ -328,40 +375,42 @@ const CustomersTableList = () => {
                             }}
                           />
                         </TableCell> */}
+                        <TableCell>
+                          <Typography fontWeight="500" variant="h6" fontSize={14}>
+                            {row.name}
+                          </Typography>
+                        </TableCell>
 
                         <TableCell>
-                          <Box display="flex" alignItems="center">
-                            <Avatar
-                              // alt={row.photo}
-                              variant="rounded"
-                              sx={{ width: 24, height: 24, borderRadius: '100%', fontSize: 12 }}
-                            >
-                              {`${row?.name.split(' ')[0][0]}`}
-                            </Avatar>
-                            <Box
+                          <Typography fontWeight="500" variant="h6" fontSize={14}>
+                            {row.category}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography fontWeight="500" variant="h6" fontSize={14}>
+                            {row.language}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography fontWeight="500" variant="h6" fontSize={14}>
+                            <Chip
                               sx={{
-                                ml: 2,
+                                bgcolor: (theme) => theme.palette.primary.light,
+                                color: (theme) => theme.palette.primary.main,
+                                borderRadius: '6px',
+                                // width: 80,
                               }}
-                            >
-                              <Typography variant="h6" fontWeight="600" fontSize={14}>
-                                {row.name}
-                              </Typography>
-                              <Typography color="textSecondary" variant="subtitle2">
-                                {/* {row.category} */}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.city}
+                              size="small"
+                              label={row.status}
+                            />
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.contact}
-                          </Typography>
+                          <Tooltip title="View">
+                            <IconButton size="small" onClick={() => handleClickOpen(row, index)}>
+                              <IconEye />
+                            </IconButton>
+                          </Tooltip>
                         </TableCell>
                       </TableRow>
                     );
@@ -395,8 +444,68 @@ const CustomersTableList = () => {
           />
         </Box> */}
       </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Your template'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {view.map((component) => {
+              switch (component.type) {
+                case 'HEADER':
+                  return (
+                    <CardMedia
+                      sx={{ height: 240 }}
+                      image={component.example.header_handle[0]}
+                      title={component.type}
+                    />
+                  );
+                case 'BODY':
+                  return (
+                    <Typography key={component.type} variant="body1">
+                      {component.text.split('\n').map(function (item, idx) {
+                        return (
+                          <span key={idx}>
+                            {item}
+                            <br />
+                          </span>
+                        );
+                      })}
+                    </Typography>
+                  );
+                case 'FOOTER':
+                  return (
+                    <Typography key={component.type} variant="caption">
+                      {component.text}
+                    </Typography>
+                  );
+                case 'BUTTONS':
+                  return (
+                    <Button key={component.type} variant="outline" href={component.buttons[0].url}>
+                      <IconMessage2Share />
+                      {component?.buttons[0].text}
+                    </Button>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button color="error" onClick={handleClose}>
+            Disagree
+          </Button>
+          <Button onClick={handleClose} autoFocus>
+            Agree
+          </Button> */}
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default CustomersTableList;
+export default TemplatesTableList;

@@ -24,7 +24,7 @@ const LineChart = () => {
   const optionslinechart = {
     chart: {
       type: 'line',
-      fontFamily: "'Public Sans', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       foreColor: '#adb0bb',
       zoom: {
         type: 'x',
