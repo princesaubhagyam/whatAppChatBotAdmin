@@ -187,7 +187,7 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} Selected
         </Typography>
       ) : (
-        <Box sx={{ flex: '1 1 100%', justifyContent: 'flex-end', textAlign:'right' , mr: 1}}>
+        <Box sx={{ flex: '1 1 100%', justifyContent: 'flex-end', textAlign: 'right', mr: 1 }}>
           <TextField
             InputProps={{
               startAdornment: (
@@ -398,10 +398,17 @@ const TemplatesTableList = () => {
                             <Chip
                               sx={{
                                 bgcolor: (theme) =>
-                                  row.status === 'PENDING'
-                                    ? theme.palette.info.main
-                                    : theme.palette.primary.light,
-                                color: (theme) => theme.palette.primary.main,
+                                  row.status === 'APPROVED'
+                                    ? theme.palette.primary.light
+                                    : row.status === 'REJECTED'
+                                    ? theme.palette.error.light
+                                    : theme.palette.warning.light,
+                                color: (theme) =>
+                                  row.status === 'APPROVED'
+                                    ? theme.palette.primary.main
+                                    : row.status === 'REJECTED'
+                                    ? theme.palette.error.main
+                                    : theme.palette.warning.main,
                                 borderRadius: '6px',
                                 // width: 80,
                               }}

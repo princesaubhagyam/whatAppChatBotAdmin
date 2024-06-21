@@ -15,6 +15,7 @@ import {
   Card,
   InputAdornment,
   IconButton,
+  TextField,
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -38,7 +39,11 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import Launch from '@mui/icons-material/Launch';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import { Replay5Outlined, Reply } from '@mui/icons-material';
-
+import toast from 'react-hot-toast';
+import * as Yup from 'yup';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import axios from 'axios';
 const BCrumb = [
   { to: '/', title: 'Home' },
   { to: '/templates', title: 'Templates' },
@@ -72,18 +77,62 @@ const validationSchema = yup.object({
   category: yup.string().required('Category is Required'),
   language: yup.string().required('Language is Required'),
 });
-
+const validatioSecondSchema = yup.object().shape({
+  type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
+  format: yup.string().when('type', {
+    is: 'HEADER',
+    then: yup.string().oneOf(['TEXT']).required(),
+    otherwise: yup.string().notRequired(),
+  }),
+  text: yup.string().when('type', {
+    is: 'BODY',
+    then: yup.string().required(),
+    otherwise: yup.string().notRequired(),
+  }),
+  example: yup.object().when('type', {
+    is: 'HEADER',
+    then: yup
+      .object({
+        header_text: yup.array().of(yup.string()).required(),
+      })
+      .required(),
+    is: 'BODY',
+    then: yup
+      .object({
+        body_text: yup.array().of(yup.array().of(yup.string())).required(),
+      })
+      .required(),
+    otherwise: yup.object().notRequired(),
+  }),
+  buttons: yup.array().when('type', {
+    is: 'BUTTONS',
+    then: yup
+      .array()
+      .of(
+        yup
+          .object()
+          .shape({
+            type: yup.string().oneOf(['QUICK_REPLY']).required(),
+            text: yup.string().required('Quick reply button text requied!'),
+          })
+          .required(),
+      )
+      .required(),
+    otherwise: yup.array().notRequired(),
+  }),
+});
 export default function CreateTemplate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [HeaderSelect, setHeaderSelect] = useState('TEXT');
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
   const [buttonIcon, setButtonIcon] = useState(<Reply />);
-
   const [loading, setLoading] = useState(false);
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
+  const [file, setFile] = useState(null);
+  console.log(file);
   const [previewHtml, setPreviewHtml] = useState('');
   const [callToActionURL, setCallToActionURL] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -105,58 +154,158 @@ export default function CreateTemplate() {
     },
   });
 
+  const [variables, setVariables] = useState([{ id: 1, value: '' }]);
+  const [variablesTitle, setVariablesTitle] = useState([{ id: 1, value: '' }]);
+
+  const addVariable = () => {
+    setVariables([...variables, { id: variables.length + 1, value: '' }]);
+    formikTemplate.values.body = formikTemplate.values.body + `{{${variables.length + 1}}}`;
+  };
+
+  const removeVariable = (id) => {
+    setVariables(variables.filter((variable) => variable.id !== id));
+    const placeholderToRemove = `{{${id}}}`;
+    formikTemplate.values.body = formikTemplate.values.body.replace(placeholderToRemove, '');
+  };
+
+  const handleVariableChange = (id, event) => {
+    const newVariables = variables.map((variable) => {
+      if (variable.id === id) {
+        return { ...variable, value: event.target.value };
+      }
+      return variable;
+    });
+    setVariables(newVariables);
+  };
+  const addVariableTitle = () => {
+    setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+    formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
+  };
+
+  const removeVariableTitle = (id) => {
+    setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
+    const placeholderToRemove = `{{${id}}}`;
+    formikTemplate.values.text = formikTemplate.values.text.replace(placeholderToRemove, '');
+  };
+
+  const handleVariableChangeTitle = (id, event) => {
+    const newVariables = variablesTitle.map((variable) => {
+      if (variable.id === id) {
+        return { ...variable, value: event.target.value };
+      }
+      return variable;
+    });
+    setVariablesTitle(newVariables);
+  };
   const formikTemplate = useFormik({
     initialValues: {
-      body: '',
+      body: 'Welcome {{1}}!',
       buttonText: '',
       footer: '',
-      text: '',
+      text: 'Hi {{1}}!',
     },
     onSubmit: async (values) => {
       setLoading(true);
-      let reqBody = {
-        name: preData.name,
-        language: preData.language,
-        category: preData.category,
-        components: [
-          {
-            type: 'HEADER',
-            format: HeaderSelect,
-            text: HeaderSelect === 'TEXT' ? values.text : '',
-            media: HeaderSelect === 'MEDIA' ? mediaContent : null,
-          },
-          {
-            type: 'BODY',
-            text: values.body,
-          },
-          {
-            type: 'FOOTER',
-            text: values.footer,
-          },
-          {
+      try {
+        const bodyValues = variables.map((v) => v.value);
+        const titleValues = variables.map((v) => v.value);
+
+        let reqBody = {
+          name: preData.name,
+          language: preData.language,
+          category: preData.category,
+          components: [
+            {
+              type: 'HEADER',
+              format: HeaderSelect,
+              text: HeaderSelect === 'TEXT' ? values.text : '',
+              // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
+              example: {
+                header_text: titleValues,
+              },
+            },
+            {
+              type: 'BODY',
+              text: values.body,
+              example: {
+                body_text: [bodyValues],
+              },
+            },
+            {
+              type: 'FOOTER',
+              text: values.footer,
+            },
+            {
+              type: 'BUTTONS',
+              buttons: [
+                {
+                  type: 'QUICK_REPLY',
+                  text: values.buttonText,
+                },
+                // {
+                //   type: 'URL',
+                //   text: values.buttonText,
+                // },
+                // {
+                //   type: 'PHONE_NUMBER',
+                //   text: values.buttonText,
+                // },
+              ],
+            },
+          ],
+        };
+        if (phoneNumber) {
+          reqBody.components[3] = {
             type: 'BUTTONS',
             buttons: [
               {
-                type: 'QUICK_REPLY',
+                type: 'PHONE_NUMBER',
                 text: values.buttonText,
+                phone_number: phoneNumber,
               },
+            ],
+          };
+        }
+        if (callToActionURL) {
+          reqBody.components[3] = {
+            type: 'BUTTONS',
+            buttons: [
               {
                 type: 'URL',
                 text: values.buttonText,
-              },
-              {
-                type: 'PHONE_NUMBER',
-                text: values.buttonText,
+                url: callToActionURL,
+                example: ['summer2023'],
               },
             ],
-          },
-        ],
-      };
-      console.log(reqBody);
-      const response = await axiosClientBm.post('/message_templates', reqBody);
-      console.log(response);
-      setLoading(false);
-      navigate('/templates');
+          };
+        }
+        let isFormIsValid = true;
+        // reqBody.components.forEach((data, index) => {
+        //   validatioSecondSchema
+        //     .validate(data)
+        //     .then(() => (isFormIsValid = true))
+        //     .catch((err) => {
+        //       isFormIsValid = false;
+
+        //       toast.error(`${err.errors}`, { duration: 2000 });
+        //     });
+        // });
+
+        if (isFormIsValid) {
+          const response = await axiosClientBm.post('/message_templates', reqBody);
+
+          if (response) {
+            setLoading(false);
+            toast.success('Template created!', { duration: 2000 });
+            navigate('/templates');
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+
+        toast.error(error.response.data.error.error_user_msg, { duration: 2000 });
+      }
     },
   });
 
@@ -187,8 +336,118 @@ export default function CreateTemplate() {
     setMediaType(event.target.value);
   };
 
-  const handleMediaContentChange = (event) => {
+  const handleMediaContentChange = async (event) => {
+    // try {
     setMediaContent(URL.createObjectURL(event.target.files[0]));
+    setFile(event.target.files[0]);
+    const session = await axiosClientBm.post(
+      `https://graph.facebook.com/v20.0/5478259322193595/uploads?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
+    );
+    // const reader = new FileReader();
+    // reader.onload = async () => {
+    //   const arrayBuffer = reader.result;
+    //   const binaryString = new Uint8Array(arrayBuffer);
+    //   console.log(binaryString);
+    //   try {
+    //     const response = await axiosClientBm.post(
+    //       `https://graph.facebook.com/v20.0/${session?.data.id}`,
+    //       binaryString,
+    //       {
+    //         headers: {
+    //           'Content-Type': event.target.files[0].type,
+    //         },
+    //       },
+    //     );
+
+    //     if (response.status === 200) {
+    //       console.log('File uploaded successfully:', response.data);
+    //     } else {
+    //       console.error('File upload failed:', response);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error uploading file:', error);
+    //   }
+    // };
+
+    // reader.readAsArrayBuffer(file);
+    const fileToBinary = (file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const binaryData = reader.result;
+          resolve(binaryData);
+        };
+        reader.onerror = () => {
+          reject(new Error('Unable to read the file as binary data'));
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    };
+
+    const binaryData = await fileToBinary(event.target.files[0]);
+
+    const imgUploadRes = await axios.post(
+      `https://graph.facebook.com/v20.0/${session?.data.id}`,
+      binaryData,
+      {
+        headers: {
+          'Content-Type': 'application/jpg',
+        },
+        Authorization:
+          'OAuth EABN2cqTjBrsBO84auDYo5SK21E6NoW5E2U8i9Uuvu9PimQOzyiFUGyYok2fZAlZB4mFQgeuOjba0id86fBxDA9PneGsWoeOE1hSDUdZB30NomXNXr3C3kZBBTuvPYrYjEJaBNuk6d8ZAlLqX78UdZCsBZA8uX4unXzcG951GZBfynXRVskoJJIQR0ztxOzW5R2kyszUT1DZBQmW3D9ZARzMCX4Hs4JclnZCsIGgzBMvs1r4dR9vVqbjWU1u',
+      },
+    );
+    console.log(imgUploadRes);
+
+    // reader.readAsBinaryString(file);
+    //   setMediaContent(URL.createObjectURL(event.target.files[0]));
+    //   setFile(event.target.files[0]);
+    //   const session = await axiosClientBm.post(
+    //     `uploads?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
+    //   );
+    //   const reader = new FileReader();
+
+    //   reader.onload = async () => {
+    //     const base64String = btoa(
+    //       new Uint8Array(reader.result).reduce(
+    //         (data, byte) => data + String.fromCharCode(byte),
+    //         '',
+    //       ),
+    //     );
+
+    //     try {
+    //       const response = await axiosClientBm.post(`${session?.data.id}`, base64String, {
+    //         headers: {
+    //           'Content-Type': 'application/json', // Use application/json for base64
+    //           'file-offset': '0', // Adjust headers as needed
+    //         },
+    //       });
+
+    //       if (response.status === 200) {
+    //         console.log('File uploaded successfully:', response.data);
+    //       } else {
+    //         console.error('File upload failed:', response);
+    //       }
+    //     } catch (error) {
+    //       console.error('Error uploading file:', error);
+    //     }
+    //   };
+
+    //   reader.onerror = (error) => {
+    //     console.error('File reading error:', error);
+    //   };
+
+    //   if (file instanceof Blob) {
+    //     reader.readAsArrayBuffer(file);
+    //   } else {
+    //     console.error('Expected a Blob, received:', file);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const handleButtonSelectChange = (event) => {
@@ -209,9 +468,32 @@ export default function CreateTemplate() {
   };
 
   const handleFieldChange = (e) => {
+    let num = countPlaceholders(e.target.value);
+    if (variables.length < num) {
+      setVariables([...variables, { id: variables.length + 1, value: '' }]);
+    }
+    if (variables.length > num) {
+      setVariables(variables.splice(-1));
+    }
     setInputLength(e.target.value.length);
     formikTemplate.handleChange(e);
   };
+  const handleFieldChangeTitle = (e) => {
+    let num = countPlaceholders(e.target.value);
+    if (variablesTitle.length < num) {
+      setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+    }
+    if (variablesTitle.length > num) {
+      setVariables(variablesTitle.splice(-1));
+    }
+    setInputLength(e.target.value.length);
+    formikTemplate.handleChange(e);
+  };
+  const countPlaceholders = (template) => {
+    const matches = template.match(/{{\d+}}/g);
+    return matches ? matches.length : 0;
+  };
+
   return (
     <PageContainer title="Create Template" description="this is Search Table page">
       {/* breadcrumb */}
@@ -298,6 +580,7 @@ export default function CreateTemplate() {
       )}
       {step === 1 && (
         <>
+          {' '}
           <ParentCard title="Edit template">
             <form onSubmit={formikTemplate.handleSubmit}>
               <Grid container spacing={3}>
@@ -314,7 +597,6 @@ export default function CreateTemplate() {
                         name="HeaderSelect"
                         variant="outlined"
                         value={HeaderSelect}
-                        // onChange={(e) => setHeaderSelect(e.target.value)}
                         onChange={handleHeaderSelectChange}
                       >
                         <MenuItem value={'TEXT'}>Text</MenuItem>
@@ -329,7 +611,7 @@ export default function CreateTemplate() {
                             id="text"
                             name="text"
                             value={formikTemplate.values.text}
-                            onChange={formikTemplate.handleChange}
+                            onChange={handleFieldChangeTitle}
                             inputProps={{
                               maxLength: CHARACTER_LIMIT_TEXT,
                             }}
@@ -349,6 +631,34 @@ export default function CreateTemplate() {
                               {formikTemplate.errors.text}
                             </FormHelperText>
                           )}
+                          {variablesTitle.map((variable, index) => (
+                            <Box display="flex" alignItems="center" mt={2} key={variable.id}>
+                              <TextField
+                                fullWidth
+                                size="small"
+                                label={`{{${index + 1}}}`}
+                                value={variable.value}
+                                onChange={(event) => handleVariableChangeTitle(variable.id, event)}
+                                variant="outlined"
+                              />
+                              <IconButton
+                                aria-label="delete"
+                                onClick={() => removeVariableTitle(variable.id)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          ))}
+                          <Box mt={2}>
+                            <Button
+                              variant="outlined"
+                              color="primary"
+                              size="small"
+                              onClick={addVariableTitle}
+                            >
+                              Add Variable
+                            </Button>
+                          </Box>
                         </>
                       )}
                       {HeaderSelect === 'MEDIA' && (
@@ -369,8 +679,8 @@ export default function CreateTemplate() {
                             />
                           </RadioGroup>
                           {mediaType && (
-                            <Button variant="contained" component="label">
-                              <FileUploadIcon fontSize="small" />
+                            <Button variant="outlined" component="label">
+                              <FileUploadIcon fontSize="small" variant="outlined" />
                               Upload
                               <input
                                 type="file"
@@ -425,7 +735,26 @@ export default function CreateTemplate() {
                     onChange={handleFieldChange}
                     // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
-
+                  {variables.map((variable, index) => (
+                    <Box display="flex" alignItems="center" mt={2} key={variable.id}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label={`{{${index + 1}}}`}
+                        value={variable.value}
+                        onChange={(event) => handleVariableChange(variable.id, event)}
+                        variant="outlined"
+                      />
+                      <IconButton aria-label="delete" onClick={() => removeVariable(variable.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
+                  <Box mt={2}>
+                    <Button variant="outlined" color="primary" size="small" onClick={addVariable}>
+                      Add Variable
+                    </Button>
+                  </Box>
                   <CustomFormLabel htmlFor="footer">Footer</CustomFormLabel>
                   <Typography variant="subtitle1">
                     Add optional footer text. You can add a short, supporting message at the bottom
@@ -661,7 +990,7 @@ export default function CreateTemplate() {
                 <Grid item lg={12} md={12} sm={12}>
                   <LoadingButton
                     loading={loading}
-                    loadingPosition="start"
+                    loadingPosition="center"
                     startIcon={<></>}
                     variant="contained"
                     color="primary"
