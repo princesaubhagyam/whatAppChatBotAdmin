@@ -89,9 +89,10 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       ) : null}
 
       {subtext}
-
+      <form onSubmit={handleSignIn}>
       <Stack>
         <Box>
+         
           <FormControl fullWidth error={!!errors.email}>
             <OutlinedInput
               sx={{ marginTop: 2 }}
@@ -151,11 +152,13 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           fullWidth
           onClick={handleSignIn}
           disabled={loading}
+          type="submit"
         >
           Sign In
         </Button>
       </Box>
       {subtitle}
+      </form>
     </>
   );
 };

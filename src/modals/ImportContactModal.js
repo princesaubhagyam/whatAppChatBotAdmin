@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Modal,
-  Fade,
-  Backdrop,
-  Typography,
-  Grid,
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Checkbox as MUICheckbox,
-} from '@mui/material';
+import { Box, Button, Modal, Fade, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { IconFileImport,IconDownload } from '@tabler/icons';
+import { IconFileImport, IconDownload } from '@tabler/icons';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,7 +16,8 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const ImportContactModal = ({ open, handleClose }) => {
-  const [value, setValue] = useState('1');
+  const sampleFileUrl =
+    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
 
   return (
     <Modal open={open} onClose={handleClose} closeAfterTransition>
@@ -46,18 +34,21 @@ const ImportContactModal = ({ open, handleClose }) => {
           }}
         >
           <Typography variant="h6" component="h2">
-          Choose file to import contact
+            Choose file to import contact
           </Typography>
           <Button
+            component="a"
+            href={sampleFileUrl}
+            download="contacts.csv"
             sx={{
               backgroundColor: 'transparent',
               width: '100%',
               fontWeight: '600',
               fontSize: '0.95rem',
-              marginTop:'10px',
+              marginTop: '10px',
               '&:hover': {
                 backgroundColor: `white`,
-                color: 'green'
+                color: 'green',
               },
             }}
           >
@@ -68,36 +59,18 @@ const ImportContactModal = ({ open, handleClose }) => {
             <Button
               component="label"
               role={undefined}
-              //variant="contained"
-              
               tabIndex={-1}
               startIcon={<IconFileImport />}
               fullWidth
               style={{
                 padding: '16px',
-                // backgroundColor: 'white',
                 fontSize: '1rem',
                 borderRadius: '4px',
-                '&:hover': {
-                  //   color: 'black !important',
-                },
               }}
             >
               Upload file
               <VisuallyHiddenInput type="file" />
             </Button>
-            {/* <Grid item xs={6}>
-                <Typography fontWeight={600} sx={{ mb: 2 }}>
-                  Import Format:
-                </Typography>
-                <RadioGroup value={value} onChange={(e) => setValue(e.target.value)} row>
-                  <FormControlLabel value="1" control={<Radio />} label="XLSX" />
-                  <FormControlLabel value="2" control={<Radio />} label="CSV" />
-                </RadioGroup>
-                <Typography fontWeight={600} sx={{ mt: 2 }}>
-                  Fields to export
-                </Typography>
-              </Grid> */}
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
             <Button variant="contained" color="primary" sx={{ mr: 2 }}>

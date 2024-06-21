@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Modal,
-  TextField,
-  Grid,
-  Typography,
-} from '@mui/material';
-import apiClient from 'src/api/axiosClient';
+import { Box, Button, Modal, TextField, Grid, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 import toast, { Toaster } from 'react-hot-toast';
+import apiClient from 'src/api/axiosClient';
+import { Link, useNavigate } from 'react-router-dom';
+const AddContactModal = ({ open, handleClose, onAddContact }) => {
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
-const AddContactModal = ({ open, handleClose }) => {
   const [contactDetails, setContactDetails] = useState({
     name: '',
     contact: '',
@@ -38,27 +35,31 @@ const AddContactModal = ({ open, handleClose }) => {
     }));
   };
 
-  // const createContact = async (contactDetails) => {
-  //   try {
-  //     const res = await apiClient.post('/api/contacts/', {
-         
-  //     } 
-  //   }
-    
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const isValid = Object.values(validity).every((value) => value);
 
     if (isValid) {
-      // createContact(contactDetails);
-      setContactDetails({
-        name: '',
-        contact: '',
-        city: '',
-        tag: '',
-      });
-      handleClose();
+      try {
+        setLoading(true);
+        const response = await apiClient.post('/api/contacts/', contactDetails);
+        toast.success('Contact created successfully!', { closeButton:  true });
+        setContactDetails({
+          name: '',
+          contact: '',
+          city: '',
+          tag: '',
+        });
+        handleClose();
+        onAddContact(response.data); // Pass the new contact data back to the parent
+      } catch (error) {
+        // console.error('Failed to create contact:', error);
+        toast.error('Failed to create contact.');
+      } finally {
+        setLoading(false);
+      }
     } else {
       console.log('Some fields are empty.');
+      toast.error('Please fill in all fields.');
     }
   };
 
@@ -146,7 +147,7 @@ const AddContactModal = ({ open, handleClose }) => {
           </Grid>
         </Grid>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button /*onClick={handleCreate}*/ variant="contained" color="primary">
+          <Button onClick={handleCreate} variant="contained" color="primary" disabled={loading}>
             Create
           </Button>
           <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
@@ -156,6 +157,12 @@ const AddContactModal = ({ open, handleClose }) => {
       </Box>
     </Modal>
   );
+};
+
+AddContactModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  onAddContact: PropTypes.func.isRequired,
 };
 
 export default AddContactModal;

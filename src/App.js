@@ -20,7 +20,7 @@ function App() {
         toastOptions={{
           success: {
             iconTheme: {
-               primary: 'green'
+              primary: 'green',
             },
             style: {
               background: 'green',
@@ -30,13 +30,12 @@ function App() {
           },
           error: {
             iconTheme: {
-               primary: 'red'
+              primary: 'red',
             },
             style: {
               background: 'red',
               color: 'white',
               fontSize: '16px',
-              
             },
           },
         }}

@@ -23,14 +23,16 @@ import {
   Dialog,
   Stack,
 } from '@mui/material';
-import { alpha } from '@mui/material/styles';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
-import createAxiosInstanceWithToken from 'src/api/axiosClient'; 
+
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -193,7 +195,7 @@ const EnhancedTableToolbar = (props) => {
           </Button>
         </Grid>
       </Grid> */}
-      <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px'}}>
+      <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px' }}>
         <Stack>
           <Box sx={{ flex: '1 1 100%' }} border={0}>
             <TextField
@@ -213,7 +215,7 @@ const EnhancedTableToolbar = (props) => {
             />
           </Box>
         </Stack>
-        <Stack sx={{flexDirection: 'row',gap: 2}}>
+        <Stack sx={{ flexDirection: 'row', gap: 2 }}>
           <Button
             style={{
               backgroundColor: '#1A4D2E',
@@ -265,6 +267,9 @@ const CustomersTableList = () => {
   const [search, setSearch] = useState('');
   const [openImportModal, setOpenImportModal] = useState(false);
   const [openAddContactModal, setOpenAddContactModal] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [contacts, setContacts] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     getApiData();
   }, []);
@@ -277,7 +282,6 @@ const CustomersTableList = () => {
       try {
         const response = await apiClient.get(
           `/api/contacts/?page=${pageNum}&rows_per_page=${rowsPerPage}`,
-          
         );
         allData = allData.concat(response.data.data.results || []);
         hasNextPage = response.data.next !== null;
@@ -342,6 +346,11 @@ const CustomersTableList = () => {
   };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
+
+  const handleAddContact = (newContact) => {
+    setContacts((prevContacts) => [...prevContacts, newContact]);
+    getApiData();
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
@@ -461,6 +470,8 @@ const CustomersTableList = () => {
       <AddContactModal
         open={openAddContactModal}
         handleClose={() => setOpenAddContactModal(false)}
+        onAddContact={handleAddContact}
+        
       />
     </Box>
   );
