@@ -58,6 +58,7 @@ import {
   IconUsers,
   IconLoader,
   IconLoaderQuarter,
+  IconPhoto,
 } from '@tabler/icons';
 
 import { uniqueId } from 'lodash';
@@ -67,6 +68,12 @@ const Menuitems = [
     title: 'Home',
     icon: IconHome,
     href: '/home',
+  },
+  {
+    id: uniqueId(),
+    title: 'Contacts',
+    icon: IconMan,
+    href: '/contacts',
   },
   {
     id: uniqueId(),
@@ -82,16 +89,17 @@ const Menuitems = [
   },
   // {
   //   id: uniqueId(),
+  //   title: 'Media',
+  //   icon: IconPhoto,
+  //   href: '/media',
+  // },
+  // {
+  //   id: uniqueId(),
   //   title: 'Scheduled Broadcasts',
   //   icon: IconTimeline,
   //   href: '/scheduled-broadcasts',
   // },
-  {
-    id: uniqueId(),
-    title: 'Customers',
-    icon: IconMan,
-    href: '/customers',
-  },
+  
   // {
   //   id: uniqueId(),
   //   title: 'Analytics',

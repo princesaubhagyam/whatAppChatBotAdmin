@@ -12,10 +12,11 @@ import SellingProducts from '../../components/dashboards/modern/SellingProducts'
 import WeeklyStats from '../../components/dashboards/modern/WeeklyStats';
 import TopPerformers from '../../components/dashboards/modern/TopPerformers';
 import Welcome from 'src/layouts/full/shared/welcome/Welcome';
-
+import AuthSocialButtons from '../authentication/authForms/AuthSocialButtons';
 const Home = () => {
   return (
     <Box>
+      <AuthSocialButtons title="Sign in with" />
       <Grid container spacing={3}>
         {/* column */}
         <Grid item sm={12} lg={12}>

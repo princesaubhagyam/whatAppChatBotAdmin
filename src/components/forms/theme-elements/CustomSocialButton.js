@@ -9,7 +9,8 @@ const CustomSocialButton = styled((props) => (
   background: `#1877f2`,
   color: `white`,
   '&:hover': {
-    color: `#539eff`,
+    color: `white`,
+    background: `#1877f2c4`,
   },
 }));
 

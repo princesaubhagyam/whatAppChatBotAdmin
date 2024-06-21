@@ -1,6 +1,7 @@
 import { styled, Container, Box, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 import Header from './vertical/header/Header';
 import HorizontalHeader from '../full/horizontal/header/Header';
@@ -20,6 +21,7 @@ const PageWrapper = styled('div')(() => ({
   paddingBottom: '60px',
   flexDirection: 'column',
   zIndex: 1,
+  //height: '100%',
   width: '100%',
   backgroundColor: 'transparent',
 }));
@@ -42,9 +44,11 @@ const FullLayout = () => {
       {/* ------------------------------------------- */}
       <PageWrapper
         className="page-wrapper"
+        style={{ padding: 0 }}
         sx={{
           ...(customizer.isCollapse && {
             [theme.breakpoints.up('lg')]: { ml: `${customizer.MiniSidebarWidth}px` },
+            maxHeight: 'md 100%!important',
           }),
         }}
       >
@@ -57,6 +61,7 @@ const FullLayout = () => {
         {/* ------------------------------------------- */}
         {customizer.isHorizontal ? <Navigation /> : ''}
         <Container
+          style={{ padding: 5 }}
           sx={{
             maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
           }}

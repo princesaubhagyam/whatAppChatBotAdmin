@@ -3,6 +3,8 @@ import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import AuthWrapper from 'src/utils/AuthWrapper';
+import { element } from 'prop-types';
+import AuthGuard from './AuthGuard';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -13,7 +15,7 @@ const ModernDash = Loadable(lazy(() => import('../views/dashboard/Modern')));
 const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')));
 
 /* ****Apps***** */
-const Chats = Loadable(lazy(() => import('../views/apps/chat/Chat')));
+const Broadcasts = Loadable(lazy(() => import('../views/apps/chat/Chat')));
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
 const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
@@ -119,6 +121,7 @@ const HomePage = Loadable(lazy(() => import('../views/dashboard/Home')));
 const Customers = Loadable(lazy(() => import('../views/customers/Customers')));
 const Templates = Loadable(lazy(() => import('../views/template/templates')));
 const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemplate')));
+const Media = Loadable(lazy(() => import('../views/media/Media')));
 
 const Router = [
   {
@@ -131,11 +134,12 @@ const Router = [
     children: [
       { path: '/', element: <EcommerceDash /> },
       { path: '/home', element: <EcommerceDash /> },
-      { path: '/broadcasts', element: <Chats /> },
+      { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },
+      { path: '/media', element: <Media /> },
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
-      { path: '/customers', element: <Customers /> },
+      { path: '/contacts', element: <Customers /> },
       { path: '/analytics', element: <Templates /> },
       { path: '/integrations', element: <Templates /> },
       { path: '/team', element: <Templates /> },
@@ -144,7 +148,7 @@ const Router = [
 
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
-      { path: '/apps/chats', element: <Chats /> },
+      { path: '/apps/chats', element: <Broadcasts /> },
       { path: '/apps/notes', element: <Notes /> },
       { path: '/apps/calendar', element: <Calendar /> },
       { path: '/apps/email', element: <Email /> },
@@ -217,7 +221,7 @@ const Router = [
     element: <BlankLayout />,
     children: [
       { path: '/auth/404', element: <Error /> },
-      { path: '/auth/login', element: <Login2 /> },
+      { path: '/auth/login', element: <AuthGuard /> },
       // { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/register', element: <Register2 /> },
       // { path: '/auth/register2', element: <Register2 /> },

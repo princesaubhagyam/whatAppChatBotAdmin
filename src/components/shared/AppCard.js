@@ -7,7 +7,7 @@ const AppCard = ({ children }) => {
   const customizer = useSelector((state) => state.customizer);
   return (
     <Card
-      sx={{ display: 'flex', p: 0, marginTop: 3 }}
+      sx={{ display: 'flex', p: 0, marginTop: 0, borderRadius: 0, height: '85vh' }}
       elevation={customizer.isCardShadow ? 9 : 0}
       variant={!customizer.isCardShadow ? 'outlined' : undefined}
     >

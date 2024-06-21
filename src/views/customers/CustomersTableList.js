@@ -1,7 +1,4 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
-import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Table,
@@ -9,28 +6,31 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Toolbar,
   IconButton,
   Tooltip,
-  FormControlLabel,
   Typography,
   Avatar,
   TextField,
   InputAdornment,
   Paper,
+  TablePagination,
+  Checkbox,
+  Button,
+  Grid,
+  Dialog,
+  Stack,
 } from '@mui/material';
-
+import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchProducts } from 'src/store/apps/eCommerce/EcommerceSlice';
-import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox';
-import { IconDotsVertical, IconFilter, IconSearch, IconTrash } from '@tabler/icons';
-import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
+import PropTypes from 'prop-types';
+import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
 import apiClient from 'src/api/axiosClient';
+import ImportContactModal from '../../modals/ImportContactModal';
+import AddContactModal from '../../modals/AddContactModal';
+import createAxiosInstanceWithToken from 'src/api/axiosClient'; 
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -59,25 +59,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  {
-    id: 'name',
-    numeric: false,
-    disablePadding: false,
-    label: 'Customer name',
-  },
-  {
-    id: 'city',
-    numeric: false,
-    disablePadding: false,
-    label: 'City',
-  },
-
-  {
-    id: 'number',
-    numeric: false,
-    disablePadding: false,
-    label: 'Number',
-  },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+  { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
+  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
+  { id: 'created_at', numeric: false, disablePadding: false, label: 'Created at' },
+  { id: 'updated_at', numeric: false, disablePadding: false, label: 'Updated at' },
 ];
 
 function EnhancedTableHead(props) {
@@ -85,26 +72,27 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
   return (
     <TableHead>
       <TableRow>
-        {/* <TableCell padding="checkbox">
-          <CustomCheckbox
+        <TableCell padding="checkbox">
+          <Checkbox
             color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputprops={{
-              'aria-label': 'select all desserts',
+            inputProps={{
+              'aria-label': 'select all',
             }}
           />
-        </TableCell> */}
+        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            style={{ fontWeight: 500, fontSize: 16, padding: '13px 16px' }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -135,103 +123,187 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, handleSearch, search } = props;
-
+  const { numSelected, handleSearch, search, onOpenImportModal, setOpenAddContactModal } = props;
+  const handleOpenAddContactModal = () => {
+    setOpenAddContactModal(true);
+  };
   return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle2" component="div">
-          {numSelected} Selected
-        </Typography>
-      ) : (
-        <Box sx={{ flex: '1 1 100%' }}>
-          <TextField
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconSearch size="1.1rem" />
-                </InputAdornment>
-              ),
+    <>
+      {/* <Grid container spacing={2} alignItems="center" sx={{ mx: 2, mt: 1, mb: 2 }} pl={0}>
+        <Grid paddingLeft={0}> */}
+      {/* <Button
+            style={{
+              backgroundColor: '#1A4D2E',
+              color: 'white',
+              width: '8rem',
+              paddingLeft: '0px',
+              paddingRight: '0px',
             }}
-            placeholder="Search..."
-            size="small"
-            onChange={handleSearch}
-            value={search}
-          />
-        </Box>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <IconTrash width="18" />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <IconFilter size="1.2rem" icon="filter" />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
+            onClick={handleOpenAddContactModal}
+          >
+            <IconPlus size={16} style={{marginRight: '2px'}}/>
+            Add Contact
+          </Button> */}
+      {/* <Box sx={{ flex: '1 1 100%' }} border={0}>
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch size="1.1rem" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ background: 'white', borderRadius: 4 }}
+              placeholder="Search..."
+              size="small"
+              onChange={handleSearch}
+              value={search}
+              fullWidth
+            />
+          </Box>
+        </Grid>
+        <Grid item ml={'40.5rem'}>
+          <Button
+            style={{
+              backgroundColor: '#1A4D2E',
+              color: 'white',
+              width: '8rem',
+              paddingLeft: '0px',
+              paddingRight: '0px',
+            }}
+            onClick={handleOpenAddContactModal}
+          >
+            <IconPlus size={16} style={{ marginRight: '2px' }} />
+            Add Contact
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            style={{
+              backgroundColor: '#1A4D2E',
+              color: 'white',
+              width: '9rem',
+              paddingLeft: '0px',
+              paddingRight: '0px',
+            }}
+            onClick={onOpenImportModal}
+          >
+            <IconFileImport size={16} style={{ marginRight: '2px' }} />
+            Import Contact
+          </Button>
+        </Grid>
+      </Grid> */}
+      <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px'}}>
+        <Stack>
+          <Box sx={{ flex: '1 1 100%' }} border={0}>
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch size="1.1rem" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ background: 'white', borderRadius: 4 }}
+              placeholder="Search..."
+              size="small"
+              onChange={handleSearch}
+              value={search}
+              fullWidth
+            />
+          </Box>
+        </Stack>
+        <Stack sx={{flexDirection: 'row',gap: 2}}>
+          <Button
+            style={{
+              backgroundColor: '#1A4D2E',
+              color: 'white',
+              width: '8rem',
+              paddingLeft: '0px',
+              paddingRight: '0px',
+            }}
+            onClick={handleOpenAddContactModal}
+          >
+            <IconPlus size={16} style={{ marginRight: '2px' }} />
+            Add Contact
+          </Button>
+          <Button
+            style={{
+              backgroundColor: '#1A4D2E',
+              color: 'white',
+              width: '9rem',
+              paddingLeft: '0px',
+              paddingRight: '0px',
+            }}
+            onClick={onOpenImportModal}
+          >
+            <IconFileImport size={16} style={{ marginRight: '2px' }} />
+            Import Contact
+          </Button>
+        </Stack>
+      </Stack>
+    </>
   );
 };
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  handleSearch: PropTypes.func.isRequired,
+  search: PropTypes.string.isRequired,
+  onOpenImportModal: PropTypes.func.isRequired,
 };
 
 const CustomersTableList = () => {
-  const [order, setOrder] = React.useState('desc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [rows, setRows] = React.useState([]);
-  const [search, setSearch] = React.useState('');
-  //Fetch Products
-  React.useEffect(() => {
-    // dispatch(fetchProducts());
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('calories');
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(true);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useState([]);
+  const [allRows, setAllRows] = useState([]);
+  const [search, setSearch] = useState('');
+  const [openImportModal, setOpenImportModal] = useState(false);
+  const [openAddContactModal, setOpenAddContactModal] = useState(false);
+  useEffect(() => {
     getApiData();
   }, []);
 
   const getApiData = async () => {
-    try {
-      const response = await apiClient.get('/api/contacts/');
-      setRows(response.data.data.results);
-      return;
-    } catch (error) {
-      console.error('Error fetching data from API:', error);
+    let allData = [];
+    let pageNum = 1;
+    let hasNextPage = true;
+    while (hasNextPage) {
+      try {
+        const response = await apiClient.get(
+          `/api/contacts/?page=${pageNum}&rows_per_page=${rowsPerPage}`,
+          
+        );
+        allData = allData.concat(response.data.data.results || []);
+        hasNextPage = response.data.next !== null;
+        pageNum += 1;
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+        hasNextPage = false;
+      }
     }
+    setAllRows(allData);
+    setRows(allData);
   };
 
   const handleSearch = (event) => {
-    const filteredRows = rows?.filter((row) => {
-      return row.name.toLowerCase().includes(event.target.value);
-    });
+    const searchValue = event.target.value.toLowerCase();
+    const filteredRows = allRows.filter((row) => row.name.toLowerCase().includes(searchValue));
     setSearch(event.target.value);
     setRows(filteredRows);
   };
 
-  // This is for the sorting
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  // This is for select all the row
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = rows.map((n) => n.id);
@@ -241,13 +313,12 @@ const CustomersTableList = () => {
     setSelected([]);
   };
 
-  // This is for the single row sleect
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -270,131 +341,127 @@ const CustomersTableList = () => {
     setPage(0);
   };
 
-  // const handleChangeDense = (event) => {
-  //   setDense(event.target.checked);
-  // };
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
   return (
-    <Box>
-      <Box>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          search={search}
-          handleSearch={(event) => handleSearch(event)}
+    <Box sx={{ width: '100%' }}>
+      <EnhancedTableToolbar
+        numSelected={selected.length}
+        handleSearch={handleSearch}
+        search={search}
+        onOpenImportModal={() => setOpenImportModal(true)}
+        setOpenAddContactModal={setOpenAddContactModal}
+      />
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby="tableTitle"
+            size={dense ? 'small' : 'medium'}
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+                  const createdAtDate = new Date(row.created_at);
+                  const updatedAtDate = new Date(row.updated_at);
+                  const formatDate = (date) => {
+                    return date.toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                    });
+                  };
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {row.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {row.contact}
+                        </Typography>{' '}
+                      </TableCell>
+                      <TableCell align="left">
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {row.city}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="left">
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {row.tag}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {formatDate(createdAtDate)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
+                          {formatDate(updatedAtDate)}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Paper variant="outlined" sx={{ mx: 2, mt: 1 }}>
-          <TableContainer>
-            <Table
-              sx={{ minWidth: 750 }}
-              aria-labelledby="tableTitle"
-              size={dense ? 'small' : 'medium'}
-            >
-              <EnhancedTableHead
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const isItemSelected = isSelected(row.id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                    return (
-                      <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row.id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.title}
-                        selected={isItemSelected}
-                      >
-                        {/* <TableCell padding="checkbox">
-                          <CustomCheckbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputprops={{
-                              'aria-labelledby': labelId,
-                            }}
-                          />
-                        </TableCell> */}
-
-                        <TableCell>
-                          <Box display="flex" alignItems="center">
-                            <Avatar
-                              // alt={row.photo}
-                              variant="rounded"
-                              sx={{ width: 24, height: 24, borderRadius: '100%', fontSize: 12 }}
-                            >
-                              {`${row?.name.split(' ')[0][0]}`}
-                            </Avatar>
-                            <Box
-                              sx={{
-                                ml: 2,
-                              }}
-                            >
-                              <Typography variant="h6" fontWeight="600" fontSize={14}>
-                                {row.name}
-                              </Typography>
-                              <Typography color="textSecondary" variant="subtitle2">
-                                {/* {row.category} */}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </TableCell>
-
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.city}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.contact}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: (dense ? 33 : 53) * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-        {/* <Box ml={2}>
-          <FormControlLabel
-            control={<CustomSwitch checked={dense} onChange={handleChangeDense} />}
-            label="Dense padding"
-          />
-        </Box> */}
-      </Box>
+      </Paper>
+      <ImportContactModal open={openImportModal} handleClose={() => setOpenImportModal(false)} />
+      <AddContactModal
+        open={openAddContactModal}
+        handleClose={() => setOpenAddContactModal(false)}
+      />
     </Box>
   );
 };

@@ -11,15 +11,15 @@ const BCrumb = [
     title: 'Home',
   },
   {
-    title: 'Customers',
+    title: 'Contacts',
   },
 ];
 
 const Customers = () => {
   return (
-    <PageContainer title="Customers" description="this is Search Table page">
+    <PageContainer title="Contacts" description="this is Search Table page">
       {/* breadcrumb */}
-      <Breadcrumb title="Customers" items={BCrumb} />
+      <Breadcrumb title="Contacts" items={BCrumb} />
       {/* end breadcrumb */}
       <Box>
         <CustomersTableList />

@@ -143,7 +143,11 @@ const Profile = () => {
                 variant="outlined"
                 color="primary"
                 component={Link}
-                onClick={() => localStorage.removeItem('token')}
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('ref');
+                  localStorage.removeItem('access');
+                }}
                 fullWidth
               >
                 Logout

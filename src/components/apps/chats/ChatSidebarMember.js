@@ -1,15 +1,16 @@
 import React from 'react';
 import { Drawer, useMediaQuery } from '@mui/material';
 import ChatListing from './ChatListing';
+import ChatListingMember from './ChatListingMember';
 
 const drawerWidth = 320;
 
-const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts }) => {
+const ChatSidebarMember = ({ isMobileSidebarOpen, onSidebarClose, contacts }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   return (
     <Drawer
-      open={isMobileSidebarOpen}
+      //open={isMobileSidebarOpen}
       onClose={onSidebarClose}
       variant={lgUp ? 'permanent' : 'temporary'}
       sx={{
@@ -20,9 +21,10 @@ const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts }) => {
         height: '100vh',
       }}
     >
-      <ChatListing broadcasts={broadcasts} />
+      {/* <ChatListingMember contacts={contacts} /> */}
+      <ChatListingMember/>
     </Drawer>
   );
 };
 
-export default ChatSidebar;
+export default ChatSidebarMember;

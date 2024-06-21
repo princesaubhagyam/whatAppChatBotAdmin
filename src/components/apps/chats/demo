@@ -1,33 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Avatar,
   List,
   ListItemText,
   ListItemAvatar,
+  TextField,
   Box,
   Alert,
   Badge,
   ListItemButton,
   Typography,
+  InputAdornment,
   Button,
+  Menu,
+  MenuItem,
+  Grid,
   Stack,
+  IconButton,
 } from '@mui/material';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
-import { selectBroadcast } from '../../../store/apps/chat/ChatSlice';
+import { selectBroadcast, fetchBroadcasts, SearchChat } from '../../../store/apps/chat/ChatSlice';
 import { last } from 'lodash';
+import { formatDistanceToNowStrict } from 'date-fns';
 import {
+  IconChevronDown,
   IconSearch,
+  IconDotsVertical,
+  IconArrowsSort,
+  IconUsers,
   IconFileImport,
   IconPlus,
-  IconUsers,
 } from '@tabler/icons';
-import ImportBroadcastModal from 'src/modals/ImportBroadcastModal';
+import user1 from 'src/assets/images/profile/user-1.jpg';
+import ImportContactModal from 'src/modals/ImportContactModal';
 
 const ChatListing = ({ broadcasts }) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
+  // useEffect(() => {
+  //   dispatch(fetchBroadcasts());
+  // }, [dispatch]);
 
   const filterChats = (broadcasts, cSearch) => {
     if (broadcasts)
@@ -41,6 +56,8 @@ const ChatListing = ({ broadcasts }) => {
   const chats = useSelector((state) =>
     filterChats(state.chatReducer.chats, state.chatReducer.chatSearch),
   );
+
+  // const chats = useSelector((state) => state.chatReducer.chats);
 
   const getDetails = (conversation) => {
     let displayText = '';
@@ -56,17 +73,48 @@ const ChatListing = ({ broadcasts }) => {
   };
 
   const lastActivity = (chat) => last(chat.messages)?.createdAt;
-
-  const handleOpenImportModal = () => {
-    setOpenImportModal(true);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  const handleCloseImportModal = () => {
-    setOpenImportModal(false);
+  const onOpenImportModal = () => {
+    setOpenImportModal(true);
+    handleClose();
   };
 
   return (
     <div style={{ borderRadius: 0, borderRight: '3px solid #e5eaef' }}>
+      {/* ------------------------------------------- */}
+      {/* Profile */}
+      {/* ------------------------------------------- */}
+      {/* <Box display={'flex'} alignItems="center" gap="10px" p={3}>
+        <Badge
+          variant="dot"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          overlap="circular"
+          color="success"
+        >
+          <Avatar alt="Remy Sharp" src={user1} sx={{ width: 54, height: 54 }} />
+        </Badge>
+        <Box>
+          <Typography variant="body1" fontWeight={600}>
+            John Deo
+          </Typography>
+          <Typography variant="body2">Marketing Manager</Typography>
+        </Box>
+      </Box> */}
+      {/* ------------------------------------------- */}
+      {/* Search */}
+      {/* ------------------------------------------- */}
+
       <Box
         px={2}
         py={1}
@@ -74,6 +122,22 @@ const ChatListing = ({ broadcasts }) => {
         borderTop={'3px solid #e5eaef'}
         borderBottom={'3px solid #e5eaef'}
       >
+        {/* <TextField
+          id="outlined-search"
+          placeholder="Search contacts"
+          size="small"
+          type="search"
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconSearch size={'16'} />
+              </InputAdornment>
+            ),
+          }}
+          fullWidth */}
+        {/* // onChange={(e) => dispatch(SearchChat(e.target.value))}
+        /> */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography style={{ fontSize: '12px' }}>
             <b style={{ fontSize: '1rem' }}>Your broadcasts</b>
@@ -81,32 +145,49 @@ const ChatListing = ({ broadcasts }) => {
             View all broadcasts and it's analytics
           </Typography>
           <IconSearch size={'16'} />
-          <Button
-            sx={{
-              height: '25px',
-              width: '40px',
-              minWidth: '40px',
-              padding: '8px',
-              marginLeft: '5px',
-              marginRight: '5px',
+          <Button sx={{ height: '25px', width: '40px', minWidth: '40px',padding: '8px', marginLeft: '5px', marginRight: '5px'}}   /*onClick={() => /*setIsModalOpen(true)}*/>
+                <IconPlus size={'19'} />
+          </Button>
+          <Button sx={{ height: '25px', width: '40px', minWidth: '40px',padding: '8px'}}/*onClick={() => /*setIsModalOpen(true)}*/>
+                <IconFileImport size={'19'} />
+          </Button>
+
+          {/* <IconDotsVertical size={'16'} onClick={handleClick} /> */}
+          {/* <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
             }}
           >
-            <IconPlus size={'19'} />
-          </Button>
-          <Button
-            sx={{
-              height: '25px',
-              width: '40px',
-              minWidth: '40px',
-              padding: '8px',
-            }}
-            onClick={handleOpenImportModal}
-          >
-            <IconFileImport size={'19'} />
-          </Button>
+            <MenuItem onClick={onOpenImportModal}>Import Broadcast</MenuItem>
+            <MenuItem onClick={handleClose}>Create broadcast</MenuItem>
+          </Menu> */}
         </Stack>
       </Box>
+      {/* ------------------------------------------- */}
+      {/* Contact List */}
+      {/* ------------------------------------------- */}
       <List sx={{ px: 0 }}>
+        {/* <Box pb={1} borderBottom={'3px solid #e5eaef'} borderRadius={0}>
+          <Button
+            id="basic-button"
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            //onClick={handleClick}
+            color="inherit"
+            fullWidth="100%"
+          >
+            <Stack direction="row" gap="16px" alignItems="center">
+              <IconArrowsSort size="20" />
+              <Typography> Sorting by recently created</Typography>
+              <IconChevronDown size="18" />
+            </Stack>
+          </Button>
+        </Box> */}
         <Scrollbar
           sx={{
             height: { xl: '100vh', lg: 'calc(100vh - 100px)', md: '100vh' },
@@ -115,10 +196,12 @@ const ChatListing = ({ broadcasts }) => {
         >
           {broadcasts && broadcasts.length ? (
             broadcasts.map((chat) => (
-              <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={chat.id}>
+              <Box borderBottom={'3px solid #e5eaef'} borderRadius={0}>
                 <ListItemButton
+                  key={chat.id}
                   onClick={() => dispatch(selectBroadcast(chat))}
                   sx={{
+                    //mb: 0.5,
                     py: 1,
                     px: 1,
                     alignItems: 'start',
@@ -144,7 +227,7 @@ const ChatListing = ({ broadcasts }) => {
                       overlap="circular"
                     >
                       <Avatar sx={{ width: 42, height: 42 }}>
-                        <IconUsers size={25} />
+                        <IconUsers size={25}></IconUsers>
                       </Avatar>
                     </Badge>
                   </ListItemAvatar>
@@ -169,7 +252,14 @@ const ChatListing = ({ broadcasts }) => {
                     }}
                     sx={{ my: 0 }}
                   />
-                  <Box sx={{ flexShrink: '0' }} mt={0.5}></Box>
+
+                  <Box sx={{ flexShrink: '0' }} mt={0.5}>
+                    {/* <Typography variant="body2">
+                    {formatDistanceToNowStrict(new Date(lastActivity(chat)), {
+                      addSuffix: false,
+                    })}
+                  </Typography> */}
+                  </Box>
                 </ListItemButton>
               </Box>
             ))
@@ -182,7 +272,7 @@ const ChatListing = ({ broadcasts }) => {
           )}
         </Scrollbar>
       </List>
-      <ImportBroadcastModal open={openImportModal} handleClose={handleCloseImportModal} />
+      <ImportContactModal open={openImportModal} handleClose={() => setOpenImportModal(false)} />
     </div>
   );
 };

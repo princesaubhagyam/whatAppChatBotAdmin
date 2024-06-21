@@ -1,47 +1,58 @@
-import axios from '../../../utils/axios';
 import { createSlice } from '@reduxjs/toolkit';
+import axios from '../../../utils/axios';
 import { uniqueId } from 'lodash';
-import { sub } from 'date-fns';
 
-const API_URL = '/api/data/chat/ChatData';
+// const CONTACTS_API_URL = 'http://192.168.1.47:8000/api/contacts/';
+// const CONTACTS_API_URL = process.env.REACT_APP_API_BASE_URL + '/api/contacts/';
+const BROADCASTS_API_URL = process.env.REACT_APP_API_BASE_URL + '/api/broadcasts/';
+const CHAT_HISTORY_BY_PHONE_NO_URL = process.env.REACT_APP_API_BASE_URL + '/api/message';
+// const CHAT_HISTORY_BY_PHONE_NO_URL = 'http://192.168.1.47:8000/api/message';
 
 const initialState = {
-  chats: [],
+  broadcasts: [],
   chatContent: 1,
   chatSearch: '',
+  chatHistory: null,
+  selectedBroadcast: null,
 };
 
 export const ChatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    getChats: (state, action) => {
-      state.chats = action.payload;
+    broadcasts: (state, action) => {
+      state.broadcasts = action.payload;
     },
     SearchChat: (state, action) => {
       state.chatSearch = action.payload;
     },
-    SelectChat: (state, action) => {
-      state.chatContent = action.payload;
+    setChatHistory: (state, action) => {
+      console.log(action.payload);
+      state.chatHistory = action.payload;
+    },
+    selectBroadcast: (state, action) => {
+      state.selectedBroadcast = action.payload;
     },
     sendMsg: (state, action) => {
-      const conversation = action.payload;
-      const { id, msg } = conversation;
+      const { msg, phoneNo, chatId } = action.payload;
 
-      const newMessage = {
-        id: id,
-        msg: msg,
-        type: 'text',
-        attachments: [],
-        createdAt: sub(new Date(), { seconds: 1 }),
-        senderId: uniqueId(),
-      };
+      sendMessage(msg, phoneNo);
 
       state.chats = state.chats.map((chat) =>
-        chat.id === action.payload.id
+        chat.id === chatId
           ? {
               ...chat,
-              ...chat.messages.push(newMessage),
+              messages: [
+                ...chat.messages,
+                {
+                  phoneNo,
+                  msg,
+                  type: 'text',
+                  attachments: [],
+                  createdAt: new Date().toISOString(),
+                  senderId: uniqueId(),
+                },
+              ],
             }
           : chat,
       );
@@ -49,15 +60,65 @@ export const ChatSlice = createSlice({
   },
 });
 
-export const { SearchChat, getChats, sendMsg, SelectChat } = ChatSlice.actions;
+export const { SearchChat, getChats, sendMsg, selectBroadcast, setChatHistory } = ChatSlice.actions;
 
-export const fetchChats = () => async (dispatch) => {
+export const fetchBroadcasts = () => async (dispatch) => {
   try {
-    const response = await axios.get(`${API_URL}`);
-    dispatch(getChats(response.data));
+    const response = await axios.get(`${BROADCASTS_API_URL}`);
+    if (response.data.success) {
+      console.log(response, '===========================');
+      // dispatch(getChats(response.data.data.results));
+    }
   } catch (err) {
     throw new Error(err);
   }
 };
+
+export const fetchChatHistoryByPhoneNo = (phoneNo) => async (dispatch) => {
+  try {
+    const res = await axios.get(CHAT_HISTORY_BY_PHONE_NO_URL, {
+      params: {
+        contact: phoneNo,
+      },
+    });
+    if (res.status === 200) {
+      console.log(res.data.data, '++++++');
+      dispatch(setChatHistory(res.data.data));
+    }
+  } catch (error) {
+    console.warn('Error fetching chat by phone number :', error);
+  }
+};
+
+const sendMessage = async (msg, to) => {
+  const META_MSG_SEND_URL = `${process.env.REACT_APP_WHAP_APP_MANAGE_API_BASE_URL}/${process.env.REACT_APP_MSG_PHONE_NUMBER_ID}/messages`;
+  const payload = {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: to,
+    type: 'text',
+    text: {
+      preview_url: false,
+      body: msg,
+    },
+  };
+  try {
+    const res = await axios.post(META_MSG_SEND_URL, payload, {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_WA_AUTH_TOKEN}`,
+      },
+    });
+    if (res.status === 200) {
+      alert('Message sent!');
+    }
+  } catch (error) {
+    console.warn('Message sending error :', error);
+  }
+};
+
+// Selectors
+export const selectChatId = (state) => state.chat.chatId;
+export const selectChatPhoneNo = (state) => state.chat.chatPhoneNo;
+export const selectChatHistory = (state) => state.chat.chatHistory;
 
 export default ChatSlice.reducer;

@@ -187,7 +187,7 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} Selected
         </Typography>
       ) : (
-        <Box sx={{ flex: '1 1 100%' }}>
+        <Box sx={{ flex: '1 1 100%', justifyContent: 'flex-end', textAlign:'right' , mr: 1}}>
           <TextField
             InputProps={{
               startAdornment: (

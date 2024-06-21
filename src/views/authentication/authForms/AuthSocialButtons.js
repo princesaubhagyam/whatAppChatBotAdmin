@@ -85,7 +85,7 @@ const AuthSocialButtons = ({ title }) => {
 
   return (
     <>
-      <Stack direction="row" justifyContent="center" spacing={2} mt={3}>
+      <Stack direction="row" justifyContent="left" spacing={2} mt={3}>
         {/* <CustomSocialButton>
         <Avatar
           src={icon1}
@@ -106,6 +106,13 @@ const AuthSocialButtons = ({ title }) => {
           onClick={launchWhatsAppSignup}
           backgroundColor="#1877f238"
           fontWeight={600}
+          style={{ border: 'none' }}
+          sx={{
+            '&:hover': {
+              backgroundColor: 'none', 
+              boxShadow: 'none',
+            },
+          }}
         >
           <Avatar
             src={icon2}

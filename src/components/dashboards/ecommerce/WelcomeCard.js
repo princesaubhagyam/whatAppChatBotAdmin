@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Typography, Card, CardContent, Grid } from '@mui/material';
 
 import welcomeImg from 'src/assets/images/backgrounds/welcome-bg2.png';
+import AuthSocialButtons from 'src/views/authentication/authForms/AuthSocialButtons';
 
 const WelcomeCard = () => {
   return (
@@ -21,9 +22,7 @@ const WelcomeCard = () => {
               <Typography variant="subtitle2" my={2} color="textSecondary">
                 You have earned 54% more than last month which is great thing.
               </Typography>
-              <Button variant="contained" color="primary">
-                Check
-              </Button>
+              <AuthSocialButtons title="Sign in with"/>
             </Box>
           </Grid>
           <Grid item sm={5}>

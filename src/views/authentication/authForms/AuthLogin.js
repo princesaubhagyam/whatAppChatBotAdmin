@@ -2,90 +2,162 @@ import React from 'react';
 import {
   Box,
   Typography,
-  FormGroup,
-  FormControlLabel,
-  Button,
   Stack,
-  Divider,
+  Button,
+  FormControl,
+  InputAdornment,
+  OutlinedInput,
+  FormHelperText,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { IconLock, IconMail } from '@tabler/icons';
+import toast, { Toaster } from 'react-hot-toast';
 
-import CustomCheckbox from '../../../components/forms/theme-elements/CustomCheckbox';
-import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
-import CustomFormLabel from '../../../components/forms/theme-elements/CustomFormLabel';
+import apiClient from 'src/api/axiosClient';
 
-import AuthSocialButtons from './AuthSocialButtons';
+const AuthLogin = ({ title, subtitle, subtext }) => {
+  const initCredentials = {
+    email: '',
+    password: '',
+  };
 
-const AuthLogin = ({ title, subtitle, subtext }) => (
-  <>
-    {title ? (
-      <Typography fontWeight="700" variant="h3" mb={1}>
-        {title}
-      </Typography>
-    ) : null}
+  const [credentials, setCredentials] = React.useState(initCredentials);
+  const [errors, setErrors] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
 
-    {subtext}
+  const navigate = useNavigate();
 
-    <Stack>
-      <Box>
-        <CustomFormLabel htmlFor="username">Username</CustomFormLabel>
-        <CustomTextField id="username" variant="outlined" fullWidth />
-      </Box>
-      <Box>
-        <CustomFormLabel htmlFor="password">Password</CustomFormLabel>
-        <CustomTextField id="password" type="password" variant="outlined" fullWidth />
-      </Box>
-      <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-        <FormGroup>
-          <FormControlLabel
-            control={<CustomCheckbox defaultChecked />}
-            label="Remeber this Device"
-          />
-        </FormGroup>
-        <Typography
-          component={Link}
-          to="/auth/forgot-password"
-          fontWeight="500"
-          sx={{
-            textDecoration: 'none',
-            color: 'primary.main',
-          }}
-        >
-          Forgot Password ?
+  const handleAuthStorage = (resData) => {
+    localStorage.setItem('ref', resData.token.refresh);
+    localStorage.setItem('access', resData.token.access);
+  };
+
+  const signInAPICall = async (creds) => {
+    try {
+      const res = await apiClient.post('/auth/signin/', { ...creds });
+      if (res.status === 200) {
+        handleAuthStorage(res.data.data);
+        toast.success('Sign in successful!', { duration: 2000 });
+        navigate('/');
+      }
+    } catch (error) {
+      if (error?.response?.data?.status === false) {
+        toast.error('Invalid credentials!', { duration: 2000 });
+      } else {
+        toast.error(error.toString());
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    if (validateForm()) {
+      setLoading(true);
+      await signInAPICall(credentials);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!credentials.email) {
+      newErrors.email = 'Please enter email!';
+    } else if (!/\S+@\S+\.\S+/.test(credentials.email)) {
+      newErrors.email = 'Please enter a valid email!';
+    }
+
+    if (!credentials.password) {
+      newErrors.password = 'Please enter password!';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFieldChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+  };
+
+  return (
+    <>
+      {title ? (
+        <Typography fontWeight="800" variant="h1" mb={1}>
+          {title}
         </Typography>
-      </Stack>
-    </Stack>
-    <Box>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
-        fullWidth
-        component={Link}
-        to="/"
-        onClick={() => localStorage.setItem('token', 'HJD35350900')}
-        type="submit"
-      >
-        Sign In
-      </Button>{' '}
-      <Box mt={3}>
-        <Divider>
+      ) : null}
+
+      {subtext}
+
+      <Stack>
+        <Box>
+          <FormControl fullWidth error={!!errors.email}>
+            <OutlinedInput
+              sx={{ marginTop: 2 }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconMail width={22} color="dimgray" />
+                </InputAdornment>
+              }
+              id="username-text"
+              placeholder="Enter Email"
+              fullWidth
+              name="email"
+              onChange={handleFieldChange}
+            />
+            {errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl fullWidth error={!!errors.password}>
+            <OutlinedInput
+              sx={{ marginTop: 2 }}
+              type="password"
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconLock width={22} color="dimgray" />
+                </InputAdornment>
+              }
+              id="pwd-text"
+              placeholder="Enter password"
+              fullWidth
+              name="password"
+              onChange={handleFieldChange}
+            />
+            {errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
+          </FormControl>
+        </Box>
+        <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
+          <div></div>
           <Typography
-            component="span"
-            color="textSecondary"
-            variant="h6"
-            fontWeight="400"
-            position="relative"
-            px={2}
+            component={Link}
+            to="/auth/forgot-password"
+            fontWeight="500"
+            sx={{
+              textDecoration: 'none',
+              color: 'primary.main',
+            }}
           >
-            or sign in with
+            Forgot Password ?
           </Typography>
-        </Divider>
+        </Stack>
+      </Stack>
+      <Box>
+        <Button
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          onClick={handleSignIn}
+          disabled={loading}
+        >
+          Sign In
+        </Button>
       </Box>
-      <AuthSocialButtons title="Sign in with" />
-    </Box>
-    {subtitle}
-  </>
-);
+      {subtitle}
+    </>
+  );
+};
 
 export default AuthLogin;

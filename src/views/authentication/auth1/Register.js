@@ -9,8 +9,8 @@ import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthRegister from '../authForms/AuthRegister';
 
 const Register = () => (
-  <PageContainer title="Register" description="this is Register page">
-    <Grid container spacing={0} justifyContent="center" sx={{ overflowX: 'hidden' }}>
+  <PageContainer title="Register" description="this is Register page" >
+    <Grid container spacing={0} justifyContent="center" sx={{ overflowX: 'hidden', padding: 0 }}>
       <Grid
         item
         xs={12}
@@ -32,7 +32,7 @@ const Register = () => (
         }}
       >
         <Box position="relative">
-          <Box px={3}>
+          <Box px={1}>
             <Logo />
           </Box>
           <Box

@@ -17,10 +17,10 @@ const drawerWidth = 320;
 
 const ChatInsideSidebar = ({ isInSidebar, chat }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const totalAttachment = uniq(flatten(chat?.messages.map((item) => item.attachment))).length;
-  const totalMedia =
-    uniq(flatten(chat?.messages.map((item) => (item?.type === 'image' ? item.msg : null)))).length -
-    1;
+  // const totalAttachment = uniq(flatten(chat?.messages.map((item) => item.attachment))).length;
+  // const totalMedia =
+  //   uniq(flatten(chat?.messages.map((item) => (item?.type === 'image' ? item.msg : null)))).length -
+  //   1;
 
   const StyledStack = styled(Stack)(() => ({
     '.showOnHover': {
@@ -50,7 +50,7 @@ const ChatInsideSidebar = ({ isInSidebar, chat }) => {
           p={3}
         >
           <Typography variant="h6" mb={2}>
-            Media ({totalMedia})
+            {/* Media ({totalMedia}) */}
           </Typography>
           <Grid container spacing={2}>
             {chat?.messages.map((c) => {
@@ -70,12 +70,12 @@ const ChatInsideSidebar = ({ isInSidebar, chat }) => {
               );
             })}
             <Grid item xs={12} lg={12}>
-              {totalMedia === 0 ? <Alert severity="error">No Media Found!</Alert> : null}
+              {/* {totalMedia === 0 ? <Alert severity="error">No Media Found!</Alert> : null} */}
             </Grid>
           </Grid>
 
           <Typography variant="h6" mt={5} mb={2}>
-            Attachments ({totalAttachment})
+            {/* Attachments ({totalAttachment}) */}
           </Typography>
           <Box>
             {chat?.messages.map((c, index) => {
@@ -116,7 +116,7 @@ const ChatInsideSidebar = ({ isInSidebar, chat }) => {
                 </Stack>
               );
             })}
-            {totalAttachment === 0 ? <Alert severity="error">No Attachment Found!</Alert> : null}
+            {/* {totalAttachment === 0 ? <Alert severity="error">No Attachment Found!</Alert> : null} */}
           </Box>
         </Box>
       ) : null}
