@@ -44,6 +44,7 @@ import * as Yup from 'yup';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
+import apiClient from 'src/api/axiosClient';
 const BCrumb = [
   { to: '/', title: 'Home' },
   { to: '/templates', title: 'Templates' },
@@ -131,13 +132,12 @@ export default function CreateTemplate() {
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
-  const [file, setFile] = useState(null);
-  console.log(file);
   const [previewHtml, setPreviewHtml] = useState('');
   const [callToActionURL, setCallToActionURL] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
-
+  const [mediaRes, setMediaRes] = useState();
+  console.log(mediaRes);
   const CHARACTER_LIMIT = 1000;
   const CHARACTER_LIMIT_TEXT = 30;
   const CHARACTER_LIMIT_FOOTER = 50;
@@ -242,18 +242,19 @@ export default function CreateTemplate() {
                   type: 'QUICK_REPLY',
                   text: values.buttonText,
                 },
-                // {
-                //   type: 'URL',
-                //   text: values.buttonText,
-                // },
-                // {
-                //   type: 'PHONE_NUMBER',
-                //   text: values.buttonText,
-                // },
               ],
             },
           ],
         };
+        if (HeaderSelect === 'MEDIA') {
+          reqBody.components[0] = {
+            type: 'HEADER',
+            format: mediaType === 'image' ? 'IMAGE' : 'VIDEO',
+            example: {
+              header_handle: [mediaRes],
+            },
+          };
+        }
         if (phoneNumber) {
           reqBody.components[3] = {
             type: 'BUTTONS',
@@ -337,117 +338,25 @@ export default function CreateTemplate() {
   };
 
   const handleMediaContentChange = async (event) => {
-    // try {
     setMediaContent(URL.createObjectURL(event.target.files[0]));
-    setFile(event.target.files[0]);
-    const session = await axiosClientBm.post(
-      `https://graph.facebook.com/v20.0/5478259322193595/uploads?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
+
+    const response = await apiClient.post(
+      `/api/create_session_facebook/?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
     );
-    // const reader = new FileReader();
-    // reader.onload = async () => {
-    //   const arrayBuffer = reader.result;
-    //   const binaryString = new Uint8Array(arrayBuffer);
-    //   console.log(binaryString);
-    //   try {
-    //     const response = await axiosClientBm.post(
-    //       `https://graph.facebook.com/v20.0/${session?.data.id}`,
-    //       binaryString,
-    //       {
-    //         headers: {
-    //           'Content-Type': event.target.files[0].type,
-    //         },
-    //       },
-    //     );
-
-    //     if (response.status === 200) {
-    //       console.log('File uploaded successfully:', response.data);
-    //     } else {
-    //       console.error('File upload failed:', response);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error uploading file:', error);
-    //   }
-    // };
-
-    // reader.readAsArrayBuffer(file);
-    const fileToBinary = (file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const binaryData = reader.result;
-          resolve(binaryData);
-        };
-        reader.onerror = () => {
-          reject(new Error('Unable to read the file as binary data'));
-        };
-        reader.readAsArrayBuffer(file);
-      });
-    };
-
-    const binaryData = await fileToBinary(event.target.files[0]);
-
-    const imgUploadRes = await axios.post(
-      `https://graph.facebook.com/v20.0/${session?.data.id}`,
-      binaryData,
-      {
-        headers: {
-          'Content-Type': 'application/jpg',
+    if (response) {
+      let mediaFile = new FormData();
+      mediaFile.append('data', event.target.files[0]);
+      const finalResponse = await apiClient.post(
+        `/api/upload_file_facebook/?base64_data=${response.data.id}&sig=${response.data.sig}`,
+        mediaFile,
+        {
+          headers: { 'content-type': 'multipart/form-data' },
         },
-        Authorization:
-          'OAuth EABN2cqTjBrsBO84auDYo5SK21E6NoW5E2U8i9Uuvu9PimQOzyiFUGyYok2fZAlZB4mFQgeuOjba0id86fBxDA9PneGsWoeOE1hSDUdZB30NomXNXr3C3kZBBTuvPYrYjEJaBNuk6d8ZAlLqX78UdZCsBZA8uX4unXzcG951GZBfynXRVskoJJIQR0ztxOzW5R2kyszUT1DZBQmW3D9ZARzMCX4Hs4JclnZCsIGgzBMvs1r4dR9vVqbjWU1u',
-      },
-    );
-    console.log(imgUploadRes);
+      );
 
-    // reader.readAsBinaryString(file);
-    //   setMediaContent(URL.createObjectURL(event.target.files[0]));
-    //   setFile(event.target.files[0]);
-    //   const session = await axiosClientBm.post(
-    //     `uploads?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
-    //   );
-    //   const reader = new FileReader();
-
-    //   reader.onload = async () => {
-    //     const base64String = btoa(
-    //       new Uint8Array(reader.result).reduce(
-    //         (data, byte) => data + String.fromCharCode(byte),
-    //         '',
-    //       ),
-    //     );
-
-    //     try {
-    //       const response = await axiosClientBm.post(`${session?.data.id}`, base64String, {
-    //         headers: {
-    //           'Content-Type': 'application/json', // Use application/json for base64
-    //           'file-offset': '0', // Adjust headers as needed
-    //         },
-    //       });
-
-    //       if (response.status === 200) {
-    //         console.log('File uploaded successfully:', response.data);
-    //       } else {
-    //         console.error('File upload failed:', response);
-    //       }
-    //     } catch (error) {
-    //       console.error('Error uploading file:', error);
-    //     }
-    //   };
-
-    //   reader.onerror = (error) => {
-    //     console.error('File reading error:', error);
-    //   };
-
-    //   if (file instanceof Blob) {
-    //     reader.readAsArrayBuffer(file);
-    //   } else {
-    //     console.error('Expected a Blob, received:', file);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+      setMediaRes(finalResponse.data.h);
+      console.log(finalResponse.data.h);
+    }
   };
 
   const handleButtonSelectChange = (event) => {
