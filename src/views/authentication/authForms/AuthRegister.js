@@ -118,102 +118,104 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       )}
 
       {subtext}
+      <form onSubmit={handleSignUp}>
+        <Stack spacing={2}>
+          <FormControl fullWidth error={!!errors.full_name}>
+            <OutlinedInput
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconUser width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="Enter Full Name"
+              fullWidth
+              name="full_name"
+              onChange={handleFieldChange}
+            />
+            {errors.full_name && <FormHelperText error>{errors.full_name}</FormHelperText>}
+          </FormControl>
 
-      <Stack spacing={2}>
-        <FormControl fullWidth error={!!errors.full_name}>
-          <OutlinedInput
-            startAdornment={
-              <InputAdornment position="start">
-                <IconUser width={20} color="dimgray" />
-              </InputAdornment>
-            }
-            placeholder="Enter Full Name"
+          <FormControl fullWidth error={!!errors.email}>
+            <OutlinedInput
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconMail width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="Enter Email"
+              fullWidth
+              name="email"
+              onChange={handleFieldChange}
+            />
+            {errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
+          </FormControl>
+
+          <FormControl fullWidth error={!!errors.mobile}>
+            <OutlinedInput
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconPhone width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="+91952XXXXXXX"
+              fullWidth
+              name="mobile"
+              onChange={handleFieldChange}
+            />
+            {errors.mobile && <FormHelperText error>{errors.mobile}</FormHelperText>}
+          </FormControl>
+
+          <FormControl fullWidth error={!!errors.password}>
+            <OutlinedInput
+              type="password"
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconLock width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="Enter Password"
+              fullWidth
+              name="password"
+              onChange={handleFieldChange}
+            />
+            {errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
+          </FormControl>
+
+          <FormControl fullWidth error={!!errors.confirm_password}>
+            <OutlinedInput
+              type="password"
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconLock width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="Enter Confirm Password"
+              fullWidth
+              name="confirm_password"
+              onChange={handleFieldChange}
+            />
+            {errors.confirm_password && (
+              <FormHelperText error>{errors.confirm_password}</FormHelperText>
+            )}
+          </FormControl>
+        </Stack>
+
+        <Box mt={2}>
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
             fullWidth
-            name="full_name"
-            onChange={handleFieldChange}
-          />
-          {errors.full_name && <FormHelperText error>{errors.full_name}</FormHelperText>}
-        </FormControl>
+            onClick={handleSignUp}
+            type="submit"
+            disabled={loading}
+          >
+            Sign Up
+          </Button>
+        </Box>
 
-        <FormControl fullWidth error={!!errors.email}>
-          <OutlinedInput
-            startAdornment={
-              <InputAdornment position="start">
-                <IconMail width={20} color="dimgray" />
-              </InputAdornment>
-            }
-            placeholder="Enter Email"
-            fullWidth
-            name="email"
-            onChange={handleFieldChange}
-          />
-          {errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
-        </FormControl>
-
-        <FormControl fullWidth error={!!errors.mobile}>
-          <OutlinedInput
-            startAdornment={
-              <InputAdornment position="start">
-                <IconPhone width={20} color="dimgray" />
-              </InputAdornment>
-            }
-            placeholder="+91952XXXXXXX"
-            fullWidth
-            name="mobile"
-            onChange={handleFieldChange}
-          />
-          {errors.mobile && <FormHelperText error>{errors.mobile}</FormHelperText>}
-        </FormControl>
-
-        <FormControl fullWidth error={!!errors.password}>
-          <OutlinedInput
-            type="password"
-            startAdornment={
-              <InputAdornment position="start">
-                <IconLock width={20} color="dimgray" />
-              </InputAdornment>
-            }
-            placeholder="Enter Password"
-            fullWidth
-            name="password"
-            onChange={handleFieldChange}
-          />
-          {errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
-        </FormControl>
-
-        <FormControl fullWidth error={!!errors.confirm_password}>
-          <OutlinedInput
-            type="password"
-            startAdornment={
-              <InputAdornment position="start">
-                <IconLock width={20} color="dimgray" />
-              </InputAdornment>
-            }
-            placeholder="Enter Confirm Password"
-            fullWidth
-            name="confirm_password"
-            onChange={handleFieldChange}
-          />
-          {errors.confirm_password && (
-            <FormHelperText error>{errors.confirm_password}</FormHelperText>
-          )}
-        </FormControl>
-      </Stack>
-
-      <Box mt={2}>
-        <Button
-          color="primary"
-          variant="contained"
-          size="large"
-          fullWidth
-          onClick={handleSignUp}
-          disabled={loading}
-        >
-          Sign Up
-        </Button>
-      </Box>
-
-      {subtitle}
+        {subtitle}
+      </form>
     </>
   );
 };
