@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Modal, Fade, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { IconFileImport, IconDownload } from '@tabler/icons';
+import apiClient from 'src/api/axiosClient';
+import toast, { Toaster } from 'react-hot-toast';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -15,9 +17,47 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const ImportContactModal = ({ open, handleClose }) => {
+const ImportContactModal = ({ open, handleClose, getApiData }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    if (!open) {
+      setSelectedFile(null);
+    }
+  }, [open]);
+
   const sampleFileUrl =
     'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        await apiClient.post('/import-contacts/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        toast.success('File uploaded successfully');
+        handleClose();
+        getApiData();
+      } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to upload file');
+        }
+      }
+    } else {
+      toast.error('Please select a file first');
+    }
+  };
 
   return (
     <Modal open={open} onClose={handleClose} closeAfterTransition>
@@ -69,11 +109,16 @@ const ImportContactModal = ({ open, handleClose }) => {
               }}
             >
               Upload file
-              <VisuallyHiddenInput type="file" />
+              <VisuallyHiddenInput type="file" onChange={handleFileChange} />
             </Button>
           </Box>
+          {selectedFile && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              Selected file: {selectedFile.name}
+            </Typography>
+          )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+            <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleSubmit}>
               Import
             </Button>
             <Button variant="contained" color="error" onClick={handleClose}>

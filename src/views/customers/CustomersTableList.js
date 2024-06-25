@@ -32,8 +32,6 @@ import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
 
-
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -466,12 +464,16 @@ const CustomersTableList = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <ImportContactModal open={openImportModal} handleClose={() => setOpenImportModal(false)} />
+      <ImportContactModal
+        open={openImportModal}
+        handleClose={() => setOpenImportModal(false)}
+        getApiData={getApiData}
+      />
+
       <AddContactModal
         open={openAddContactModal}
         handleClose={() => setOpenAddContactModal(false)}
         onAddContact={handleAddContact}
-        
       />
     </Box>
   );
