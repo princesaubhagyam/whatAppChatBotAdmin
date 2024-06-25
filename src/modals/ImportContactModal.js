@@ -37,7 +37,7 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
+      console.log('abc',formData);
       try {
         await apiClient.post('/import-contacts/', formData, {
           headers: {

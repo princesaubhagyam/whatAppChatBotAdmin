@@ -24,7 +24,7 @@ import {
   Stack,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-
+import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
@@ -123,7 +123,14 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, handleSearch, search, onOpenImportModal, setOpenAddContactModal } = props;
+  const {
+    numSelected,
+    handleSearch,
+    search,
+    onOpenImportModal,
+    setOpenAddContactModal,
+    showButtons,
+  } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
   };
@@ -213,34 +220,38 @@ const EnhancedTableToolbar = (props) => {
             />
           </Box>
         </Stack>
-        <Stack sx={{ flexDirection: 'row', gap: 2 }}>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={handleOpenAddContactModal}
-          >
-            <IconPlus size={16} style={{ marginRight: '2px' }} />
-            Add Contact
-          </Button>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '9rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={onOpenImportModal}
-          >
-            <IconFileImport size={16} style={{ marginRight: '2px' }} />
-            Import Contact
-          </Button>
-        </Stack>
+        {/* <Stack sx={{ flexDirection: 'row', gap: 2 }}> */}
+        {showButtons && (
+          <Stack sx={{ flexDirection: 'row', gap: 2 }}>
+            <Button
+              style={{
+                backgroundColor: '#1A4D2E',
+                color: 'white',
+                width: '8rem',
+                paddingLeft: '0px',
+                paddingRight: '0px',
+              }}
+              onClick={handleOpenAddContactModal}
+            >
+              <IconPlus size={16} style={{ marginRight: '2px' }} />
+              Add Contact
+            </Button>
+            <Button
+              style={{
+                backgroundColor: '#1A4D2E',
+                color: 'white',
+                width: '9rem',
+                paddingLeft: '0px',
+                paddingRight: '0px',
+              }}
+              onClick={onOpenImportModal}
+            >
+              <IconFileImport size={16} style={{ marginRight: '2px' }} />
+              Import Contact
+            </Button>
+          </Stack>
+        )}
+        {/* </Stack> */}
       </Stack>
     </>
   );
@@ -267,12 +278,14 @@ const CustomersTableList = () => {
   const [openAddContactModal, setOpenAddContactModal] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
   }, []);
 
   const getApiData = async () => {
+    setLoading(true);
     let allData = [];
     let pageNum = 1;
     let hasNextPage = true;
@@ -291,6 +304,7 @@ const CustomersTableList = () => {
     }
     setAllRows(allData);
     setRows(allData);
+    setLoading(false);
   };
 
   const handleSearch = (event) => {
@@ -353,128 +367,165 @@ const CustomersTableList = () => {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
     <Box sx={{ width: '100%' }}>
-      <EnhancedTableToolbar
-        numSelected={selected.length}
-        handleSearch={handleSearch}
-        search={search}
-        onOpenImportModal={() => setOpenImportModal(true)}
-        setOpenAddContactModal={setOpenAddContactModal}
-      />
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  const createdAtDate = new Date(row.created_at);
-                  const updatedAtDate = new Date(row.updated_at);
-                  const formatDate = (date) => {
-                    return date.toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                    });
-                  };
-                  return (
+      {loading ? (
+        <Spinner /> // Display spinner while loading is true
+      ) : (
+        <>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            handleSearch={handleSearch}
+            search={search}
+            onOpenImportModal={() => setOpenImportModal(true)}
+            setOpenAddContactModal={setOpenAddContactModal}
+            showButtons={true}
+          />
+          <Paper sx={{ width: '100%', mb: 2 }}>
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size={dense ? 'small' : 'medium'}
+              >
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {stableSort(rows, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      const isItemSelected = isSelected(row.id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+                      const createdAtDate = new Date(row.created_at);
+                      const updatedAtDate = new Date(row.updated_at);
+                      const formatDate = (date) => {
+                        return date.toLocaleDateString(undefined, {
+                          year: 'numeric',
+                          month: 'numeric',
+                          day: 'numeric',
+                        });
+                      };
+                      return (
+                        <TableRow
+                          hover
+                          onClick={(event) => handleClick(event, row.id)}
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.id}
+                          selected={isItemSelected}
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              color="primary"
+                              checked={isItemSelected}
+                              inputProps={{
+                                'aria-labelledby': labelId,
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.name}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.contact}
+                            </Typography>{' '}
+                          </TableCell>
+                          <TableCell align="left">
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.city}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="left">
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.tag}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {formatDate(createdAtDate)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {formatDate(updatedAtDate)}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
                     <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
+                      style={{
+                        height: (dense ? 33 : 53) * emptyRows,
+                      }}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.name}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.contact}
-                        </Typography>{' '}
-                      </TableCell>
-                      <TableCell align="left">
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.city}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="left">
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.tag}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {formatDate(createdAtDate)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {formatDate(updatedAtDate)}
-                        </Typography>
-                      </TableCell>
+                      <TableCell colSpan={6} />
                     </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <ImportContactModal
-        open={openImportModal}
-        handleClose={() => setOpenImportModal(false)}
-        getApiData={getApiData}
-      />
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+          <ImportContactModal
+            open={openImportModal}
+            handleClose={() => setOpenImportModal(false)}
+            getApiData={getApiData}
+          />
 
-      <AddContactModal
-        open={openAddContactModal}
-        handleClose={() => setOpenAddContactModal(false)}
-        onAddContact={handleAddContact}
-      />
+          <AddContactModal
+            open={openAddContactModal}
+            handleClose={() => setOpenAddContactModal(false)}
+            onAddContact={handleAddContact}
+          />
+        </>
+      )}
     </Box>
   );
 };

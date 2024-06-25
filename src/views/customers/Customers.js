@@ -17,11 +17,11 @@ const BCrumb = [
 
 const Customers = () => {
   return (
-    <PageContainer title="Contacts" description="this is Search Table page">
+    <PageContainer title="Contacts" description="this is Search Table page" style={{padding: 0}}>
       {/* breadcrumb */}
       <Breadcrumb title="Contacts" items={BCrumb} />
       {/* end breadcrumb */}
-      <Box>
+      <Box sx={{ padding: '0px'}}>
         <CustomersTableList />
       </Box>
     </PageContainer>

@@ -4,7 +4,7 @@ import ChatListing from './ChatListing';
 
 const drawerWidth = 320;
 
-const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts }) => {
+const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts , getBroadcastsData}) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   return (
@@ -20,7 +20,7 @@ const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts }) => {
         height: '100vh',
       }}
     >
-      <ChatListing broadcasts={broadcasts} />
+      <ChatListing broadcasts={broadcasts} getBroadcastsData={getBroadcastsData}/>
     </Drawer>
   );
 };

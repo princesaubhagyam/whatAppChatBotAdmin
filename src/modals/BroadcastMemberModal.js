@@ -1,10 +1,10 @@
 import React from 'react';
 import { Modal, Box, Typography, Button,Dialog } from '@mui/material';
-
+import CustomersTableList from 'src/views/customers/CustomersTableList';
 const BroadcastMemberModal = ({ open, handleClose, children }) => {
   const [scroll, setScroll] = React.useState('paper');
   return (
-    <Dialog open={open} onClose={handleClose} closeAfterTransition   scroll={scroll} fullWidth maxWidth="lg" >
+    <Dialog open={open} onClose={handleClose} closeAfterTransition scroll={scroll} fullWidth maxWidth="lg" >
       <Box
         sx={{
           outline: 'none',
@@ -26,6 +26,7 @@ const BroadcastMemberModal = ({ open, handleClose, children }) => {
             Cancel
           </Button>
         </Box>
+        
     </Dialog>
   );
 };

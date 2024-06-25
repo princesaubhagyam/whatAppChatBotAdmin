@@ -15,7 +15,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import { IconPlus, IconDotsVertical } from '@tabler/icons';
-import BroadcastMemberModal from 'src/components/BroadcastMemberModal';
+import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import CustomersTableList from 'src/views/customers/CustomersTableList';
 
 const getInitials = (name) => {
@@ -130,7 +130,7 @@ const ChatListingMember = () => {
         <Typography variant="h6" component="h2" mb={2}>
           Add Contacts
         </Typography>
-        <CustomersTableList hideToolbar={true} />
+        <CustomersTableList hideToolbar={true} showButtons={false}/>
       </BroadcastMemberModal>
     </>
   );
