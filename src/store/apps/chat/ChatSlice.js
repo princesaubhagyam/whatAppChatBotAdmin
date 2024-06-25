@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from '../../../utils/axios';
 import { uniqueId } from 'lodash';
+import apiClient from 'src/api/axiosClient';
 
 // const CONTACTS_API_URL = 'http://192.168.1.47:8000/api/contacts/';
 // const CONTACTS_API_URL = process.env.REACT_APP_API_BASE_URL + '/api/contacts/';
-const BROADCASTS_API_URL = process.env.REACT_APP_API_BASE_URL + '/api/broadcasts/';
+// const BROADCASTS_API_URL = process.env.REACT_APP_API_BASE_URL + '/api/broadcasts/';
 const CHAT_HISTORY_BY_PHONE_NO_URL = process.env.REACT_APP_API_BASE_URL + '/api/message';
 // const CHAT_HISTORY_BY_PHONE_NO_URL = 'http://192.168.1.47:8000/api/message';
 
@@ -20,7 +21,10 @@ export const ChatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    broadcasts: (state, action) => {
+    // broadcasts: (state, action) => {
+    //   state.broadcasts = action.payload;
+    // },
+    setBroadcastList: (state, action) => {
       state.broadcasts = action.payload;
     },
     SearchChat: (state, action) => {
@@ -60,14 +64,14 @@ export const ChatSlice = createSlice({
   },
 });
 
-export const { SearchChat, getChats, sendMsg, selectBroadcast, setChatHistory } = ChatSlice.actions;
+export const { SearchChat, setBroadcastList, sendMsg, selectBroadcast, setChatHistory } =
+  ChatSlice.actions;
 
-export const fetchBroadcasts = () => async (dispatch) => {
+export const fetchBroadcasts = () => async () => {
   try {
-    const response = await axios.get(`${BROADCASTS_API_URL}`);
+    const response = await apiClient.get('/api/broadcasts/');
     if (response.data.success) {
-      console.log(response, '===========================');
-      // dispatch(getChats(response.data.data.results));
+      return response.data.data.results;
     }
   } catch (err) {
     throw new Error(err);

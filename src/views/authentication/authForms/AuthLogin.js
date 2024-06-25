@@ -12,8 +12,9 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { IconLock, IconMail } from '@tabler/icons';
 import toast, { Toaster } from 'react-hot-toast';
-
+import { setWalletBalance } from 'src/store/auth/AuthSlice';
 import apiClient from 'src/api/axiosClient';
+import { useDispatch } from 'react-redux';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -26,6 +27,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const [loading, setLoading] = React.useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleAuthStorage = (resData) => {
     localStorage.setItem('ref', resData.token.refresh);
@@ -36,7 +38,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     try {
       const res = await apiClient.post('/auth/signin/', { ...creds });
       if (res.status === 200) {
+        console.log('login', res);
         handleAuthStorage(res.data.data);
+        dispatch(setWalletBalance(res.data.data.wallet_balance));
         toast.success('Sign in successful!', { duration: 2000 });
         navigate('/');
       }
@@ -90,74 +94,73 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
       {subtext}
       <form onSubmit={handleSignIn}>
-      <Stack>
-        <Box>
-         
-          <FormControl fullWidth error={!!errors.email}>
-            <OutlinedInput
-              sx={{ marginTop: 2 }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <IconMail width={22} color="dimgray" />
-                </InputAdornment>
-              }
-              id="username-text"
-              placeholder="Enter Email"
-              fullWidth
-              name="email"
-              onChange={handleFieldChange}
-            />
-            {errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl fullWidth error={!!errors.password}>
-            <OutlinedInput
-              sx={{ marginTop: 2 }}
-              type="password"
-              startAdornment={
-                <InputAdornment position="start">
-                  <IconLock width={22} color="dimgray" />
-                </InputAdornment>
-              }
-              id="pwd-text"
-              placeholder="Enter password"
-              fullWidth
-              name="password"
-              onChange={handleFieldChange}
-            />
-            {errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
-          </FormControl>
-        </Box>
-        <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-          <div></div>
-          <Typography
-            component={Link}
-            to="/auth/forgot-password"
-            fontWeight="500"
-            sx={{
-              textDecoration: 'none',
-              color: 'primary.main',
-            }}
-          >
-            Forgot Password ?
-          </Typography>
+        <Stack>
+          <Box>
+            <FormControl fullWidth error={!!errors.email}>
+              <OutlinedInput
+                sx={{ marginTop: 2 }}
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconMail width={22} color="dimgray" />
+                  </InputAdornment>
+                }
+                id="username-text"
+                placeholder="Enter Email"
+                fullWidth
+                name="email"
+                onChange={handleFieldChange}
+              />
+              {errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl fullWidth error={!!errors.password}>
+              <OutlinedInput
+                sx={{ marginTop: 2 }}
+                type="password"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconLock width={22} color="dimgray" />
+                  </InputAdornment>
+                }
+                id="pwd-text"
+                placeholder="Enter password"
+                fullWidth
+                name="password"
+                onChange={handleFieldChange}
+              />
+              {errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
+            </FormControl>
+          </Box>
+          <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
+            <div></div>
+            <Typography
+              component={Link}
+              to="/auth/forgot-password"
+              fontWeight="500"
+              sx={{
+                textDecoration: 'none',
+                color: 'primary.main',
+              }}
+            >
+              Forgot Password ?
+            </Typography>
+          </Stack>
         </Stack>
-      </Stack>
-      <Box>
-        <Button
-          color="primary"
-          variant="contained"
-          size="large"
-          fullWidth
-          onClick={handleSignIn}
-          disabled={loading}
-          type="submit"
-        >
-          Sign In
-        </Button>
-      </Box>
-      {subtitle}
+        <Box>
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            fullWidth
+            onClick={handleSignIn}
+            disabled={loading}
+            type="submit"
+          >
+            Sign In
+          </Button>
+        </Box>
+        {subtitle}
       </form>
     </>
   );

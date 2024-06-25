@@ -126,12 +126,7 @@ const ChatListingMember = () => {
           </List>
         </div>
       )}
-      <BroadcastMemberModal open={isModalOpen} handleClose={() => setIsModalOpen(false)}>
-        <Typography variant="h6" component="h2" mb={2}>
-          Add Contacts
-        </Typography>
-        <CustomersTableList hideToolbar={true} showButtons={false}/>
-      </BroadcastMemberModal>
+      <BroadcastMemberModal open={isModalOpen} handleClose={() => setIsModalOpen(false)} activeBroadcastId={activeBroadcast?.id} />
     </>
   );
 };
