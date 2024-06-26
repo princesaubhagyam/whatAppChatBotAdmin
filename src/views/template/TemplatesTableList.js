@@ -33,6 +33,7 @@ import {
 } from '@mui/material';
 
 import { visuallyHidden } from '@mui/utils';
+import img from 'src/assets/images/backgrounds/Template_background.jpg';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from 'src/store/apps/eCommerce/EcommerceSlice';
@@ -461,52 +462,109 @@ const TemplatesTableList = () => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        maxWidth="xs"
       >
         <DialogTitle id="alert-dialog-title">{'Your template'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {view.map((component) => {
-              switch (component.type) {
-                case 'HEADER':
-                  return (
-                    <CardMedia
-                      sx={{ height: 240 }}
-                      image={component.example?.header_handle[0]}
-                      title={component.type}
-                    />
-                  );
-                case 'BODY':
-                  return (
-                    <Typography key={component.type} variant="body1">
-                      {component.text.split('\n').map(function (item, idx) {
+            <Box>
+              <CardMedia
+                component="div"
+                image={img}
+                sx={{
+                  overflow: 'auto',
+                  backgroundSize: 'cover',
+                  boxShadow: '0px 1px 5px #00000025',
+                  p: 2,
+                  border: '1px solid lightgrey',
+                  borderRadius: '8px',
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: '#E9FEEE',
+                    padding: 1,
+                    boxShadow: '0px 1px 110px #00000025',
+                    borderBottom: '1px solid #80808078',
+                  }}
+                >
+                  {view.map((component) => {
+                    switch (component.type) {
+                      case 'HEADER':
                         return (
-                          <span key={idx}>
-                            {item}
-                            <br />
-                          </span>
+                          <CardMedia
+                            sx={{ height: 240 }}
+                            image={component.example?.header_handle[0]}
+                            title={component.type}
+                          />
                         );
-                      })}
-                    </Typography>
-                  );
-                case 'FOOTER':
-                  return (
-                    <Typography key={component.type} variant="caption">
-                      {component.text}
-                    </Typography>
-                  );
-                case 'BUTTONS':
-                  return (
-                    <Button key={component.type} variant="outline" href={component.buttons[0].url}>
-                      <IconMessage2Share />
-                      {component?.buttons[0].text}
-                    </Button>
-                  );
-                default:
-                  return null;
-              }
-            })}
+                      case 'BODY':
+                        return (
+                          <Typography key={component.type} variant="body1">
+                            {component.text.split('\n').map((item, idx) => (
+                              <span key={idx}>
+                                {item}
+                                <br />
+                              </span>
+                            ))}
+                          </Typography>
+                        );
+                      case 'FOOTER':
+                        return (
+                          <Typography
+                            key={component.type}
+                            variant="caption"
+                            sx={{ fontStyle: 'bold', fontSize: '0.85rem', color: 'gray' }}
+                          >
+                            {component.text}
+                          </Typography>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </Box>
+
+                <Box
+                  sx={{
+                    backgroundColor: 'white',
+                    width: '100%',
+                    mt: '1px',
+                    boxShadow: '0px 1px 5px #00000025',
+                  }}
+                >
+                  {view.map((component) => {
+                    if (component.type === 'BUTTONS') {
+                      return (
+                        <Button
+                          key={component.type}
+                          variant="outline"
+                          href={component.buttons[0].url}
+                          sx={{
+                            backgroundColor: 'transparent',
+                            color: '#0093E1',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            width: '100%',
+                            '&:hover': { backgroundColor: '#1a4d2e00', color: '#0093E1' },
+                            display: 'flex',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <IconMessage2Share />
+                          {component?.buttons[0].icon}
+                          {component?.buttons[0].text}
+                        </Button>
+                      );
+                    }
+                    return null;
+                  })}
+                </Box>
+              </CardMedia>
+            </Box>
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
           {/* <Button color="error" onClick={handleClose}>
             Disagree

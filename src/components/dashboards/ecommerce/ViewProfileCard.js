@@ -7,21 +7,36 @@ import axiosClientBm from 'src/api/axiosClientBm';
 const ViewProfileCard = () => {
   const [contactName, setContactName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [profileDetails, setProfileDetails] = useState({});
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosClientBm.get('phone_numbers');
-        const fetchedContactName = response?.data?.data[0]?.verified_name || 'N/A';
-        const fetchedPhoneNumber = response?.data?.data[0]?.display_phone_number || 'N/A';
+        // Fetch phone number details
+        const phoneResponse = await axiosClientBm.get('phone_numbers');
+        const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
+        const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
 
         setContactName(fetchedContactName);
         setPhoneNumber(fetchedPhoneNumber);
 
-        console.log('API Response:', response);
-        console.log('Quality Rating:', fetchedContactName);
-        console.log('API Status:', fetchedPhoneNumber);
+        console.log('Phone API Response:', phoneResponse);
+
+        const phoneId = 119306844496484;
+        const profileResponse = await axiosClientBm.get(
+          `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
+          {
+            params: {
+              fields: 'about,address,description,email,profile_picture_url,websites,vertical',
+            },
+          },
+        );
+
+        const profileData = profileResponse?.data?.data[0] || {};
+        setProfileDetails(profileData);
+
+        console.log('Profile API Response:', profileResponse);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -35,17 +50,13 @@ const ViewProfileCard = () => {
   };
 
   return (
-    <Card>
-      <CardContent>
+    <Card sx={{ padding: '5px'}}>
+      <CardContent sx={{ padding: '8px'}}>
         <Typography variant="h5">{contactName}</Typography>
         <Typography>{phoneNumber}</Typography>
-        <Box sx={{ background: '#00720b40', padding: '5px 15px 5px 15px'}}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography
-              color="primary"
-              onClick={handleToggle}
-              sx={{ cursor: 'pointer' }}
-            >
+        <Box sx={{ background: '#00720b40', padding: '8px 8px 8px 8px' , width: '100%', marginTop: '5px'}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' , padding: '0px', height: '3vh'}}>
+            <Typography color="primary" onClick={handleToggle} sx={{ cursor: 'pointer' }}>
               View your profile
             </Typography>
             <IconButton onClick={handleToggle}>
@@ -53,9 +64,34 @@ const ViewProfileCard = () => {
             </IconButton>
           </Box>
           <Collapse in={open}>
-            <Box sx={{ mt: 2 }}>
-              <Typography>Additional profile details go here.</Typography>
+            <Box sx={{ mt: 2, display: 'flex' , alignItems: 'center'}}>
+              <div style={{marginRight:'1rem'}}>
+                {profileDetails.profile_picture_url && (
+                  <img
+                    src={profileDetails.profile_picture_url}
+                    alt="Profile"
+                    height={55}
+                    width={58}
+                  />
+                )}
+              </div>
+              <div>
+                <Typography>
+                  <strong style={{ fontWeight: '500'}}>Email:</strong> {profileDetails.email}
+                </Typography>
+                <Typography>
+                  <strong style={{ fontWeight: '500'}}>Websites:</strong>{' '}
+                  {profileDetails.websites ? profileDetails.websites.join(', ') : 'N/A'}
+                </Typography>
+              </div>
+             
             </Box>
+            {/* <Typography>
+                <strong style={{ fontWeight: '500'}}>About:</strong> {profileDetails.about}
+              </Typography> */}
+              <Typography>
+                <strong style={{ fontWeight: '500'}}>Address:</strong> {profileDetails.address}
+              </Typography>
           </Collapse>
         </Box>
       </CardContent>

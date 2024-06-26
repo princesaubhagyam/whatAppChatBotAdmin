@@ -20,7 +20,6 @@ import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard
 
 const Ecommerce = () => {
   return (
-
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={3}>
@@ -55,7 +54,7 @@ const Ecommerce = () => {
             <QualityRatingCard />
             </Grid>
             <Grid item xs={12}>
-            <SetUpProfileCard />
+            <ViewProfileCard />
             </Grid>
             
           </Grid>
@@ -78,7 +77,7 @@ const Ecommerce = () => {
         </Grid> */}
         {/* column */}
         <Grid item xs={12} sm={6} lg={4}>
-          <ViewProfileCard />
+          <SetUpProfileCard/> 
         </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>

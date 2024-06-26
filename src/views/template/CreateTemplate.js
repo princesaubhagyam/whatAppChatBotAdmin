@@ -276,6 +276,7 @@ export default function CreateTemplate() {
                 text: values.buttonText,
                 url: callToActionURL,
                 example: ['summer2023'],
+                icon: buttonIcon,
               },
             ],
           };

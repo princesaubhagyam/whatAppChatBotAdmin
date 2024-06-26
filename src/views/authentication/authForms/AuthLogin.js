@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -11,10 +11,11 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { IconLock, IconMail } from '@tabler/icons';
-import toast, { Toaster } from 'react-hot-toast';
-import { setWalletBalance } from 'src/store/auth/AuthSlice';
-import apiClient from 'src/api/axiosClient';
+import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import apiClient from 'src/api/axiosClient';
+import { useUser } from 'src/store/apps/UserContext';
+import { setWalletBalance } from 'src/store/auth/AuthSlice';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -22,16 +23,28 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     password: '',
   };
 
-  const [credentials, setCredentials] = React.useState(initCredentials);
-  const [errors, setErrors] = React.useState({});
-  const [loading, setLoading] = React.useState(false);
+  const [credentials, setCredentials] = useState(initCredentials);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { setUserDetails } = useUser();
 
   const handleAuthStorage = (resData) => {
     localStorage.setItem('ref', resData.token.refresh);
-    localStorage.setItem('access', resData.token.access);
+    localStorage.setItem('access_app', resData.token.access);
+
+    const fbMetaData = resData.facebook_meta_data;
+    if (fbMetaData) {
+      localStorage.setItem('graph_api_url', fbMetaData.graph_api_url);
+      localStorage.setItem('api_version', fbMetaData.api_version);
+      localStorage.setItem('app_id', fbMetaData.app_id);
+      localStorage.setItem('embedded_configuration_id', fbMetaData.embedded_configuration_id);
+      localStorage.setItem('phone_id', fbMetaData.phone_id);
+      localStorage.setItem('whatsapp_business_account_id', fbMetaData.whatsapp_business_account_id);
+      localStorage.setItem('access_meta', fbMetaData.access_token);
+    }
   };
 
   const signInAPICall = async (creds) => {
@@ -40,7 +53,12 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       if (res.status === 200) {
         console.log('login', res);
         handleAuthStorage(res.data.data);
+        setUserDetails({
+          full_name: res.data.data.full_name,
+          email: res.data.data.email,
+        });
         dispatch(setWalletBalance(res.data.data.wallet_balance));
+
         toast.success('Sign in successful!', { duration: 2000 });
         navigate('/');
       }
