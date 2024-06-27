@@ -31,7 +31,18 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
   const handleAuthStorage = (resData) => {
     localStorage.setItem('ref', resData.token.refresh);
-    localStorage.setItem('access', resData.token.access);
+    localStorage.setItem('access_app', resData.token.access);
+
+    const fbMetaData = resData.facebook_meta_data;
+    if (fbMetaData) {
+      localStorage.setItem('graph_api_url', fbMetaData.graph_api_url);
+      localStorage.setItem('api_version', fbMetaData.api_version);
+      localStorage.setItem('app_id', fbMetaData.app_id);
+      localStorage.setItem('embedded_configuration_id', fbMetaData.embedded_configuration_id);
+      localStorage.setItem('phone_id', fbMetaData.phone_id);
+      localStorage.setItem('whatsapp_business_account_id', fbMetaData.whatsapp_business_account_id);
+      localStorage.setItem('access_meta', fbMetaData.access_token);
+    }
   };
 
   const signInAPICall = async (creds) => {

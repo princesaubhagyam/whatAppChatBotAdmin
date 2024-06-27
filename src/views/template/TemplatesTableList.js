@@ -46,7 +46,7 @@ import {
   IconTrash,
 } from '@tabler/icons';
 import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
-import axiosClientBm from 'src/api/axiosClientBm';
+import createMetaAxiosClient from 'src/api/axiosClientMeta';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -253,7 +253,8 @@ const TemplatesTableList = () => {
 
   const getApiData = async () => {
     try {
-      const response = await axiosClientBm.get('/message_templates');
+      const metaAxiosClient = createMetaAxiosClient();
+      const response = await metaAxiosClient.get('/message_templates');
       setRows(response.data.data);
       return;
     } catch (error) {

@@ -19,8 +19,8 @@ import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCa
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 
 const Ecommerce = () => {
+  console.log('hello');
   return (
-
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={3}>
@@ -52,12 +52,11 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-            <QualityRatingCard />
+              <QualityRatingCard />
             </Grid>
             <Grid item xs={12}>
-            <SetUpProfileCard />
+              <SetUpProfileCard />
             </Grid>
-            
           </Grid>
           {/* <Grid item xs={12} sm={6} lg={4}>
             <SalesOverview />

@@ -164,7 +164,7 @@ const BroadcastMemberModal = ({ open, handleClose, activeBroadcastId }) => {
               gap={2}
               style={{ paddingBlock: '1rem', paddingInline: '2rem' }}
             >
-              <Button color="success" variant="contained" onClick={updateBroadcastMembers}>
+              <Button variant="contained" color="primary" onClick={updateBroadcastMembers}>
                 Update
               </Button>
               <Button color="error" variant="contained" onClick={handleClose}>
