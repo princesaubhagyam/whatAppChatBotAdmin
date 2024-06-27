@@ -20,7 +20,7 @@ const MessageList = () => {
         backgroundColor: '#E9FEEE',
         borderRadius: 1,
         position: 'absolute',
-        bottom: '5rem',
+        bottom: '8rem',
         right: '1rem',
         padding: 1,
         boxShadow: '0px 1px 110px #00000025',
@@ -40,6 +40,7 @@ const MessageList = () => {
         <br />
         Would you like to see them?
       </Typography>
+      
       <MessageAnalyticsModal
         open={showModal}
         handleClose={handleCloseModal}

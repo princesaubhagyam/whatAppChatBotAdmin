@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
 import { useUser } from 'src/store/apps/UserContext';
 import { setWalletBalance } from 'src/store/auth/AuthSlice';
+import { LoadingButton } from '@mui/lab';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -166,17 +167,18 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           </Stack>
         </Stack>
         <Box>
-          <Button
+          <LoadingButton
             color="primary"
             variant="contained"
             size="large"
             fullWidth
             onClick={handleSignIn}
-            disabled={loading}
+            loadingPosition="start"
             type="submit"
+            loading={loading}
           >
             Sign In
-          </Button>
+          </LoadingButton>
         </Box>
         {subtitle}
       </form>

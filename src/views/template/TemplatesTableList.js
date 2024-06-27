@@ -239,10 +239,11 @@ const TemplatesTableList = () => {
   const [search, setSearch] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [view, setView] = React.useState([]);
-
+  const [dialogTitle, setDialogTitle] = React.useState('');
   const handleClickOpen = (row, index) => {
     setOpen(true);
     setView(row.components);
+    setDialogTitle(row.name);
   };
 
   const handleClose = () => {
@@ -464,8 +465,8 @@ const TemplatesTableList = () => {
         aria-describedby="alert-dialog-description"
         maxWidth="xs"
       >
-        <DialogTitle id="alert-dialog-title">{'Your template'}</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
+        <DialogContent sx={{ padding: '7px 8px'}}>
           <DialogContentText id="alert-dialog-description">
             <Box>
               <CardMedia
