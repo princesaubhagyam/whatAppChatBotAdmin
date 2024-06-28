@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Stack, Badge } from '@mui/material';
-import axiosClientBm from 'src/api/axiosClientBm';
+import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 
 const QualityRatingCard = () => {
   const [remainingQuota, setRemainingQuota] = useState(1000);
@@ -10,7 +10,8 @@ const QualityRatingCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosClientBm.get('phone_numbers');
+        const metaClient = createMetaAxiosInstance();
+        const response = await metaClient.get('phone_numbers');
         const fetchedQualityRating = response?.data?.data[0]?.quality_rating;
         const fetchedApiStatus = response?.data?.data[0]?.throughput?.level;
 
@@ -40,7 +41,7 @@ const QualityRatingCard = () => {
                 horizontal: 'left',
               }}
               sx={{
-                  marginLeft: '2.3rem'
+                marginLeft: '2.3rem',
               }}
               badgeContent={apiStatus}
               color="primary"
@@ -54,7 +55,7 @@ const QualityRatingCard = () => {
                 horizontal: 'left',
               }}
               sx={{
-                  marginLeft: '1.5rem'
+                marginLeft: '1.5rem',
               }}
               badgeContent={qualityRating}
               color="primary"

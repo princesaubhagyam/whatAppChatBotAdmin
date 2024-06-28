@@ -2,7 +2,7 @@ import { CardContent, Card, Typography, Collapse, Box, IconButton } from '@mui/m
 import React, { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import axiosClientBm from 'src/api/axiosClientBm';
+import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 
 const ViewProfileCard = () => {
   const [contactName, setContactName] = useState('');
@@ -14,7 +14,8 @@ const ViewProfileCard = () => {
     const fetchData = async () => {
       try {
         // Fetch phone number details
-        const phoneResponse = await axiosClientBm.get('phone_numbers');
+        const metaClient = createMetaAxiosInstance();
+        const phoneResponse = await metaClient.get('phone_numbers');
         const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
         const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
 
@@ -24,7 +25,7 @@ const ViewProfileCard = () => {
         console.log('Phone API Response:', phoneResponse);
 
         const phoneId = 119306844496484;
-        const profileResponse = await axiosClientBm.get(
+        const profileResponse = await metaClient.get(
           `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
           {
             params: {
@@ -50,48 +51,54 @@ const ViewProfileCard = () => {
   };
 
   return (
-    <Card sx={{ padding: '5px'}}>
-      <CardContent sx={{ padding: '8px'}}>
+    <Card sx={{ padding: '5px' }}>
+      <CardContent sx={{ padding: '8px' }}>
         <Typography variant="h5">{contactName}</Typography>
         <Typography>{phoneNumber}</Typography>
-        <Box sx={{ background: '#00720b40', padding: '8px 8px 8px 8px' , width: '100%', marginTop: '5px'}}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' , padding: '0px', height: '3vh'}}>
-            <Typography color="primary" onClick={handleToggle} sx={{ cursor: 'pointer' }}>
+        <Box sx={{ background: '#00720b40', padding: '5px 5px 5px 5px', width: '100%' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0px',
+              cursor: 'pointer',
+            }}
+            onClick={handleToggle}
+          >
+            <Typography color="primary" sx={{ cursor: 'pointer' }}>
               View your profile
             </Typography>
-            <IconButton onClick={handleToggle}>
-              {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+            <IconButton>{open ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
           </Box>
           <Collapse in={open}>
-            <Box sx={{ mt: 2, display: 'flex' , alignItems: 'center'}}>
-              <div style={{marginRight:'1rem'}}>
-                {profileDetails.profile_picture_url && (
+            <Box sx={{ mt: 2, display: 'flex' }}>
+              <div style={{ marginRight: '1rem' }}>
+                {profileDetails?.profile_picture_url && (
                   <img
-                    src={profileDetails.profile_picture_url}
+                    src={profileDetails?.profile_picture_url}
                     alt="Profile"
-                    height={55}
-                    width={58}
+                    height={50}
+                    width={50}
                   />
                 )}
               </div>
               <div>
                 <Typography>
-                  <strong style={{ fontWeight: '500'}}>Email:</strong> {profileDetails.email}
+                  <strong style={{ fontWeight: '500' }}>Email:</strong> {profileDetails?.email}
                 </Typography>
                 <Typography>
-                  <strong style={{ fontWeight: '500'}}>Websites:</strong>{' '}
-                  {profileDetails.websites ? profileDetails.websites.join(', ') : 'N/A'}
+                  <strong style={{ fontWeight: '500' }}>Websites:</strong>{' '}
+                  {profileDetails?.websites ? profileDetails?.websites.join(', ') : 'N/A'}
                 </Typography>
               </div>
-             
             </Box>
             {/* <Typography>
-                <strong style={{ fontWeight: '500'}}>About:</strong> {profileDetails.about}
+                <strong style={{ fontWeight: '500'}}>About:</strong> {profileDetails?.about}
               </Typography> */}
-              <Typography>
-                <strong style={{ fontWeight: '500'}}>Address:</strong> {profileDetails.address}
-              </Typography>
+            <Typography>
+              <strong style={{ fontWeight: '500' }}>Address:</strong> {profileDetails?.address}
+            </Typography>
           </Collapse>
         </Box>
       </CardContent>

@@ -187,8 +187,12 @@ const BroadcastMemberModal = ({
         toast.success('Broadcast members updated successfully!');
         handleClose();
         getBroadcastList();
-        console.log('activeBroadcast', activeBroadcast);
-        dispatch(selectBroadcast(activeBroadcast));
+        dispatch(
+          selectBroadcast({
+            contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
+            ...activeBroadcast,
+          }),
+        );
       }
     } catch (error) {
       console.warn(error);
