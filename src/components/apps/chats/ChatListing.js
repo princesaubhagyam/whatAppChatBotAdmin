@@ -77,7 +77,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
             <br />
             View all broadcasts and it's analytics
           </Typography>
-          <IconSearch size={'20'} />
+          {/* <IconSearch size={'20'} /> */}
           {/* <Button
             sx={{
               height: '25px',
@@ -99,7 +99,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
             }}
             onClick={handleOpenImportModal}
           >
-            <IconFileImport size={'19'} />
+            <IconPlus size={'19'} />
           </Button>
         </Stack>
       </Box>
@@ -119,6 +119,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                     py: 1,
                     px: 1,
                     alignItems: 'start',
+                    
                   }}
                   selected={activeChat === chat.id}
                 >

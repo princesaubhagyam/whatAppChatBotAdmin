@@ -21,13 +21,20 @@ import {
   Button,
   Grid,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Select,
   Stack,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
+
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
@@ -63,8 +70,8 @@ const headCells = [
   { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
   { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
-  { id: 'created_at', numeric: false, disablePadding: false, label: 'Created at' },
-  { id: 'updated_at', numeric: false, disablePadding: false, label: 'Updated at' },
+  // { id: 'created_at', numeric: false, disablePadding: false, label: 'Created at' },
+  // { id: 'updated_at', numeric: false, disablePadding: false, label: 'Updated at' },
 ];
 
 function EnhancedTableHead(props) {
@@ -130,6 +137,7 @@ const EnhancedTableToolbar = (props) => {
     onOpenImportModal,
     setOpenAddContactModal,
     showButtons,
+    handleOpenFilterDialog,
   } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
@@ -223,6 +231,9 @@ const EnhancedTableToolbar = (props) => {
         {/* <Stack sx={{ flexDirection: 'row', gap: 2 }}> */}
         {showButtons && (
           <Stack sx={{ flexDirection: 'row', gap: 2 }}>
+            <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+              <FilterAltIcon size="1.1rem" />
+            </IconButton>
             <Button
               style={{
                 backgroundColor: '#1A4D2E',
@@ -262,6 +273,7 @@ EnhancedTableToolbar.propTypes = {
   handleSearch: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   onOpenImportModal: PropTypes.func.isRequired,
+  handleOpenFilterDialog: PropTypes.func.isRequired,
 };
 
 const CustomersTableList = () => {
@@ -279,6 +291,12 @@ const CustomersTableList = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({
+    column: '',
+    operator: 'contains',
+    value: '',
+  });
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
@@ -308,10 +326,57 @@ const CustomersTableList = () => {
   };
 
   const handleSearch = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const filteredRows = allRows.filter((row) => row.name.toLowerCase().includes(searchValue));
     setSearch(event.target.value);
+    if (event.target.value === '') {
+      setRows(allRows);
+    } else {
+      const filteredRows = allRows.filter((row) =>
+        row.name.toLowerCase().includes(event.target.value.toLowerCase()),
+      );
+      // console.log('=====', filteredRows);
+      setRows(filteredRows);
+    }
+  };
+
+  const handleOpenFilterDialog = () => {
+    setOpenFilterDialog(true);
+  };
+
+  const handleCloseFilterDialog = () => {
+    setFilterCriteria({
+      column: '',
+      operator: 'contains',
+      value: '',
+    });
+    setOpenFilterDialog(false);
+    setRows(allRows);
+    setSearch('');
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilterCriteria((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const applyFilter = () => {
+    const { column, value } = filterCriteria;
+
+    if (!column || !value) {
+      console.error('Column or value is not defined:', column, value);
+      return;
+    }
+
+    const filteredRows = allRows.filter((row) => {
+      if (row[column] && typeof row[column] === 'string') {
+        return row[column].toLowerCase().includes(value.toLowerCase());
+      }
+      return false;
+    });
+
+    console.log('Filtered Rows:', filteredRows);
+
     setRows(filteredRows);
+    setOpenFilterDialog(false);
   };
 
   const handleRequestSort = (event, property) => {
@@ -378,6 +443,7 @@ const CustomersTableList = () => {
             onOpenImportModal={() => setOpenImportModal(true)}
             setOpenAddContactModal={setOpenAddContactModal}
             showButtons={true}
+            handleOpenFilterDialog={handleOpenFilterDialog}
           />
           <Paper sx={{ width: '100%', mb: 2 }}>
             <TableContainer>
@@ -455,7 +521,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.city}
+                              {row.city ? row.city : '-'}
                             </Typography>
                           </TableCell>
                           <TableCell align="left">
@@ -465,10 +531,10 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.tag}
+                              {row.tag ? row.tag : '-'}
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -477,8 +543,8 @@ const CustomersTableList = () => {
                             >
                               {formatDate(createdAtDate)}
                             </Typography>
-                          </TableCell>
-                          <TableCell>
+                          </TableCell> */}
+                          {/* <TableCell>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -487,7 +553,7 @@ const CustomersTableList = () => {
                             >
                               {formatDate(updatedAtDate)}
                             </Typography>
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       );
                     })}
@@ -513,6 +579,68 @@ const CustomersTableList = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
+          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog}>
+            <DialogTitle>Filter Contacts</DialogTitle>
+            <DialogContent>
+              <Grid container spacing={2}>
+                <Grid item xs={6} sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}>
+                  <Select
+                    value={filterCriteria.column}
+                    onChange={handleFilterChange}
+                    fullWidth
+                    name="column"
+                    variant="outlined"
+                    displayEmpty
+                  >
+                    <MenuItem value="" disabled>
+                      Select Column
+                    </MenuItem>
+                    {headCells.map((headCell) => (
+                      <MenuItem key={headCell.id} value={headCell.id}>
+                        {headCell.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs={6} sx={{ paddingTop: '25px !important' }}>
+                  <TextField
+                    fullWidth
+                    label="Value"
+                    variant="outlined"
+                    name="value"
+                    value={filterCriteria.value}
+                    onChange={handleFilterChange}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions sx={{ justifyContent: 'space-around' }}>
+              <Button
+                variant="contained"
+                onClick={handleCloseFilterDialog}
+                sx={{
+                  backgroundColor: '#b4b4b4',
+                  '&:hover': {
+                    backgroundColor: `#b4b4b4`,
+                  },
+                }}
+              >
+                Remove Filter
+              </Button>
+              <Button
+                onClick={applyFilter}
+                variant="contained"
+                color="primary"
+                sx={{ marginLeft: '10rem !important' }}
+              >
+                Apply
+              </Button>
+              <Button onClick={handleCloseFilterDialog} variant="contained" color="error">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
           <ImportContactModal
             open={openImportModal}
             handleClose={() => setOpenImportModal(false)}

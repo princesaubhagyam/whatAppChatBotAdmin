@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
+
 const AddContactModal = ({ open, handleClose, onAddContact }) => {
   const [loading, setLoading] = useState(false);
   const [contactDetails, setContactDetails] = useState({
@@ -51,14 +52,6 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
       tempErrors.contact = 'Contact is required';
       isValid = false;
     }
-    if (!contactDetails.city.trim()) {
-      tempErrors.city = 'City is required';
-      isValid = false;
-    }
-    if (!contactDetails.tag.trim()) {
-      tempErrors.tag = 'Tag is required';
-      isValid = false;
-    }
 
     setErrors(tempErrors);
     return isValid;
@@ -68,7 +61,12 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     if (validateFields()) {
       try {
         setLoading(true);
-        const response = await apiClient.post('/api/contacts/', contactDetails);
+        const contactData = {
+          ...contactDetails,
+          city: contactDetails.city.trim() || '-',
+          tag: contactDetails.tag.trim() || '-',
+        };
+        const response = await apiClient.post('/api/contacts/', contactData);
         toast.success('Contact created successfully!', { closeButton: true });
         setContactDetails({
           name: '',

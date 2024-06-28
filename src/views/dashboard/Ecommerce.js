@@ -31,10 +31,10 @@ const Ecommerce = () => {
         {/* column */}
         <Grid item xs={12} lg={4}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Payment />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Grid> */}
+            <Grid item xs={12} sm={6} lg={12}>
               <ProductsSold />
             </Grid>
           </Grid>

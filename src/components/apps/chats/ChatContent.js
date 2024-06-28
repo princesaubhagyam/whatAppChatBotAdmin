@@ -109,7 +109,6 @@ const ChatContent = ({ toggleChatSidebar }) => {
                 </Scrollbar>
               </Box>
               <ChatInsideSidebar isInSidebar={lgUp ? open : !open} chat={chatDetails} />
-             
             </Box>
           </Box>
         </>

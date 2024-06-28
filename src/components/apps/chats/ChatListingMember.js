@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   List,
@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
-import { IconPlus, IconDotsVertical } from '@tabler/icons';
+import { IconPlus, IconDotsVertical, IconEdit, IconFileImport } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
-import CustomersTableList from 'src/views/customers/CustomersTableList';
+import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -25,11 +25,11 @@ const getInitials = (name) => {
   return initials.toUpperCase();
 };
 
-const ChatListingMember = () => {
+const ChatListingMember = ({ getBroadcastList }) => {
   const dispatch = useDispatch();
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   return (
     <>
@@ -48,10 +48,28 @@ const ChatListingMember = () => {
                 <br />
                 {activeBroadcast.members} members
               </Typography>
-              <Button onClick={() => setIsModalOpen(true)}>
-                <IconPlus size={'20'} />
+              <Button
+                sx={{
+                  height: '25px',
+                  width: '40px',
+                  minWidth: '40px',
+                  padding: '8px',
+                }}
+                onClick={() => setIsMemberModalOpen(true)}
+              >
+                <IconEdit size={'20'} />
               </Button>
-              <IconDotsVertical size={'16'} />
+              <Button
+                sx={{
+                  height: '25px',
+                  width: '40px',
+                  minWidth: '40px',
+                  padding: '8px',
+                }}
+                onClick={() => setIsImportModalOpen(true)}
+              >
+                <IconFileImport size={'19'} />
+              </Button>
             </Stack>
           </Box>
           <List sx={{ px: 0 }}>
@@ -126,7 +144,18 @@ const ChatListingMember = () => {
           </List>
         </div>
       )}
-      <BroadcastMemberModal open={isModalOpen} handleClose={() => setIsModalOpen(false)} activeBroadcastId={activeBroadcast?.id} />
+      <BroadcastMemberModal
+        open={isMemberModalOpen}
+        handleClose={() => setIsMemberModalOpen(false)}
+        activeBroadcastId={activeBroadcast?.id}
+        getBroadcastList={getBroadcastList}
+        activeBroadcast={activeBroadcast}
+      />
+      <ImportBroadcastMember
+        open={isImportModalOpen}
+        handleClose={() => setIsImportModalOpen(false)}
+        activeBroadcastId={activeBroadcast?.id}
+      />
     </>
   );
 };

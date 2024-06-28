@@ -63,7 +63,7 @@ const Chats = () => {
             isMobileSidebarOpen={isMobileSidebarOpen}
             onSidebarClose={() => setMobileSidebarOpen(false)}
             broadcasts={broadcasts}
-            getBroadcastsData={getBroadcastsData}
+            getBroadcastsData={getBroadcastList}
             sx={{ flex: '0 1 300px', overflowY: 'auto' }}
           />
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '85vh' }}>
@@ -74,7 +74,10 @@ const Chats = () => {
             <Divider />
             <ChatMsgSent />
           </Box>
-          <ChatSidebarMember sx={{ flex: '0 1 300px', overflowY: 'auto' }} />
+          <ChatSidebarMember
+            sx={{ flex: '0 1 300px', overflowY: 'auto' }}
+            getBroadcastList={getBroadcastList}
+          />
         </AppCard>
       </PageContainer>
     </>

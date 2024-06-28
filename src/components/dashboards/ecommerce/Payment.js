@@ -25,7 +25,7 @@ const Payment = () => {
           Wallet
         </Typography>
         {/* <Typography variant="h4">$678,298</Typography> */}
-        <Typography variant="h4">${walletBalance}</Typography>
+        <Typography variant="h4">₹{walletBalance}.00</Typography>
         {/* <Stack direction="row" spacing={1} mt={1} alignItems="center">
           <Avatar sx={{ bgcolor: successlight, width: 20, height: 20 }}>
             <IconArrowUpLeft width={16} color="#39B69A" />
