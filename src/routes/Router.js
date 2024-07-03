@@ -5,6 +5,7 @@ import Loadable from '../layouts/full/shared/loadable/Loadable';
 import AuthWrapper from 'src/utils/AuthWrapper';
 import { element } from 'prop-types';
 import AuthGuard from './AuthGuard';
+import ChangePassword from 'src/views/apps/ChangePassword';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -164,6 +165,7 @@ const Router = [
       { path: '/apps/friends', element: <Friends /> },
       { path: '/apps/gallery', element: <Gallery /> },
       { path: '/user-profile', element: <UserProfile /> },
+      {path: '/change-password', element: <ChangePassword/>}, 
       { path: '/pages/casl', element: <RollbaseCASL /> },
       { path: '/pages/treeview', element: <Treeview /> },
       { path: '/pages/pricing', element: <Pricing /> },

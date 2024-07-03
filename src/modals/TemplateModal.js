@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -10,13 +10,20 @@ import {
   Typography,
   Stack,
   Input,
+  CardMedia,
+  Dialog,
+  Grid,
+  InputLabel,
+  OutlinedInput,
+  FormControl,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { IconFileImport } from '@tabler/icons';
+import { IconMessage2Share } from '@tabler/icons';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
+import img from 'src/assets/images/backgrounds/Template_background.jpg';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -56,17 +63,15 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
         <label>Body variables</label>
         {new Array(bodyData?.parameters?.length).fill('').map((field, idx) => {
           return (
-            <>
-              <Stack direction="horizontal" alignItems={'center'} gap={2}>
-                <p>{`{{${idx + 1}}}`}</p>
-                <Input
-                  fullWidth
-                  required
-                  inputProps={{ maxLength: 100 }}
-                  onChange={(e) => updateBodyVariable(e, idx)}
-                ></Input>
-              </Stack>
-            </>
+            <Stack direction="horizontal" alignItems={'center'} gap={2} key={idx}>
+              <p>{`{{${idx + 1}}}`}</p>
+              <Input
+                fullWidth
+                required
+                inputProps={{ maxLength: 100 }}
+                onChange={(e) => updateBodyVariable(e, idx)}
+              ></Input>
+            </Stack>
           );
         })}
       </>
@@ -127,7 +132,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchTemplates();
     setBroadcastDetails({
       broadcast: broadcastId,
@@ -136,13 +141,9 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     });
   }, [broadcastId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchTemplateById();
   }, [broadcastDetails?.template]);
-
-  React.useEffect(() => {
-    console.log(templateDetails, '+=+=+=');
-  }, [templateDetails]);
 
   const handleFieldChange = (e) => {
     setBroadcastDetails({
@@ -165,7 +166,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
         template: templateDetails,
       });
       if (res.status === 200 || res.status === 201) {
-        toast.success('Broadcast scheduled succesfully!');
+        toast.success('Broadcast scheduled successfully!');
         handleClose();
       }
     } catch (err) {
@@ -221,7 +222,13 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
   };
 
   return (
-    <Modal open={open} onClose={handleClose} closeAfterTransition>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      closeAfterTransition
+      maxWidth={'md'}
+      sx={{ height: '90%' }}
+    >
       <Fade in={open}>
         <form onSubmit={sendBroadcastMsg}>
           <Box
@@ -230,93 +237,207 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
               bgcolor: 'background.paper',
               boxShadow: 24,
               p: 4,
-              width: '60%',
-              margin: 'auto',
-              mt: 10,
+              width: '100%',
+              minWidth: '500px',
             }}
           >
-            <FormLabel>Select template</FormLabel>
-            <Select
-              value={broadcastDetails.template}
-              fullWidth
-              displayEmpty
-              name="template"
-              onChange={handleFieldChange}
-            >
-              {templates?.map((temp) => (
-                <MenuItem value={temp.id}>{temp.name}</MenuItem>
-              ))}
-            </Select>
-            <Stack gap={2} marginTop={4}>
-              {broadcastDetails?.template &&
-                (templateDetails?.components?.[0]?.type === 'HEADER' ? (
-                  <HeaderComponent
-                    componentData={templateDetails?.components?.[0]}
-                    updateHeaderImageLink={updateHeaderImageLink}
-                  />
-                ) : (
-                  <></>
-                ))}
-              {broadcastDetails?.template &&
-                (templateDetails?.components?.[1]?.type === 'BODY' ? (
-                  <BodyVariableComponent
-                    bodyData={templateDetails?.components?.[1]}
-                    updateBodyVariable={updateBodyParameter}
-                  />
-                ) : (
-                  <></>
-                ))}
-              {/* {broadcastDetails?.template &&
-              templateDetails?.components?.map((component) => {
-                if (component.type !== 'BUTTONS') {
-                  return (
-                    <div>
-                      <Typography fontWeight={'600'}>{component.type}</Typography>
-                      {component.type === 'HEADER' &&
-                        (component?.format === 'IMAGE' ? (
-                          <>
-                            <Input
-                              type="url"
-                              placeholder="Add link to image here"
-                              onChange={updateHeaderImageLink}
-                              variant="outlined"
-                              fullWidth
-                            ></Input>
-                          </>
-                        ) : (
-                          <Box style={{ border: '1px solid', padding: 4 }}>{component?.text}</Box>
-                        ))}
-
-                      {component.type === 'BODY' && (
-                        <Box style={{ border: '1px solid', padding: 4 }}>{component?.text}</Box>
-                      )}
-                      {component.type === 'FOOTER' && (
-                        <Box style={{ border: '1px solid', padding: 4 }}>{component?.text}</Box>
-                      )}
-                    </div>
-                  );
-                }
-                return <></>;
-              })} */}
-            </Stack>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <LoadingButton
-                loading={loading}
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ mr: 2 }}
+            <Typography variant="h6" component="h2" mb={2}>
+              Templates
+            </Typography>
+            <FormControl fullWidth>
+              <InputLabel>Select template</InputLabel>
+              <Select
+                value={broadcastDetails.template}
+                fullWidth
+                // displayEmpty
+                name="template"
+                onChange={handleFieldChange}
+                sx={{ marginBottom: '2rem' }}
+                label="Select Template"
               >
-                Send
-              </LoadingButton>
-              <Button variant="contained" color="error" onClick={handleClose}>
-                Close
-              </Button>
-            </Box>
+                {templates?.map((temp) => (
+                  <MenuItem key={temp.id} value={temp.id}>
+                    {temp.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Stack gap={2}>
+                  {broadcastDetails?.template &&
+                    (templateDetails?.components?.[0]?.type === 'HEADER' ? (
+                      <HeaderComponent
+                        componentData={templateDetails?.components?.[0]}
+                        updateHeaderImageLink={updateHeaderImageLink}
+                      />
+                    ) : (
+                      <></>
+                    ))}
+                  {broadcastDetails?.template &&
+                    (templateDetails?.components?.[1]?.type === 'BODY' ? (
+                      <BodyVariableComponent
+                        bodyData={templateDetails?.components?.[1]}
+                        updateBodyVariable={updateBodyParameter}
+                      />
+                    ) : (
+                      <></>
+                    ))}
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box>
+                  {templateDetails ? (
+                    <CardMedia
+                      component="div"
+                      image={img}
+                      sx={{
+                        overflow: 'auto',
+                        backgroundSize: 'cover',
+                        boxShadow: '0px 1px 5px #00000025',
+                        p: 2,
+                        border: '1px solid lightgrey',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          backgroundColor: '#E9FEEE',
+                          padding: 1,
+                          boxShadow: '0px 1px 110px #00000025',
+                          borderBottom: '1px solid #80808078',
+                        }}
+                      >
+                        {templateDetails?.components.map((component) => {
+                          switch (component.type) {
+                            case 'HEADER':
+                              {
+                                const headerHandle = component.example?.header_handle?.[0];
+                                const headerText = component.example?.header_text?.[0];
+                                if (headerHandle) {
+                                  const isVideo = component.format === 'VIDEO';
+                                  return isVideo ? (
+                                    <CardMedia
+                                      key={component.type}
+                                      component="video"
+                                      image={headerHandle}
+                                      controls
+                                      title={component.type}
+                                      sx={{ height: 200 }}
+                                      autoPlay
+                                    />
+                                  ) : (
+                                    <CardMedia
+                                      key={component.type}
+                                      component="img"
+                                      image={headerHandle}
+                                      title={component.type}
+                                      sx={{ height: 200 }}
+                                    />
+                                  );
+                                }
+
+                                if (headerText) {
+                                  return (
+                                    <Typography key={'1'} variant="body1">
+                                      <span key={'1'}>
+                                        {headerText}
+                                        <br />
+                                      </span>
+                                    </Typography>
+                                  );
+                                }
+
+                                return null;
+                              }
+                              
+
+                            case 'BODY':
+                              return (
+                                <Typography key={component.type} variant="body1">
+                                  {component.text.split('\n').map((item, idx) => (
+                                    <span key={idx}>
+                                      {item}
+                                      <br />
+                                    </span>
+                                  ))}
+                                </Typography>
+                              );
+                            case 'FOOTER':
+                              return (
+                                <Typography key={component.type} variant="caption">
+                                  {component.text}
+                                </Typography>
+                              );
+                            default:
+                              return null;
+                          }
+                        })}
+                      </Box>
+                      <Box
+                        sx={{
+                          backgroundColor: 'white',
+                          width: '100%',
+                          mt: '1px',
+                          boxShadow: '0px 1px 5px #00000025',
+                        }}
+                      >
+                        {templateDetails?.components.map((component) => {
+                          if (component.type === 'BUTTONS') {
+                            return (
+                              <Button
+                                key={component.type}
+                                variant="outline"
+                                href={component.buttons[0].url}
+                                sx={{
+                                  backgroundColor: 'transparent',
+                                  color: '#0093E1',
+                                  fontSize: '1rem',
+                                  fontWeight: '600',
+                                  width: '100%',
+                                  '&:hover': { backgroundColor: '#1a4d2e00', color: '#0093E1' },
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <IconMessage2Share />
+                                {component?.buttons[0].icon}
+                                {component?.buttons[0].text}
+                              </Button>
+                            );
+                          }
+                          return null;
+                        })}
+                      </Box>
+                    </CardMedia>
+                  ) : (
+                    <></>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+            {templateDetails ? (
+              <Stack direction="row" gap={2} justifyContent="flex-end" marginTop={4}>
+                <LoadingButton
+                  size="large"
+                  startIcon={<IconMessage2Share />}
+                  type="submit"
+                  variant="contained"
+                  loading={loading}
+                >
+                  Send broadcast
+                </LoadingButton>
+                <Button variant="contained" color="error" onClick={handleClose}>
+                  Cancel
+                </Button>
+              </Stack>
+            ) : (
+              <></>
+            )}
           </Box>
         </form>
       </Fade>
-    </Modal>
+    </Dialog>
   );
 };
 

@@ -58,7 +58,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           full_name: res.data.data.full_name,
           email: res.data.data.email,
         });
-        dispatch(setWalletBalance(res.data.data.wallet_balance));
+        //dispatch(setWalletBalance(res.data.data.wallet_balance));
 
         toast.success('Sign in successful!', { duration: 2000 });
         navigate('/');

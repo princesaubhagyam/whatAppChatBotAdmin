@@ -1,30 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Menu, Avatar, Typography, Button, IconButton, MenuItem } from '@mui/material';
+import { Box, Menu, Avatar, Typography, IconButton, MenuItem } from '@mui/material';
+import axios from 'axios';
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
-import { useSelector } from 'react-redux';
+import apiClient from 'src/api/axiosClient';
+
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
-  const walletBalance = useSelector((state) => state.authReducer.wallet_balance);
+  const [walletBalance, setWalletBalance] = useState();
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    
+    const fetchWalletBalance = async () => {
+      try {
+        const response = await apiClient.get('/wallet/');
+        if (response.status === 200) {
+          console.log(response);
+          setWalletBalance(response.data.data.balance); 
+        }
+      } catch (error) {
+        console.error('Error fetching wallet balance:', error);
+      }
+    };
+
+    fetchWalletBalance();
+  }, []);
+
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
+
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
 
-  const { user } = useUser();
-
   return (
     <>
-      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557'}}>Wallet</Typography>
-      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557'}}>₹{walletBalance}.00</Typography>
+      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+        Wallet
+      </Typography>
+      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+        ₹{walletBalance}
+      </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <Typography variant="h6" sx={{ marginRight: '6px', fontWeight: 500, fontSize: '15px' }}>
-        Hello, {user ? user.full_name : 'User'}
-      </Typography> */}
-
         <IconButton
           size="large"
           aria-label="show user profile"
@@ -64,12 +85,6 @@ const Profile = () => {
         >
           <Scrollbar sx={{ height: '100%', maxHeight: '85vh' }}>
             <Box>
-              {/* <Typography variant="h6" color="textPrimary" fontWeight={600}>
-              {user ? user.full_name : 'Guest'}
-            </Typography>
-            <Typography variant="subtitle2" color="gray">
-              {user ? user.email : 'guest@example.com'}
-            </Typography> */}
               <Box>
                 <MenuItem
                   component={Link}
@@ -85,6 +100,21 @@ const Profile = () => {
                   }}
                 >
                   Your Profile
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/change-password"
+                  onClick={handleClose2}
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: '400',
+                    '&:hover': {
+                      backgroundColor: `#1A4D2E`,
+                      color: `white`,
+                    },
+                  }}
+                >
+                  Change Password
                 </MenuItem>
                 <MenuItem
                   sx={{

@@ -10,7 +10,6 @@ import {
   TableRow,
   TableCell,
   Checkbox,
-  TableFooter,
   Button,
   Stack,
   TableHead,
@@ -19,6 +18,13 @@ import {
   TextField,
   InputAdornment,
   Toolbar,
+  Grid,
+  Select,
+  MenuItem,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { IconSearch } from '@tabler/icons';
@@ -26,16 +32,9 @@ import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { selectBroadcast, setBroadcastList } from 'src/store/apps/chat/ChatSlice';
+import { selectBroadcast } from 'src/store/apps/chat/ChatSlice';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-export const getBroadcastsData = async () => {
-  try {
-    const response = await apiClient.get('/api/broadcasts/');
-    return response.data.data.results;
-  } catch (error) {
-    toast.error('Error fetching data from API:', error);
-  }
-};
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -77,13 +76,15 @@ const EnhancedTableHead = (props) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" />
+        <TableCell padding="checkbox" sx={{ padding: '4.5px' }} />
+
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ fontWeight: 600, fontSize: 14, padding: '12px 5px' }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -114,11 +115,18 @@ const BroadcastMemberModal = ({
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [broadcastContacts, setBroadcastContacts] = useState([]);
   const [memberIds, setMemberIds] = useState([]);
+  const [allContacts, setAllContacts] = useState([]); // New state to keep original data
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({
+    column: '',
+    operator: 'contains',
+    value: '',
+  });
   const dispatch = useDispatch();
 
   const getApiData = async () => {
@@ -127,6 +135,7 @@ const BroadcastMemberModal = ({
       const res = await apiClient.get(`update_broadcast_members/${activeBroadcastId}`);
       if (res.status === 200) {
         setBroadcastContacts(res.data.data.all_contacts);
+        setAllContacts(res.data.data.all_contacts); // Store the original data
         setMemberIds(
           res.data.data.all_contacts
             .filter((contact) => contact.is_member)
@@ -156,6 +165,45 @@ const BroadcastMemberModal = ({
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
+  };
+
+  const handleOpenFilterDialog = () => {
+    setOpenFilterDialog(true);
+  };
+
+  const handleCloseFilterDialog = () => {
+    setFilterCriteria({
+      column: '',
+      operator: 'contains',
+      value: '',
+    });
+    setBroadcastContacts(allContacts); // Reset to original data
+    setOpenFilterDialog(false);
+    setSearch('');
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilterCriteria((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const applyFilter = () => {
+    const { column, value } = filterCriteria;
+
+    if (!column || !value) {
+      console.error('Column or value is not defined:', column, value);
+      return;
+    }
+
+    const filteredRows = broadcastContacts.filter((row) => {
+      if (row[column] && typeof row[column] === 'string') {
+        return row[column].toLowerCase().includes(value.toLowerCase());
+      }
+      return false;
+    });
+
+    setBroadcastContacts(filteredRows);
+    setOpenFilterDialog(false);
   };
 
   const handlePageChange = (event, newPage) => {
@@ -212,120 +260,212 @@ const BroadcastMemberModal = ({
   );
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
-      <Box
-        sx={{
-          outline: 'none',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          width: '100%',
-          margin: 'auto',
-        }}
-      >
-        <Typography variant="h6" component="h2" mb={2}>
-          Update Broadcast Members
-        </Typography>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <>
-            <Toolbar>
-              <TextField
-                variant="outlined"
-                placeholder="Search by name"
-                value={search}
-                onChange={handleSearchChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <IconSearch />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Toolbar>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-              <TableContainer>
-                <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
-                  <EnhancedTableHead
-                    order={order}
-                    orderBy={orderBy}
-                    onRequestSort={handleRequestSort}
-                  />
-                  <TableBody>
-                    {paginatedContacts.map((row, idx) => {
-                      const labelId = `enhanced-table-checkbox-${idx}`;
-                      return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              color="primary"
-                              checked={memberIds.includes(row.id)}
-                              onChange={() => handleSelectedMemberStateUpdate(row.id)}
-                              inputProps={{
-                                'aria-labelledby': labelId,
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Typography fontWeight="400" fontSize={12} padding="13px 4px">
-                              {row.name}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.contact}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="left">
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.city}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={sortedContacts.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-              />
-              <Stack
-                direction={'row'}
-                justifyContent={'end'}
-                gap={2}
-                style={{ paddingBlock: '1rem', paddingInline: '2rem' }}
+    <>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <Box
+          sx={{
+            outline: 'none',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: '100%',
+            margin: 'auto',
+          }}
+        >
+          <Typography variant="h6" component="h2" mb={2}>
+            Update Broadcast Members
+          </Typography>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              <Toolbar
+                sx={{ display: 'flex', justifyContent: 'space-between', padding: '0px !important' }}
               >
-                <Button variant="contained" color="primary" onClick={updateBroadcastMembers}>
-                  Update
-                </Button>
-                <Button color="error" variant="contained" onClick={handleClose}>
-                  Close
-                </Button>
-              </Stack>
-            </Paper>
-          </>
-        )}
-      </Box>
-    </Dialog>
+                <Box sx={{ flex: '1 1 100%' }} border={0}>
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconSearch size="1.1rem" />
+                        </InputAdornment>
+                      ),
+                      sx: { background: 'white', borderRadius: 5 },
+                    }}
+                    placeholder="Search..."
+                    size="small"
+                    value={search}
+                    onChange={handleSearchChange}
+                  />
+                  <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+                    <FilterAltIcon size="1.1rem" />
+                  </IconButton>
+                </Box>
+                <Stack
+                  direction={'row'}
+                  justifyContent={'end'}
+                  gap={2}
+                  style={{ paddingBlock: '1rem' }}
+                >
+                  <Button variant="contained" color="primary" onClick={updateBroadcastMembers}>
+                    Update
+                  </Button>
+                  <Button color="error" variant="contained" onClick={handleClose}>
+                    Close
+                  </Button>
+                </Stack>
+              </Toolbar>
+              <Paper
+                sx={{ width: '100%', mb: 2, border: '1px solid #E7EAF0', mt: 2, boxShadow: 'none' }}
+              >
+                <TableContainer>
+                  <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
+                    <EnhancedTableHead
+                      order={order}
+                      orderBy={orderBy}
+                      onRequestSort={handleRequestSort}
+                    />
+                    <TableBody>
+                      {paginatedContacts.map((row, idx) => {
+                        const labelId = `enhanced-table-checkbox-${idx}`;
+                        return (
+                          <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                color="primary"
+                                checked={memberIds.includes(row.id)}
+                                onChange={() => handleSelectedMemberStateUpdate(row.id)}
+                                inputProps={{
+                                  'aria-labelledby': labelId,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
+                              <Typography
+                                fontWeight="400 !important"
+                                variant="h6"
+                                fontSize="14px !important"
+                                padding="13px 4px !important"
+                              >
+                                {row.name}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px' }}>
+                              <Typography
+                                fontWeight="400 !important"
+                                variant="h6"
+                                fontSize="14px !important"
+                                padding="13px 4px !important"
+                              >
+                                {row.contact}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="left" sx={{ padding: '0px' }}>
+                              <Typography
+                                fontWeight="400 !important"
+                                variant="h6"
+                                fontSize="14px !important"
+                                padding="13px 4px !important"
+                              >
+                                {row.city ? row.city : '-'}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={sortedContacts.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handlePageChange}
+                  onRowsPerPageChange={handleRowsPerPageChange}
+                />
+              </Paper>
+            </>
+          )}
+        </Box>
+      </Dialog>
+      <Dialog
+        open={openFilterDialog}
+        onClose={handleCloseFilterDialog}
+        sx={{ height: '70%' }}
+        fullWidth
+        maxWidth="sm"
+      >
+        <Paper sx={{ padding: '25px' }}>
+          <DialogTitle sx={{ padding: 1 }}>Filter Contacts</DialogTitle>
+          <DialogContent sx={{ padding: '17px 16px' }}>
+            <Grid container spacing={2}>
+              <Grid
+                item
+                xs={6}
+                sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}
+              >
+                <Select
+                  value={filterCriteria.column}
+                  onChange={handleFilterChange}
+                  fullWidth
+                  name="column"
+                  variant="outlined"
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select Column
+                  </MenuItem>
+                  {headCells.map((headCell) => (
+                    <MenuItem key={headCell.id} value={headCell.id}>
+                      {headCell.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid item xs={6} sx={{ paddingTop: '25px !important' }}>
+                <TextField
+                  fullWidth
+                  label="Value"
+                  variant="outlined"
+                  name="value"
+                  value={filterCriteria.value}
+                  onChange={handleFilterChange}
+                  sx={{ width: '265px'}}
+                  
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: 'space-between', padding: '0px' }}>
+            <Button
+              variant="contained"
+              onClick={handleCloseFilterDialog}
+              sx={{
+                backgroundColor: '#b4b4b4',
+                '&:hover': {
+                  backgroundColor: `#b4b4b4`,
+                },
+              }}
+            >
+              Clear Filter
+            </Button>
+            <Button
+              onClick={applyFilter}
+              variant="contained"
+              color="primary"
+              sx={{ marginLeft: '17rem !important' }}
+            >
+              Apply
+            </Button>
+            <Button onClick={handleCloseFilterDialog} variant="contained" color="error">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Paper>
+      </Dialog>
+    </>
   );
 };
 

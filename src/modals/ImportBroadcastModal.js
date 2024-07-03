@@ -89,7 +89,7 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
             bgcolor: 'background.paper',
             boxShadow: 24,
             p: 4,
-            width: '30%',
+            width: '35%',
             margin: 'auto',
             mt: 10,
           }}

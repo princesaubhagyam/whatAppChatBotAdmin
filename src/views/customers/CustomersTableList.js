@@ -99,7 +99,7 @@ function EnhancedTableHead(props) {
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ fontWeight: 500, fontSize: 16, padding: '13px 16px' }}
+            style={{ fontWeight: 500, fontSize: 16, padding: '12px 5px' }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -445,8 +445,8 @@ const CustomersTableList = () => {
             showButtons={true}
             handleOpenFilterDialog={handleOpenFilterDialog}
           />
-          <Paper sx={{ width: '100%', mb: 2 }}>
-            <TableContainer>
+          <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
+            <TableContainer >
               <Table
                 sx={{ minWidth: 750 }}
                 aria-labelledby="tableTitle"
@@ -485,7 +485,7 @@ const CustomersTableList = () => {
                           key={row.id}
                           selected={isItemSelected}
                         >
-                          <TableCell padding="checkbox">
+                          <TableCell padding="checkbox" >
                             <Checkbox
                               color="primary"
                               checked={isItemSelected}
@@ -494,7 +494,7 @@ const CustomersTableList = () => {
                               }}
                             />
                           </TableCell>
-                          <TableCell>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -504,7 +504,7 @@ const CustomersTableList = () => {
                               {row.name}
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          <TableCell sx={{ padding: '0px', minWidth: '150px'}}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -514,7 +514,7 @@ const CustomersTableList = () => {
                               {row.contact}
                             </Typography>{' '}
                           </TableCell>
-                          <TableCell align="left">
+                          <TableCell sx={{ padding: '0px',minWidth: '180px'}}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -524,7 +524,7 @@ const CustomersTableList = () => {
                               {row.city ? row.city : '-'}
                             </Typography>
                           </TableCell>
-                          <TableCell align="left">
+                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -579,67 +579,76 @@ const CustomersTableList = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
-          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog}>
-            <DialogTitle>Filter Contacts</DialogTitle>
-            <DialogContent>
-              <Grid container spacing={2}>
-                <Grid item xs={6} sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}>
-                  <Select
-                    value={filterCriteria.column}
-                    onChange={handleFilterChange}
-                    fullWidth
-                    name="column"
-                    variant="outlined"
-                    displayEmpty
+          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog} sx={{ height: '70%' }} fullWidth="lg">
+            <Paper sx={{ padding: '25px'}}>
+              <DialogTitle sx={{ padding: 1}}>Filter Contacts</DialogTitle>
+              <DialogContent>
+                <Grid container spacing={2}>
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}
                   >
-                    <MenuItem value="" disabled>
-                      Select Column
-                    </MenuItem>
-                    {headCells.map((headCell) => (
-                      <MenuItem key={headCell.id} value={headCell.id}>
-                        {headCell.label}
+                    <Select
+                      value={filterCriteria.column}
+                      onChange={handleFilterChange}
+                      fullWidth
+                      name="column"
+                      variant="outlined"
+                      displayEmpty
+                    >
+                      <MenuItem value="" disabled>
+                        Select Column
                       </MenuItem>
-                    ))}
-                  </Select>
+                      {headCells.map((headCell) => (
+                        <MenuItem key={headCell.id} value={headCell.id}>
+                          {headCell.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                  <Grid item xs={6} lg={6} sx={{ paddingTop: '25px !important' }}>
+                    <TextField
+                      fullWidth="lg"
+                      label="Value"
+                      variant="outlined"
+                      name="value"
+                      value={filterCriteria.value}
+                      onChange={handleFilterChange}
+                      style={{
+                        width: '265px',
+                      }}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={6} sx={{ paddingTop: '25px !important' }}>
-                  <TextField
-                    fullWidth
-                    label="Value"
-                    variant="outlined"
-                    name="value"
-                    value={filterCriteria.value}
-                    onChange={handleFilterChange}
-                  />
-                </Grid>
-              </Grid>
-            </DialogContent>
+              </DialogContent>
 
-            <DialogActions sx={{ justifyContent: 'space-around' }}>
-              <Button
-                variant="contained"
-                onClick={handleCloseFilterDialog}
-                sx={{
-                  backgroundColor: '#b4b4b4',
-                  '&:hover': {
-                    backgroundColor: `#b4b4b4`,
-                  },
-                }}
-              >
-                Remove Filter
-              </Button>
-              <Button
-                onClick={applyFilter}
-                variant="contained"
-                color="primary"
-                sx={{ marginLeft: '10rem !important' }}
-              >
-                Apply
-              </Button>
-              <Button onClick={handleCloseFilterDialog} variant="contained" color="error">
-                Cancel
-              </Button>
-            </DialogActions>
+              <DialogActions sx={{ justifyContent: 'space-around' , padding: '0px'}}>
+                <Button
+                  variant="contained"
+                  onClick={handleCloseFilterDialog}
+                  sx={{
+                    backgroundColor: '#b4b4b4',
+                    '&:hover': {
+                      backgroundColor: `#b4b4b4`,
+                    },
+                  }}
+                >
+                  Clear Filter
+                </Button>
+                <Button
+                  onClick={applyFilter}
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginLeft: '16rem !important' }}
+                >
+                  Apply
+                </Button>
+                <Button onClick={handleCloseFilterDialog} variant="contained" color="error">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Paper>
           </Dialog>
           <ImportContactModal
             open={openImportModal}

@@ -54,9 +54,9 @@ const Ecommerce = () => {
             <Grid item xs={12}>
               <QualityRatingCard />
             </Grid>
-            <Grid item xs={12} lg={12}>
+            {/* <Grid item xs={12} lg={14}>
               <ViewProfileCard />
-            </Grid>
+            </Grid> */}
           </Grid>
           {/* <Grid item xs={12} sm={6} lg={4}>
             <SalesOverview />
@@ -79,23 +79,26 @@ const Ecommerce = () => {
         <Grid item xs={12} sm={6} lg={4}>
           <SetUpProfileCard />
         </Grid>
+        <Grid item xs={12} lg={14}>
+              <ViewProfileCard />
+            </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>
-          <YearlySales />
+          {/* <YearlySales /> */}
         </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>
-          <PaymentGateways />
+          {/* <PaymentGateways /> */}
         </Grid>
         {/* column */}
 
         <Grid item xs={12} lg={4}>
-          <RecentTransactions />
+          {/* <RecentTransactions /> */}
         </Grid>
         {/* column */}
 
         <Grid item xs={12} lg={8}>
-          <ProductPerformances />
+          {/* <ProductPerformances /> */}
         </Grid>
       </Grid>
     </Box>

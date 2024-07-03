@@ -50,7 +50,7 @@ const AuthSocialButtons = ({ title }) => {
           const accessToken = response.authResponse.accessToken;
           console.log(accessToken);
           fetch(
-            `https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}&access_token=EABN2cqTjBrsBO2u9dXpmCjDBuIQpOZBe0sZCCGsEIvBUdP4SJ6nKKU60Qo4TA6FBaFNAZCeJCASzRYapk5y52aEQp833n1LpPjSHNvdBsoqME7EVsXO6BqZBsFmA3gvVb8NvQSkkz60PRKFTE01Ox3okM9Oy71yhXUKExbpwIAWPYY6NqCmWLDbRlw9ZCkZCZAkAd1tvB0jhTX9BY537cIjIlT87CC1oNgeQZCCBhP1gQGsO`,
+            `https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}&access_token=EABN2cqTjBrsBO5jcvxQJwGexjk1ot50ZCXzJCZBLNkERhW7wrnHXtMUpT2k6DWQi5RZAyPbUZAiL8BKUs54RqSdXhIj17mdvgRC5IF0506XjXLM9qZAzyrfkbjshjhcGsEddJCS8Q8GnKRmRH0vzeffB9wzrHutVZADbcBy5wBaoNTIzVd4drWKCnssoTfJZCYFcAZDZD`,
           )
             .then((response) => response.json())
             .then((data) => {

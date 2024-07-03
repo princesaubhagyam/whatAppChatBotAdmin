@@ -97,7 +97,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          width: '45%',
+          width: '50%',
           margin: 'auto',
           mt: 10,
         }}
@@ -115,6 +115,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               onChange={handleChange}
               error={!!errors.name}
               helperText={errors.name}
+              placeholder='Enter name'
             />
           </Grid>
           <Grid item xs={6}>
@@ -126,6 +127,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               onChange={handleChange}
               error={!!errors.contact}
               helperText={errors.contact}
+              placeholder="91952XXXXXXX"
             />
           </Grid>
           <Grid item xs={6}>
@@ -137,6 +139,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               onChange={handleChange}
               error={!!errors.city}
               helperText={errors.city}
+              placeholder="Enter City"
             />
           </Grid>
           <Grid item xs={6}>
@@ -148,6 +151,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               onChange={handleChange}
               error={!!errors.tag}
               helperText={errors.tag}
+              placeholder='Enter tag'
             />
           </Grid>
         </Grid>

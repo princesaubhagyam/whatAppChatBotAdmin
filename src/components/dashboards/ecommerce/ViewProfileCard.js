@@ -63,6 +63,7 @@ const ViewProfileCard = () => {
               justifyContent: 'space-between',
               padding: '0px',
               cursor: 'pointer',
+              height: '18px',
             }}
             onClick={handleToggle}
           >
