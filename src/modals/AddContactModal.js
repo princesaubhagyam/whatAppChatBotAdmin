@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import { Box, Button, Modal, TextField, Grid, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
-import { Link, useNavigate } from 'react-router-dom';
-const AddContactModal = ({ open, handleClose, onAddContact }) => {
-  const [loading, setLoading] = React.useState(false);
-  const navigate = useNavigate();
+import { LoadingButton } from '@mui/lab';
+import CircularProgress from '@mui/material/CircularProgress';
 
+const AddContactModal = ({ open, handleClose, onAddContact }) => {
+  const [loading, setLoading] = useState(false);
   const [contactDetails, setContactDetails] = useState({
     name: '',
     contact: '',
     city: '',
     tag: '',
   });
-
-  const [validity, setValidity] = useState({
-    name: true,
-    contact: true,
-    city: true,
-    tag: true,
+  const [errors, setErrors] = useState({
+    name: '',
+    contact: '',
+    city: '',
+    tag: '',
   });
 
   const handleChange = (event) => {
@@ -28,21 +27,47 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
       ...prevDetails,
       [name]: value,
     }));
-
-    setValidity((prevValidity) => ({
-      ...prevValidity,
-      [name]: value.trim() !== '',
+    // Clear the error for the current field when user starts typing
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: '',
     }));
   };
 
-  const handleCreate = async () => {
-    const isValid = Object.values(validity).every((value) => value);
+  const validateFields = () => {
+    let isValid = true;
+    const tempErrors = {
+      name: '',
+      contact: '',
+      city: '',
+      tag: '',
+    };
 
-    if (isValid) {
+    // Validate each field
+    if (!contactDetails.name.trim()) {
+      tempErrors.name = 'Name is required';
+      isValid = false;
+    }
+    if (!contactDetails.contact.trim()) {
+      tempErrors.contact = 'Contact is required';
+      isValid = false;
+    }
+
+    setErrors(tempErrors);
+    return isValid;
+  };
+
+  const handleCreate = async () => {
+    if (validateFields()) {
       try {
         setLoading(true);
-        const response = await apiClient.post('/api/contacts/', contactDetails);
-        toast.success('Contact created successfully!', { closeButton:  true });
+        const contactData = {
+          ...contactDetails,
+          city: contactDetails.city.trim() || '-',
+          tag: contactDetails.tag.trim() || '-',
+        };
+        const response = await apiClient.post('/api/contacts/', contactData);
+        toast.success('Contact created successfully!', { closeButton: true });
         setContactDetails({
           name: '',
           contact: '',
@@ -52,14 +77,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         handleClose();
         onAddContact(response.data); // Pass the new contact data back to the parent
       } catch (error) {
-        // console.error('Failed to create contact:', error);
         toast.error('Failed to create contact.');
       } finally {
         setLoading(false);
       }
-    } else {
-      console.log('Some fields are empty.');
-      toast.error('Please fill in all fields.');
     }
   };
 
@@ -76,7 +97,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          width: '45%',
+          width: '50%',
           margin: 'auto',
           mt: 10,
         }}
@@ -92,13 +113,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               name="name"
               value={contactDetails.name}
               onChange={handleChange}
-              error={!validity.name}
+              error={!!errors.name}
+              helperText={errors.name}
+              placeholder='Enter name'
             />
-            {!validity.name && (
-              <Typography variant="body2" color="error">
-                Name is required
-              </Typography>
-            )}
           </Grid>
           <Grid item xs={6}>
             <TextField
@@ -107,13 +125,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               name="contact"
               value={contactDetails.contact}
               onChange={handleChange}
-              error={!validity.contact}
+              error={!!errors.contact}
+              helperText={errors.contact}
+              placeholder="91952XXXXXXX"
             />
-            {!validity.contact && (
-              <Typography variant="body2" color="error">
-                Contact is required
-              </Typography>
-            )}
           </Grid>
           <Grid item xs={6}>
             <TextField
@@ -122,13 +137,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               name="city"
               value={contactDetails.city}
               onChange={handleChange}
-              error={!validity.city}
+              error={!!errors.city}
+              helperText={errors.city}
+              placeholder="Enter City"
             />
-            {!validity.city && (
-              <Typography variant="body2" color="error">
-                City is required
-              </Typography>
-            )}
           </Grid>
           <Grid item xs={6}>
             <TextField
@@ -137,19 +149,28 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
               name="tag"
               value={contactDetails.tag}
               onChange={handleChange}
-              error={!validity.tag}
+              error={!!errors.tag}
+              helperText={errors.tag}
+              placeholder='Enter tag'
             />
-            {!validity.tag && (
-              <Typography variant="body2" color="error">
-                Tag is required
-              </Typography>
-            )}
           </Grid>
         </Grid>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button onClick={handleCreate} variant="contained" color="primary" disabled={loading}>
+          <LoadingButton
+            onClick={handleCreate}
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            loadingPosition="start"
+            loadingIndicator={
+              <React.Fragment>
+                <CircularProgress size={18} color="inherit" />
+                {/* Creating.. */}
+              </React.Fragment>
+            }
+          >
             Create
-          </Button>
+          </LoadingButton>
           <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
             Cancel
           </Button>

@@ -9,29 +9,43 @@ import apiClient from 'src/api/axiosClient';
 import AppCard from 'src/components/shared/AppCard';
 import ChatSidebarMember from '../../../components/apps/chats/ChatSidebarMember';
 import Spinner from '../../../views/spinner/Spinner';
+import toast, { Toaster } from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBroadcastList } from 'src/store/apps/chat/ChatSlice';
+
+export const getBroadcastsData = async () => {
+  try {
+    const response = await apiClient.get('/api/broadcasts/');
+    return response.data.data.results;
+  } catch (error) {
+    toast.error('Error fetching data from API:', error);
+  }
+};
 
 const Chats = () => {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [broadcasts, setBroadcasts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
 
-  const getBroadcastsData = async () => {
-    try {
-      const response = await apiClient.get('/api/broadcasts/');
-      setBroadcasts(response.data.data.results);
-      return;
-    } catch (error) {
-      console.error('Error fetching data from API:', error);
-    }
+  const getBroadcastList = async () => {
+    setLoading(true);
+    const broadcastsRes = await getBroadcastsData();
+    // setBroadcasts(broadcastsRes);
+    dispatch(setBroadcastList(broadcastsRes));
+    setLoading(false);
   };
 
   useEffect(() => {
-    getBroadcastsData();
+    getBroadcastList();
   }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
-      {/* <Spinner/> */}
-      {/* <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}> */}
       <PageContainer
         title="Broadcasts"
         description="This is the Chat page"
@@ -44,20 +58,14 @@ const Chats = () => {
           borderRadius: 10,
         }}
       >
-        {/* <Breadcrumb title="Broadcasts" subtitle="Broadcasts list" /> */}
         <AppCard sx={{ display: 'flex', flexGrow: 1, flexDirection: 'row', overflow: 'hidden' }}>
-          {/* ------------------------------------------- */}
-          {/* Left part */}
-          {/* ------------------------------------------- */}
           <ChatSidebar
             isMobileSidebarOpen={isMobileSidebarOpen}
             onSidebarClose={() => setMobileSidebarOpen(false)}
             broadcasts={broadcasts}
+            getBroadcastsData={getBroadcastList}
             sx={{ flex: '0 1 300px', overflowY: 'auto' }}
           />
-          {/* ------------------------------------------- */}
-          {/* Right part */}
-          {/* ------------------------------------------- */}
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '85vh' }}>
             <ChatContent
               toggleChatSidebar={() => setMobileSidebarOpen(true)}
@@ -66,13 +74,12 @@ const Chats = () => {
             <Divider />
             <ChatMsgSent />
           </Box>
-          {/* ------------------------------------------- */}
-          {/* Left part */}
-          {/* ------------------------------------------- */}
-          <ChatSidebarMember sx={{ flex: '0 1 300px', overflowY: 'auto' }} />
+          <ChatSidebarMember
+            sx={{ flex: '0 1 300px', overflowY: 'auto' }}
+            getBroadcastList={getBroadcastList}
+          />
         </AppCard>
       </PageContainer>
-      {/* </Box> */}
     </>
   );
 };

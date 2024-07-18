@@ -16,18 +16,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import { selectBroadcast } from '../../../store/apps/chat/ChatSlice';
 import { last } from 'lodash';
-import {
-  IconSearch,
-  IconFileImport,
-  IconPlus,
-  IconUsers,
-} from '@tabler/icons';
+import { IconSearch, IconFileImport, IconPlus, IconUsers } from '@tabler/icons';
 import ImportBroadcastModal from 'src/modals/ImportBroadcastModal';
+import apiClient from 'src/api/axiosClient';
 
-const ChatListing = ({ broadcasts }) => {
+const ChatListing = ({ broadcasts, getBroadcastsData }) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
+  const [broadcastData, setBroadcastData] = useState(broadcasts);
 
   const filterChats = (broadcasts, cSearch) => {
     if (broadcasts)
@@ -80,8 +77,8 @@ const ChatListing = ({ broadcasts }) => {
             <br />
             View all broadcasts and it's analytics
           </Typography>
-          <IconSearch size={'16'} />
-          <Button
+          {/* <IconSearch size={'20'} /> */}
+          {/* <Button
             sx={{
               height: '25px',
               width: '40px',
@@ -92,7 +89,7 @@ const ChatListing = ({ broadcasts }) => {
             }}
           >
             <IconPlus size={'19'} />
-          </Button>
+          </Button> */}
           <Button
             sx={{
               height: '25px',
@@ -102,7 +99,7 @@ const ChatListing = ({ broadcasts }) => {
             }}
             onClick={handleOpenImportModal}
           >
-            <IconFileImport size={'19'} />
+            <IconPlus size={'19'} />
           </Button>
         </Stack>
       </Box>
@@ -113,8 +110,8 @@ const ChatListing = ({ broadcasts }) => {
             maxHeight: '520px',
           }}
         >
-          {broadcasts && broadcasts.length ? (
-            broadcasts.map((chat) => (
+          {broadcastData && broadcastData.length ? (
+            broadcastData.map((chat) => (
               <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={chat.id}>
                 <ListItemButton
                   onClick={() => dispatch(selectBroadcast(chat))}
@@ -122,6 +119,7 @@ const ChatListing = ({ broadcasts }) => {
                     py: 1,
                     px: 1,
                     alignItems: 'start',
+                    
                   }}
                   selected={activeChat === chat.id}
                 >
@@ -182,7 +180,11 @@ const ChatListing = ({ broadcasts }) => {
           )}
         </Scrollbar>
       </List>
-      <ImportBroadcastModal open={openImportModal} handleClose={handleCloseImportModal} />
+      <ImportBroadcastModal
+        open={openImportModal}
+        handleClose={handleCloseImportModal}
+        getBroadcastsData={getBroadcastsData}
+      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const AlertDialog = () => {
+const DeleteDialog = () => {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -21,9 +21,6 @@ const AlertDialog = () => {
 
   return (
     <>
-      <Button variant="contained" color="secondary" fullWidth onClick={handleClickOpen}>
-        Open Alert Dialog
-      </Button>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -33,16 +30,15 @@ const AlertDialog = () => {
         <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous location data to
-            Google, even when no apps are running.
+            Are you sure you want to delete this item?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button color="error" onClick={handleClose}>
-            Disagree
+            Delete
           </Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
+          <Button color="primary" onClick={handleClose} autoFocus>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
@@ -50,4 +46,4 @@ const AlertDialog = () => {
   );
 };
 
-export default AlertDialog;
+export default DeleteDialog;

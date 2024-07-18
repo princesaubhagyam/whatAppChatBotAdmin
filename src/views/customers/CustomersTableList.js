@@ -21,18 +21,23 @@ import {
   Button,
   Grid,
   Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Select,
   Stack,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-
+import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
+
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
-
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -65,8 +70,8 @@ const headCells = [
   { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
   { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
-  { id: 'created_at', numeric: false, disablePadding: false, label: 'Created at' },
-  { id: 'updated_at', numeric: false, disablePadding: false, label: 'Updated at' },
+  // { id: 'created_at', numeric: false, disablePadding: false, label: 'Created at' },
+  // { id: 'updated_at', numeric: false, disablePadding: false, label: 'Updated at' },
 ];
 
 function EnhancedTableHead(props) {
@@ -94,7 +99,7 @@ function EnhancedTableHead(props) {
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ fontWeight: 500, fontSize: 16, padding: '13px 16px' }}
+            style={{ fontWeight: 500, fontSize: 16, padding: '12px 5px' }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -125,7 +130,15 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, handleSearch, search, onOpenImportModal, setOpenAddContactModal } = props;
+  const {
+    numSelected,
+    handleSearch,
+    search,
+    onOpenImportModal,
+    setOpenAddContactModal,
+    showButtons,
+    handleOpenFilterDialog,
+  } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
   };
@@ -215,34 +228,41 @@ const EnhancedTableToolbar = (props) => {
             />
           </Box>
         </Stack>
-        <Stack sx={{ flexDirection: 'row', gap: 2 }}>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={handleOpenAddContactModal}
-          >
-            <IconPlus size={16} style={{ marginRight: '2px' }} />
-            Add Contact
-          </Button>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '9rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={onOpenImportModal}
-          >
-            <IconFileImport size={16} style={{ marginRight: '2px' }} />
-            Import Contact
-          </Button>
-        </Stack>
+        {/* <Stack sx={{ flexDirection: 'row', gap: 2 }}> */}
+        {showButtons && (
+          <Stack sx={{ flexDirection: 'row', gap: 2 }}>
+            <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+              <FilterAltIcon size="1.1rem" />
+            </IconButton>
+            <Button
+              style={{
+                backgroundColor: '#1A4D2E',
+                color: 'white',
+                width: '8rem',
+                paddingLeft: '0px',
+                paddingRight: '0px',
+              }}
+              onClick={handleOpenAddContactModal}
+            >
+              <IconPlus size={16} style={{ marginRight: '2px' }} />
+              Add Contact
+            </Button>
+            <Button
+              style={{
+                backgroundColor: '#1A4D2E',
+                color: 'white',
+                width: '9rem',
+                paddingLeft: '0px',
+                paddingRight: '0px',
+              }}
+              onClick={onOpenImportModal}
+            >
+              <IconFileImport size={16} style={{ marginRight: '2px' }} />
+              Import Contact
+            </Button>
+          </Stack>
+        )}
+        {/* </Stack> */}
       </Stack>
     </>
   );
@@ -253,6 +273,7 @@ EnhancedTableToolbar.propTypes = {
   handleSearch: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   onOpenImportModal: PropTypes.func.isRequired,
+  handleOpenFilterDialog: PropTypes.func.isRequired,
 };
 
 const CustomersTableList = () => {
@@ -269,12 +290,20 @@ const CustomersTableList = () => {
   const [openAddContactModal, setOpenAddContactModal] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [filterCriteria, setFilterCriteria] = useState({
+    column: '',
+    operator: 'contains',
+    value: '',
+  });
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
   }, []);
 
   const getApiData = async () => {
+    setLoading(true);
     let allData = [];
     let pageNum = 1;
     let hasNextPage = true;
@@ -293,13 +322,61 @@ const CustomersTableList = () => {
     }
     setAllRows(allData);
     setRows(allData);
+    setLoading(false);
   };
 
   const handleSearch = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const filteredRows = allRows.filter((row) => row.name.toLowerCase().includes(searchValue));
     setSearch(event.target.value);
+    if (event.target.value === '') {
+      setRows(allRows);
+    } else {
+      const filteredRows = allRows.filter((row) =>
+        row.name.toLowerCase().includes(event.target.value.toLowerCase()),
+      );
+      // console.log('=====', filteredRows);
+      setRows(filteredRows);
+    }
+  };
+
+  const handleOpenFilterDialog = () => {
+    setOpenFilterDialog(true);
+  };
+
+  const handleCloseFilterDialog = () => {
+    setFilterCriteria({
+      column: '',
+      operator: 'contains',
+      value: '',
+    });
+    setOpenFilterDialog(false);
+    setRows(allRows);
+    setSearch('');
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilterCriteria((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const applyFilter = () => {
+    const { column, value } = filterCriteria;
+
+    if (!column || !value) {
+      console.error('Column or value is not defined:', column, value);
+      return;
+    }
+
+    const filteredRows = allRows.filter((row) => {
+      if (row[column] && typeof row[column] === 'string') {
+        return row[column].toLowerCase().includes(value.toLowerCase());
+      }
+      return false;
+    });
+
+    console.log('Filtered Rows:', filteredRows);
+
     setRows(filteredRows);
+    setOpenFilterDialog(false);
   };
 
   const handleRequestSort = (event, property) => {
@@ -355,124 +432,237 @@ const CustomersTableList = () => {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
     <Box sx={{ width: '100%' }}>
-      <EnhancedTableToolbar
-        numSelected={selected.length}
-        handleSearch={handleSearch}
-        search={search}
-        onOpenImportModal={() => setOpenImportModal(true)}
-        setOpenAddContactModal={setOpenAddContactModal}
-      />
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  const createdAtDate = new Date(row.created_at);
-                  const updatedAtDate = new Date(row.updated_at);
-                  const formatDate = (date) => {
-                    return date.toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                    });
-                  };
-                  return (
+      {loading ? (
+        <Spinner /> // Display spinner while loading is true
+      ) : (
+        <>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            handleSearch={handleSearch}
+            search={search}
+            onOpenImportModal={() => setOpenImportModal(true)}
+            setOpenAddContactModal={setOpenAddContactModal}
+            showButtons={true}
+            handleOpenFilterDialog={handleOpenFilterDialog}
+          />
+          <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
+            <TableContainer >
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size={dense ? 'small' : 'medium'}
+              >
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {stableSort(rows, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      const isItemSelected = isSelected(row.id);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+                      const createdAtDate = new Date(row.created_at);
+                      const updatedAtDate = new Date(row.updated_at);
+                      const formatDate = (date) => {
+                        return date.toLocaleDateString(undefined, {
+                          year: 'numeric',
+                          month: 'numeric',
+                          day: 'numeric',
+                        });
+                      };
+                      return (
+                        <TableRow
+                          hover
+                          onClick={(event) => handleClick(event, row.id)}
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.id}
+                          selected={isItemSelected}
+                        >
+                          <TableCell padding="checkbox" >
+                            <Checkbox
+                              color="primary"
+                              checked={isItemSelected}
+                              inputProps={{
+                                'aria-labelledby': labelId,
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.name}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ padding: '0px', minWidth: '150px'}}>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.contact}
+                            </Typography>{' '}
+                          </TableCell>
+                          <TableCell sx={{ padding: '0px',minWidth: '180px'}}>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.city ? row.city : '-'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {row.tag ? row.tag : '-'}
+                            </Typography>
+                          </TableCell>
+                          {/* <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {formatDate(createdAtDate)}
+                            </Typography>
+                          </TableCell> */}
+                          {/* <TableCell>
+                            <Typography
+                              fontWeight="400"
+                              variant="h6"
+                              fontSize={14}
+                              padding="13px 4px"
+                            >
+                              {formatDate(updatedAtDate)}
+                            </Typography>
+                          </TableCell> */}
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
                     <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
+                      style={{
+                        height: (dense ? 33 : 53) * emptyRows,
+                      }}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.name}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.contact}
-                        </Typography>{' '}
-                      </TableCell>
-                      <TableCell align="left">
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.city}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="left">
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {row.tag}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {formatDate(createdAtDate)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography fontWeight="400" variant="h6" fontSize={14} padding="13px 4px">
-                          {formatDate(updatedAtDate)}
-                        </Typography>
-                      </TableCell>
+                      <TableCell colSpan={6} />
                     </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog} sx={{ height: '70%' }} fullWidth="lg">
+            <Paper sx={{ padding: '25px'}}>
+              <DialogTitle sx={{ padding: 1}}>Filter Contacts</DialogTitle>
+              <DialogContent>
+                <Grid container spacing={2}>
+                  <Grid
+                    item
+                    xs={6}
+                    sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}
+                  >
+                    <Select
+                      value={filterCriteria.column}
+                      onChange={handleFilterChange}
+                      fullWidth
+                      name="column"
+                      variant="outlined"
+                      displayEmpty
+                    >
+                      <MenuItem value="" disabled>
+                        Select Column
+                      </MenuItem>
+                      {headCells.map((headCell) => (
+                        <MenuItem key={headCell.id} value={headCell.id}>
+                          {headCell.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                  <Grid item xs={6} lg={6} sx={{ paddingTop: '25px !important' }}>
+                    <TextField
+                      fullWidth="lg"
+                      label="Value"
+                      variant="outlined"
+                      name="value"
+                      value={filterCriteria.value}
+                      onChange={handleFilterChange}
+                      style={{
+                        width: '265px',
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </DialogContent>
+
+              <DialogActions sx={{ justifyContent: 'space-around' , padding: '0px'}}>
+                <Button
+                  variant="contained"
+                  onClick={handleCloseFilterDialog}
+                  sx={{
+                    backgroundColor: '#b4b4b4',
+                    '&:hover': {
+                      backgroundColor: `#b4b4b4`,
+                    },
                   }}
                 >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <ImportContactModal open={openImportModal} handleClose={() => setOpenImportModal(false)} />
-      <AddContactModal
-        open={openAddContactModal}
-        handleClose={() => setOpenAddContactModal(false)}
-        onAddContact={handleAddContact}
-        
-      />
+                  Clear Filter
+                </Button>
+                <Button
+                  onClick={applyFilter}
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginLeft: '16rem !important' }}
+                >
+                  Apply
+                </Button>
+                <Button onClick={handleCloseFilterDialog} variant="contained" color="error">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Paper>
+          </Dialog>
+          <ImportContactModal
+            open={openImportModal}
+            handleClose={() => setOpenImportModal(false)}
+            getApiData={getApiData}
+          />
+
+          <AddContactModal
+            open={openAddContactModal}
+            handleClose={() => setOpenAddContactModal(false)}
+            onAddContact={handleAddContact}
+          />
+        </>
+      )}
     </Box>
   );
 };

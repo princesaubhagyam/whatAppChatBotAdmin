@@ -1,162 +1,147 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Menu, Avatar, Typography, Divider, Button, IconButton } from '@mui/material';
-import * as dropdownData from './data';
-
-import { IconMail } from '@tabler/icons';
-import { Stack } from '@mui/system';
-
-import ProfileImg from 'src/assets/images/profile/user-1.jpg';
-import unlimitedImg from 'src/assets/images/backgrounds/unlimited-bg.png';
+import { Box, Menu, Avatar, Typography, IconButton, MenuItem } from '@mui/material';
+import axios from 'axios';
+import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
+import apiClient from 'src/api/axiosClient';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
+  const [walletBalance, setWalletBalance] = useState();
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    
+    const fetchWalletBalance = async () => {
+      try {
+        const response = await apiClient.get('/wallet/');
+        if (response.status === 200) {
+          console.log(response);
+          setWalletBalance(response.data.data.balance); 
+        }
+      } catch (error) {
+        console.error('Error fetching wallet balance:', error);
+      }
+    };
+
+    fetchWalletBalance();
+  }, []);
+
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
+
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
 
   return (
-    <Box>
-      <IconButton
-        size="large"
-        aria-label="show 11 new notifications"
-        color="inherit"
-        aria-controls="msgs-menu"
-        aria-haspopup="true"
-        sx={{
-          ...(typeof anchorEl2 === 'object' && {
-            color: 'primary.main',
-          }),
-        }}
-        onClick={handleClick2}
-      >
-        <Avatar
-          src={ProfileImg}
-          alt={ProfileImg}
+    <>
+      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+        Wallet
+      </Typography>
+      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+        ₹{walletBalance}
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <IconButton
+          size="large"
+          aria-label="show user profile"
+          color="inherit"
+          aria-controls="profile-menu"
+          aria-haspopup="true"
           sx={{
-            width: 35,
-            height: 35,
+            ...(typeof anchorEl2 === 'object' && {
+              color: 'primary.main',
+            }),
           }}
-        />
-      </IconButton>
-      {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
-      {/* ------------------------------------------- */}
-      <Menu
-        id="msgs-menu"
-        anchorEl={anchorEl2}
-        keepMounted
-        open={Boolean(anchorEl2)}
-        onClose={handleClose2}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        sx={{
-          '& .MuiMenu-paper': {
-            width: '160px',
-          },
-        }}
-      >
-        <Scrollbar sx={{ height: '100%', maxHeight: '85vh' }}>
-          <Box p={3}>
-            {/* <Typography variant="h5">User Profile</Typography>
-            <Stack direction="row" py={3} spacing={2} alignItems="center">
-              <Avatar src={ProfileImg} alt={ProfileImg} sx={{ width: 95, height: 95 }} />
+          onClick={handleClick2}
+        >
+          <Avatar
+            sx={{
+              width: 35,
+              height: 35,
+              backgroundColor: 'primary.main',
+            }}
+          >
+            {user && user.full_name ? user.full_name.charAt(0) : ''}
+          </Avatar>
+        </IconButton>
+        <Menu
+          id="profile-menu"
+          anchorEl={anchorEl2}
+          keepMounted
+          open={Boolean(anchorEl2)}
+          onClose={handleClose2}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          sx={{
+            '& .MuiMenu-paper': {
+              width: '160px',
+            },
+          }}
+        >
+          <Scrollbar sx={{ height: '100%', maxHeight: '85vh' }}>
+            <Box>
               <Box>
-                <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-                  Mathew Anderson
-                </Typography>
-                <Typography variant="subtitle2" color="textSecondary">
-                  Designer
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  color="textSecondary"
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
+                <MenuItem
+                  component={Link}
+                  to="/user-profile"
+                  onClick={handleClose2}
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: '400',
+                    '&:hover': {
+                      backgroundColor: `#1A4D2E`,
+                      color: `white`,
+                    },
+                  }}
                 >
-                  <IconMail width={15} height={15} />
-                  info@modernize.com
-                </Typography>
+                  Your Profile
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/change-password"
+                  onClick={handleClose2}
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: '400',
+                    '&:hover': {
+                      backgroundColor: `#1A4D2E`,
+                      color: `white`,
+                    },
+                  }}
+                >
+                  Change Password
+                </MenuItem>
+                <MenuItem
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: '400',
+                    '&:hover': {
+                      backgroundColor: `#1A4D2E`,
+                      color: `white`,
+                    },
+                  }}
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('ref');
+                    localStorage.removeItem('access_app');
+                    handleClose2();
+                  }}
+                  component={Link}
+                  to="/auth/login"
+                >
+                  Logout
+                </MenuItem>
               </Box>
-            </Stack>
-            <Divider /> */}
-            {/* {dropdownData.profile.map((profile) => (
-              <Box key={profile.title}>
-                <Box sx={{ py: 2, px: 0 }} className="hover-text-primary">
-                  <Link to={profile.href}>
-                    <Stack direction="row" spacing={2}>
-                      <Box
-                        width="45px"
-                        height="45px"
-                        bgcolor="primary.light"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Avatar
-                          src={profile.icon}
-                          alt={profile.icon}
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            borderRadius: 0,
-                          }}
-                        />
-                      </Box>
-                      <Box>
-                        <Typography
-                          variant="subtitle2"
-                          fontWeight={600}
-                          color="textPrimary"
-                          className="text-hover"
-                          noWrap
-                          sx={{
-                            width: '240px',
-                          }}
-                        >
-                          {profile.title}
-                        </Typography>
-                        <Typography
-                          color="textSecondary"
-                          variant="subtitle2"
-                          sx={{
-                            width: '240px',
-                          }}
-                          noWrap
-                        >
-                          {profile.subtitle}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </Link>
-                </Box>
-              </Box>
-            ))} */}
-            <Box mt={2}>
-              <Button
-                to="/auth/login"
-                variant="outlined"
-                color="primary"
-                component={Link}
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  localStorage.removeItem('ref');
-                  localStorage.removeItem('access');
-                }}
-                fullWidth
-              >
-                Logout
-              </Button>
             </Box>
-          </Box>
-        </Scrollbar>
-      </Menu>
-    </Box>
+          </Scrollbar>
+        </Menu>
+      </Box>
+    </>
   );
 };
 

@@ -19,8 +19,8 @@ import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCa
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 
 const Ecommerce = () => {
+  console.log('hello');
   return (
-
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={3}>
@@ -32,10 +32,10 @@ const Ecommerce = () => {
         {/* column */}
         <Grid item xs={12} lg={4}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Payment />
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Grid> */}
+            <Grid item xs={12} sm={6} lg={12}>
               <ProductsSold />
             </Grid>
           </Grid>
@@ -52,12 +52,11 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-            <QualityRatingCard />
+              <QualityRatingCard />
             </Grid>
-            <Grid item xs={12}>
-            <SetUpProfileCard />
-            </Grid>
-            
+            {/* <Grid item xs={12} lg={14}>
+              <ViewProfileCard />
+            </Grid> */}
           </Grid>
           {/* <Grid item xs={12} sm={6} lg={4}>
             <SalesOverview />
@@ -78,25 +77,28 @@ const Ecommerce = () => {
         </Grid> */}
         {/* column */}
         <Grid item xs={12} sm={6} lg={4}>
-          <ViewProfileCard />
+          <SetUpProfileCard />
+        </Grid>
+        <Grid item xs={12} lg={14}>
+              <ViewProfileCard />
+            </Grid>
+        {/* column */}
+        <Grid item xs={12} lg={4}>
+          {/* <YearlySales /> */}
         </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>
-          <YearlySales />
-        </Grid>
-        {/* column */}
-        <Grid item xs={12} lg={4}>
-          <PaymentGateways />
+          {/* <PaymentGateways /> */}
         </Grid>
         {/* column */}
 
         <Grid item xs={12} lg={4}>
-          <RecentTransactions />
+          {/* <RecentTransactions /> */}
         </Grid>
         {/* column */}
 
         <Grid item xs={12} lg={8}>
-          <ProductPerformances />
+          {/* <ProductPerformances /> */}
         </Grid>
       </Grid>
     </Box>

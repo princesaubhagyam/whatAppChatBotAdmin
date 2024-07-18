@@ -31,12 +31,11 @@ import {
   Card,
   CardMedia,
 } from '@mui/material';
-
+import DeleteDialog from 'src/modals/DeleteDialog';
 import { visuallyHidden } from '@mui/utils';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchProducts } from 'src/store/apps/eCommerce/EcommerceSlice';
-import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox';
+import img from 'src/assets/images/backgrounds/Template_background.jpg';
+import { Delete, DeleteOutline } from '@mui/icons-material';
+import { useState } from 'react';
 import {
   IconDotsVertical,
   IconEye,
@@ -45,8 +44,9 @@ import {
   IconSearch,
   IconTrash,
 } from '@tabler/icons';
-import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
-import axiosClientBm from 'src/api/axiosClientBm';
+
+import createMetaAxiosClient from 'src/api/axiosClientMeta';
+import { LoadingButton } from '@mui/lab';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -101,10 +101,10 @@ const headCells = [
     label: 'Status',
   },
   {
-    id: 'view',
+    id: 'action',
     numeric: false,
     disablePadding: false,
-    label: 'View',
+    label: 'Action',
   },
   // {
   //   id: 'edit',
@@ -238,10 +238,18 @@ const TemplatesTableList = () => {
   const [search, setSearch] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [view, setView] = React.useState([]);
-
+  const [dialogTitle, setDialogTitle] = React.useState('');
+  const [currentId, setCurrentId] = useState(null);
+  const [currentName, setCurrentName] = useState('');
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleClickOpen = (row, index) => {
+    console.log('Row clicked:', row);
     setOpen(true);
-    setView(row.components);
+    //setView(row.components);
+    setView(row.components || []);
+    setDialogTitle(row.name);
   };
 
   const handleClose = () => {
@@ -253,7 +261,8 @@ const TemplatesTableList = () => {
 
   const getApiData = async () => {
     try {
-      const response = await axiosClientBm.get('/message_templates');
+      const metaAxiosClient = createMetaAxiosClient();
+      const response = await metaAxiosClient.get('/message_templates');
       setRows(response.data.data);
       return;
     } catch (error) {
@@ -261,6 +270,65 @@ const TemplatesTableList = () => {
     }
   };
 
+  // const handleDelete = async (id, templateName) => {
+  //   try {
+  //     const metaAxiosClient = createMetaAxiosClient();
+  //     await metaAxiosClient.delete(`/message_templates`, {
+  //       params: {
+  //         hsm_id: id,
+  //         name: templateName,
+  //       },
+  //     });
+
+  //     setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+  //   } catch (error) {
+  //     console.error('Error deleting template:', error);
+  //   }
+  // };
+
+  // const handleDeleteClick = (id, templateName) => {
+  //   setCurrentId(id);
+  //   setCurrentName(templateName);
+  //   setDeleteOpen(true);
+  //   handleDeleteApi(id, templateName); // delete the row
+  // };
+
+  const handleDelete = (id, templateName) => {
+    setCurrentId(id);
+    setCurrentName(templateName);
+    setConfirmDelete(true);
+  };
+  const handleConfirmDelete = async () => {
+    setConfirmDelete(false);
+    setLoading(true); 
+
+    try {
+      await handleDeleteApi(currentId, currentName);
+    } finally {
+      setLoading(false); 
+    }
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+  };
+
+  // Add this new function to handle the API call for deleting a template
+  const handleDeleteApi = async (id, templateName) => {
+    try {
+      const metaAxiosClient = createMetaAxiosClient();
+      await metaAxiosClient.delete(`/message_templates`, {
+        params: {
+          hsm_id: id,
+          name: templateName,
+        },
+      });
+
+      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+    } catch (error) {
+      console.error('Error deleting template:', error);
+    }
+  };
   const handleSearch = (event) => {
     const filteredRows = rows?.filter((row) => {
       return row.name.toLowerCase().includes(event.target.value);
@@ -323,9 +391,14 @@ const TemplatesTableList = () => {
   //   setDense(event.target.checked);
   // };
 
+  // const handleDeleteClick = (id, templateName) => {
+  //   if (window.confirm(`Are you sure you want to delete the template: ${templateName}?`)) {
+  //     handleDelete(id, templateName);
+  //   }
+  // };
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
@@ -423,6 +496,13 @@ const TemplatesTableList = () => {
                               <IconEye />
                             </IconButton>
                           </Tooltip>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleDelete(row.id, row.name)}
+                          >
+                            <DeleteOutline />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );
@@ -461,52 +541,145 @@ const TemplatesTableList = () => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        maxWidth="xs"
       >
-        <DialogTitle id="alert-dialog-title">{'Your template'}</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="alert-dialog-title">{dialogTitle}</DialogTitle>
+        <DialogContent sx={{ padding: '7px 8px' }}>
           <DialogContentText id="alert-dialog-description">
-            {view.map((component) => {
-              switch (component.type) {
-                case 'HEADER':
-                  return (
-                    <CardMedia
-                      sx={{ height: 240 }}
-                      image={component.example?.header_handle[0]}
-                      title={component.type}
-                    />
-                  );
-                case 'BODY':
-                  return (
-                    <Typography key={component.type} variant="body1">
-                      {component.text.split('\n').map(function (item, idx) {
+            <Box>
+              <CardMedia
+                component="div"
+                image={img}
+                sx={{
+                  overflow: 'auto',
+                  backgroundSize: 'cover',
+                  boxShadow: '0px 1px 5px #00000025',
+                  p: 2,
+                  border: '1px solid lightgrey',
+                  borderRadius: '8px',
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: '#E9FEEE',
+                    padding: 1,
+                    boxShadow: '0px 1px 110px #00000025',
+                    borderBottom: '1px solid #80808078',
+                  }}
+                >
+                  {view.length > 0 &&
+                    view.map((component) => {
+                      console.log('component', component);
+                      switch (component.type) {
+                        case 'HEADER': {
+                          const headerHandle = component.example?.header_handle?.[0];
+                          const headerText = component.example?.header_text?.[0];
+                          if (headerHandle) {
+                            const isVideo = component.format === 'VIDEO';
+                            return isVideo ? (
+                              <CardMedia
+                                key={component.type}
+                                component="video"
+                                image={headerHandle}
+                                controls
+                                title={component.type}
+                                sx={{ height: 200 }}
+                                autoPlay
+                              />
+                            ) : (
+                              <CardMedia
+                                key={component.type}
+                                component="img"
+                                image={headerHandle}
+                                title={component.type}
+                                sx={{ height: 200 }}
+                              />
+                            );
+                          }
+
+                          if (headerText) {
+                            return (
+                              <Typography key={'1'} variant="body1">
+                                <span key={'1'}>
+                                  {headerText}
+                                  <br />
+                                </span>
+                              </Typography>
+                            );
+                          }
+
+                          return null;
+                        }
+
+                        case 'BODY':
+                          return (
+                            <Typography key={component?.type} variant="body1">
+                              {component?.text.split('\n').map((item, idx) => (
+                                <span key={idx}>
+                                  {item}
+                                  <br />
+                                </span>
+                              ))}
+                            </Typography>
+                          );
+
+                        case 'FOOTER':
+                          return (
+                            <Typography
+                              key={component?.type}
+                              variant="caption"
+                              sx={{ fontStyle: 'bold', fontSize: '0.85rem', color: 'gray' }}
+                            >
+                              {component?.text}
+                            </Typography>
+                          );
+                        default:
+                          return null;
+                      }
+                    })}
+                </Box>
+
+                <Box
+                  sx={{
+                    backgroundColor: 'white',
+                    width: '100%',
+                    mt: '1px',
+                    boxShadow: '0px 1px 5px #00000025',
+                  }}
+                >
+                  {view.length > 0 &&
+                    view.map((component) => {
+                      if (component?.type === 'BUTTONS') {
                         return (
-                          <span key={idx}>
-                            {item}
-                            <br />
-                          </span>
+                          <Button
+                            key={component?.type}
+                            variant="outline"
+                            href={component?.buttons[0].url}
+                            sx={{
+                              backgroundColor: 'transparent',
+                              color: '#0093E1',
+                              fontSize: '1rem',
+                              fontWeight: '600',
+                              width: '100%',
+                              '&:hover': { backgroundColor: '#1a4d2e00', color: '#0093E1' },
+                              display: 'flex',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <IconMessage2Share />
+                            {component?.buttons[0].icon}
+                            {component?.buttons[0].text}
+                          </Button>
                         );
-                      })}
-                    </Typography>
-                  );
-                case 'FOOTER':
-                  return (
-                    <Typography key={component.type} variant="caption">
-                      {component.text}
-                    </Typography>
-                  );
-                case 'BUTTONS':
-                  return (
-                    <Button key={component.type} variant="outline" href={component.buttons[0].url}>
-                      <IconMessage2Share />
-                      {component?.buttons[0].text}
-                    </Button>
-                  );
-                default:
-                  return null;
-              }
-            })}
+                      }
+                      return null;
+                    })}
+                </Box>
+              </CardMedia>
+            </Box>
           </DialogContentText>
         </DialogContent>
+
         <DialogActions>
           {/* <Button color="error" onClick={handleClose}>
             Disagree
@@ -514,6 +687,31 @@ const TemplatesTableList = () => {
           <Button onClick={handleClose} autoFocus>
             Agree
           </Button> */}
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        aria-labelledby="confirm-delete-dialog"
+        sx={{ top: '-200px' }}
+      >
+        <DialogTitle id="confirm-delete-dialog">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Are you sure you want to delete the template?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <LoadingButton
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            loadingPosition="start"
+            loading={loading}
+          >
+            Delete
+          </LoadingButton>
+          <Button onClick={() => setConfirmDelete(false)} color="primary" variant="contained">
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

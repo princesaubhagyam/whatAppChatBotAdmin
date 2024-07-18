@@ -5,10 +5,12 @@ import { IconArrowUpLeft } from '@tabler/icons';
 
 import DashboardCard from '../../shared/DashboardCard';
 import icon1Img from 'src/assets/images/svgs/icon-paypal.svg';
+import { useSelector } from 'react-redux';
 
 const Payment = () => {
   const theme = useTheme();
   const successlight = theme.palette.success.light;
+  //const walletBalance = useSelector((state) => state.authReducer.wallet_balance);
 
   return (
     <DashboardCard>
@@ -19,18 +21,19 @@ const Payment = () => {
         >
           <Avatar src={icon1Img} alt={icon1Img} sx={{ width: 24, height: 24 }} />
         </Avatar>
-        <Typography variant="subtitle2" color="textSecondary" mt={3}>
-          Payments
+        <Typography variant="subtitle2" color="textSecondary" mt={7}>
+          Wallet
         </Typography>
-        <Typography variant="h4">$678,298</Typography>
-        <Stack direction="row" spacing={1} mt={1} alignItems="center">
+        {/* <Typography variant="h4">$678,298</Typography> */}
+        {/* <Typography variant="h4">₹{walletBalance}</Typography> */}
+        {/* <Stack direction="row" spacing={1} mt={1} alignItems="center">
           <Avatar sx={{ bgcolor: successlight, width: 20, height: 20 }}>
             <IconArrowUpLeft width={16} color="#39B69A" />
           </Avatar>
           <Typography variant="subtitle2" color="textSecondary">
             +9%
           </Typography>
-        </Stack>
+        </Stack> */}
       </>
     </DashboardCard>
   );

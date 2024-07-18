@@ -18,7 +18,7 @@ export const Profile = () => {
     >
       {!hideMenu ? (
         <>
-          <Avatar alt="Remy Sharp" src={img1} />
+          {/* <Avatar alt="Remy Sharp" src={img1} /> */}
 
           <Box>
             <Typography variant="h6"  color="textPrimary">Mathew</Typography>

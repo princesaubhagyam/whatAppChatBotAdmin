@@ -30,7 +30,6 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router';
 import { LoadingButton } from '@mui/lab';
-import axiosClientBm from 'src/api/axiosClientBm';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -45,6 +44,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
 import apiClient from 'src/api/axiosClient';
+import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 const BCrumb = [
   { to: '/', title: 'Home' },
   { to: '/templates', title: 'Templates' },
@@ -276,6 +276,7 @@ export default function CreateTemplate() {
                 text: values.buttonText,
                 url: callToActionURL,
                 example: ['summer2023'],
+                icon: buttonIcon,
               },
             ],
           };
@@ -293,7 +294,8 @@ export default function CreateTemplate() {
         // });
 
         if (isFormIsValid) {
-          const response = await axiosClientBm.post('/message_templates', reqBody);
+          const metaClient = createMetaAxiosInstance();
+          const response = await metaClient.post('/message_templates', reqBody);
 
           if (response) {
             setLoading(false);
@@ -347,7 +349,7 @@ export default function CreateTemplate() {
       let mediaFile = new FormData();
       mediaFile.append('data', event.target.files[0]);
       const finalResponse = await apiClient.post(
-        `/api/upload_file_facebook/?base64_data=${response.data.id}&sig=${response.data.sig}`,
+        `/api/upload_file_facebook/${response.data.id}`,
         mediaFile,
         {
           headers: { 'content-type': 'multipart/form-data' },

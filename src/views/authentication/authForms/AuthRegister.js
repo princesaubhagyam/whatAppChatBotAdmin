@@ -12,6 +12,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
 import toast, { Toaster } from 'react-hot-toast';
+import { LoadingButton } from '@mui/lab';
 
 import apiClient from 'src/api/axiosClient';
 
@@ -201,17 +202,18 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
         </Stack>
 
         <Box mt={2}>
-          <Button
+          <LoadingButton
             color="primary"
             variant="contained"
             size="large"
             fullWidth
             onClick={handleSignUp}
             type="submit"
-            disabled={loading}
+            loading={loading}
+            loadingPosition="start"
           >
             Sign Up
-          </Button>
+          </LoadingButton>
         </Box>
 
         {subtitle}
