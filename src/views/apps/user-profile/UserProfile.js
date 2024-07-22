@@ -34,7 +34,8 @@ const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) 
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
-      sx={{ position: 'absolute', top: '-500px'}}
+      // sx={{ position: 'absolute', top: '-400px'}}
+      sx={{ height: '30%' }} 
     >
       <DialogTitle id="alert-dialog-title">Delete Confirmation</DialogTitle>
       <DialogContent>
@@ -45,7 +46,7 @@ const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) 
       <DialogActions>
         
         <Button onClick={handleDelete} color="error" disabled={deleteDialogLoading} variant='contained'>
-          {deleteDialogLoading ? <CircularProgress size={24} color="gray" /> : 'Delete'}
+          {deleteDialogLoading ? <CircularProgress size={24} /> : 'Delete'}
         </Button>
         <Button onClick={handleClose} color="primary" variant='contained'>
           Cancel

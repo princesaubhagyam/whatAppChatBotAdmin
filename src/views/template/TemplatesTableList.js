@@ -299,9 +299,8 @@ const TemplatesTableList = () => {
     setConfirmDelete(true);
   };
   const handleConfirmDelete = async () => {
+    //setLoading(true); 
     setConfirmDelete(false);
-    setLoading(true); 
-
     try {
       await handleDeleteApi(currentId, currentName);
     } finally {
@@ -693,7 +692,8 @@ const TemplatesTableList = () => {
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         aria-labelledby="confirm-delete-dialog"
-        sx={{ top: '-200px' }}
+        sx={{ height: '40%' }} 
+
       >
         <DialogTitle id="confirm-delete-dialog">Confirm Deletion</DialogTitle>
         <DialogContent>
