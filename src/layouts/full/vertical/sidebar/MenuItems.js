@@ -83,6 +83,12 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Media',
+    icon: IconPhoto,
+     href: '/media',
+  },
+  {
+    id: uniqueId(),
     title: 'Templates',
     icon: IconTemplate,
     href: '/templates',

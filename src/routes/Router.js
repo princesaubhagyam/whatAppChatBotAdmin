@@ -17,6 +17,7 @@ const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')
 
 /* ****Apps***** */
 const Broadcasts = Loadable(lazy(() => import('../views/apps/chat/Chat')));
+const BroadcastsDetail =  Loadable(lazy(() => import('../views/media/BroadcastsDetail')));
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
 const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
@@ -146,7 +147,7 @@ const Router = [
       { path: '/team', element: <Templates /> },
       { path: '/pending-requests', element: <Templates /> },
       { path: '/settings', element: <Maintenance /> },
-
+      { path: '/broadcast/:id', element: <BroadcastsDetail />},
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },

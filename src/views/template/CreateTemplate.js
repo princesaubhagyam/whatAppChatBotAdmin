@@ -137,7 +137,7 @@ export default function CreateTemplate() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
   const [mediaRes, setMediaRes] = useState();
-  console.log(mediaRes);
+  //console.log('mediares',mediaRes);
   const CHARACTER_LIMIT = 1000;
   const CHARACTER_LIMIT_TEXT = 30;
   const CHARACTER_LIMIT_FOOTER = 50;
@@ -154,9 +154,9 @@ export default function CreateTemplate() {
     },
   });
 
-  const [variables, setVariables] = useState([{ id: 1, value: '' }]);
-  const [variablesTitle, setVariablesTitle] = useState([{ id: 1, value: '' }]);
-
+  const [variables, setVariables] = useState([]);
+  const [variablesTitle, setVariablesTitle] = useState([]);
+  //console.log(variablesTitle, variables);
   const addVariable = () => {
     setVariables([...variables, { id: variables.length + 1, value: '' }]);
     formikTemplate.values.body = formikTemplate.values.body + `{{${variables.length + 1}}}`;
@@ -199,17 +199,17 @@ export default function CreateTemplate() {
   };
   const formikTemplate = useFormik({
     initialValues: {
-      body: 'Welcome {{1}}!',
+      body: '',
       buttonText: '',
       footer: '',
-      text: 'Hi {{1}}!',
+      text: '',
     },
     onSubmit: async (values) => {
       setLoading(true);
       try {
         const bodyValues = variables.map((v) => v.value);
         const titleValues = variables.map((v) => v.value);
-
+        const validButton = values.buttonText && values.buttonText.trim().length > 0;
         let reqBody = {
           name: preData.name,
           language: preData.language,
@@ -220,32 +220,55 @@ export default function CreateTemplate() {
               format: HeaderSelect,
               text: HeaderSelect === 'TEXT' ? values.text : '',
               // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
-              example: {
-                header_text: titleValues,
-              },
+              ...(titleValues.length > 0 && {
+                example: {
+                  header_text: titleValues,
+                },
+              }),
             },
             {
               type: 'BODY',
               text: values.body,
-              example: {
-                body_text: [bodyValues],
-              },
+              // example: {
+              //   body_text: [bodyValues],
+              // body_text: bodyValues.length > 0 ? [bodyValues] : [''],
+              //},
+              ...(bodyValues.length > 0 && {
+                example: {
+                  body_text: [bodyValues],
+                },
+              }),
             },
             {
               type: 'FOOTER',
               text: values.footer,
             },
-            {
-              type: 'BUTTONS',
-              buttons: [
-                {
-                  type: 'QUICK_REPLY',
-                  text: values.buttonText,
-                },
-              ],
-            },
+            ...(validButton && [
+              {
+                type: 'BUTTONS',
+                buttons: [
+                  {
+                    type: buttonSelect,
+                    text: values.buttonText,
+
+                    ...(buttonSelect === 'PHONE_NUMBER' && { phone_number: phoneNumber }),
+                    ...(buttonSelect === 'URL' && {
+                      url: callToActionURL,
+                      example: ['summer2023'],
+                    }),
+                  },
+                ],
+              },
+            ]),
           ],
         };
+        reqBody.components.forEach((component) => {
+          if (component.type === 'BUTTONS') {
+            component.buttons.forEach((button) => {
+              delete button.icon;
+            });
+          }
+        });
         if (HeaderSelect === 'MEDIA') {
           reqBody.components[0] = {
             type: 'HEADER',
@@ -276,7 +299,7 @@ export default function CreateTemplate() {
                 text: values.buttonText,
                 url: callToActionURL,
                 example: ['summer2023'],
-                icon: buttonIcon,
+                //icon: buttonIcon,
               },
             ],
           };
@@ -339,30 +362,67 @@ export default function CreateTemplate() {
     setMediaType(event.target.value);
   };
 
-  const handleMediaContentChange = async (event) => {
-    setMediaContent(URL.createObjectURL(event.target.files[0]));
+  // const handleMediaContentChange = async (event) => {
+  //   setMediaContent(URL.createObjectURL(event.target.files[0]));
 
-    const response = await apiClient.post(
-      `/api/create_session_facebook/?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
-    );
-    if (response) {
-      let mediaFile = new FormData();
-      mediaFile.append('data', event.target.files[0]);
-      const finalResponse = await apiClient.post(
-        `/api/upload_file_facebook/${response.data.id}`,
-        mediaFile,
-        {
-          headers: { 'content-type': 'multipart/form-data' },
-        },
+  //   const response = await apiClient.post(
+  //     `/api/create_session_facebook/?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
+  //   );
+  //   if (response) {
+  //     let mediaFile = new FormData();
+  //     mediaFile.append('data', event.target.files[0]);
+  //     console.log('abcd',mediaFile);
+  //     const finalResponse = await apiClient.post(
+  //       `/api/upload_file_facebook/${response.data.id}`,
+  //       mediaFile,
+  //       {
+  //         headers: { 'content-type': 'multipart/form-data' },
+  //       },
+  //     );
+
+  //     setMediaRes(finalResponse.data.h);
+  //     console.log(finalResponse.data.h);
+  //   }
+  // };
+  const handleMediaContentChange = async (event) => {
+    try {
+      const file = event.target.files[0];
+      setMediaContent(URL.createObjectURL(file));
+
+      const response = await apiClient.post(
+        `/api/create_session_facebook/?file_length=${file.size}&file_type=${file.type}`,
       );
 
-      setMediaRes(finalResponse.data.h);
-      console.log(finalResponse.data.h);
+      if (response && response.data.id) {
+        let mediaFile = new FormData();
+        mediaFile.append('file', file);
+
+        for (let [key, value] of mediaFile.entries()) {
+          console.log(`${key}:`, value);
+        }
+
+        const finalResponse = await apiClient.post(
+          `/api/upload_file_facebook/${response.data.id}`,
+          mediaFile,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          },
+        );
+        console.log('Upload file response:', finalResponse);
+
+        setMediaRes(finalResponse.data.res.h);
+        console.log('abc image', finalResponse.data.res.h);
+      } else {
+        console.error('Failed to create session.');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error.response ? error.response.data : error.message);
     }
   };
 
   const handleButtonSelectChange = (event) => {
     const value = event.target.value;
+    console.log('Selected Value:', value);
     setButtonSelect(value);
     formikTemplate.setFieldValue('buttonText', '');
     switch (value) {
@@ -382,11 +442,17 @@ export default function CreateTemplate() {
     let num = countPlaceholders(e.target.value);
     if (variables.length < num) {
       setVariables([...variables, { id: variables.length + 1, value: '' }]);
+      console.log('variables<', variables);
     }
     if (variables.length > num) {
-      setVariables(variables.splice(-1));
+      console.log('variables>', variables);
+
+      setVariables(variables.slice(0, -1));
+      console.log('variables>', variables);
     }
     setInputLength(e.target.value.length);
+    console.log('e', e.target.value);
+
     formikTemplate.handleChange(e);
   };
   const handleFieldChangeTitle = (e) => {
@@ -617,7 +683,9 @@ export default function CreateTemplate() {
                   </Typography>
                   <CustomTextField
                     fullWidth
-                    // id="body"
+                    id="body"
+                    value={formikTemplate.values.body}
+                    onChange={handleFieldChange}
                     name="body"
                     multiline
                     rows={4}
@@ -631,7 +699,7 @@ export default function CreateTemplate() {
                         },
                       },
                     }}
-                    id="outlined-error-helper-text"
+                    //id="outlined-error-helper-text"
                     helperText={inputLength >= CHARACTER_LIMIT && <ErrorText />}
                     InputProps={{
                       endAdornment: (
@@ -642,25 +710,25 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
-                    value={formikTemplate.values.body}
-                    onChange={handleFieldChange}
+
                     // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
-                  {variables.map((variable, index) => (
-                    <Box display="flex" alignItems="center" mt={2} key={variable.id}>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        label={`{{${index + 1}}}`}
-                        value={variable.value}
-                        onChange={(event) => handleVariableChange(variable.id, event)}
-                        variant="outlined"
-                      />
-                      <IconButton aria-label="delete" onClick={() => removeVariable(variable.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
+                  {variables &&
+                    variables?.map((variable, index) => (
+                      <Box display="flex" alignItems="center" mt={2} key={variable.id}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label={`{{${index + 1}}}`}
+                          value={variable.value}
+                          onChange={(event) => handleVariableChange(variable.id, event)}
+                          variant="outlined"
+                        />
+                        <IconButton aria-label="delete" onClick={() => removeVariable(variable.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    ))}
                   <Box mt={2}>
                     <Button variant="outlined" color="primary" size="small" onClick={addVariable}>
                       Add Variable

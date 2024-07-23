@@ -299,12 +299,12 @@ const TemplatesTableList = () => {
     setConfirmDelete(true);
   };
   const handleConfirmDelete = async () => {
-    //setLoading(true); 
-    setConfirmDelete(false);
+    setLoading(true); 
     try {
       await handleDeleteApi(currentId, currentName);
     } finally {
       setLoading(false); 
+      setConfirmDelete(false); 
     }
   };
 

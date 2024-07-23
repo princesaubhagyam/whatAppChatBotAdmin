@@ -12,7 +12,7 @@ import Spinner from '../../../views/spinner/Spinner';
 import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBroadcastList } from 'src/store/apps/chat/ChatSlice';
-
+import BroadcastTableList from 'src/views/media/BroadcastTableList';
 export const getBroadcastsData = async () => {
   try {
     const response = await apiClient.get('/api/broadcasts/');
@@ -27,7 +27,7 @@ const Chats = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
-
+  const broadcastsFromRedux = useSelector((state) => state.chatReducer.broadcasts);
   const getBroadcastList = async () => {
     setLoading(true);
     const broadcastsRes = await getBroadcastsData();
@@ -80,6 +80,7 @@ const Chats = () => {
           />
         </AppCard>
       </PageContainer>
+      {/* <BroadcastTableList broadcasts={broadcasts} /> */}
     </>
   );
 };
