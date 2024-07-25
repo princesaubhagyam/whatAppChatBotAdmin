@@ -272,7 +272,15 @@ export default function CreateTemplate() {
         if (HeaderSelect === 'MEDIA') {
           reqBody.components[0] = {
             type: 'HEADER',
-            format: mediaType === 'image' ? 'IMAGE' : 'VIDEO',
+            format:
+              mediaType === 'image'
+                ? 'IMAGE'
+                : mediaType === 'video'
+                ? 'VIDEO'
+                : mediaType === 'document'
+                ? 'DOCUMENT'
+                : '',
+
             example: {
               header_handle: [mediaRes],
             },
@@ -360,6 +368,7 @@ export default function CreateTemplate() {
 
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
+    setMediaContent(null);
   };
 
   // const handleMediaContentChange = async (event) => {
@@ -638,6 +647,7 @@ export default function CreateTemplate() {
                           </Box>
                         </>
                       )}
+
                       {HeaderSelect === 'MEDIA' && (
                         <>
                           <RadioGroup
@@ -667,7 +677,9 @@ export default function CreateTemplate() {
                                     ? 'image/*'
                                     : mediaType === 'video'
                                     ? 'video/*'
-                                    : 'application/pdf'
+                                    : mediaType === 'document'
+                                    ? 'application/pdf'
+                                    : ''
                                 }
                                 onChange={handleMediaContentChange}
                               />
@@ -896,19 +908,31 @@ export default function CreateTemplate() {
                             </Typography>
                           </Box>
                         )} */}
+
                         {HeaderSelect === 'TEXT' ? (
                           <Typography variant="h6" component="div">
                             {formikTemplate.values.text}
                           </Typography>
                         ) : mediaContent ? (
-                          <CardMedia
-                            component={mediaType === 'image' ? 'img' : mediaType}
-                            src={mediaContent}
-                            controls={mediaType === 'video'}
-                            controlsList={mediaType === 'video' && []}
-                            title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
-                            sx={{ height: 140, mb: 2 }}
-                          />
+                          mediaType === 'document' ? (
+                            <Box sx={{ mb: 2 }}>
+                              <iframe
+                                src={mediaContent}
+                                width="100%"
+                                height="50%"
+                                title="Document Preview"
+                              ></iframe>
+                            </Box>
+                          ) : (
+                            <CardMedia
+                              component={mediaType === 'image' ? 'img' : mediaType}
+                              src={mediaContent}
+                              controls={mediaType === 'video'}
+                              controlsList={mediaType === 'video' && []}
+                              title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
+                              sx={{ height: 140, mb: 2 }}
+                            />
+                          )
                         ) : null}
                         {formikTemplate.values.body && (
                           <Box sx={{ mb: 1 }}>

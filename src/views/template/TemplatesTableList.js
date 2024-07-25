@@ -30,6 +30,8 @@ import {
   DialogActions,
   Card,
   CardMedia,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
 import DeleteDialog from 'src/modals/DeleteDialog';
 import { visuallyHidden } from '@mui/utils';
@@ -47,6 +49,7 @@ import {
 
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
 import { LoadingButton } from '@mui/lab';
+import CachedIcon from '@mui/icons-material/Cached';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -169,7 +172,7 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, handleSearch, search } = props;
+  const { numSelected, handleSearch, search, handleRefreshpage } = props;
 
   return (
     <Toolbar
@@ -187,7 +190,19 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} Selected
         </Typography>
       ) : (
-        <Box sx={{ flex: '1 1 100%', justifyContent: 'flex-end', textAlign: 'right', mr: 1 }}>
+        <Box
+          sx={{
+            flex: '1 1 100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            textAlign: 'right',
+            mr: 1,
+          }}
+        >
+          <Button type="submit" variant="contained" onClick={handleRefreshpage}>
+            <CachedIcon fontSize="medium" sx={{ marginRight: '2px' }} />
+            Refresh
+          </Button>
           <TextField
             InputProps={{
               startAdornment: (
@@ -244,6 +259,7 @@ const TemplatesTableList = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   const handleClickOpen = (row, index) => {
     console.log('Row clicked:', row);
     setOpen(true);
@@ -267,6 +283,9 @@ const TemplatesTableList = () => {
       return;
     } catch (error) {
       console.error('Error fetching data from API:', error);
+    } finally {
+      setLoading(false);
+      setTableLoading(false);
     }
   };
 
@@ -293,18 +312,23 @@ const TemplatesTableList = () => {
   //   handleDeleteApi(id, templateName); // delete the row
   // };
 
+  const handleRefreshpage = async () => {
+    setTableLoading(true);
+    await getApiData();
+  };
+
   const handleDelete = (id, templateName) => {
     setCurrentId(id);
     setCurrentName(templateName);
     setConfirmDelete(true);
   };
   const handleConfirmDelete = async () => {
-    setLoading(true); 
+    setLoading(true);
     try {
       await handleDeleteApi(currentId, currentName);
     } finally {
-      setLoading(false); 
-      setConfirmDelete(false); 
+      setLoading(false);
+      setConfirmDelete(false);
     }
   };
 
@@ -312,7 +336,6 @@ const TemplatesTableList = () => {
     setDeleteOpen(false);
   };
 
-  // Add this new function to handle the API call for deleting a template
   const handleDeleteApi = async (id, templateName) => {
     try {
       const metaAxiosClient = createMetaAxiosClient();
@@ -339,7 +362,6 @@ const TemplatesTableList = () => {
     }
   };
 
-  // This is for the sorting
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -407,6 +429,7 @@ const TemplatesTableList = () => {
           numSelected={selected.length}
           search={search}
           handleSearch={(event) => handleSearch(event)}
+          handleRefreshpage={handleRefreshpage}
         />
         <Paper variant="outlined" sx={{ mx: 2, mt: 1 }}>
           <TableContainer>
@@ -424,96 +447,95 @@ const TemplatesTableList = () => {
                 rowCount={rows.length}
               />
               <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    // const isItemSelected = isSelected(row.id);
-                    // const labelId = `enhanced-table-checkbox-${index}`;
-
-                    return (
-                      <TableRow
-                        hover
-                        // onClick={(event) => handleClick(event, row.id)}
-                        // role="checkbox"
-                        // aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.name}
-                        // selected={isItemSelected}
-                      >
-                        {/* <TableCell padding="checkbox">
-                          <CustomCheckbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputprops={{
-                              'aria-labelledby': labelId,
-                            }}
-                          />
-                        </TableCell> */}
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.name}
-                          </Typography>
-                        </TableCell>
-
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.category}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            {row.language}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography fontWeight="500" variant="h6" fontSize={14}>
-                            <Chip
-                              sx={{
-                                bgcolor: (theme) =>
-                                  row.status === 'APPROVED'
-                                    ? theme.palette.primary.light
-                                    : row.status === 'REJECTED'
-                                    ? theme.palette.error.light
-                                    : theme.palette.warning.light,
-                                color: (theme) =>
-                                  row.status === 'APPROVED'
-                                    ? theme.palette.primary.main
-                                    : row.status === 'REJECTED'
-                                    ? theme.palette.error.main
-                                    : theme.palette.warning.main,
-                                borderRadius: '6px',
-                                // width: 80,
-                              }}
-                              size="small"
-                              label={row.status}
-                            />
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip title="View">
-                            <IconButton size="small" onClick={() => handleClickOpen(row, index)}>
-                              <IconEye />
-                            </IconButton>
-                          </Tooltip>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete(row.id, row.name)}
-                          >
-                            <DeleteOutline />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: (dense ? 33 : 53) * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
+                {tableLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <CircularProgress />
+                    </TableCell>
                   </TableRow>
+                ) : (
+                  stableSort(rows, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      // const isItemSelected = isSelected(row.id);
+                      // const labelId = `enhanced-table-checkbox-${index}`;
+
+                      return (
+                        <TableRow
+                          hover
+                          // onClick={(event) => handleClick(event, row.id)}
+                          // role="checkbox"
+                          // aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.name}
+                          // selected={isItemSelected}
+                        >
+                          {/* <TableCell padding="checkbox">
+              <CustomCheckbox
+                color="primary"
+                checked={isItemSelected}
+                inputprops={{
+                  'aria-labelledby': labelId,
+                }}
+              />
+            </TableCell> */}
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.name}
+                            </Typography>
+                          </TableCell>
+
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.category}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.language}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              <Chip
+                                sx={{
+                                  bgcolor: (theme) =>
+                                    row.status === 'APPROVED'
+                                      ? theme.palette.primary.light
+                                      : row.status === 'REJECTED'
+                                      ? theme.palette.error.light
+                                      : theme.palette.warning.light,
+                                  color: (theme) =>
+                                    row.status === 'APPROVED'
+                                      ? theme.palette.primary.main
+                                      : row.status === 'REJECTED'
+                                      ? theme.palette.error.main
+                                      : theme.palette.warning.main,
+                                  borderRadius: '6px',
+                                  // width: 80,
+                                }}
+                                size="small"
+                                label={row.status}
+                              />
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Tooltip title="View">
+                              <IconButton size="small" onClick={() => handleClickOpen(row, index)}>
+                                <IconEye />
+                              </IconButton>
+                            </Tooltip>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDelete(row.id, row.name)}
+                            >
+                              <DeleteOutline />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                 )}
               </TableBody>
             </Table>
@@ -528,13 +550,8 @@ const TemplatesTableList = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-        {/* <Box ml={2}>
-          <FormControlLabel
-            control={<CustomSwitch checked={dense} onChange={handleChangeDense} />}
-            label="Dense padding"
-          />
-        </Box> */}
       </Box>
+
       <Dialog
         open={open}
         onClose={handleClose}
@@ -573,7 +590,8 @@ const TemplatesTableList = () => {
                         case 'HEADER': {
                           const headerHandle = component.example?.header_handle?.[0];
                           const headerText = component.example?.header_text?.[0];
-                          if (headerHandle) {
+
+                          /* if (headerHandle) {
                             const isVideo = component.format === 'VIDEO';
                             return isVideo ? (
                               <CardMedia
@@ -594,6 +612,47 @@ const TemplatesTableList = () => {
                                 sx={{ height: 200 }}
                               />
                             );
+                          } */
+
+                          if (headerHandle) {
+                            const isVideo = component.format === 'VIDEO';
+                            const isDocument = component.format === 'DOCUMENT';
+
+                            if (isVideo) {
+                              return (
+                                <CardMedia
+                                  key={component.type}
+                                  component="video"
+                                  image={headerHandle}
+                                  controls
+                                  title={component.type}
+                                  sx={{ height: 200 }}
+                                  autoPlay
+                                />
+                              );
+                            } else if (isDocument) {
+                              return (
+                                <Box sx={{ mb: 2, overflow: 'hidden', height: '200px' }}>
+                                  <iframe
+                                    src={headerHandle}
+                                    width="100%"
+                                    height="200px"
+                                    title="Document Preview"
+                                    style={{ border: 'none', overflow: 'hidden' }}
+                                  ></iframe>
+                                </Box>
+                              );
+                            } else {
+                              return (
+                                <CardMedia
+                                  key={component.type}
+                                  component="img"
+                                  image={headerHandle}
+                                  title={component.type}
+                                  sx={{ height: 200 }}
+                                />
+                              );
+                            }
                           }
 
                           if (headerText) {
@@ -692,8 +751,7 @@ const TemplatesTableList = () => {
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         aria-labelledby="confirm-delete-dialog"
-        sx={{ height: '40%' }} 
-
+        sx={{ height: '40%' }}
       >
         <DialogTitle id="confirm-delete-dialog">Confirm Deletion</DialogTitle>
         <DialogContent>
