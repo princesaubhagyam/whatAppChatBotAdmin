@@ -15,7 +15,7 @@ const truncateText = (text, wordLimit) => {
   return text;
 };
 
-const MessageList = ({ id }) => {
+const MessageList = ({ id, refreshKey }) => {
   const [broadcastData, setBroadcastData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ const MessageList = ({ id }) => {
     };
 
     checkBroadcastHistory();
-  }, [id]);
+  }, [id, refreshKey]);
 
   if (loading) {
     return <Spinner />;

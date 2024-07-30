@@ -81,12 +81,12 @@ const Menuitems = [
     icon: IconBroadcast,
     href: '/broadcasts',
   },
-  {
-    id: uniqueId(),
-    title: 'Media',
-    icon: IconPhoto,
-     href: '/media',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Media',
+  //   icon: IconPhoto,
+  //    href: '/media',
+  // },
   {
     id: uniqueId(),
     title: 'Templates',

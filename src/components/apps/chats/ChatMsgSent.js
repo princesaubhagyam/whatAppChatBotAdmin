@@ -14,17 +14,18 @@ const ChatMsgSent = () => {
   const [chosenEmoji, setChosenEmoji] = useState();
   const [openModal, setOpenModal] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
-  
+
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const id = useSelector((state) => state.chatReducer.chatId);
 
   useEffect(() => {
     if (activeBroadcast) {
-      apiClient.get(`/broadcast-history_checker/${activeBroadcast.id}/`)
-        .then(response => {
+      apiClient
+        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
+        .then((response) => {
           setIsHistory(response.data.is_history);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching history status:', error);
         });
     }
@@ -65,7 +66,7 @@ const ChatMsgSent = () => {
   };
 
   return (
-    <Box sx={{ height: '40px' }}>
+    <Box sx={{ height: { lg: '39px !important', xl: '39px !important', md: '39px !important' } }}>
       {/* ------------------------------------------- */}
       {/* sent chat */}
       {/* ------------------------------------------- */}
@@ -80,7 +81,7 @@ const ChatMsgSent = () => {
             justifyContent: 'center',
             padding: '9.6px',
             backgroundColor: 'white',
-            height: '40px'
+            height: '40px',
           }}
         >
           {/* ------------------------------------------- */}
@@ -140,6 +141,7 @@ const ChatMsgSent = () => {
               <Button
                 style={{ backgroundColor: '#1A4D2E', color: 'white' }}
                 onClick={handleOpenModal}
+                sx={{ height: '30px'}}
               >
                 <IconSend size={16} />
                 Send Template

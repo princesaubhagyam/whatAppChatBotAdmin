@@ -346,6 +346,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                           borderBottom: '1px solid #80808078',
                         }}
                       >
+                        {/* Preview section for template */}
                         {templateDetails?.components.map((component) => {
                           switch (component.type) {
                             case 'HEADER': {

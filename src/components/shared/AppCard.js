@@ -12,7 +12,7 @@ const AppCard = ({ children }) => {
         p: 0,
         marginTop: 0,
         borderRadius: 0,
-        height: { lg: '87vh !important', xl: '85vh !important', xxl: '100vh !important' },
+        height: { lg: '88vh !important', xl: '87vh !important', xxl: '100vh !important' },
       }}
       elevation={customizer.isCardShadow ? 9 : 0}
       variant={!customizer.isCardShadow ? 'outlined' : undefined}
