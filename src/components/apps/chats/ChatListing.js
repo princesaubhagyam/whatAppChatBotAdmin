@@ -104,12 +104,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
         </Stack>
       </Box>
       <List sx={{ px: 0 }}>
-        <Scrollbar
-          sx={{
-            height: { xl: '100vh', lg: 'calc(100vh - 100px)', md: '100vh' },
-            maxHeight: '520px',
-          }}
-        >
+        <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}>
           {broadcastData && broadcastData.length ? (
             broadcastData.map((chat) => (
               <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={chat.id}>
@@ -119,7 +114,6 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                     py: 1,
                     px: 1,
                     alignItems: 'start',
-                    
                   }}
                   selected={activeChat === chat.id}
                 >

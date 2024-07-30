@@ -194,6 +194,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       toast.error('Please select template!');
       return;
     }
+    console.log(templateDetails);
     try {
       const res = await apiClient.post('/api/send_template/', {
         broadcast: broadcastDetails.broadcast,
@@ -212,7 +213,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
   };
 
   const updateHeaderLink = (e, format) => {
-    //setPreviewLink(e.target.value);
+    setPreviewLink(e.target.value);
 
     const newHeaderComponent = {
       type: 'HEADER',
@@ -234,7 +235,6 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       ),
     }));
   };
-  
 
   const updateBodyParameter = (e, paramIdx) => {
     const tmpTemplateDetails = { ...templateDetails };

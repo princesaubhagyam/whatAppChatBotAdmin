@@ -1,52 +1,131 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, Stack } from '@mui/material';
-import { IconChartBar } from '@tabler/icons';
-import MessageAnalyticsModal from 'src/modals/MessageAnalyticsModal';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import apiClient from 'src/api/axiosClient';
+import Spinner from 'src/views/spinner/Spinner';
+import DoneIcon from '@mui/icons-material/Done';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import ReplyIcon from '@mui/icons-material/Reply';
+import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 
-const MessageList = () => {
-  const [showModal, setShowModal] = useState(false);
+const truncateText = (text, wordLimit) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
 
-  const handleChartClick = () => {
-    setShowModal(true);
-  };
+const MessageList = ({ id }) => {
+  const [broadcastData, setBroadcastData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isHistory, setIsHistory] = useState(false);
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  useEffect(() => {
+    const checkBroadcastHistory = async () => {
+      try {
+        const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
+        setIsHistory(historyResponse.data.is_history);
+
+        if (historyResponse.data.is_history) {
+          const response = await apiClient.get(`/broadcast-history/${id}/`);
+          setBroadcastData(response.data.data);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    checkBroadcastHistory();
+  }, [id]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (!isHistory) {
+    return <></>;
+  }
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'sent':
+        return <DoneIcon fontSize="small" />;
+      case 'delivered':
+        return <DoneAllIcon fontSize="small" />;
+      case 'read':
+        return <DoneAllIcon fontSize="small" sx={{ color: 'green' }} />;
+      case 'replied':
+        return <ReplyIcon fontSize="small" sx={{ color: '#53BDEB' }} />;
+      case 'failed':
+        return <SmsFailedIcon fontSize="small" sx={{ color: '#F78154' }} />;
+      default:
+        return <></>;
+    }
   };
 
   return (
     <Box
       sx={{
-        backgroundColor: '#E9FEEE',
-        borderRadius: 1,
-        position: 'absolute',
-        bottom: '8rem',
-        right: '1rem',
-        padding: 1,
+        borderRadius: '8px',
+        overflow: 'hidden',
+        position: 'relative',
+
+        width: '320px',
         boxShadow: '0px 1px 110px #00000025',
       }}
     >
-      <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
-        <Typography variant="h5" sx={{ fontSize: '0.85rem', color: 'rgb(26, 77, 46)' }}>
-          Amar Sharma
-        </Typography>
-        <Button onClick={handleChartClick} cursor="pointer">
-          <IconChartBar size={20} />
-        </Button>
-      </Stack>
-      <Typography sx={{ fontSize: '0.81rem' }}>Hii Customer name</Typography>
-      <Typography sx={{ fontSize: '0.81rem' }}>
-        We have exciting new arrivals.
-        <br />
-        Would you like to see them?
-      </Typography>
-      
-      <MessageAnalyticsModal
-        open={showModal}
-        handleClose={handleCloseModal}
-        customerName="Amar Sharma"
-        message="We have exciting new arrivals. Would you like to see them?"
-      />
+      {broadcastData && (
+        <>
+          {broadcastData.broadcast_histories.map((history, index) => (
+            <List
+              key={index}
+              sx={{ paddingTop: '0px', paddingBottom: '0px', borderRadius: '5rem !important' }}
+            >
+              <Box sx={{ backgroundColor: '#E9FEEE', padding: '10px', borderRadius: '0px' }}>
+                <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
+                  {history.template}
+                </Typography>
+                <Typography sx={{ fontSize: '0.80rem' }}>
+                  {truncateText(history.template_body, 10)}
+                </Typography>
+              </Box>
+              <Box sx={{ backgroundColor: '#B8E7CB', padding: '10px', borderRadius: '0px' }}>
+                {history.message_statuses.map((status, idx) => (
+                  <ListItem key={idx} sx={{ padding: 0, marginBottom: '1px' }}>
+                    <ListItemAvatar>
+                      <Typography variant="h6">{status.count} </Typography>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography
+                          sx={{
+                            fontSize: '0.95rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {status.status}
+                          {getStatusIcon(status.status)}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography
+                          sx={{ fontSize: '0.95rem' }}
+                        >{`${status.percentage}`}</Typography>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </Box>
+            </List>
+          ))}
+        </>
+      )}
     </Box>
   );
 };

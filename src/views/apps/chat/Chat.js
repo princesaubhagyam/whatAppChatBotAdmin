@@ -66,7 +66,7 @@ const Chats = () => {
             getBroadcastsData={getBroadcastList}
             sx={{ flex: '0 1 300px', overflowY: 'auto' }}
           />
-          <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: '85vh' }}>
+          <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' /*height: '85vh'*/ }}>
             <ChatContent
               toggleChatSidebar={() => setMobileSidebarOpen(true)}
               sx={{ flexGrow: 1 }}
