@@ -48,7 +48,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
   }, [activeBroadcast]);
   const refreshChatHistory = async () => {
     setLoading(true);
-    setRefreshKey((prevKey) => prevKey + 1); // Increment key to trigger refresh
+    setRefreshKey((prevKey) => prevKey + 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
   };
@@ -74,7 +74,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
                     primary={<Typography variant="h5">{activeBroadcast.title}</Typography>}
                   />
                   <IconButton sx={{ cursor: 'pointer' }}>
-                    {!isHistory && (
+                    {isHistory && (
                       <CachedIcon
                         fontSize="medium"
                         sx={{ marginRight: '2px' }}
@@ -105,8 +105,8 @@ const ChatContent = ({ toggleChatSidebar }) => {
                 <Scrollbar
                   sx={{
                     height: { xl: '100vh', lg: 'calc(100vh - 100px)', md: '100vh' },
-                    maxHeight: '500px',
-                    //overflowY: 'scroll',
+                    maxHeight: '420px',
+                    overflowY: 'auto',
                   }}
                 >
                   <Box p={3} display={'flex'} justifyContent={'end'}>

@@ -117,7 +117,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
                               ? 'warning'
                               : 'secondary'
                           }
-                          variant="dot"
+                          //variant="dot"
                           anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'right',

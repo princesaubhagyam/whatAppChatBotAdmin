@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import {
   IconApps,
+  IconBroadcast,
   IconCalendarEvent,
   IconChevronDown,
   IconChevronUp,
   IconGridDots,
+  IconHome,
   IconMail,
+  IconMan,
   IconMessages,
+  IconSettings,
+  IconSettingsAutomation,
+  IconTemplate,
+  
 } from '@tabler/icons';
 import {
   Box,
@@ -44,37 +51,57 @@ const MobileRightSidebar = () => {
           component="nav"
           aria-labelledby="nested-list-subheader"
         >
-          <ListItemButton component={Link} to="/apps/chats">
+          <ListItemButton component={Link} to="/home">
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconMessages size="21" stroke="1.5" />
+              <IconHome size="21" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
               <Typography variant="subtitle2" fontWeight={600}>
-                Chats
+                Home
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/apps/calendar">
+          <ListItemButton component={Link} to="/contacts">
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconCalendarEvent size="21" stroke="1.5" />
+              <IconMan size="21" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
               <Typography variant="subtitle2" fontWeight={600}>
-                Calendar
+                Contacts
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/apps/email">
+          <ListItemButton component={Link} to="/broadcasts">
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconMail size="21" stroke="1.5" />
+              <IconBroadcast size="21" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
               <Typography variant="subtitle2" fontWeight={600}>
-                Email
+                Broadcasts
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton onClick={handleClick}>
+          <ListItemButton component={Link} to="/templates">
+            <ListItemIcon sx={{ minWidth: 35 }}>
+              <IconTemplate size="21" stroke="1.5" />
+            </ListItemIcon>
+            <ListItemText>
+              <Typography variant="subtitle2" fontWeight={600}>
+                Templates
+              </Typography>
+            </ListItemText>
+          </ListItemButton>
+          <ListItemButton component={Link} to="/settings">
+            <ListItemIcon sx={{ minWidth: 35 }}>
+              <IconSettings size="21" stroke="1.5" />
+            </ListItemIcon>
+            <ListItemText>
+              <Typography variant="subtitle2" fontWeight={600}>
+                Settings
+              </Typography>
+            </ListItemText>
+          </ListItemButton>
+          {/* <ListItemButton onClick={handleClick}>
             <ListItemIcon sx={{ minWidth: 35 }}>
               <IconApps size="21" stroke="1.5" />
             </ListItemIcon>
@@ -88,17 +115,17 @@ const MobileRightSidebar = () => {
             ) : (
               <IconChevronUp size="21" stroke="1.5" />
             )}
-          </ListItemButton>
+          </ListItemButton> */}
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box px={4} pt={3} overflow="hidden">
-              <AppLinks />
+              {/* <AppLinks /> */}
             </Box>
           </Collapse>
         </List>
       </Box>
 
       <Box px={3} mt={3}>
-        <QuickLinks />
+        {/* <QuickLinks /> */}
       </Box>
     </Box>
   );

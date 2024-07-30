@@ -49,6 +49,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             onChange={(e) => updateHeaderLink(e, 'IMAGE')}
             variant="outlined"
             //value={componentData.link}
+            value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
             required
           />
@@ -62,6 +63,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             type="url"
             placeholder="Add link to video here"
             onChange={(e) => updateHeaderLink(e, 'VIDEO')}
+            value={componentData.parameters?.[0]?.video?.link || ''}
             variant="outlined"
             fullWidth
             //value={componentData.link}
@@ -80,6 +82,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             variant="outlined"
             fullWidth
             //value={componentData.link}
+            value={componentData.parameters?.[0]?.document?.link || ''}
             required
           />
         </>
@@ -116,6 +119,8 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
 const TemplateModal = ({ open, handleClose, broadcastId }) => {
   const [loading, setLoading] = useState(false);
   const [templates, setTemplates] = useState([]);
+  const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
+
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
@@ -158,7 +163,17 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
         const metaInstance = createMetaAxiosInstance({ addBAId: false });
         const res = await metaInstance.get(broadcastDetails.template);
         if (res.status === 200) {
-          setTemplateDetails(() => addBodyVariableEmptyArray(res.data));
+          const updatedData = addBodyVariableEmptyArray(res.data);
+          setTemplateDetails(updatedData);
+
+          // Store default values
+          const defaultValues = {};
+          updatedData.components.forEach((component) => {
+            if (component.type === 'HEADER') {
+              defaultValues[component.format] = component.example?.header_handle?.[0];
+            }
+          });
+          setDefaultHeaderHandles(defaultValues);
         }
       }
     } catch (err) {
@@ -213,7 +228,8 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
   };
 
   const updateHeaderLink = (e, format) => {
-    setPreviewLink(e.target.value);
+    const newLink = e.target.value;
+    setPreviewLink(newLink);
 
     const newHeaderComponent = {
       type: 'HEADER',
@@ -222,7 +238,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
         {
           type: format.toLowerCase(),
           [format.toLowerCase()]: {
-            link: e.target.value,
+            link: newLink || defaultHeaderHandles[format],
           },
         },
       ],
@@ -258,11 +274,23 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     });
     setTemplateDetails(tmpTemplateDetails);
   };
+  const resetTemplateSelection = () => {
+    setTemplateDetails(null);
 
+    setBroadcastDetails({
+      ...broadcastDetails,
+      template: null,
+    });
+    setTemplateDetails(null);
+    handleClose();
+  };
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        //handleClose();
+        resetTemplateSelection(); // Reset template selection on close
+      }}
       closeAfterTransition
       maxWidth={'md'}
       sx={{ height: '90%' }}
@@ -350,7 +378,12 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                         {templateDetails?.components.map((component) => {
                           switch (component.type) {
                             case 'HEADER': {
-                              const headerHandle = component.example?.header_handle?.[0];
+                              //const headerHandle = component.example?.header_handle?.[0] || component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
+                              const headerLink =
+                                component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
+                              const headerHandle =
+                                headerLink || component.example?.header_handle?.[0];
+
                               const headerText = component.example?.header_text?.[0];
 
                               if (headerHandle) {
@@ -483,7 +516,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                 >
                   Send broadcast
                 </LoadingButton>
-                <Button variant="contained" color="error" onClick={handleClose}>
+                <Button variant="contained" color="error" onClick={resetTemplateSelection}>
                   Cancel
                 </Button>
               </Stack>

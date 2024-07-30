@@ -25,7 +25,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
   const [broadcastData, setBroadcastData] = useState(broadcasts);
-
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
   const filterChats = (broadcasts, cSearch) => {
     if (broadcasts)
       return broadcasts.filter((t) =>
@@ -60,6 +60,11 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
 
   const handleCloseImportModal = () => {
     setOpenImportModal(false);
+  };
+
+  const handleBroadcastClick = (chat) => {
+    dispatch(selectBroadcast(chat)); // Dispatch action to select the broadcast
+    setSelectedBroadcastId(chat.id); // Update selected broadcast ID
   };
 
   return (
@@ -107,15 +112,25 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
         <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}>
           {broadcastData && broadcastData.length ? (
             broadcastData.map((chat) => (
-              <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={chat.id}>
+              <Box
+                sx={{
+                  borderBottom: '3px solid #e5eaef',
+                  borderRadius: 0,
+                  backgroundColor: selectedBroadcastId === chat.id ? '#bdbcbc9e' : 'transparent',
+                  '&:hover': { backgroundColor: '#bdbcbc9e !important' },
+                }}
+                key={chat.id}
+              >
                 <ListItemButton
-                  onClick={() => dispatch(selectBroadcast(chat))}
+                  onClick={() => handleBroadcastClick(chat)}
                   sx={{
                     py: 1,
                     px: 1,
                     alignItems: 'start',
+                    '&:hover': { backgroundColor: 'transparent !important'}
                   }}
                   selected={activeChat === chat.id}
+                  
                 >
                   <ListItemAvatar>
                     <Badge
@@ -128,7 +143,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                           ? 'warning'
                           : 'secondary'
                       }
-                      variant="dot"
+                      //variant="dot"
                       anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: 'right',
