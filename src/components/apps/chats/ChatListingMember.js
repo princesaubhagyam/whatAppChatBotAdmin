@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Avatar,
   List,
@@ -18,6 +18,7 @@ import { IconPlus, IconDotsVertical, IconEdit, IconFileImport } from '@tabler/ic
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 import apiClient from 'src/api/axiosClient';
+import EventContext from 'src/BroadcastContext';
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -32,18 +33,22 @@ const ChatListingMember = ({ getBroadcastList }) => {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
+  const { isOn } = useContext(EventContext);
+
+
   useEffect(() => {
     if (activeBroadcast) {
       apiClient
         .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
         .then((response) => {
           setIsHistory(response.data.is_history);
+
         })
         .catch((error) => {
           console.error('Error fetching history status:', error);
         });
     }
-  }, [activeBroadcast]);
+  }, [activeBroadcast, isOn]);
 
   return (
     <>

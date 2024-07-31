@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
@@ -6,10 +6,11 @@ import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
+import EventContext from 'src/BroadcastContext';
 
 const truncateText = (text, wordLimit) => {
-  if (!text) return ''; 
-  
+  if (!text) return '';
+
   const words = text.split(' ');
   if (words.length > wordLimit) {
     return words.slice(0, wordLimit).join(' ') + '...';
@@ -17,14 +18,36 @@ const truncateText = (text, wordLimit) => {
   return text;
 };
 
-const MessageList = ({ id, refreshKey }) => {
+const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
   const [broadcastData, setBroadcastData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isHistory, setIsHistory] = useState(false);
+  const { isOn } = useContext(EventContext);
 
+  // useEffect(() => {
+  //   const checkBroadcastHistory = async () => {
+  //     try {
+  //       const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
+  //       setIsHistory(historyResponse.data.is_history);
+
+  //       if (historyResponse.data.is_history) {
+  //         const response = await apiClient.get(`/broadcast-history/${id}/`);
+  //         setBroadcastData(response.data.data);
+  //       }
+
+  //       setLoading(false);
+  //     } catch (err) {
+  //       setError(err);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   checkBroadcastHistory();
+  // }, [id, refreshKey, checkBroadcastHistory]);
   useEffect(() => {
     const checkBroadcastHistory = async () => {
+      setLoading(true); // Start loading
       try {
         const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
         setIsHistory(historyResponse.data.is_history);
@@ -33,16 +56,17 @@ const MessageList = ({ id, refreshKey }) => {
           const response = await apiClient.get(`/broadcast-history/${id}/`);
           setBroadcastData(response.data.data);
         }
-
-        setLoading(false);
       } catch (err) {
         setError(err);
-        setLoading(false);
+        setBroadcastData(null);
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
     checkBroadcastHistory();
-  }, [id, refreshKey]);
+    // Reset the trigger
+  }, [id, isOn]);
 
   if (loading) {
     return <Spinner />;

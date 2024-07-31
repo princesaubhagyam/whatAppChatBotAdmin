@@ -22,7 +22,7 @@ export const getBroadcastsData = async () => {
   }
 };
 
-const Chats = () => {
+const Chats = ({ checkBroadcastHistory }) => {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
@@ -70,9 +70,10 @@ const Chats = () => {
             <ChatContent
               toggleChatSidebar={() => setMobileSidebarOpen(true)}
               sx={{ flexGrow: 1 }}
+              checkBroadcastHistory={checkBroadcastHistory}
             />
             <Divider />
-            <ChatMsgSent />
+            <ChatMsgSent checkBroadcastHistory={checkBroadcastHistory} />
           </Box>
           <ChatSidebarMember
             sx={{ flex: '0 1 300px', overflowY: 'auto' }}

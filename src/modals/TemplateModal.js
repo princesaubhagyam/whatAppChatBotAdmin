@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Button,
@@ -24,6 +24,7 @@ import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
+import EventContext from 'src/BroadcastContext';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -38,7 +39,9 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const HeaderComponent = ({ componentData, updateHeaderLink }) => {
+
   switch (componentData.format) {
+    
     case 'IMAGE':
       return (
         <>
@@ -48,8 +51,8 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             placeholder="Add link to image here"
             onChange={(e) => updateHeaderLink(e, 'IMAGE')}
             variant="outlined"
-            //value={componentData.link}
-            value={componentData.parameters?.[0]?.image?.link || ''}
+            //value={currentLink}
+            //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
             required
           />
@@ -63,10 +66,10 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             type="url"
             placeholder="Add link to video here"
             onChange={(e) => updateHeaderLink(e, 'VIDEO')}
-            value={componentData.parameters?.[0]?.video?.link || ''}
+            //value={componentData.parameters?.[0]?.video?.link || ''}
             variant="outlined"
             fullWidth
-            //value={componentData.link}
+            //value={currentLink}
             required
           />
         </>
@@ -82,7 +85,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             variant="outlined"
             fullWidth
             //value={componentData.link}
-            value={componentData.parameters?.[0]?.document?.link || ''}
+            //value={componentData.parameters?.[0]?.document?.link || ''}
             required
           />
         </>
@@ -116,11 +119,11 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
   return <></>;
 };
 
-const TemplateModal = ({ open, handleClose, broadcastId }) => {
+const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }) => {
   const [loading, setLoading] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
-
+  const { toggleOnOff } = useContext(EventContext);
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
@@ -217,6 +220,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       });
       if (res.status === 200 || res.status === 201) {
         toast.success('Broadcast scheduled successfully!');
+        toggleOnOff(); // Trigger history check
         handleClose();
       }
     } catch (err) {
@@ -275,8 +279,6 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     setTemplateDetails(tmpTemplateDetails);
   };
   const resetTemplateSelection = () => {
-    setTemplateDetails(null);
-
     setBroadcastDetails({
       ...broadcastDetails,
       template: null,
@@ -289,7 +291,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       open={open}
       onClose={() => {
         //handleClose();
-        resetTemplateSelection(); // Reset template selection on close
+        resetTemplateSelection(); 
       }}
       closeAfterTransition
       maxWidth={'md'}

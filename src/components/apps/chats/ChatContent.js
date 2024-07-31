@@ -22,8 +22,10 @@ import { fetchChatHistoryByPhoneNo } from '../../../store/apps/chat/ChatSlice';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import MessageList from './MessageList'; // Import the new component
 import Spinner from 'src/views/spinner/Spinner';
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import apiClient from 'src/api/axiosClient';
+import EventContext from 'src/BroadcastContext';
+
 const ChatContent = ({ toggleChatSidebar }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
@@ -34,6 +36,8 @@ const ChatContent = ({ toggleChatSidebar }) => {
   const [refreshKey, setRefreshKey] = useState(0);
   console.log('chatDetails', activeBroadcast);
   const [isHistory, setIsHistory] = useState(false);
+  const { isOn } = useContext(EventContext);
+
   useEffect(() => {
     if (activeBroadcast) {
       apiClient
@@ -45,7 +49,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
           console.error('Error fetching history status:', error);
         });
     }
-  }, [activeBroadcast]);
+  }, [activeBroadcast, isOn]);
   const refreshChatHistory = async () => {
     setLoading(true);
     setRefreshKey((prevKey) => prevKey + 1);

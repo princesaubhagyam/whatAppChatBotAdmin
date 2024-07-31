@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton, InputBase, Box, Popover, Button } from '@mui/material';
 import { IconSend } from '@tabler/icons';
@@ -6,18 +6,19 @@ import { sendMsg } from 'src/store/apps/chat/ChatSlice';
 import TemplateModal from 'src/modals/TemplateModal';
 import axios from 'axios';
 import apiClient from 'src/api/axiosClient';
+import EventContext from 'src/BroadcastContext';
 
-const ChatMsgSent = () => {
+const ChatMsgSent = ({ checkBroadcastHistory }) => {
   const [msg, setMsg] = useState('');
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [chosenEmoji, setChosenEmoji] = useState();
   const [openModal, setOpenModal] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
-
+  const { isOn } = useContext(EventContext);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const id = useSelector((state) => state.chatReducer.chatId);
-
+   
   useEffect(() => {
     if (activeBroadcast) {
       apiClient
@@ -29,7 +30,7 @@ const ChatMsgSent = () => {
           console.error('Error fetching history status:', error);
         });
     }
-  }, [activeBroadcast]);
+  }, [activeBroadcast , isOn]);
 
   const onEmojiClick = (_event, emojiObject) => {
     setChosenEmoji(emojiObject);
@@ -154,6 +155,7 @@ const ChatMsgSent = () => {
         open={openModal}
         handleClose={handleCloseModal}
         broadcastId={activeBroadcast?.id}
+        checkBroadcastHistory={checkBroadcastHistory}
       />
     </Box>
   );

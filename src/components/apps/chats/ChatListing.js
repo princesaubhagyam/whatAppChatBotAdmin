@@ -109,7 +109,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
         </Stack>
       </Box>
       <List sx={{ px: 0 }}>
-        <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}>
+        <Scrollbar sx={{ height: { /*lg: 'calc(100vh - 100px)'*/ lg: '75vh', md: '100vh' }, maxHeight: '550px' }}>
           {broadcastData && broadcastData.length ? (
             broadcastData.map((chat) => (
               <Box
