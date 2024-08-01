@@ -106,7 +106,7 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
           }}
         >
           <Typography variant="h6" component="h2">
-            Create Broadcast from CSV
+            Create Broadcast Title
           </Typography>
           {/* <Button
             href={sampleFileUrl}

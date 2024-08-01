@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import WeeklyStats from 'src/components/dashboards/modern/WeeklyStats';
 import YearlySales from 'src/components/dashboards/ecommerce/YearlySales';
@@ -17,9 +17,35 @@ import AuthSocialButtons from '../authentication/authForms/AuthSocialButtons';
 import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRatingCard';
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
+import apiClient from 'src/api/axiosClient';
 
 const Ecommerce = () => {
   console.log('hello');
+  const [showCard, setShowcard] = useState(false);
+
+  const checkFacebookLogin = async () => {
+    try {
+      const res = await apiClient.get('/auth/user_profile/');
+      console.log('API Response:', res);
+      if (res.status === 200) {
+        const phoneId = res.data.data.facebook_meta_data.phone_id;
+      
+        if (!phoneId || phoneId.trim() === '') {
+          setShowcard(false);
+        } else {
+          setShowcard(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching Facebook meta info:', error);
+      setShowcard(false); 
+    }
+  };
+
+  useEffect(() => {
+    checkFacebookLogin();
+  }, []);
+
   return (
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
@@ -52,7 +78,7 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              <QualityRatingCard />
+              {showCard &&<QualityRatingCard />}
             </Grid>
             {/* <Grid item xs={12} lg={14}>
               <ViewProfileCard />
@@ -80,7 +106,7 @@ const Ecommerce = () => {
           <SetUpProfileCard />
         </Grid>
         <Grid item xs={12} lg={14}>
-              <ViewProfileCard />
+              {showCard && <ViewProfileCard />}
             </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>

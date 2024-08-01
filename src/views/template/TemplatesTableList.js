@@ -50,6 +50,7 @@ import {
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
 import { LoadingButton } from '@mui/lab';
 import CachedIcon from '@mui/icons-material/Cached';
+import Spinner from '../spinner/Spinner';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -314,6 +315,7 @@ const TemplatesTableList = () => {
 
   const handleRefreshpage = async () => {
     setTableLoading(true);
+    //window.alert('Wait until your template is being verified by Meta');
     await getApiData();
   };
 
@@ -450,6 +452,7 @@ const TemplatesTableList = () => {
                 {tableLoading ? (
                   <TableRow>
                     <TableCell colSpan={5} align="center">
+                      <Typography>Wait until the status update it will be Approved it may take 2-5 minutes</Typography>
                       <CircularProgress />
                     </TableCell>
                   </TableRow>

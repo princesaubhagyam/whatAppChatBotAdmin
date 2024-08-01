@@ -330,7 +330,7 @@ export default function CreateTemplate() {
 
           if (response) {
             setLoading(false);
-            toast.success('Template created!', { duration: 2000 });
+            toast.success('Template created please wait until your template being verified by Meta this process may take 2-5 minutes', { duration: 5000 });
             navigate('/templates');
           }
         }
