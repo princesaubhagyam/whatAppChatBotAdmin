@@ -142,12 +142,12 @@ const Menuitems = [
   //   icon: IconAlertCircle,
   //   href: '/pending-requests',
   // },
-  {
-    id: uniqueId(),
-    title: 'Settings',
-    icon: IconSettings,
-    href: '/settings',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Settings',
+  //   icon: IconSettings,
+  //   href: '/settings',
+  // },
 ];
 
 // const Menuitems = [

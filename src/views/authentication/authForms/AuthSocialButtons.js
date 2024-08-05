@@ -71,7 +71,7 @@ const AuthSocialButtons = ({ title }) => {
         }
       },
       {
-        config_id: '995842362049849',
+        config_id: '1902067633621358',
         response_type: 'code',
         override_default_response_type: true,
         extras: {

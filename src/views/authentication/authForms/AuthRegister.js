@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -8,13 +8,15 @@ import {
   InputAdornment,
   OutlinedInput,
   FormHelperText,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
 import toast, { Toaster } from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
-
 import apiClient from 'src/api/axiosClient';
+import countryCodes from 'src/utils/Countrycode.json'
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -28,6 +30,15 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const [credentials, setCredentials] = React.useState(initCredentials);
   const [loading, setLoading] = React.useState(false);
+  const [countryCode, setCountryCode] = useState('+91'); 
+  const [errors, setErrors] = React.useState({});
+
+  // const countryCodes = [
+  //   { value: '+91', label: 'India (+91)' },
+  //   { value: '+1', label: 'USA (+1)' },
+  //   { value: '+44', label: 'UK (+44)' },
+  //   // Add more country codes as needed
+  // ];
 
   const signUpAPICall = async (creds) => {
     try {
@@ -64,6 +75,14 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const handleFieldChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
+  const handleCountryCodeChange = (e) => {
+    setCountryCode(e.target.value);
+    setCredentials((prev) => ({
+      ...prev,
+      mobile: e.target.value + prev.mobile.replace(/^\+\d+/, ''), // Update mobile number with new country code
+    }));
   };
 
   const validateForm = () => {
@@ -108,8 +127,6 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     return isValid;
   };
 
-  const [errors, setErrors] = React.useState({});
-
   return (
     <>
       {title && (
@@ -119,7 +136,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       )}
 
       {subtext}
-      <form onSubmit={handleSignUp}>
+      <form onSubmit={(e) => { e.preventDefault(); handleSignUp(); }}>
         <Stack spacing={2}>
           <FormControl fullWidth error={!!errors.full_name}>
             <OutlinedInput
@@ -152,17 +169,31 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
           </FormControl>
 
           <FormControl fullWidth error={!!errors.mobile}>
-            <OutlinedInput
-              startAdornment={
-                <InputAdornment position="start">
-                  <IconPhone width={20} color="dimgray" />
-                </InputAdornment>
-              }
-              placeholder="+91952XXXXXXX"
-              fullWidth
-              name="mobile"
-              onChange={handleFieldChange}
-            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Select
+                value={countryCode}
+                onChange={handleCountryCodeChange}
+                sx={{ width: 'auto', minWidth: '100px' }}
+              >
+                {countryCodes.map((code) => (
+                  <MenuItem key={code.dial_code} value={code.dial_code}>
+                    {code.code}
+                  </MenuItem>
+                ))}
+              </Select>
+              <OutlinedInput
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconPhone width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter Mobile Number"
+                fullWidth
+                name="mobile"
+                value={credentials.mobile}
+                onChange={handleFieldChange}
+              />
+            </Stack>
             {errors.mobile && <FormHelperText error>{errors.mobile}</FormHelperText>}
           </FormControl>
 

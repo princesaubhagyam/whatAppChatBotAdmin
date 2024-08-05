@@ -85,6 +85,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
                         onClick={refreshChatHistory}
                       />
                     )}
+                    
                   </IconButton>
                 </ListItem>
                 <Stack direction={'row'}></Stack>

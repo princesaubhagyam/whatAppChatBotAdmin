@@ -635,7 +635,7 @@ export default function CreateTemplate() {
                               </IconButton>
                             </Box>
                           ))}
-                          <Box mt={2}>
+                          {/* <Box mt={2}>
                             <Button
                               variant="outlined"
                               color="primary"
@@ -644,7 +644,7 @@ export default function CreateTemplate() {
                             >
                               Add Variable
                             </Button>
-                          </Box>
+                          </Box> */}
                         </>
                       )}
 

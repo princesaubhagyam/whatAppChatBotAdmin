@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Skeleton } from '@mui/material';
 import WeeklyStats from 'src/components/dashboards/modern/WeeklyStats';
 import YearlySales from 'src/components/dashboards/ecommerce/YearlySales';
 import PaymentGateways from 'src/components/dashboards/ecommerce/PaymentGateways';
@@ -22,6 +22,7 @@ import apiClient from 'src/api/axiosClient';
 const Ecommerce = () => {
   console.log('hello');
   const [showCard, setShowcard] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const checkFacebookLogin = async () => {
     try {
@@ -29,7 +30,7 @@ const Ecommerce = () => {
       console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
-      
+
         if (!phoneId || phoneId.trim() === '') {
           setShowcard(false);
         } else {
@@ -38,7 +39,9 @@ const Ecommerce = () => {
       }
     } catch (error) {
       console.error('Error fetching Facebook meta info:', error);
-      setShowcard(false); 
+      setShowcard(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,7 +81,11 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              {showCard &&<QualityRatingCard />}
+              {loading ? (
+                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+              ) : showCard ? (
+                <QualityRatingCard />
+              ) : null}
             </Grid>
             {/* <Grid item xs={12} lg={14}>
               <ViewProfileCard />
@@ -106,8 +113,18 @@ const Ecommerce = () => {
           <SetUpProfileCard />
         </Grid>
         <Grid item xs={12} lg={14}>
-              {showCard && <ViewProfileCard />}
-            </Grid>
+          {loading ? (
+            <Skeleton
+              variant="rounded"
+              width={1069}
+              height={117}
+              animation="wave"
+              sx={{ bgcolor: 'grey.100' }}
+            />
+          ) : showCard ? (
+            <ViewProfileCard />
+          ) : null}
+        </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>
           {/* <YearlySales /> */}

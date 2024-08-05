@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Typography, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  IconButton,
+  Button,
+} from '@mui/material';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
 import DoneIcon from '@mui/icons-material/Done';
@@ -7,7 +16,8 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import EventContext from 'src/BroadcastContext';
-
+import BarChartIcon from '@mui/icons-material/BarChart';
+import BarChart from '@mui/icons-material/BarChart';
 const truncateText = (text, wordLimit) => {
   if (!text) return '';
 
@@ -47,7 +57,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
   // }, [id, refreshKey, checkBroadcastHistory]);
   useEffect(() => {
     const checkBroadcastHistory = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
         setIsHistory(historyResponse.data.is_history);
@@ -60,7 +70,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
         setError(err);
         setBroadcastData(null);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
@@ -112,9 +122,14 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
               sx={{ paddingTop: '0px', paddingBottom: '0px', borderRadius: '5rem !important' }}
             >
               <Box sx={{ backgroundColor: '#E9FEEE', padding: '10px', borderRadius: '0px' }}>
-                <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
-                  {history.template}
-                </Typography>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
+                    {history.template}
+                  </Typography>
+                  <Button sx={{ height: '25px', width: '30px !important', minWidth: '30px !important' }}>
+                    <BarChart />
+                  </Button>
+                </div>
                 <Typography sx={{ fontSize: '0.80rem' }}>
                   {truncateText(history.template_body, 10)}
                 </Typography>
