@@ -34,7 +34,8 @@ import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
@@ -138,142 +139,122 @@ const EnhancedTableToolbar = (props) => {
     setOpenAddContactModal,
     showButtons,
     handleOpenFilterDialog,
+    isSelected,
+    isItemSelected,
+    handleDelete,
   } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
   };
+  // const handleDelete = async () => {
+  //   try {
+  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
+  //       data: { ids: selected },
+  //     });
+  //     toast.success('Contacts deleted successfully');
+  //     // Remove the deleted contacts from the local state
+  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setSelected([]);
+  //   } catch (error) {
+  //     console.error('Failed to delete contacts:', error);
+  //     toast.error('Failed to delete contacts');
+  //   }
+  // };
+
   return (
     <>
-      {/* <Grid container spacing={2} alignItems="center" sx={{ mx: 2, mt: 1, mb: 2 }} pl={0}>
-        <Grid paddingLeft={0}> */}
-      {/* <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={handleOpenAddContactModal}
-          >
-            <IconPlus size={16} style={{marginRight: '2px'}}/>
-            Add Contact
-          </Button> */}
-      {/* <Box sx={{ flex: '1 1 100%' }} border={0}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch size="1.1rem" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ background: 'white', borderRadius: 4 }}
-              placeholder="Search..."
-              size="small"
-              onChange={handleSearch}
-              value={search}
-              fullWidth
-            />
-          </Box>
-        </Grid>
-        <Grid item ml={'40.5rem'}>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={handleOpenAddContactModal}
-          >
-            <IconPlus size={16} style={{ marginRight: '2px' }} />
-            Add Contact
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '9rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={onOpenImportModal}
-          >
-            <IconFileImport size={16} style={{ marginRight: '2px' }} />
-            Import Contact
-          </Button>
-        </Grid>
-      </Grid> */}
       <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px' }}>
-        <Stack>
-          <Box sx={{ flex: '1 1 100%' }} border={0}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch size="1.1rem" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ background: 'white', borderRadius: 4 }}
-              placeholder="Search..."
-              size="small"
-              onChange={handleSearch}
-              value={search}
-              fullWidth
-            />
-          </Box>
-        </Stack>
-        {/* <Stack sx={{ flexDirection: 'row', gap: 2 }}> */}
-        {showButtons && (
-          <Stack sx={{ flexDirection: 'row', gap: 2 }}>
-            <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
-              <FilterAltIcon size="1.1rem" />
-            </IconButton>
-            <Button
-              style={{
-                backgroundColor: '#1A4D2E',
-                color: 'white',
-                width: '8rem',
-                paddingLeft: '0px',
-                paddingRight: '0px',
-              }}
-              onClick={handleOpenAddContactModal}
-            >
-              <IconPlus size={16} style={{ marginRight: '2px' }} />
-              Add Contact
-            </Button>
-            <Button
-              style={{
-                backgroundColor: '#1A4D2E',
-                color: 'white',
-                width: '9rem',
-                paddingLeft: '0px',
-                paddingRight: '0px',
-              }}
-              onClick={onOpenImportModal}
-            >
-              <IconFileImport size={16} style={{ marginRight: '2px' }} />
-              Import Contact
-            </Button>
+        {numSelected > 0 ? (
+          <Stack
+            sx={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              backgroundColor: '#00720b21',
+            }}
+          >
+            <Typography variant="h5" marginLeft={'10px'}>
+              {' '}
+              {numSelected} selected{' '}
+            </Typography>
+            <Tooltip title="Delete">
+              <IconButton sx={{ color: '#1A4D2E' }} onClick={handleDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
+        ) : (
+          // When no items are selected
+          <>
+            <Stack>
+              <Box sx={{ flex: '1 1 100%' }} border={0}>
+                <TextField
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSearch size="1.1rem" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ background: 'white', borderRadius: 4 }}
+                  placeholder="Search..."
+                  size="small"
+                  onChange={handleSearch}
+                  value={search}
+                  fullWidth
+                />
+              </Box>
+            </Stack>
+            {showButtons && (
+              <Stack sx={{ flexDirection: 'row', gap: 2 }}>
+                <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+                  <FilterAltIcon size="1.1rem" />
+                </IconButton>
+                <Button
+                  style={{
+                    backgroundColor: '#1A4D2E',
+                    color: 'white',
+                    width: '8rem',
+                    paddingLeft: '0px',
+                    paddingRight: '0px',
+                  }}
+                  onClick={handleOpenAddContactModal}
+                >
+                  <IconPlus size={16} style={{ marginRight: '2px' }} />
+                  Add Contact
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: '#1A4D2E',
+                    color: 'white',
+                    width: '9rem',
+                    paddingLeft: '0px',
+                    paddingRight: '0px',
+                  }}
+                  onClick={onOpenImportModal}
+                >
+                  <IconFileImport size={16} style={{ marginRight: '2px' }} />
+                  Import Contact
+                </Button>
+              </Stack>
+            )}
+          </>
         )}
-        {/* </Stack> */}
       </Stack>
     </>
   );
 };
 
 EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
+  //numSelected: PropTypes.number.isRequired,
+  numSelected: PropTypes.arrayOf(PropTypes.number).isRequired,
   handleSearch: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   onOpenImportModal: PropTypes.func.isRequired,
   handleOpenFilterDialog: PropTypes.func.isRequired,
+  //isSelected: PropTypes.array.isRequired,
 };
 
 const CustomersTableList = () => {
@@ -429,11 +410,27 @@ const CustomersTableList = () => {
     getApiData();
   };
 
+  const handleDelete = async () => {
+    try {
+      await apiClient.delete(`api/contacts/bulk_delete/`, {
+        data: { ids: selected },
+      });
+      toast.success('Contacts deleted successfully');
+
+      setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+      setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+      setSelected([]);
+    } catch (error) {
+      console.error('Failed to delete contacts:', error);
+      toast.error('Failed to delete contacts');
+    }
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
     <Box sx={{ width: '100%' }}>
       {loading ? (
-        <Spinner /> // Display spinner while loading is true
+        <Spinner /> 
       ) : (
         <>
           <EnhancedTableToolbar
@@ -444,9 +441,11 @@ const CustomersTableList = () => {
             setOpenAddContactModal={setOpenAddContactModal}
             showButtons={true}
             handleOpenFilterDialog={handleOpenFilterDialog}
+            isItemSelected={selected}
+            handleDelete={handleDelete}
           />
           <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
-            <TableContainer >
+            <TableContainer>
               <Table
                 sx={{ minWidth: 750 }}
                 aria-labelledby="tableTitle"
@@ -485,7 +484,7 @@ const CustomersTableList = () => {
                           key={row.id}
                           selected={isItemSelected}
                         >
-                          <TableCell padding="checkbox" >
+                          <TableCell padding="checkbox">
                             <Checkbox
                               color="primary"
                               checked={isItemSelected}
@@ -494,7 +493,7 @@ const CustomersTableList = () => {
                               }}
                             />
                           </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -504,7 +503,7 @@ const CustomersTableList = () => {
                               {row.name}
                             </Typography>
                           </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '150px'}}>
+                          <TableCell sx={{ padding: '0px', minWidth: '150px' }}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -514,7 +513,7 @@ const CustomersTableList = () => {
                               {row.contact}
                             </Typography>{' '}
                           </TableCell>
-                          <TableCell sx={{ padding: '0px',minWidth: '180px'}}>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -524,7 +523,7 @@ const CustomersTableList = () => {
                               {row.city ? row.city : '-'}
                             </Typography>
                           </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
+                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
                             <Typography
                               fontWeight="400"
                               variant="h6"
@@ -579,9 +578,14 @@ const CustomersTableList = () => {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
-          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog} sx={{ height: '70%' }} fullWidth="lg">
-            <Paper sx={{ padding: '25px'}}>
-              <DialogTitle sx={{ padding: 1}}>Filter Contacts</DialogTitle>
+          <Dialog
+            open={openFilterDialog}
+            onClose={handleCloseFilterDialog}
+            sx={{ height: '70%' }}
+            fullWidth="lg"
+          >
+            <Paper sx={{ padding: '25px' }}>
+              <DialogTitle sx={{ padding: 1 }}>Filter Contacts</DialogTitle>
               <DialogContent>
                 <Grid container spacing={2}>
                   <Grid
@@ -623,7 +627,7 @@ const CustomersTableList = () => {
                 </Grid>
               </DialogContent>
 
-              <DialogActions sx={{ justifyContent: 'space-around' , padding: '0px'}}>
+              <DialogActions sx={{ justifyContent: 'space-around', padding: '0px' }}>
                 <Button
                   variant="contained"
                   onClick={handleCloseFilterDialog}

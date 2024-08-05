@@ -160,7 +160,7 @@ const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
               loading={loading}
               onClick={handleCreate}
               sx={{ mr: 2 }}
-              loadingPosition="start"
+              //loadingPosition="start"
               loadingIndicator={
                 <React.Fragment>
                   <CircularProgress size={18} color="inherit" />

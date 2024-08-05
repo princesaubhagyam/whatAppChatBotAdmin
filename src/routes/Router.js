@@ -6,6 +6,7 @@ import AuthWrapper from 'src/utils/AuthWrapper';
 import { element } from 'prop-types';
 import AuthGuard from './AuthGuard';
 import ChangePassword from 'src/views/apps/ChangePassword';
+import AuthReset from 'src/views/authentication/authForms/AuthReset';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -17,6 +18,7 @@ const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')
 
 /* ****Apps***** */
 const Broadcasts = Loadable(lazy(() => import('../views/apps/chat/Chat')));
+const BroadcastsDetail =  Loadable(lazy(() => import('../views/media/BroadcastsDetail')));
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
 const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
@@ -146,7 +148,7 @@ const Router = [
       { path: '/team', element: <Templates /> },
       { path: '/pending-requests', element: <Templates /> },
       { path: '/settings', element: <Maintenance /> },
-
+      { path: '/broadcast/:id', element: <BroadcastsDetail />},
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },
@@ -225,6 +227,7 @@ const Router = [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <AuthGuard /> },
       // { path: '/auth/login2', element: <Login2 /> },
+      { path: '/auth/reset-password/:token', element: <AuthReset />},
       { path: '/auth/register', element: <Register2 /> },
       // { path: '/auth/register2', element: <Register2 /> },
       { path: '/auth/forgot-password', element: <ForgotPassword2 /> },

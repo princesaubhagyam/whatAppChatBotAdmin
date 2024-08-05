@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -8,24 +9,92 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Dialog,
 } from '@mui/material';
+import apiClient from 'src/api/axiosClient';
 
-const messages = [
-  { id: 1, text: 'Messages sent', count: '156582', status: 'Delivered' },
-  { id: 2, text: 'Messages delivered', count: '156689', status: 'Unread' },
-  { id: 3, text: 'Messages read by', count: '21', status: 'Read' },
-  //   { id: 4, text: 'Replied by 1%', count: '16', status: 'Replied' },
-];
+const MessageAnalyticsModal = ({ id, open, handleClose, customerName, message }) => {
+  const [broadcastData, setBroadcastData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const message1 = [
-  { id: 5, text: 'Amount spent', count: '14', status: 'Check products' },
-  { id: 6, text: 'Cost per message delivered', count: '10', status: 'Talk to agent' },
-  { id: 7, text: 'Cost per website button click', count: '20', status: 'Click ' },
-];
+  useEffect(() => {
+    const fetchBroadcastData = async () => {
+      try {
+        const response = await apiClient.get(`/broadcast-history/${id}/`);
+        setBroadcastData(response.data.data);
+        console.log('modal', response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
 
-const MessageAnalyticsModal = ({ open, handleClose, customerName, message }) => {
+    if (open) {
+      fetchBroadcastData();
+    }
+  }, [open]);
+
+  if (loading) {
+    return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="message-analytics-modal"
+        aria-describedby="message-analytics-description"
+      >
+        <Box
+          sx={{
+            outline: 'none',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: '35%',
+            margin: 'auto',
+            mt: 10,
+          }}
+        >
+          <Typography variant="h5" component="h2" gutterBottom>
+            Loading...
+          </Typography>
+        </Box>
+      </Dialog>
+    );
+  }
+
+  if (error) {
+    return (
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="message-analytics-modal"
+        aria-describedby="message-analytics-description"
+      >
+        <Box
+          sx={{
+            outline: 'none',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: '400px',
+            margin: 'auto',
+            mt: 10,
+          }}
+        >
+          <Typography variant="h5" component="h2" gutterBottom>
+            No Data Found
+          </Typography>
+          {/* <Typography variant="body2" gutterBottom>
+            {error.message}
+          </Typography> */}
+        </Box>
+      </Modal>
+    );
+  }
+
   return (
-    <Modal
+    <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="message-analytics-modal"
@@ -37,9 +106,8 @@ const MessageAnalyticsModal = ({ open, handleClose, customerName, message }) => 
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          width: '35%',
+
           margin: 'auto',
-          mt: 10,
         }}
       >
         <Typography variant="h5" component="h2" gutterBottom>
@@ -57,29 +125,39 @@ const MessageAnalyticsModal = ({ open, handleClose, customerName, message }) => 
             </Typography>
           </ListItem>
         </List>
-        <List>
-          {messages.map((message) => (
-            <ListItem key={message.id} sx={{ backgroundColor: '#B8E7CB' }}>
-              <ListItemAvatar>{message.count}</ListItemAvatar>
-              <ListItemText primary={message.text} />
-            </ListItem>
-          ))}
-        </List>
-        <List>
-          {message1.map((message) => (
-            <ListItem key={message.id} sx={{ backgroundColor: '#CAD3E9' }}>
-              <ListItemAvatar>{message.count}</ListItemAvatar>
-              <ListItemText primary={message.text} />
-            </ListItem>
-          ))}
-        </List>
+        {broadcastData && (
+          <>
+            <Typography variant="h6" gutterBottom>
+              Broadcast Name: {broadcastData.broadcast.broadcast_name}
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              Total Members: {broadcastData.broadcast.total_members}
+            </Typography>
+            {broadcastData.broadcast_histories.map((history, index) => (
+              <List key={index}>
+                <Typography variant="h6" gutterBottom>
+                  Template: {history.template}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {history.template_body}
+                </Typography>
+                {history.message_statuses.map((status, idx) => (
+                  <ListItem key={idx} sx={{ backgroundColor: '#B8E7CB' }}>
+                    <ListItemAvatar>{status.count}</ListItemAvatar>
+                    <ListItemText primary={status.status} secondary={`${status.percentage}`} />
+                  </ListItem>
+                ))}
+              </List>
+            ))}
+          </>
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
             Close
           </Button>
         </Box>
       </Box>
-    </Modal>
+    </Dialog>
   );
 };
 

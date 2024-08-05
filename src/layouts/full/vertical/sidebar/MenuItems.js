@@ -81,6 +81,12 @@ const Menuitems = [
     icon: IconBroadcast,
     href: '/broadcasts',
   },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Media',
+  //   icon: IconPhoto,
+  //    href: '/media',
+  // },
   {
     id: uniqueId(),
     title: 'Templates',
@@ -136,12 +142,12 @@ const Menuitems = [
   //   icon: IconAlertCircle,
   //   href: '/pending-requests',
   // },
-  {
-    id: uniqueId(),
-    title: 'Settings',
-    icon: IconSettings,
-    href: '/settings',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Settings',
+  //   icon: IconSettings,
+  //   href: '/settings',
+  // },
 ];
 
 // const Menuitems = [

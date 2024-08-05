@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton, InputBase, Box, Popover, Button } from '@mui/material';
-import Picker from 'emoji-picker-react';
-import { IconMoodSmile, IconPaperclip, IconPhoto, IconSend } from '@tabler/icons';
+import { IconSend } from '@tabler/icons';
 import { sendMsg } from 'src/store/apps/chat/ChatSlice';
 import TemplateModal from 'src/modals/TemplateModal';
-import { useState } from 'react';
+import axios from 'axios';
+import apiClient from 'src/api/axiosClient';
+import EventContext from 'src/BroadcastContext';
 
-const ChatMsgSent = () => {
-  const [msg, setMsg] = React.useState('');
+const ChatMsgSent = ({ checkBroadcastHistory }) => {
+  const [msg, setMsg] = useState('');
   const dispatch = useDispatch();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [chosenEmoji, setChosenEmoji] = React.useState();
-  const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [chosenEmoji, setChosenEmoji] = useState();
   const [openModal, setOpenModal] = useState(false);
+  const [isHistory, setIsHistory] = useState(false);
+  const { isOn } = useContext(EventContext);
+  const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  const id = useSelector((state) => state.chatReducer.chatId);
+   
+  useEffect(() => {
+    if (activeBroadcast) {
+      apiClient
+        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
+        .then((response) => {
+          setIsHistory(response.data.is_history);
+        })
+        .catch((error) => {
+          console.error('Error fetching history status:', error);
+        });
+    }
+  }, [activeBroadcast , isOn]);
 
   const onEmojiClick = (_event, emojiObject) => {
     setChosenEmoji(emojiObject);
@@ -23,15 +40,15 @@ const ChatMsgSent = () => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const id = useSelector((state) => state.chatReducer.chatId);
-
   const handleChatMsgChange = (e) => {
     setMsg(e.target.value);
   };
+
   const handleOpenModal = () => {
     setOpenModal(true);
   };
@@ -39,6 +56,7 @@ const ChatMsgSent = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+
   const newMsg = { id, msg };
 
   const onChatMsgSubmit = (e) => {
@@ -49,7 +67,7 @@ const ChatMsgSent = () => {
   };
 
   return (
-    <Box sx={{ height: '82vh' }}>
+    <Box sx={{ height: { lg: '39px !important', xl: '39px !important', md: '39px !important' } }}>
       {/* ------------------------------------------- */}
       {/* sent chat */}
       {/* ------------------------------------------- */}
@@ -64,7 +82,7 @@ const ChatMsgSent = () => {
             justifyContent: 'center',
             padding: '9.6px',
             backgroundColor: 'white',
-            height: '65px'
+            height: '40px',
           }}
         >
           {/* ------------------------------------------- */}
@@ -119,21 +137,25 @@ const ChatMsgSent = () => {
           <IconButton aria-label="delete">
             <IconPaperclip stroke={1.5} size="20" />
           </IconButton> */}
-          <div style={{ justifyContent: 'center' }}>
-            <Button
-              style={{ backgroundColor: '#1A4D2E', color: 'white' }}
-              onClick={handleOpenModal}
-            >
-              <IconSend size={16} />
-              Send Template
-            </Button>
-          </div>
+          {!isHistory && (
+            <div style={{ justifyContent: 'center' }}>
+              <Button
+                style={{ backgroundColor: '#1A4D2E', color: 'white' }}
+                onClick={handleOpenModal}
+                sx={{ height: '30px'}}
+              >
+                <IconSend size={16} />
+                Send Template
+              </Button>
+            </div>
+          )}
         </form>
       )}
       <TemplateModal
         open={openModal}
         handleClose={handleCloseModal}
         broadcastId={activeBroadcast?.id}
+        checkBroadcastHistory={checkBroadcastHistory}
       />
     </Box>
   );
