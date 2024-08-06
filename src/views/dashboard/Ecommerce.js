@@ -18,7 +18,7 @@ import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRating
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
-import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
+// import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
 // import TwoStepVerification from '../../components/Models/TwoStepVerification';
 
 const Ecommerce = () => {
@@ -126,7 +126,7 @@ const Ecommerce = () => {
           ) : showCard ? (
             <>
               <ViewProfileCard />
-              <TwoStepVerificationOTP />
+              {/* <TwoStepVerificationOTP /> */}
               {/* <TwoStepVerification /> */}
             </>
           ) : null}

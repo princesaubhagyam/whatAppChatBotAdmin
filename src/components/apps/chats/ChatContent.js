@@ -18,24 +18,29 @@ import CachedIcon from '@mui/icons-material/Cached';
 import { useState } from 'react';
 //import ChatInsideSidebar from './ChatInsideSidebar';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
-import { fetchChatHistoryByPhoneNo } from '../../../store/apps/chat/ChatSlice';
+// import { fetchChatHistoryByPhoneNo } from '../../../store/apps/chat/ChatSlice';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import MessageList from './MessageList'; // Import the new component
 import Spinner from 'src/views/spinner/Spinner';
 import { useEffect, useContext } from 'react';
 import apiClient from 'src/api/axiosClient';
 import EventContext from 'src/BroadcastContext';
+import InfoIcon from '@mui/icons-material/Info';
 
-const ChatContent = ({ toggleChatSidebar }) => {
+const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
   const dispatch = useDispatch();
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
+  const [Graph, setGraph] = React.useState([]);
+  console.log('Graph', Graph);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  // console.log(activeBroadcast.id);
   const [loading, setLoading] = useState(false);
   const chatDetails = useSelector((state) => state.chatReducer.chatHistory);
   const [refreshKey, setRefreshKey] = useState(0);
   console.log('chatDetails', activeBroadcast);
   const [isHistory, setIsHistory] = useState(false);
+  console.log('isHistory', isHistory);
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {
@@ -44,6 +49,7 @@ const ChatContent = ({ toggleChatSidebar }) => {
         .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
         .then((response) => {
           setIsHistory(response.data.is_history);
+          setGraph(response.data);
         })
         .catch((error) => {
           console.error('Error fetching history status:', error);
@@ -57,6 +63,9 @@ const ChatContent = ({ toggleChatSidebar }) => {
     setLoading(false);
   };
 
+  function analyticsHistroy() {
+    setIsAnalytics(() => true);
+  }
   return (
     <Box>
       {activeBroadcast ? (
@@ -79,13 +88,21 @@ const ChatContent = ({ toggleChatSidebar }) => {
                   />
                   <IconButton sx={{ cursor: 'pointer' }}>
                     {isHistory && (
+                      <InfoIcon
+                        fontSize="medium"
+                        sx={{ marginRight: '2px' }}
+                        onClick={analyticsHistroy}
+                      />
+                    )}
+                  </IconButton>
+                  <IconButton sx={{ cursor: 'pointer' }}>
+                    {isHistory && (
                       <CachedIcon
                         fontSize="medium"
                         sx={{ marginRight: '2px' }}
                         onClick={refreshChatHistory}
                       />
                     )}
-                    
                   </IconButton>
                 </ListItem>
                 <Stack direction={'row'}></Stack>
