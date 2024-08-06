@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import icon1 from 'src/assets/images/svgs/google-icon.svg';
+// import icon1 from 'src/assets/images/svgs/google-icon.svg';
 import icon2 from 'src/assets/images/svgs/facebook-icon.svg';
 import CustomSocialButton from '../../../components/forms/theme-elements/CustomSocialButton';
 import { Stack } from '@mui/system';
@@ -54,7 +54,7 @@ const AuthSocialButtons = ({ title }) => {
           )
             .then((response) => response.json())
             .then((data) => {
-              console.log(data);
+              console.log(data, 'data=============');
               if (data.data && data.data.is_valid) {
                 navigate('/dashboard');
               } else {
@@ -109,7 +109,7 @@ const AuthSocialButtons = ({ title }) => {
           style={{ border: 'none' }}
           sx={{
             '&:hover': {
-              backgroundColor: 'none', 
+              backgroundColor: 'none',
               boxShadow: 'none',
             },
           }}
