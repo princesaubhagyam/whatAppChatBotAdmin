@@ -47,10 +47,7 @@ const AuthSocialButtons = ({ title }) => {
     window.FB.login(
       function (response) {
         if (response.authResponse) {
-          console.log(response.authResponse, 'response.authResponse');
-          const accessToken = response.authResponse.accessToken;
-          console.log(response.authResponse.code, 'response.authResponse.code');
-          console.log(response.authResponse, 'accessToken====');
+          const accessToken = response.authResponse.code;
           fetch(
             `https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}&access_token=EABN2cqTjBrsBO5jcvxQJwGexjk1ot50ZCXzJCZBLNkERhW7wrnHXtMUpT2k6DWQi5RZAyPbUZAiL8BKUs54RqSdXhIj17mdvgRC5IF0506XjXLM9qZAzyrfkbjshjhcGsEddJCS8Q8GnKRmRH0vzeffB9wzrHutVZADbcBy5wBaoNTIzVd4drWKCnssoTfJZCYFcAZDZD`,
           )
