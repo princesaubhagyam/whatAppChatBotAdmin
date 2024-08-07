@@ -48,9 +48,7 @@ const AuthSocialButtons = ({ title }) => {
       function (response) {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          fetch(
-            `https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}&access_token=EABN2cqTjBrsBO5jcvxQJwGexjk1ot50ZCXzJCZBLNkERhW7wrnHXtMUpT2k6DWQi5RZAyPbUZAiL8BKUs54RqSdXhIj17mdvgRC5IF0506XjXLM9qZAzyrfkbjshjhcGsEddJCS8Q8GnKRmRH0vzeffB9wzrHutVZADbcBy5wBaoNTIzVd4drWKCnssoTfJZCYFcAZDZD`,
-          )
+          fetch(`https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}`)
             .then((response) => response.json())
             .then((data) => {
               console.log(data, 'data=============');
