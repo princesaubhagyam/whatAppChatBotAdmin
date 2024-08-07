@@ -12,6 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { Typography, Divider } from '@mui/material';
 import Spinner from '../../views/spinner/Spinner';
+import BarGraph from './BarGraph';
 
 function Analytics({ setIsAnalytics }) {
   const [value, setValue] = React.useState('graph');
@@ -21,9 +22,8 @@ function Analytics({ setIsAnalytics }) {
   const [delivered, setDelivered] = React.useState([]);
   const [read, setRead] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [graphData, setGraphData] = React.useState([]);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-
-  console.log(activeBroadcast, 'activeBroadcast analytics');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -43,10 +43,20 @@ function Analytics({ setIsAnalytics }) {
     setLoading(true);
     try {
       if (activeBroadcast) {
+        let options = [];
         apiClient
           .get(`/broadcast-history/${activeBroadcast.id}/`)
           .then((response) => {
             setMessageStatuses(response?.data?.data?.broadcast_histories[0]?.message_statuses);
+            if (response?.data?.data?.broadcast_histories[0]?.message_statuses) {
+              console.log(response?.data?.data?.broadcast_histories[0]?.message_statuses, 'data');
+              response?.data?.data?.broadcast_histories[0]?.message_statuses.forEach(function (
+                item,
+              ) {
+                options.push(parseInt(item.percentage));
+              });
+            }
+            setGraphData([...options]);
           })
           .catch((error) => {
             console.error('Error fetching history status:', error);
@@ -64,7 +74,7 @@ function Analytics({ setIsAnalytics }) {
       const data = messageStatuses
         .filter((item) => item.status === status)
         .map((item) => item.recipients);
-      setData([...data]);
+      setData(data);
     }
     setLoading(false);
   }
@@ -75,12 +85,13 @@ function Analytics({ setIsAnalytics }) {
     getDataByStatus('read', setRead);
   }
 
-  console.log(sentData, 'sentData');
-  console.log(delivered, 'delivered');
-  console.log(read, 'read');
+  // function updateValueByName(name, newValue) {
+  //   setGraphData((prevData) =>
+  //     prevData.map((item) => (item.name.toLowerCase() === name ? { ...item, value: newValue } : item)),
+  //   );
+  // }
 
-  const xAxisData = ['Send', 'Deliver', 'Read', 'Reply', 'Fail'];
-  const seriesData = [4, 1, 2, 2, 2];
+  const xAxisData = ['Sent', 'Delivered', 'Read', 'Replied', 'Failed'];
   const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -110,11 +121,12 @@ function Analytics({ setIsAnalytics }) {
         <TabPanel value="graph">
           <BarChart
             xAxis={[{ scaleType: 'band', data: xAxisData }]}
-            series={[{ data: seriesData, id: 'cId' }]}
+            series={[{ data: graphData ? graphData : '' }]}
             width={900}
             height={500}
             barLabel="value"
           />
+          {/* <BarGraph /> */}
         </TabPanel>
         <TabPanel value="message">
           <TabContext value={innerValue}>
@@ -139,7 +151,6 @@ function Analytics({ setIsAnalytics }) {
                 sentData &&
                 sentData.length > 0 &&
                 sentData[0].map(function (item, index) {
-                  console.log(item, 'item');
                   let firstLetter = item.recipient_contact__name?.charAt(0);
 
                   return (
@@ -184,7 +195,6 @@ function Analytics({ setIsAnalytics }) {
                 delivered &&
                 delivered.length > 0 &&
                 delivered[0].map(function (item, index) {
-                  console.log(item, 'item');
                   let firstLetter = item.recipient_contact__name?.charAt(0);
 
                   return (
@@ -229,9 +239,7 @@ function Analytics({ setIsAnalytics }) {
                 read &&
                 read.length > 0 &&
                 read[0].map(function (item, index) {
-                  console.log(item, 'item');
                   let firstLetter = item.recipient_contact__name?.charAt(0);
-
                   return (
                     <>
                       <Box

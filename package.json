@@ -47,6 +47,7 @@
     "react-slick": "^0.29.0",
     "react-spring": "^9.2.4",
     "react-toastify": "^10.0.5",
+    "recharts": "^2.12.7",
     "serve": "^14.2.3",
     "simplebar-react": "^2.4.1",
     "slick-carousel": "^1.8.1",

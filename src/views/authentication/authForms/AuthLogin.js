@@ -52,7 +52,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     try {
       const res = await apiClient.post('/auth/signin/', { ...creds });
       if (res.status === 200) {
-        console.log('login', res);
+        // console.log('login', res);
         handleAuthStorage(res.data.data);
         setUserDetails({
           full_name: res.data.data.full_name,

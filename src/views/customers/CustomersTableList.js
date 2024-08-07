@@ -35,10 +35,12 @@ import PropTypes from 'prop-types';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
+import EditContactModal from '../../modals/EditContactModel';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -142,6 +144,7 @@ const EnhancedTableToolbar = (props) => {
     isSelected,
     isItemSelected,
     handleDelete,
+    handleEdit,
   } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
@@ -179,11 +182,20 @@ const EnhancedTableToolbar = (props) => {
               {' '}
               {numSelected} selected{' '}
             </Typography>
-            <Tooltip title="Delete">
-              <IconButton sx={{ color: '#1A4D2E' }} onClick={handleDelete}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <Box>
+              {numSelected === 1 ? (
+                <Tooltip title="Edit">
+                  <IconButton sx={{ color: '#1A4D2E' }} onClick={handleEdit}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : null}
+              <Tooltip title="Delete">
+                <IconButton sx={{ color: '#1A4D2E' }} onClick={handleDelete}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Stack>
         ) : (
           // When no items are selected
@@ -272,6 +284,14 @@ const CustomersTableList = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [edit, setEdit] = useState(false);
+  const [editData, setEditData] = useState({
+    city: '',
+    contact: ' ',
+    name: '',
+    tag: '',
+  });
+  const [allDataForEdit, setAllDataForEdit] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
@@ -303,8 +323,26 @@ const CustomersTableList = () => {
     }
     setAllRows(allData);
     setRows(allData);
+    setAllDataForEdit(allData);
     setLoading(false);
   };
+
+  function handleEdit() {
+    allDataForEdit &&
+      allDataForEdit.length > 0 &&
+      allDataForEdit.find(function (item) {
+        if (item.id === selected[0]) {
+          setEditData({
+            city: item.city,
+            contact: item.contact,
+            name: item.name,
+            tag: item.tag,
+          });
+        }
+        return;
+      });
+    setEdit(true);
+  }
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
@@ -430,7 +468,7 @@ const CustomersTableList = () => {
   return (
     <Box sx={{ width: '100%' }}>
       {loading ? (
-        <Spinner /> 
+        <Spinner />
       ) : (
         <>
           <EnhancedTableToolbar
@@ -443,6 +481,7 @@ const CustomersTableList = () => {
             handleOpenFilterDialog={handleOpenFilterDialog}
             isItemSelected={selected}
             handleDelete={handleDelete}
+            handleEdit={handleEdit}
           />
           <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
             <TableContainer>
@@ -664,6 +703,15 @@ const CustomersTableList = () => {
             open={openAddContactModal}
             handleClose={() => setOpenAddContactModal(false)}
             onAddContact={handleAddContact}
+          />
+          <EditContactModal
+            open={edit}
+            selected={selected}
+            setEdit={setEdit}
+            editData={editData}
+            setEditData={setEditData}
+            getApiData={getApiData}
+            setSelected={setSelected}
           />
         </>
       )}

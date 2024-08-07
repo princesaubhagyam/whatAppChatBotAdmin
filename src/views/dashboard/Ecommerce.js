@@ -22,14 +22,14 @@ import apiClient from 'src/api/axiosClient';
 // import TwoStepVerification from '../../components/Models/TwoStepVerification';
 
 const Ecommerce = () => {
-  console.log('hello');
+  // console.log('hello');
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      console.log('API Response:', res);
+      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 

@@ -12,7 +12,7 @@ const WelcomeCard = () => {
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      console.log('API Response:', res);
+      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         setShowSocialButtons(!phoneId || phoneId.trim() === '');
