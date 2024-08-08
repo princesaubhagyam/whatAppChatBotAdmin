@@ -1,40 +1,81 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, Cell } from 'recharts';
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
 const colors = ['#00FF00', '#808080', '#0000FF', '#FFFF00', '#FF0000'];
+const barWidths = [50, 50, 50, 50, 50];
 
 const BarGraph = ({ graphData }) => {
-  const coloredData = graphData.map((entry, index) => ({
-    ...entry,
-    fill: colors[index % colors.length],
-  }));
+  const data = {
+    //labels: graphData.map((entry) => `${entry.name} (${entry.number}) : ${entry.value}%`),
+    labels: graphData.map((entry) => `${entry.name} (${entry.number})`),
+    datasets: [
+      {
+        // label: null,
+        data: graphData.map((entry) => entry.value),
+        backgroundColor: colors,
+        borderColor: colors,
+        borderWidth: 1,
+        barThickness: barWidths[0],
+      },
+    ],
+  };
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div
-          className="custom-tooltip"
-          style={{ backgroundColor: '#fff', border: '1px solid #ccc', padding: '10px' }}
-        >
-          <p className="label" style={{ fontWeight: 'bold' }}>{`${label}`}</p>
-          <p className="intro">{`Value: ${payload[0].value}%`}</p>
-        </div>
-      );
-    }
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => `Value: ${context.raw}%`,
+        },
+      },
+      datalabels: {
+        color: '#000',
+        anchor: 'end',
+        align: 'top',
+        formatter: (value) => `${value}%`,
+        font: {
+          weight: 'bold',
+          size: 12,
+        },
+        padding: {
+          top: 2,
+          bottom: 4,
+        },
+        clamp: true,
+        offset: 4,
+      },
+    },
+    scales: {
+      x: {
+        barPercentage: 0.8,
+        categoryPercentage: 1.0,
+      },
+      y: {
+        beginAtZero: true,
+        max: 100,
+      },
+    },
   };
 
   return (
-    <BarChart width={900} height={500} data={coloredData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip content={<CustomTooltip />} />
-      <Bar dataKey="value" barSize={50}>
-        {coloredData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.fill} />
-        ))}
-        {/* <LabelList dataKey="value" position="top" /> */}
-      </Bar>
-    </BarChart>
+    <div style={{ width: '700px', height: '400px' }}>
+      <Bar data={data} options={options} />
+    </div>
   );
 };
 
