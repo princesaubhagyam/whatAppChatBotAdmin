@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, Grid, Skeleton } from '@mui/material';
-import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+// import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import welcomeImg from 'src/assets/images/backgrounds/welcome-bg2.png';
 import AuthSocialButtons from 'src/views/authentication/authForms/AuthSocialButtons';
 import apiClient from 'src/api/axiosClient';
@@ -12,7 +12,7 @@ const WelcomeCard = () => {
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      console.log('API Response:', res);
+      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         setShowSocialButtons(!phoneId || phoneId.trim() === '');
@@ -44,9 +44,15 @@ const WelcomeCard = () => {
             >
               {loading ? (
                 <>
-                  <Skeleton variant="text" width={200} height={40} animation="wave"/>
-                  <Skeleton variant="text" width={300} height={20} sx={{ my: 2 }} animation="wave"/>
-                  <Skeleton variant="rectangular" width={200} height={40} animation="wave"/>
+                  <Skeleton variant="text" width={200} height={40} animation="wave" />
+                  <Skeleton
+                    variant="text"
+                    width={300}
+                    height={20}
+                    sx={{ my: 2 }}
+                    animation="wave"
+                  />
+                  <Skeleton variant="rectangular" width={200} height={40} animation="wave" />
                 </>
               ) : (
                 <>

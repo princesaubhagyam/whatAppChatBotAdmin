@@ -3,7 +3,7 @@ import {
   Box,
   Typography,
   Stack,
-  Button,
+  // Button,
   FormControl,
   InputAdornment,
   OutlinedInput,
@@ -12,10 +12,10 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { IconLock, IconMail } from '@tabler/icons';
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
 import { useUser } from 'src/store/apps/UserContext';
-import { setWalletBalance } from 'src/store/auth/AuthSlice';
+// import { setWalletBalance } from 'src/store/auth/AuthSlice';
 import { LoadingButton } from '@mui/lab';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
@@ -29,7 +29,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { setUserDetails } = useUser();
 
   const handleAuthStorage = (resData) => {
@@ -52,7 +52,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     try {
       const res = await apiClient.post('/auth/signin/', { ...creds });
       if (res.status === 200) {
-        console.log('login', res);
+        // console.log('login', res);
         handleAuthStorage(res.data.data);
         setUserDetails({
           full_name: res.data.data.full_name,

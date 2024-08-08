@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import icon1 from 'src/assets/images/svgs/google-icon.svg';
+// import icon1 from 'src/assets/images/svgs/google-icon.svg';
 import icon2 from 'src/assets/images/svgs/facebook-icon.svg';
 import CustomSocialButton from '../../../components/forms/theme-elements/CustomSocialButton';
 import { Stack } from '@mui/system';
@@ -47,14 +47,11 @@ const AuthSocialButtons = ({ title }) => {
     window.FB.login(
       function (response) {
         if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-          console.log(accessToken);
-          fetch(
-            `https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}&access_token=EABN2cqTjBrsBO5jcvxQJwGexjk1ot50ZCXzJCZBLNkERhW7wrnHXtMUpT2k6DWQi5RZAyPbUZAiL8BKUs54RqSdXhIj17mdvgRC5IF0506XjXLM9qZAzyrfkbjshjhcGsEddJCS8Q8GnKRmRH0vzeffB9wzrHutVZADbcBy5wBaoNTIzVd4drWKCnssoTfJZCYFcAZDZD`,
-          )
+          const accessToken = response.authResponse.code;
+          fetch(`https://graph.facebook.com/v20.0/debug_token?input_token=${accessToken}`)
             .then((response) => response.json())
             .then((data) => {
-              console.log(data);
+              console.log(data, 'data=============');
               if (data.data && data.data.is_valid) {
                 navigate('/dashboard');
               } else {
@@ -109,7 +106,7 @@ const AuthSocialButtons = ({ title }) => {
           style={{ border: 'none' }}
           sx={{
             '&:hover': {
-              backgroundColor: 'none', 
+              backgroundColor: 'none',
               boxShadow: 'none',
             },
           }}

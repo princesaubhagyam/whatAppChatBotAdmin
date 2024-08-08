@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Skeleton } from '@mui/material';
-import WeeklyStats from 'src/components/dashboards/modern/WeeklyStats';
-import YearlySales from 'src/components/dashboards/ecommerce/YearlySales';
-import PaymentGateways from 'src/components/dashboards/ecommerce/PaymentGateways';
+// import WeeklyStats from 'src/components/dashboards/modern/WeeklyStats';
+// import YearlySales from 'src/components/dashboards/ecommerce/YearlySales';
+// import PaymentGateways from 'src/components/dashboards/ecommerce/PaymentGateways';
 import WelcomeCard from 'src/components/dashboards/ecommerce/WelcomeCard';
-import Payment from 'src/components/dashboards/ecommerce/Payment';
-import SalesProfit from 'src/components/dashboards/ecommerce/SalesProfit';
-import RevenueUpdates from 'src/components/dashboards/ecommerce/RevenueUpdates';
-import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
-import TotalEarning from 'src/components/dashboards/ecommerce/TotalEarning';
+// import Payment from 'src/components/dashboards/ecommerce/Payment';
+// import SalesProfit from 'src/components/dashboards/ecommerce/SalesProfit';
+// import RevenueUpdates from 'src/components/dashboards/ecommerce/RevenueUpdates';
+// import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
+// import TotalEarning from 'src/components/dashboards/ecommerce/TotalEarning';
 import ProductsSold from 'src/components/dashboards/ecommerce/ProductsSold';
-import MonthlyEarnings from 'src/components/dashboards/ecommerce/MonthlyEarnings';
-import ProductPerformances from 'src/components/dashboards/ecommerce/ProductPerformances';
-import RecentTransactions from 'src/components/dashboards/ecommerce/RecentTransactions';
-import AuthSocialButtons from '../authentication/authForms/AuthSocialButtons';
+// import MonthlyEarnings from 'src/components/dashboards/ecommerce/MonthlyEarnings';
+// import ProductPerformances from 'src/components/dashboards/ecommerce/ProductPerformances';
+// import RecentTransactions from 'src/components/dashboards/ecommerce/RecentTransactions';
+// import AuthSocialButtons from '../authentication/authForms/AuthSocialButtons';
 import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRatingCard';
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
+// import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
+// import TwoStepVerification from '../../components/Models/TwoStepVerification';
 
 const Ecommerce = () => {
-  console.log('hello');
+  // console.log('hello');
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      console.log('API Response:', res);
+      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 
@@ -122,7 +124,11 @@ const Ecommerce = () => {
               sx={{ bgcolor: 'grey.100' }}
             />
           ) : showCard ? (
-            <ViewProfileCard />
+            <>
+              <ViewProfileCard />
+              {/* <TwoStepVerificationOTP /> */}
+              {/* <TwoStepVerification /> */}
+            </>
           ) : null}
         </Grid>
         {/* column */}

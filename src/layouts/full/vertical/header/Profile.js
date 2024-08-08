@@ -13,13 +13,12 @@ const Profile = () => {
   const { user } = useUser();
 
   useEffect(() => {
-    
     const fetchWalletBalance = async () => {
       try {
         const response = await apiClient.get('/wallet/');
         if (response.status === 200) {
-          console.log(response);
-          setWalletBalance(response.data.data.balance); 
+          // console.log(response);
+          setWalletBalance(response.data.data.balance);
         }
       } catch (error) {
         console.error('Error fetching wallet balance:', error);
