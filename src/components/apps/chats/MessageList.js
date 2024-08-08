@@ -145,18 +145,15 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            // Customizing tooltip label
             return `${context.label}: ${context.raw}%`;
           },
           afterLabel: function (context) {
-            // This adds additional lines, in this case, empty to add a margin
             return '';
           },
         },
-        // You can set the font color for tooltips here
+
         titleFontColor: '#000000',
         bodyFontColor: '#FF0000',
-        // Other tooltip options
       },
       legend: {
         display: true,
@@ -223,12 +220,12 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
                   <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
                     {history.template}
                   </Typography>
-                  <Button
+                  {/* <Button
                     sx={{ height: '28px', width: '32px !important', minWidth: '30px !important' }}
                     onClick={() => handleOpenModal(history.message_statuses)}
                   >
                     <BarChartIcon />
-                  </Button>
+                  </Button> */}
                 </div>
                 <Typography sx={{ fontSize: '0.80rem' }}>
                   {truncateText(history.template_body, 10)}

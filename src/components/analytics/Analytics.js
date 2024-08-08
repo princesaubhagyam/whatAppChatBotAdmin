@@ -54,6 +54,7 @@ function Analytics({ setIsAnalytics }) {
                 response?.data?.data?.broadcast_histories[0]?.message_statuses.map((data) => ({
                   name: data.status,
                   value: parseFloat(data.percentage),
+                  number: data.count,
                 })),
               );
             }
@@ -110,7 +111,7 @@ function Analytics({ setIsAnalytics }) {
             onClick={closeAnalyticsHistory}
           />
         </Box>
-        <TabPanel value="graph">
+        <TabPanel value="graph" sx={{ display: 'flex', justifyContent: 'center' }}>
           <BarGraph graphData={graphData} />
         </TabPanel>
         <TabPanel value="message">
