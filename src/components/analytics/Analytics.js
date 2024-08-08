@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -22,8 +22,8 @@ function Analytics({ setIsAnalytics }) {
   const [delivered, setDelivered] = React.useState([]);
   const [read, setRead] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [graphData, setGraphData] = React.useState([]);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  const [graphData, setGraphData] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -50,13 +50,13 @@ function Analytics({ setIsAnalytics }) {
             setMessageStatuses(response?.data?.data?.broadcast_histories[0]?.message_statuses);
             if (response?.data?.data?.broadcast_histories[0]?.message_statuses) {
               console.log(response?.data?.data?.broadcast_histories[0]?.message_statuses, 'data');
-              response?.data?.data?.broadcast_histories[0]?.message_statuses.forEach(function (
-                item,
-              ) {
-                options.push(parseInt(item.percentage));
-              });
+              setGraphData(
+                response?.data?.data?.broadcast_histories[0]?.message_statuses.map((data) => ({
+                  name: data.status,
+                  value: parseFloat(data.percentage),
+                })),
+              );
             }
-            setGraphData([...options]);
           })
           .catch((error) => {
             console.error('Error fetching history status:', error);
@@ -85,14 +85,6 @@ function Analytics({ setIsAnalytics }) {
     getDataByStatus('read', setRead);
   }
 
-  // function updateValueByName(name, newValue) {
-  //   setGraphData((prevData) =>
-  //     prevData.map((item) => (item.name.toLowerCase() === name ? { ...item, value: newValue } : item)),
-  //   );
-  // }
-
-  const xAxisData = ['Sent', 'Delivered', 'Read', 'Replied', 'Failed'];
-  const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <TabContext value={value}>
@@ -119,14 +111,7 @@ function Analytics({ setIsAnalytics }) {
           />
         </Box>
         <TabPanel value="graph">
-          <BarChart
-            xAxis={[{ scaleType: 'band', data: xAxisData }]}
-            series={[{ data: graphData ? graphData : '' }]}
-            width={900}
-            height={500}
-            barLabel="value"
-          />
-          {/* <BarGraph /> */}
+          <BarGraph graphData={graphData} />
         </TabPanel>
         <TabPanel value="message">
           <TabContext value={innerValue}>
