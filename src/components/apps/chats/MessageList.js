@@ -205,7 +205,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
         overflow: 'hidden',
         position: 'relative',
         width: '320px',
-        boxShadow: '0px 1px 110px #00000025',
+        boxShadow: '0px 1px 5px #00000025',
       }}
     >
       {broadcastData && (
@@ -264,7 +264,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
           ))}
         </>
       )}
-      <Modal open={openModal} onClose={handleCloseModal}>
+      {/* <Modal open={openModal} onClose={handleCloseModal}>
         <Box
           sx={{
             position: 'absolute',
@@ -285,7 +285,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
             <Bar data={barChartData} options={options} />
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 };
