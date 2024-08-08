@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -6,8 +6,8 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  IconButton,
   Button,
+  Modal,
 } from '@mui/material';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
@@ -15,46 +15,62 @@ import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
-import EventContext from 'src/BroadcastContext';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import BarChart from '@mui/icons-material/BarChart';
-const truncateText = (text, wordLimit) => {
-  if (!text) return '';
+import EventContext from 'src/BroadcastContext';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-  const words = text.split(' ');
-  if (words.length > wordLimit) {
-    return words.slice(0, wordLimit).join(' ') + '...';
-  }
-  return text;
-};
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
   const [broadcastData, setBroadcastData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isHistory, setIsHistory] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [chartData, setChartData] = useState([
+    {
+      status: 'sent',
+      count: 0,
+      percentage: 20,
+      recipients: [],
+    },
+    {
+      status: 'delivered',
+      count: 0,
+      percentage: 30,
+      recipients: [],
+    },
+    {
+      status: 'read',
+      count: 0,
+      percentage: 40,
+      recipients: [],
+    },
+    {
+      status: 'replied',
+      count: 0,
+      percentage: 10,
+      recipients: [],
+    },
+    {
+      status: 'failed',
+      count: 0,
+      percentage: 20,
+      recipients: [],
+    },
+  ]);
+  console.log(chartData);
   const { isOn } = useContext(EventContext);
 
-  // useEffect(() => {
-  //   const checkBroadcastHistory = async () => {
-  //     try {
-  //       const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
-  //       setIsHistory(historyResponse.data.is_history);
-
-  //       if (historyResponse.data.is_history) {
-  //         const response = await apiClient.get(`/broadcast-history/${id}/`);
-  //         setBroadcastData(response.data.data);
-  //       }
-
-  //       setLoading(false);
-  //     } catch (err) {
-  //       setError(err);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   checkBroadcastHistory();
-  // }, [id, refreshKey, checkBroadcastHistory]);
   useEffect(() => {
     const checkBroadcastHistory = async () => {
       setLoading(true);
@@ -75,8 +91,18 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
     };
 
     checkBroadcastHistory();
-    // Reset the trigger
   }, [id, isOn]);
+
+  const handleOpenModal = (data) => {
+    const formattedData = data.map((item) => ({
+      ...item,
+      percentage: Math.round(item.percentage),
+    }));
+    // setChartData(formattedData);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => setOpenModal(false);
 
   if (loading) {
     return <Spinner />;
@@ -103,13 +129,84 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
     }
   };
 
+  const barChartData = {
+    labels: chartData.map((item) => item.status),
+    datasets: [
+      {
+        label: 'Percentage',
+        data: chartData.map((item) => item.percentage),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      },
+    ],
+  };
+
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            // Customizing tooltip label
+            return `${context.label}: ${context.raw}%`;
+          },
+          afterLabel: function (context) {
+            // This adds additional lines, in this case, empty to add a margin
+            return '';
+          },
+        },
+        // You can set the font color for tooltips here
+        titleFontColor: '#000000',
+        bodyFontColor: '#FF0000',
+        // Other tooltip options
+      },
+      legend: {
+        display: true,
+      },
+    },
+    responsive: true,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Status',
+        },
+        ticks: {
+          autoSkip: false,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Percentage',
+        },
+        ticks: {
+          callback: function (value) {
+            return `${value}%`;
+          },
+        },
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.5,
+      },
+    },
+    options: {
+      tooltips: {
+        callbacks: {
+          label: function (value, data) {
+            return 10;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <Box
       sx={{
         borderRadius: '8px',
         overflow: 'hidden',
         position: 'relative',
-
         width: '320px',
         boxShadow: '0px 1px 110px #00000025',
       }}
@@ -126,8 +223,11 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
                   <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
                     {history.template}
                   </Typography>
-                  <Button sx={{ height: '25px', width: '30px !important', minWidth: '30px !important' }}>
-                    <BarChart />
+                  <Button
+                    sx={{ height: '28px', width: '32px !important', minWidth: '30px !important' }}
+                    onClick={() => handleOpenModal(history.message_statuses)}
+                  >
+                    <BarChartIcon />
                   </Button>
                 </div>
                 <Typography sx={{ fontSize: '0.80rem' }}>
@@ -167,8 +267,40 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
           ))}
         </>
       )}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            // border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" component="h2">
+            Status Bar Chart
+          </Typography>
+          <Box sx={{ mt: 2 }}>
+            <Bar data={barChartData} options={options} />
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
+};
+
+const truncateText = (text, wordLimit) => {
+  if (!text) return '';
+
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
 };
 
 export default MessageList;

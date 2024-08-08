@@ -38,7 +38,7 @@ const AuthReset = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        await apiClient.get(`auth/verify-token/${token}/`);
+        await apiClient.get(`auth/reset-password/${token}/`);
       } catch (error) {
         setValidToken(false);
         setMessage('Invalid or expired token.');
