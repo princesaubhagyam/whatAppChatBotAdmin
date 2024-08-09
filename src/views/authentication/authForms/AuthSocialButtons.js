@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 // import icon1 from 'src/assets/images/svgs/google-icon.svg';
 import icon2 from 'src/assets/images/svgs/facebook-icon.svg';
 import CustomSocialButton from '../../../components/forms/theme-elements/CustomSocialButton';
@@ -6,11 +6,11 @@ import { Stack } from '@mui/system';
 import { Avatar, Box } from '@mui/material';
 import { useNavigate } from 'react-router';
 import apiClient from 'src/api/axiosClient';
-import { functionsIn } from 'lodash';
+// import { functionsIn } from 'lodash';
 
 const AuthSocialButtons = ({ title }) => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState({})
+  // const [userInfo, setUserInfo] = useState({})
 
 
 
@@ -54,33 +54,33 @@ const AuthSocialButtons = ({ title }) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
           if (accessToken) {
-            try { 
+            try {
               apiClient.get(`auth/get_access_token_for_business/?code=${accessToken}`)
-              .then((response) => {
-                console.log(response, "response====")
-                if(response.data.status){
-                  setUserInfo(()=>({access_token :response.data.data.access_token}))
-                  try {
-                    apiClient.get(`auth/get_business_id?input_token=${response.data.data.access_token}`,{
-                      headers: {
-                        'Access-Token': response.data.data.access_token,
-                      }
-                    })
-                    .then((response) => {
-                      console.log(response, "response====")
-                    })
-                    .catch((error) => {
-                      console.log(error)
-                    })
-                  } catch (error) {
-                     console.error
+                .then((response) => {
+                  console.log(response, "response====")
+                  if (response.data.status) {
+                    // setUserInfo(() => ({ access_token: response.data.data.access_token }))
+                    try {
+                      apiClient.get(`auth/get_business_id?input_token=${response.data.data.access_token}`, {
+                        headers: {
+                          'Access-Token': response.data.data.access_token,
+                        }
+                      })
+                        .then((response) => {
+                          console.log(response, "response====")
+                        })
+                        .catch((error) => {
+                          console.log(error)
+                        })
+                    } catch (error) {
+                      console.error(error,"error")
+                    }
                   }
-                }
-              })
-              .catch((error) => {
-                console.log(error)
-              })
-              
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+
             } catch (error) {
               console.log(error)
             }
@@ -108,7 +108,7 @@ const AuthSocialButtons = ({ title }) => {
 
 
 
- 
+
   return (
     <>
       <Stack direction="row" justifyContent="left" spacing={2} mt={3}>
