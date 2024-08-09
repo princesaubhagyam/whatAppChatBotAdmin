@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -13,6 +13,7 @@ import Stack from '@mui/material/Stack';
 import { Typography, Divider } from '@mui/material';
 import Spinner from '../../views/spinner/Spinner';
 import BarGraph from './BarGraph';
+import EventContext from 'src/BroadcastContext';
 
 function Analytics({ setIsAnalytics }) {
   const [value, setValue] = React.useState('graph');
@@ -24,7 +25,7 @@ function Analytics({ setIsAnalytics }) {
   const [loading, setLoading] = React.useState(true);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [graphData, setGraphData] = useState([]);
-
+  const { isOn } = useContext(EventContext);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -37,7 +38,7 @@ function Analytics({ setIsAnalytics }) {
   useEffect(() => {
     getBroadcastsDataforAnalytics(activeBroadcast);
     fetchAllData();
-  }, [activeBroadcast]);
+  }, [activeBroadcast, isOn]);
 
   function getBroadcastsDataforAnalytics(activeBroadcast) {
     setLoading(true);
@@ -110,20 +111,25 @@ function Analytics({ setIsAnalytics }) {
             onClick={closeAnalyticsHistory}
           />
         </Box>
-        <TabPanel value="graph" sx={{ display: 'flex', justifyContent: 'center' }}>
+        <TabPanel value="graph" sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
           <BarGraph graphData={graphData} />
         </TabPanel>
-        <TabPanel value="message">
-          <TabContext value={innerValue}>
+        <TabPanel value="message" sx={{ padding: '0px !important' }}>
+          <TabContext value={innerValue} sx={{ padding: '0px !important' }}>
             <Box
               sx={{
                 borderBottom: 1,
                 borderColor: 'divider',
                 display: 'flex',
                 justifyContent: 'space-between',
+                padding: '0px !important',
               }}
             >
-              <TabList onChange={handleChangeInner} aria-label="lab API tabs example">
+              <TabList
+                onChange={handleChangeInner}
+                aria-label="lab API tabs example"
+                sx={{ padding: '0px !important' }}
+              >
                 <Tab label="Sent" value="inner-sent" />
                 <Tab label="Delivered" value="inner-deliver" />
                 <Tab label="Read" value="inner-read" />
@@ -144,6 +150,7 @@ function Analytics({ setIsAnalytics }) {
                         sx={{
                           display: 'flex',
                           flexDirection: 'row',
+                          paddingTop: '10px',
                         }}
                       >
                         <Stack direction="row" spacing={2}>
@@ -188,6 +195,7 @@ function Analytics({ setIsAnalytics }) {
                         sx={{
                           display: 'flex',
                           flexDirection: 'row',
+                          paddingTop: '10px',
                         }}
                       >
                         <Stack direction="row" spacing={2}>
@@ -231,6 +239,7 @@ function Analytics({ setIsAnalytics }) {
                         sx={{
                           display: 'flex',
                           flexDirection: 'row',
+                          paddingTop: '10px',
                         }}
                       >
                         <Stack direction="row" spacing={2}>
