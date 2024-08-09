@@ -58,8 +58,23 @@ const AuthSocialButtons = ({ title }) => {
               apiClient.get(`auth/get_access_token_for_business/?code=${accessToken}`)
               .then((response) => {
                 console.log(response, "response====")
-                if(response.status){
-        
+                if(response.data.status){
+                  setUserInfo(()=>({access_token :response.data.data.access_token}))
+                  try {
+                    apiClient.get(`auth/get_business_id?input_token=${response.data.data.access_token}`,{
+                      headers: {
+                        'Access-Token': response.data.data.access_token,
+                      }
+                    })
+                    .then((response) => {
+                      console.log(response, "response====")
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
+                  } catch (error) {
+                     console.error
+                  }
                 }
               })
               .catch((error) => {
