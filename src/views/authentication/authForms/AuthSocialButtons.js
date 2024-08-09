@@ -54,36 +54,7 @@ const AuthSocialButtons = ({ title }) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
           if (accessToken) {
-            try {
-              apiClient.get(`auth/get_access_token_for_business/?code=${accessToken}`)
-                .then((response) => {
-                  console.log(response, "response====")
-                  if (response.data.status) {
-                    // setUserInfo(() => ({ access_token: response.data.data.access_token }))
-                    try {
-                      apiClient.get(`auth/get_business_id?input_token=${response.data.data.access_token}`, {
-                        headers: {
-                          'Access-Token': response.data.data.access_token,
-                        }
-                      })
-                        .then((response) => {
-                          console.log(response, "response====")
-                        })
-                        .catch((error) => {
-                          console.log(error)
-                        })
-                    } catch (error) {
-                      console.error(error,"error")
-                    }
-                  }
-                })
-                .catch((error) => {
-                  console.log(error)
-                })
-
-            } catch (error) {
-              console.log(error)
-            }
+            getAccessTokenForBusiness(accessToken)
           }
           else {
             console.error("Access Token is not found")
@@ -107,7 +78,59 @@ const AuthSocialButtons = ({ title }) => {
   };
 
 
+ function getAccessTokenForBusiness(accessToken){
+  try {
+    apiClient.get(`auth/get_access_token_for_business/?code=${accessToken}`)
+    .then((response) => {
+      if(response.data.status){
+        getBusinessId(response.data.data.access_token)
+      }
+    }).catch((error)=>{
+      console.error(error)
+    })
+  } catch (error) {
+    
+  }
+ }
+ 
+function getBusinessId(access_token){
+  try {
+    apiClient.get(`auth/get_business_id?input_token=${access_token}`, {
+      headers: {
+        'Access-Token': access_token,
+      }
+    })
+      .then((response) => {
+        if(response.data.status){
+          const businessId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
+          getWhatsappBusinessMessaging(access_token,businessId.target_ids[0])
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error(error,"error")
+  }
+}
 
+  function getWhatsappBusinessMessaging(access_token, id){
+    try {
+      apiClient.get(`auth/get_phone_id/${id}`, {
+        headers: {
+          'Access-Token': access_token,
+        }
+      })
+        .then((response) => {
+          console.log(response, "response====")
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } catch (error) {
+      console.error(error,"error")
+    }
+  }
 
   return (
     <>
