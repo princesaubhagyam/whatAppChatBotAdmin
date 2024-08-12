@@ -21,7 +21,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchData}) {
+export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchData,setTriggerRerender}) {
   const [otp, setOtp] = React.useState('');
   const handleClose = () => {
     setOpen(false);
@@ -41,7 +41,7 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchDa
       }
      })
      .then((response)=>{
-       console.log(response)
+       console.log(response,"******")
        if(response.status){
         toast.success('Account Verified', { duration: 2000 })
         fetchData()

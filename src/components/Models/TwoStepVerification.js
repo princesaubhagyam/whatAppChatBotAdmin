@@ -25,7 +25,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerification({open, setOpen,allUserInfo,fetchData}) {
+export default function TwoStepVerification({open, setOpen,allUserInfo,fetchData ,setTriggerRerender}) {
   const [selectedValue, setSelectedValue] = useState();
   const [optModelOpen,setOptModelOpen] = useState(false)
   const [options, ] = useState([{ id: 1, value: 'WABA', label: 'WABA' },]);
@@ -140,6 +140,7 @@ export default function TwoStepVerification({open, setOpen,allUserInfo,fetchData
       setOpen={setOptModelOpen}
       allUserInfo = {allUserInfo}
       fetchData = {fetchData}
+      setTriggerRerender ={setTriggerRerender}
       />
     </React.Fragment>
   );

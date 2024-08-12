@@ -12,11 +12,12 @@ const QualityRatingCard = ( { isLoading}) => {
   const [qualityRating, setQualityRating] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
   const [allUserInfo, setAllUserInfo] = useState({})
+  const [triggerRerender, setTriggerRerender] = useState();
 
 
   useEffect(() => {
     fetchData();
-  }, [isLoading]);
+  }, [triggerRerender]);
 
   const fetchData = async () => {
     try {
@@ -141,6 +142,7 @@ const QualityRatingCard = ( { isLoading}) => {
        setOpen ={setOpen}
        allUserInfo ={allUserInfo}
        fetchData = {fetchData}
+       setTriggerRerender= {setTriggerRerender}
       />
     </Card>
   );

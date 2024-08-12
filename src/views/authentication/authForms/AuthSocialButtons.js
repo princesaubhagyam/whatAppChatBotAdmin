@@ -166,6 +166,7 @@ function getBusinessId(verifyFbAccessToken){
       .then((response)=>{
         if(response.data.status){
           toast.success('WABA successful! Please Verify Account', { duration: 2000 })
+          window.location.reload()
         }
         console.log(response,"updateUserFbInfo")
       }).catch((error)=>{
