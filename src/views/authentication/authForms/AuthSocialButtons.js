@@ -123,8 +123,12 @@ function getBusinessId(verifyFbAccessToken){
         }
       })
         .then((response) => {
-          console.log(response, "response====")
           if(response.data.status){
+            const reqBody = {
+              data : response.data.data,
+              accessToken : verifyFbAccessToken
+            }
+            localStorage.setItem("reqBody",JSON.stringify(reqBody))
             const phoneId = response.data.data.id
             updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
 
@@ -140,7 +144,6 @@ function getBusinessId(verifyFbAccessToken){
 
  function updateUserFbInfo(accessToken,whatsappId,phoneId){
   try {
-
     let reqBody = {
       access_token : accessToken,
       phone_id :phoneId,

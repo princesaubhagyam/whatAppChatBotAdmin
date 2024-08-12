@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Stack, Badge, Skeleton } from '@mui/material';
+import { Card, CardContent, Typography, Stack, Badge, Skeleton,Button } from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+import TwoStepVerification from '../../Models/TwoStepVerification';
 
 const QualityRatingCard = () => {
   const [remainingQuota, setRemainingQuota] = useState(1000);
+  const [open, setOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
+  const [allUserInfo, setAllUserInfo] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +36,14 @@ const QualityRatingCard = () => {
 
     fetchData();
   }, []);
+
+  const handleClickOpen = () => { 
+    const data = localStorage.getItem('reqBody');
+    setAllUserInfo(()=>(JSON.parse(data)))
+    setOpen(true);
+  };
+
+
 
   return (
     <Card>
@@ -80,6 +91,14 @@ const QualityRatingCard = () => {
           </div>
         </Stack>
       </CardContent>
+      <Button 
+       onClick={handleClickOpen}
+      variant="contained">Please Verify Your Account</Button>
+      <TwoStepVerification
+       open ={open}
+       setOpen ={setOpen}
+       allUserInfo ={allUserInfo}
+      />
     </Card>
   );
 };

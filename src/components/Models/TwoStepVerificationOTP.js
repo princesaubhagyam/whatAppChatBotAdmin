@@ -19,13 +19,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerificationOTP() {
-  const [open, setOpen] = React.useState(false);
+export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
   const [otp, setOtp] = React.useState('');
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -47,16 +42,13 @@ export default function TwoStepVerificationOTP() {
   //   };
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
         sx={{
           '& .MuiDialog-paper': {
-            width: '600px',
+            width: '500px',
             height: '300px',
           },
         }}
@@ -84,7 +76,7 @@ export default function TwoStepVerificationOTP() {
                   <OtpInput
                     value={otp}
                     onChange={handleChange}
-                    numInputs={6}
+                    numInputs={5}
                     separator={<span>-</span>}
                     renderInput={(props) => <input {...props} />}
                     isInputNum
