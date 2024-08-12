@@ -52,9 +52,9 @@ const AuthSocialButtons = ({ title }) => {
     window.FB.login(
       function (response) {
         if (response.authResponse) {
-          const accessToken = response.authResponse.code;
-          if (accessToken) {
-            getAccessTokenForBusiness(accessToken)
+          const fbAccessToken = response.authResponse.code;
+          if (fbAccessToken) {
+            getAccessTokenForBusiness(fbAccessToken)
           }
           else {
             console.error("Access Token is not found")
@@ -78,12 +78,13 @@ const AuthSocialButtons = ({ title }) => {
   };
 
 
- function getAccessTokenForBusiness(accessToken){
+ function getAccessTokenForBusiness(fbAccessToken){
   try {
-    apiClient.get(`auth/get_access_token_for_business/?code=${accessToken}`)
+    apiClient.get(`auth/get_access_token_for_business/?code=${fbAccessToken}`)
     .then((response) => {
       if(response.data.status){
-        getBusinessId(response.data.data.access_token)
+        let verifyFbAccessToken = response.data.data.access_token
+        getBusinessId(verifyFbAccessToken)
       }
     }).catch((error)=>{
       console.error(error)
@@ -93,17 +94,17 @@ const AuthSocialButtons = ({ title }) => {
   }
  }
  
-function getBusinessId(access_token){
+function getBusinessId(verifyFbAccessToken){
   try {
-    apiClient.get(`auth/get_business_id?input_token=${access_token}`, {
+    apiClient.get(`auth/get_business_id?input_token=${verifyFbAccessToken}`, {
       headers: {
-        'Access-Token': access_token,
+        'Access-Token': verifyFbAccessToken,
       }
     })
       .then((response) => {
         if(response.data.status){
-          const businessId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
-          getWhatsappBusinessMessaging(access_token,businessId.target_ids[0])
+          const whatsappId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
+          getWhatsappBusinessMessaging(verifyFbAccessToken,whatsappId.target_ids[0])
         }
       })
       .catch((error) => {
@@ -114,15 +115,20 @@ function getBusinessId(access_token){
   }
 }
 
-  function getWhatsappBusinessMessaging(access_token, id){
+  function getWhatsappBusinessMessaging(verifyFbAccessToken, whatsappId){
     try {
-      apiClient.get(`auth/get_phone_id/${id}`, {
+      apiClient.get(`auth/get_phone_id/${whatsappId}`, {
         headers: {
-          'Access-Token': access_token,
+          'Access-Token': verifyFbAccessToken,
         }
       })
         .then((response) => {
           console.log(response, "response====")
+          if(response.data.status){
+            const phoneId = response.data.data.id
+            updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
+
+          }
         })
         .catch((error) => {
           console.log(error)
@@ -131,6 +137,29 @@ function getBusinessId(access_token){
       console.error(error,"error")
     }
   }
+
+ function updateUserFbInfo(accessToken,whatsappId,phoneId){
+  try {
+
+    let reqBody = {
+      access_token : accessToken,
+      phone_id :phoneId,
+      whatsapp_business_account_id :whatsappId,
+    }
+    let userAccessToken = localStorage.getItem("access_app")
+    apiClient.patch(`auth/update_user_fb_info/`,
+      reqBody,{ headers: {'Access-Token': userAccessToken,}})
+      .then((response)=>{
+        console.log(response)
+      }).catch((error)=>{
+        console.error(error)
+      })
+    
+  } catch (error) {
+     console.log(error)
+  }
+
+ }
 
   return (
     <>
