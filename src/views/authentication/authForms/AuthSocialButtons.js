@@ -85,6 +85,7 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
     .then((response) => {
       console.log(response,"verifyFbAccessToken response")
       if(response.data.status){
+        setIsLoading(true)
         let verifyFbAccessToken = response.data.data.access_token
         console.log(verifyFbAccessToken,"verifyFbAccessToken")
         getBusinessId(verifyFbAccessToken)
@@ -162,7 +163,7 @@ function getBusinessId(verifyFbAccessToken){
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
         if(response.data.status){
-          setIsLoading(true)
+          
         }
         console.log(response,"updateUserFbInfo")
       }).catch((error)=>{

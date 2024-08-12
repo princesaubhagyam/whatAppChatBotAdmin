@@ -51,11 +51,11 @@ const Ecommerce = () => {
 
   useEffect(() => {
     checkFacebookLogin();
-  }, []);
+  }, [showCard]);
   useEffect(()=>{
    setTimeout(()=>{
     setIsLoading(false)
-   },2000)
+   },3000)
   },[isLoading])
 
   return (
@@ -135,8 +135,6 @@ const Ecommerce = () => {
           ) : showCard ? (
             <>
               <ViewProfileCard />
-              {/* <TwoStepVerificationOTP /> */}
-              {/* <TwoStepVerification /> */}
             </>
           ) : null}
         </Grid>
