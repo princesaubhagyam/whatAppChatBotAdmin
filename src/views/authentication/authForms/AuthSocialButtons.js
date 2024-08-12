@@ -54,6 +54,7 @@ const AuthSocialButtons = ({ title }) => {
         if (response.authResponse) {
           const fbAccessToken = response.authResponse.code;
           if (fbAccessToken) {
+            console.log(fbAccessToken,"fbAccessToken")
             getAccessTokenForBusiness(fbAccessToken)
           }
           else {
@@ -82,8 +83,10 @@ const AuthSocialButtons = ({ title }) => {
   try {
     apiClient.get(`auth/get_access_token_for_business/?code=${fbAccessToken}`)
     .then((response) => {
+      console.log(response,"verifyFbAccessToken response")
       if(response.data.status){
         let verifyFbAccessToken = response.data.data.access_token
+        console.log(verifyFbAccessToken,"verifyFbAccessToken")
         getBusinessId(verifyFbAccessToken)
       }
     }).catch((error)=>{
@@ -102,8 +105,10 @@ function getBusinessId(verifyFbAccessToken){
       }
     })
       .then((response) => {
+        console.log(response,"response whatsappId")
         if(response.data.status){
           const whatsappId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
+           console.log(whatsappId,"whatsappId")
           getWhatsappBusinessMessaging(verifyFbAccessToken,whatsappId.target_ids[0])
         }
       })
@@ -123,13 +128,16 @@ function getBusinessId(verifyFbAccessToken){
         }
       })
         .then((response) => {
+          console.log(response,"respons phoneId ")
           if(response.data.status){
-            const reqBody = {
+            const reqBody2 = {
               data : response.data.data,
               accessToken : verifyFbAccessToken
             }
-            localStorage.setItem("reqBody",JSON.stringify(reqBody))
+            console.log(reqBody2,"reqBody2")
+            localStorage.setItem("reqBody",JSON.stringify(reqBody2))
             const phoneId = response.data.data.id
+            console.log(phoneId,"phoneId")
             updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
 
           }
@@ -153,7 +161,7 @@ function getBusinessId(verifyFbAccessToken){
     apiClient.patch(`auth/update_user_fb_info/`,
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
-        console.log(response)
+        console.log(response,"updateUserFbInfo")
       }).catch((error)=>{
         console.error(error)
       })
