@@ -11,6 +11,7 @@ const QualityRatingCard = () => {
   const [loading, setLoading] = useState(true); // Added loading state
   const [allUserInfo, setAllUserInfo] = useState({})
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,17 +70,45 @@ const QualityRatingCard = () => {
             <Typography>Quality Rating</Typography>
             {loading ? (
               <Skeleton variant="text" width={100} animation="wave"/>
-            ) : (
+            ) : qualityRating ==="UNKNOWN" ? <Badge
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                sx={{ marginLeft: '1.5rem',}}
+                badgeContent={qualityRating}
+                color="muted"
+              ></Badge> : 
+              qualityRating ==="GREEN" ?
+            (
               <Badge
                 anchorOrigin={{
                   vertical: 'bottom',
                   horizontal: 'left',
                 }}
-                sx={{ marginLeft: '1.5rem' }}
+                sx={{ marginLeft: '1.5rem',}}
                 badgeContent={qualityRating}
                 color="primary"
-              ></Badge>
-            )}
+              ></Badge> 
+            ) : qualityRating ==="YELLOW" ? (
+              <Badge
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                sx={{ marginLeft: '1.5rem',}}
+                badgeContent={qualityRating}
+                color="warning"
+              ></Badge> 
+            ) : <Badge
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            sx={{ marginLeft: '1.5rem',}}
+            badgeContent={qualityRating}
+            color="error"
+          ></Badge>  }
           </div>
           <div>
             <Typography>Remaining Quota</Typography>
@@ -91,9 +120,12 @@ const QualityRatingCard = () => {
           </div>
         </Stack>
       </CardContent>
-      <Button 
-       onClick={handleClickOpen}
-      variant="contained">Please Verify Your Account</Button>
+{
+  apiStatus === 'STANDARD' ? " " :  <Button 
+  onClick={handleClickOpen}
+ variant="contained">Please Verify Your Account</Button>
+} 
+     
       <TwoStepVerification
        open ={open}
        setOpen ={setOpen}

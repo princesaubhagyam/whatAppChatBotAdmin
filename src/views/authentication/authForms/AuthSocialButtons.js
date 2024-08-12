@@ -6,11 +6,11 @@ import { Stack } from '@mui/system';
 import { Avatar, Box } from '@mui/material';
 import { useNavigate } from 'react-router';
 import apiClient from 'src/api/axiosClient';
-// import { functionsIn } from 'lodash';
 
-const AuthSocialButtons = ({ title }) => {
+
+const AuthSocialButtons = ({ title,setIsLoading }) => {
   const navigate = useNavigate();
-  // const [userInfo, setUserInfo] = useState({})
+ 
 
 
 
@@ -161,6 +161,9 @@ function getBusinessId(verifyFbAccessToken){
     apiClient.patch(`auth/update_user_fb_info/`,
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
+        if(response.data.status){
+          setIsLoading(true)
+        }
         console.log(response,"updateUserFbInfo")
       }).catch((error)=>{
         console.error(error)
