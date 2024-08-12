@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import OtpInput from 'react-otp-input';
 import apiClient from 'src/api/axiosClient';
+import toast from 'react-hot-toast'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -20,7 +21,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
+export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchData}) {
   const [otp, setOtp] = React.useState('');
   const handleClose = () => {
     setOpen(false);
@@ -29,18 +30,6 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
   const handleChange = (otp) => {
     setOtp(otp);
   };
-
-  //   const handleSubmit = () => {
-  //     const payload = { otp };
-  //     axios
-  //       .post('https://api.example.com/verify-otp', payload)
-  //       .then((response) => {
-  //         console.log('OTP verified successfully:', response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error verifying OTP:', error);
-  //       });
-  //   };
 
   function onSubmitHandle(){
     try {
@@ -53,13 +42,20 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
      })
      .then((response)=>{
        console.log(response)
-       handleClose()
-       setOtp('')
+       if(response.status){
+        toast.success('Account Verified', { duration: 2000 })
+        fetchData()
+        handleClose()
+        setOtp('')
+        
+       }
      }).catch((error)=>{
+      toast.error(error.toString(), { duration: 2000 })
        console.error(error)
        
      })
     } catch (error) {
+      toast.error(error.toString(), { duration: 2000 })
       console.error(error)
     }
   }

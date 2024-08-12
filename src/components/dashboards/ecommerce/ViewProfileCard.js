@@ -33,37 +33,38 @@ const ViewProfileCard = () => {
   const [newProfilePictureURL, setNewProfilePictureURL] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const metaClient = createMetaAxiosInstance();
-        const phoneResponse = await metaClient.get('phone_numbers');
-        const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
-        const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
 
-        setContactName(fetchedContactName);
-        setPhoneNumber(fetchedPhoneNumber);
 
-        const phoneId = localStorage.getItem('phone_id');
-        const profileResponse = await metaClient.get(
-          `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
-          {
-            params: {
-              fields: 'about,address,description,email,profile_picture_url,websites,vertical',
-            },
+  const fetchData = async () => {
+    try {
+      const metaClient = createMetaAxiosInstance();
+      const phoneResponse = await metaClient.get('phone_numbers');
+      const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
+      const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
+
+      setContactName(fetchedContactName);
+      setPhoneNumber(fetchedPhoneNumber);
+
+      const phoneId = localStorage.getItem('phone_id');
+      const profileResponse = await metaClient.get(
+        `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
+        {
+          params: {
+            fields: 'about,address,description,email,profile_picture_url,websites,vertical',
           },
-        );
+        },
+      );
 
-        const profileData = profileResponse?.data?.data[0] || {};
-        setProfileDetails(profileData);
-        setEditableProfile(profileData);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+      const profileData = profileResponse?.data?.data[0] || {};
+      setProfileDetails(profileData);
+      setEditableProfile(profileData);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, []);
 

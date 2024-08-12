@@ -6,6 +6,7 @@ import { Stack } from '@mui/system';
 import { Avatar, Box } from '@mui/material';
 import { useNavigate } from 'react-router';
 import apiClient from 'src/api/axiosClient';
+import toast from 'react-hot-toast'
 
 
 const AuthSocialButtons = ({ title,setIsLoading }) => {
@@ -61,6 +62,7 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
             console.error("Access Token is not found")
           }
         } else {
+          toast.error('User cancelled login or did not fully authorize.', { duration: 2000 });
           console.log('User cancelled login or did not fully authorize.');
           navigate('/auth/login');
         }
@@ -163,14 +165,16 @@ function getBusinessId(verifyFbAccessToken){
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
         if(response.data.status){
-          
+          toast.success('WABA successful! Please Verify Account', { duration: 2000 })
         }
         console.log(response,"updateUserFbInfo")
       }).catch((error)=>{
+        toast.error(error.toString(), { duration: 2000 });
         console.error(error)
       })
     
   } catch (error) {
+    toast.error(error.toString(), { duration: 2000 });
      console.log(error)
   }
 

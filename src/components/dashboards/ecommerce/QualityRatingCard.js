@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, Stack, Badge, Skeleton,Button } from '@m
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import TwoStepVerification from '../../Models/TwoStepVerification';
 
-const QualityRatingCard = () => {
+const QualityRatingCard = ( { isLoading}) => {
   const [remainingQuota, setRemainingQuota] = useState(1000);
   const [open, setOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState(null);
@@ -13,30 +13,27 @@ const QualityRatingCard = () => {
 
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const metaClient = createMetaAxiosInstance({ addBAId: false });
-        const phoneId = localStorage.getItem('phone_id');
-        const response = await metaClient.get(`${phoneId}`);
-        console.log('response quality', response)
-        const fetchedQualityRating = response?.data?.quality_rating;
-        const fetchedApiStatus = response?.data?.throughput?.level;
-
-        setQualityRating(fetchedQualityRating);
-        setApiStatus(fetchedApiStatus);
-
-        console.log('API Response:', response);
-        console.log('Quality Rating:', fetchedQualityRating);
-        console.log('API Status:', fetchedApiStatus);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false); 
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [isLoading]);
+
+  const fetchData = async () => {
+    try {
+      const metaClient =  createMetaAxiosInstance({ addBAId: false });
+      const phoneId = localStorage.getItem('phone_id');
+      const response = await metaClient.get(`${phoneId}`);
+      console.log('response quality', response)
+      const fetchedQualityRating = response?.data?.quality_rating;
+      const fetchedApiStatus = response?.data?.throughput?.level;
+
+      setQualityRating(fetchedQualityRating);
+      setApiStatus(fetchedApiStatus);
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    } finally {
+      setLoading(false); 
+    }
+  };
 
   const handleClickOpen = () => { 
     const data = localStorage.getItem('reqBody');
@@ -52,7 +49,16 @@ const QualityRatingCard = () => {
         <Stack flexDirection={'row'} justifyContent={'space-between'}>
           <div>
             <Typography>WhatsApp Business Cloud API Status</Typography>
-            {loading ? (
+            <Badge
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                sx={{ marginLeft: '2.3rem' }}
+                badgeContent={apiStatus}
+                color="primary"
+              ></Badge>
+            {/* {loading ? (
               <Skeleton variant="text" width={100} animation="wave" />
             ) : (
               <Badge
@@ -64,7 +70,7 @@ const QualityRatingCard = () => {
                 badgeContent={apiStatus}
                 color="primary"
               ></Badge>
-            )}
+            )} */}
           </div>
           <div>
             <Typography>Quality Rating</Typography>
@@ -130,6 +136,7 @@ const QualityRatingCard = () => {
        open ={open}
        setOpen ={setOpen}
        allUserInfo ={allUserInfo}
+       fetchData = {fetchData}
       />
     </Card>
   );

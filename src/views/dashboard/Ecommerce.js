@@ -51,11 +51,11 @@ const Ecommerce = () => {
 
   useEffect(() => {
     checkFacebookLogin();
-  }, [showCard]);
+  }, []);
   useEffect(()=>{
    setTimeout(()=>{
     setIsLoading(false)
-   },3000)
+   },2000)
   },[isLoading])
 
   return (

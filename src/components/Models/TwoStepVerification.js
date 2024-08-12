@@ -25,10 +25,9 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerification({open, setOpen,allUserInfo}) {
-  const [selectedValue, setSelectedValue] = useState('');
+export default function TwoStepVerification({open, setOpen,allUserInfo,fetchData}) {
+  const [selectedValue, setSelectedValue] = useState();
   const [optModelOpen,setOptModelOpen] = useState(false)
-  // const [loading, setLoading] = useState(true);
   const [options, ] = useState([{ id: 1, value: 'WABA', label: 'WABA' },]);
   const handleCloseModel = ()=>{
     setOpen(false);
@@ -39,10 +38,6 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
     setSelectedValue('')
     setOptModelOpen(true)   
   };
-  console.log(allUserInfo)
-  console.log(allUserInfo?.data?.code_verification_status,"===")
-  console.log(allUserInfo?.data?.display_phone_number,"===")
-  console.log(allUserInfo?.data?.verified_name)
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
@@ -131,7 +126,10 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose}>
+            <Button
+             autoFocus
+             disabled={!selectedValue}
+              onClick={handleClose}>
               Save Selection
             </Button>
           </DialogActions>
@@ -141,6 +139,7 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
       open = {optModelOpen}
       setOpen={setOptModelOpen}
       allUserInfo = {allUserInfo}
+      fetchData = {fetchData}
       />
     </React.Fragment>
   );
