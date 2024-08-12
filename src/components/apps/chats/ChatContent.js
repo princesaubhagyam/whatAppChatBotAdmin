@@ -28,11 +28,11 @@ import EventContext from 'src/BroadcastContext';
 import InfoIcon from '@mui/icons-material/Info';
 
 const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
-  const dispatch = useDispatch();
+  
   // const [open, setOpen] = React.useState(false);
   const [Graph, setGraph] = React.useState([]);
   console.log('Graph', Graph);
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+ 
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   // console.log(activeBroadcast.id);
   const [loading, setLoading] = useState(false);

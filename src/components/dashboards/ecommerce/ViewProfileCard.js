@@ -426,15 +426,29 @@ const ViewProfileCard = () => {
       <CardContent sx={{ padding: '8px' }}>
         {loading ? (
           <Box>
-            <Skeleton variant="text" width="100%" height={40} animation="wave"/>
-            <Skeleton variant="text" width="60%" height={30} animation="wave"/>
-            <Skeleton variant="rectangular" width="100%" height={200} sx={{ mt: 2 }} animation="wave" />
+            <Skeleton variant="text" width="100%" height={40} animation="wave" />
+            <Skeleton variant="text" width="60%" height={30} animation="wave" />
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height={200}
+              sx={{ mt: 2 }}
+              animation="wave"
+            />
           </Box>
         ) : (
           <>
             <Typography variant="h5">{contactName}</Typography>
             <Typography>{phoneNumber}</Typography>
-            <Box sx={{ background: '#00720b40', padding: '5px 5px 5px 5px', width: '100%' }}>
+            <Box
+              sx={{
+                background: '#00720b40',
+                padding: '5px 5px 5px 5px',
+                width: '100%',
+                overflowX: 'auto',
+                overflowY: 'hidden',
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',

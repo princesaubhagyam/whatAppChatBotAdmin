@@ -1,17 +1,17 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 
-const SetUpProfileCard = () => {
+const CurrentPlan = () => {
   return (
     <Card>
       <CardContent sx={{ py: 2 }}>
         <div style={{ flexDirection: 'column', display: 'flex', justifyContent: 'space-between' }}>
-          <Typography>Free Service Conversation 53 /1000 used</Typography>
-          <Typography>WhatsApp Conversation Credits (WCC) $ 49.16</Typography>
+          <Typography>Current Plan renews on 07/09/24 </Typography>
+          <Typography>PRO (monthly)</Typography>
         </div>
       </CardContent>
     </Card>
   );
 };
 
-export default SetUpProfileCard;
+export default CurrentPlan;

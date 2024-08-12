@@ -142,7 +142,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
           handleSignUp();
         }}
       >
-        <Stack spacing={2}>
+        <Stack spacing={2} gap={'0.80rem'}>
           <FormControl fullWidth error={!!errors.full_name}>
             <OutlinedInput
               startAdornment={

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   List,
@@ -11,14 +11,15 @@ import {
   Typography,
   Button,
   Stack,
+  IconButton,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import { selectBroadcast } from '../../../store/apps/chat/ChatSlice';
-import { last } from 'lodash';
-import { IconSearch, IconFileImport, IconPlus, IconUsers } from '@tabler/icons';
+
+import { IconPlus, IconTrash, IconUsers } from '@tabler/icons';
 import ImportBroadcastModal from 'src/modals/ImportBroadcastModal';
-import apiClient from 'src/api/axiosClient';
+import { DeleteOutline } from '@mui/icons-material';
 
 const ChatListing = ({ broadcasts, getBroadcastsData }) => {
   const dispatch = useDispatch();
@@ -39,20 +40,20 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
     filterChats(state.chatReducer.chats, state.chatReducer.chatSearch),
   );
 
-  const getDetails = (conversation) => {
-    let displayText = '';
+  // const getDetails = (conversation) => {
+  //   let displayText = '';
 
-    const lastMessage = conversation.messages[conversation.messages.length - 1];
-    if (lastMessage) {
-      const sender = lastMessage.senderId === conversation?.id ? 'You: ' : '';
-      const message = lastMessage.type === 'image' ? 'Sent a photo' : lastMessage.msg;
-      displayText = `${sender}${message}`;
-    }
+  //   const lastMessage = conversation.messages[conversation.messages.length - 1];
+  //   if (lastMessage) {
+  //     const sender = lastMessage.senderId === conversation?.id ? 'You: ' : '';
+  //     const message = lastMessage.type === 'image' ? 'Sent a photo' : lastMessage.msg;
+  //     displayText = `${sender}${message}`;
+  //   }
 
-    return displayText;
-  };
+  //   return displayText;
+  // };
 
-  const lastActivity = (chat) => last(chat.messages)?.createdAt;
+  // const lastActivity = (chat) => last(chat.messages)?.createdAt;
 
   const handleOpenImportModal = () => {
     setOpenImportModal(true);
@@ -109,7 +110,12 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
         </Stack>
       </Box>
       <List sx={{ px: 0 }}>
-        <Scrollbar sx={{ height: { /*lg: 'calc(100vh - 100px)'*/ lg: '75vh', md: '100vh' }, maxHeight: '550px' }}>
+        <Scrollbar
+          sx={{
+            height: { /*lg: 'calc(100vh - 100px)'*/ lg: '75vh', md: '100vh' },
+            maxHeight: '550px',
+          }}
+        >
           {broadcastData && broadcastData.length ? (
             broadcastData.map((chat) => (
               <Box
@@ -118,6 +124,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                   borderRadius: 0,
                   backgroundColor: selectedBroadcastId === chat.id ? '#bdbcbc9e' : 'transparent',
                   '&:hover': { backgroundColor: '#bdbcbc9e !important' },
+                  display: 'flex',
+                  alignItems: 'center',
+                  paddingRight: '10px',
                 }}
                 key={chat.id}
               >
@@ -127,10 +136,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                     py: 1,
                     px: 1,
                     alignItems: 'start',
-                    '&:hover': { backgroundColor: 'transparent !important'}
+                    '&:hover': { backgroundColor: 'transparent !important' },
                   }}
                   selected={activeChat === chat.id}
-                  
                 >
                   <ListItemAvatar>
                     <Badge
@@ -176,8 +184,11 @@ const ChatListing = ({ broadcasts, getBroadcastsData }) => {
                     }}
                     sx={{ my: 0 }}
                   />
-                  <Box sx={{ flexShrink: '0' }} mt={0.5}></Box>
+                  {/* <Box sx={{ flexShrink: '0' }} mt={0.5}></Box> */}
                 </ListItemButton>
+                <IconButton size="small" color="error">
+                  <DeleteOutline />
+                </IconButton>
               </Box>
             ))
           ) : (

@@ -61,7 +61,7 @@ const FullLayout = () => {
         {/* ------------------------------------------- */}
         {customizer.isHorizontal ? <Navigation /> : ''}
         <Container
-          style={{ padding: 5 }}
+          style={{ padding: 12, paddingTop: 3 }}
           sx={{
             maxWidth: customizer.isLayout === 'boxed' ? 'lg' : '100%!important',
           }}
@@ -69,7 +69,7 @@ const FullLayout = () => {
           {/* ------------------------------------------- */}
           {/* Page Route */}
           {/* ------------------------------------------- */}
-          <Box sx={{ /*minHeight: 'calc(100vh - 170px)'*/ minHeight: { lg: '85vh', xl: '70vh' } }}>
+          <Box sx={{ /*minHeight: 'calc(100vh - 170px)'*/ minHeight: { lg: '85vh', xl: '70vh' }, overflow: 'hidden' }}>
             <Outlet />
           </Box>
           {/* ------------------------------------------- */}

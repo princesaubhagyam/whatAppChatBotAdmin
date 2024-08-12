@@ -17,13 +17,14 @@ import apiClient from 'src/api/axiosClient';
 import { useUser } from 'src/store/apps/UserContext';
 // import { setWalletBalance } from 'src/store/auth/AuthSlice';
 import { LoadingButton } from '@mui/lab';
+import { useSelector } from 'react-redux';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
   const initCredentials = {
     email: '',
     password: '',
   };
-
+  const customizer = useSelector((state) => state.customizer);
   const [credentials, setCredentials] = useState(initCredentials);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -105,13 +106,14 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
   return (
     <>
-      {title ? (
+      {/* {title ? (
         <Typography fontWeight="800" variant="h1" mb={1}>
-          {title}
+          {title} 
         </Typography>
-      ) : null}
+      ) : null} */}
+       
 
-      {subtext}
+      {/* {subtext} */}
       <form onSubmit={handleSignIn}>
         <Stack>
           <Box>

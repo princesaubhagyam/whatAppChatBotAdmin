@@ -131,7 +131,7 @@ const MobileRightSidebar = () => {
   );
 
   return (
-    <Box>
+    <Box width={'100%'}>
       <IconButton
         size="large"
         color="inherit"

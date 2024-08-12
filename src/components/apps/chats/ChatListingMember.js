@@ -34,7 +34,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
   const { isOn } = useContext(EventContext);
-
+  
 
   useEffect(() => {
     if (activeBroadcast) {

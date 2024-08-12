@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Menu, Avatar, Typography, IconButton, MenuItem } from '@mui/material';
+import { Box, Menu, Avatar, Typography, IconButton, MenuItem, Stack } from '@mui/material';
 import axios from 'axios';
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
@@ -38,12 +38,45 @@ const Profile = () => {
 
   return (
     <>
-      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
-        Wallet
-      </Typography>
-      <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
-        ₹{walletBalance}
-      </Typography>
+      <Stack direction={'row'} alignItems="center">
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 500,
+            color: '#545557',
+            display: { xs: 'none', sm: 'block' },
+          }}
+        >
+          WhatsApp Business API Status:
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 500,
+            color: '#545557',
+            display: { xs: 'block', sm: 'none' },
+          }}
+        >
+          WABA Status:
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 500,
+            color: '#1A4D2E',
+          }}
+        >
+          LIVE
+        </Typography>
+      </Stack>
+      <Stack direction={'row'}>
+        <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+          Wallet
+        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+          ₹{walletBalance}
+        </Typography>
+      </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
           size="large"

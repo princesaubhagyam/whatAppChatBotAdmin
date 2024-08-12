@@ -27,7 +27,8 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
     whiteSpace: 'nowrap',
     marginBottom: '2px',
     padding: '8px 10px',
-    borderRadius: `${customizer.borderRadius}px`,
+    // borderRadius: `${customizer.borderRadius}px`,
+    
     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
     color:
       level > 1 && isActive
@@ -45,6 +46,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
         backgroundColor: theme.palette.primary.main,
         color: 'white',
       },
+      //borderRadius: '50%',
     },
   }));
 
@@ -59,26 +61,30 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
         selected={isActive}
         target={item.external ? '_blank' : ''}
         onClick={onClick}
+        sx={{ justifyContent: 'space-evenly', textAlign: 'center' }}
       >
-        <ListItemIcon
-          sx={{
-            minWidth: '36px',
-            p: '3px 0',
-            color: level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
-          }}
-        >
-          {itemIcon}
-        </ListItemIcon>
-        <ListItemText>
-          {hideMenu ? '' : <>{t(`${item.title}`)}</>}
+        <div>
+          <ListItemIcon
+            sx={{
+              //minWidth: '36px',
+              minWidth: '0px !important',
+              p: '3px 0',
+              color: level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
+            }}
+          >
+            {itemIcon}
+          </ListItemIcon>
           <br />
-          {item.subtitle ? (
-            <Typography variant="caption">{hideMenu ? '' : item.subtitle}</Typography>
-          ) : (
-            ''
-          )}
-        </ListItemText>
-
+          <ListItemText>
+            {hideMenu ? '' : <>{t(`${item.title}`)}</>}
+            <br />
+            {item.subtitle ? (
+              <Typography variant="caption">{hideMenu ? '' : item.subtitle}</Typography>
+            ) : (
+              ''
+            )}
+          </ListItemText>
+        </div>
         {!item.chip || hideMenu ? null : (
           <Chip
             color={item.chipColor}
