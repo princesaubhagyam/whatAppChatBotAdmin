@@ -14,9 +14,7 @@ import TwoStepVerificationOTP from "../Models/TwoStepVerificationOTP"
 import {
   Select,
   MenuItem,
-  // FormControl
 } from '@mui/material';
-import apiClient from 'src/api/axiosClient';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -41,7 +39,10 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
     setSelectedValue('')
     setOptModelOpen(true)   
   };
-  console.log(allUserInfo,"===")
+  console.log(allUserInfo)
+  console.log(allUserInfo?.data?.code_verification_status,"===")
+  console.log(allUserInfo?.data?.display_phone_number,"===")
+  console.log(allUserInfo?.data?.verified_name)
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
@@ -77,14 +78,14 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
             <DialogContent>
               <Typography variant="subtitle2" my={2} color="textSecondary">
                 <Typography gutterBottom>
-                  User Business name
+                 {allUserInfo?.data?.verified_name}
                   <Badge
                     anchorOrigin={{
                       vertical: 'bottom',
                       horizontal: 'left',
                     }}
                     sx={{ marginLeft: '5rem' }}
-                    badgeContent="verified"
+                    badgeContent={allUserInfo?.data?.code_verification_status}
                     color="primary"
                   />
                 </Typography>
@@ -101,7 +102,7 @@ export default function TwoStepVerification({open, setOpen,allUserInfo}) {
                   style={{width:"30px", marginTop: "3px"}}
                   />
                 <Typography gutterBottom ml= {2} mt={1}>
-                   9410419080
+                  {allUserInfo?.data?.display_phone_number}
                 </Typography>
               </Typography>
             </DialogContent>

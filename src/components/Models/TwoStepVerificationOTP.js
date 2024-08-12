@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import OtpInput from 'react-otp-input';
+import apiClient from 'src/api/axiosClient';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -40,6 +41,28 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
   //         console.error('Error verifying OTP:', error);
   //       });
   //   };
+
+  function onSubmitHandle(){
+    try {
+      const  id = allUserInfo?.data?.id
+      const requestBody = otp
+     apiClient.post(`auth/registerphone/${id}/`,requestBody,{
+      headers: {
+        'Access-Token': allUserInfo?.accessToken
+      }
+     })
+     .then((response)=>{
+       console.log(response)
+       handleClose()
+       setOtp('')
+     }).catch((error)=>{
+       console.error(error)
+       
+     })
+    } catch (error) {
+      console.error(error)
+    }
+  }
   return (
     <React.Fragment>
       <BootstrapDialog
@@ -68,7 +91,7 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
         >
           <CloseIcon />
         </IconButton>
-        <form>
+        <form onSubmit={onSubmitHandle}>
           <DialogContent dividers>
             <DialogContent>
               <Typography variant="subtitle2" my={2} color="textSecondary">
@@ -94,7 +117,7 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo}) {
             </DialogContent>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose}>
+            <Button  type='submit'autoFocus onClick={handleClose}>
               Verify Number
             </Button>
           </DialogActions>
