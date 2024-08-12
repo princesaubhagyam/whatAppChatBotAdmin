@@ -4,7 +4,9 @@ import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import TwoStepVerification from '../../Models/TwoStepVerification';
 
 const QualityRatingCard = ( { isLoading}) => {
-  const [remainingQuota, setRemainingQuota] = useState(1000);
+  const [remainingQuota,
+    //  setRemainingQuota
+    ] = useState(1000);
   const [open, setOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
@@ -126,8 +128,10 @@ const QualityRatingCard = ( { isLoading}) => {
           </div>
         </Stack>
       </CardContent>
-{
-  apiStatus === 'STANDARD' ? " " :  <Button 
+{ 
+ loading ? (
+  <Skeleton variant="text" width={100} animation="wave"/>
+) : apiStatus === 'STANDARD' ? " " :  <Button 
   onClick={handleClickOpen}
  variant="contained">Please Verify Your Account</Button>
 } 

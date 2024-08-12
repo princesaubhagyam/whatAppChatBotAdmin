@@ -113,7 +113,8 @@ export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchDa
             </DialogContent>
           </DialogContent>
           <DialogActions>
-            <Button  type='submit'autoFocus onClick={handleClose}>
+            <Button  
+            type='submit'>
               Verify Number
             </Button>
           </DialogActions>
