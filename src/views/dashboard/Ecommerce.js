@@ -29,7 +29,6 @@ const Ecommerce = () => {
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 
@@ -49,7 +48,8 @@ const Ecommerce = () => {
 
   useEffect(() => {
     checkFacebookLogin();
-  }, []);
+  }, [isLoading]);
+  
   useEffect(()=>{
    setTimeout(()=>{
     setIsLoading(false)
@@ -91,11 +91,12 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-              {loading ? (
+            <QualityRatingCard />
+              {/* {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
                 <QualityRatingCard />
-              ) : null}
+              ) : null} */}
             </Grid>
             {/* <Grid item xs={12} lg={14}>
               <ViewProfileCard />
@@ -123,7 +124,9 @@ const Ecommerce = () => {
           <SetUpProfileCard />
         </Grid>
         <Grid item xs={12} lg={14}>
-          {loading ? (
+        <ViewProfileCard />
+
+          {/* {loading ? (
             <Skeleton
               variant="rounded"
               width={1069}
@@ -135,7 +138,7 @@ const Ecommerce = () => {
             <>
               <ViewProfileCard />
             </>
-          ) : null}
+          ) : null} */}
         </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>

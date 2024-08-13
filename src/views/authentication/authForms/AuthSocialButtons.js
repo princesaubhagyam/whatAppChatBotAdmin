@@ -158,6 +158,7 @@ function getBusinessId(verifyFbAccessToken){
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
         if(response.data.status){
+          addUserInfo()
           verifiedAccount(accessToken,phoneId)
         }
       }).catch((error)=>{
@@ -171,6 +172,18 @@ function getBusinessId(verifyFbAccessToken){
   }
  }
 
+ function addUserInfo(){
+    try {
+      apiClient.get(`auth/user_profile/`)
+      .then((response)=>{
+       console.log(response,"========")
+      }).catch((error)=>{
+         console.error(error)
+      })
+    } catch (error) {
+        console.error(error)  
+    }
+ }
  function verifiedAccount(accessToken,phoneId){
   try { 
     const reqBody ={pin : "123456" } 
