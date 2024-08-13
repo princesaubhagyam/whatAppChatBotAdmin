@@ -44,7 +44,6 @@ function Analytics({ setIsAnalytics }) {
     setLoading(true);
     try {
       if (activeBroadcast) {
-        let options = [];
         apiClient
           .get(`/broadcast-history/${activeBroadcast.id}/`)
           .then((response) => {

@@ -411,7 +411,6 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                         height="200px"
                                         title="Document Preview"
                                         style={{ border: 'none', overflow: 'hidden' }}
-                                        key={component.type}
                                       ></iframe>
                                     </Box>
                                   );

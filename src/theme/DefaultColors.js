@@ -23,6 +23,12 @@ const baselightTheme = {
       dark: '#1682d4',
       contrastText: '#ffffff',
     },
+    muted : {
+      main: '#b0b3b8',
+      light: '#888b8f',
+      dark: '#666a6e',
+      contrastText: '#ffffff',
+    },
     error: {
       main: '#de3838',
       light: '#FDEDE8',
@@ -87,6 +93,12 @@ const baseDarkTheme = {
       main: '#539BFF',
       light: '#223662',
       dark: '#1682d4',
+      contrastText: '#ffffff',
+    },
+    muted : {
+      main: '#b0b3b8',
+      light: '#888b8f',
+      dark: '#666a6e',
       contrastText: '#ffffff',
     },
     error: {

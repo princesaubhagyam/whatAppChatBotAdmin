@@ -9,6 +9,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import OtpInput from 'react-otp-input';
+import apiClient from 'src/api/axiosClient';
+import toast from 'react-hot-toast'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -19,13 +21,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerificationOTP() {
-  const [open, setOpen] = React.useState(false);
+export default function TwoStepVerificationOTP({open,setOpen,allUserInfo,fetchData,setTriggerRerender}) {
   const [otp, setOtp] = React.useState('');
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -34,29 +31,43 @@ export default function TwoStepVerificationOTP() {
     setOtp(otp);
   };
 
-  //   const handleSubmit = () => {
-  //     const payload = { otp };
-  //     axios
-  //       .post('https://api.example.com/verify-otp', payload)
-  //       .then((response) => {
-  //         console.log('OTP verified successfully:', response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error verifying OTP:', error);
-  //       });
-  //   };
+  function onSubmitHandle(){
+    try {
+      const  id = allUserInfo?.data?.id
+      const requestBody = otp
+     apiClient.post(`auth/registerphone/${id}/`,requestBody,{
+      headers: {
+        'Access-Token': allUserInfo?.accessToken
+      }
+     })
+     .then((response)=>{
+       console.log(response,"******")
+       if(response.status){
+        toast.success('Account Verified', { duration: 2000 })
+        fetchData()
+        handleClose()
+        setOtp('')
+        
+       }
+     }).catch((error)=>{
+      toast.error(error.toString(), { duration: 2000 })
+       console.error(error)
+       
+     })
+    } catch (error) {
+      toast.error(error.toString(), { duration: 2000 })
+      console.error(error)
+    }
+  }
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
         sx={{
           '& .MuiDialog-paper': {
-            width: '600px',
+            width: '500px',
             height: '300px',
           },
         }}
@@ -76,7 +87,7 @@ export default function TwoStepVerificationOTP() {
         >
           <CloseIcon />
         </IconButton>
-        <form>
+        <form onSubmit={onSubmitHandle}>
           <DialogContent dividers>
             <DialogContent>
               <Typography variant="subtitle2" my={2} color="textSecondary">
@@ -84,7 +95,7 @@ export default function TwoStepVerificationOTP() {
                   <OtpInput
                     value={otp}
                     onChange={handleChange}
-                    numInputs={6}
+                    numInputs={5}
                     separator={<span>-</span>}
                     renderInput={(props) => <input {...props} />}
                     isInputNum
@@ -102,7 +113,8 @@ export default function TwoStepVerificationOTP() {
             </DialogContent>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose}>
+            <Button  
+            type='submit'>
               Verify Number
             </Button>
           </DialogActions>

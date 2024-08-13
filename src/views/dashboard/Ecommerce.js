@@ -24,16 +24,17 @@ import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
 import CurrentPlan from 'src/components/dashboards/ecommerce/CurrentPlan';
 // import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
 // import TwoStepVerification from '../../components/Models/TwoStepVerification';
+import Spinner from "src/views/spinner/Spinner"
 
 const Ecommerce = () => {
   // console.log('hello');
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isLoading,setIsLoading] = useState(false)
 
   const checkFacebookLogin = async () => {
     try {
-      const res = await apiClient.get('/auth/user_profile/');
-      // console.log('API Response:', res);
+      const res = await apiClient.get('/auth/user_profile/')
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 
@@ -53,15 +54,24 @@ const Ecommerce = () => {
 
   useEffect(() => {
     checkFacebookLogin();
-  }, []);
+  }, [isLoading]);
+  
+  useEffect(()=>{
+   setTimeout(()=>{
+    setIsLoading(false)
+   },3000)
+  },[isLoading])
 
   return (
+     isLoading ?< Spinner /> :
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={2}>
         {/* column */}
         <Grid item xs={12} lg={8}>
-          <WelcomeCard />
+          <WelcomeCard  
+           setIsLoading = {setIsLoading}
+          />
         </Grid>
 
         {/* column */}
@@ -94,7 +104,9 @@ const Ecommerce = () => {
               {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
-                <QualityRatingCard />
+                <QualityRatingCard
+                isLoading ={isLoading}
+                />
               ) : null}
             </Grid>
             {/* <Grid item xs={12} lg={14}>
@@ -133,9 +145,9 @@ const Ecommerce = () => {
             />
           ) : showCard ? (
             <>
-              <ViewProfileCard />
-              {/* <TwoStepVerificationOTP /> */}
-              {/* <TwoStepVerification /> */}
+              <ViewProfileCard
+              isLoading ={isLoading} 
+              />
             </>
           ) : null}
         </Grid>

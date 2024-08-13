@@ -9,11 +9,11 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import { Badge } from '@mui/material';
+import whatsAppIcon from "../../assets/images/svgs/whatsAppIcon.svg"
+import TwoStepVerificationOTP from "../Models/TwoStepVerificationOTP"
 import {
   Select,
-  InputLabel,
   MenuItem,
-  // FormControl
 } from '@mui/material';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -25,66 +25,31 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function TwoStepVerification() {
-  const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('');
-  // const [loading, setLoading] = useState(true);
-  const [
-    options,
-    //  setOptions
-  ] = useState([
-    { id: 1, value: 'value1', label: 'Label 1' },
-    { id: 2, value: 'value2', label: 'Label 2' },
-  ]);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+export default function TwoStepVerification({open, setOpen,allUserInfo,fetchData ,setTriggerRerender}) {
+  const [selectedValue, setSelectedValue] = useState();
+  const [optModelOpen,setOptModelOpen] = useState(false)
+  const [options, ] = useState([{ id: 1, value: 'WABA', label: 'WABA' },]);
+  const handleCloseModel = ()=>{
+    setOpen(false);
+    setSelectedValue('')
+  }
   const handleClose = () => {
     setOpen(false);
+    setSelectedValue('')
+    setOptModelOpen(true)   
   };
-
-  // useEffect(() => {
-  //   // Fetch the options data from API
-  //   axios.get('https://api.example.com/data')
-  //     .then(response => {
-  //       setOptions(response.data);
-  //       setLoading(false);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching data:', error);
-  //       setLoading(false);
-  //     });
-  // }, []);
-
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
-
-  // const handleSubmit = () => {
-  //   const payload = { selectedOption: selectedValue };
-  //   axios.post('https://api.example.com/submit', payload)
-  //     .then(response => {
-  //       console.log('Data submitted successfully:', response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error submitting data:', error);
-  //     });
-  // };
-
   return (
     <React.Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
       <BootstrapDialog
-        onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
         sx={{
           '& .MuiDialog-paper': {
-            width: '600px', // Set the custom width here
-            height: '400px', // Set the custom height here
+            width: '500px', // Set the custom width here
+            height: '350px', // Set the custom height here
           },
         }}
       >
@@ -93,7 +58,7 @@ export default function TwoStepVerification() {
         </DialogTitle>
         <IconButton
           aria-label="close"
-          onClick={handleClose}
+          onClick={handleCloseModel}
           sx={{
             position: 'absolute',
             right: 8,
@@ -108,31 +73,46 @@ export default function TwoStepVerification() {
             <DialogContent>
               <Typography variant="subtitle2" my={2} color="textSecondary">
                 <Typography gutterBottom>
-                  User Business name
+                 {allUserInfo?.data?.verified_name}
                   <Badge
                     anchorOrigin={{
                       vertical: 'bottom',
                       horizontal: 'left',
                     }}
                     sx={{ marginLeft: '5rem' }}
-                    badgeContent="verified"
+                    badgeContent={allUserInfo?.data?.code_verification_status}
                     color="primary"
                   />
                 </Typography>
               </Typography>
+              <Typography
+               variant="subtitle2" 
+               my={2} 
+               color="textSecondary" 
+               sx={{ display: 'flex' }}
+              >
+              <img
+                   src= {whatsAppIcon}
+                   alt='whats App'
+                  style={{width:"30px", marginTop: "3px"}}
+                  />
+                <Typography gutterBottom ml= {2} mt={1}>
+                  {allUserInfo?.data?.display_phone_number}
+                </Typography>
+              </Typography>
             </DialogContent>
 
-            <InputLabel id="demo-simple-select-outlined-label">Register Number</InputLabel>
+            {/* <InputLabel id="demo-simple-select-outlined-label">WABA</InputLabel> */}
             <Select
               sx={{
                 width: '300px',
                 height: '40px',
               }}
-              labelId="demo-simple-select-outlined-label"
+              // labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               value={selectedValue}
               onChange={handleChange}
-              label="Register Number"
+              // label="Register Number"
             >
               {options &&
                 options.length > 0 &&
@@ -146,12 +126,22 @@ export default function TwoStepVerification() {
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleClose}>
+            <Button
+             autoFocus
+             disabled={!selectedValue}
+              onClick={handleClose}>
               Save Selection
             </Button>
           </DialogActions>
         </form>
       </BootstrapDialog>
+      <TwoStepVerificationOTP
+      open = {optModelOpen}
+      setOpen={setOptModelOpen}
+      allUserInfo = {allUserInfo}
+      fetchData = {fetchData}
+      setTriggerRerender ={setTriggerRerender}
+      />
     </React.Fragment>
   );
 }

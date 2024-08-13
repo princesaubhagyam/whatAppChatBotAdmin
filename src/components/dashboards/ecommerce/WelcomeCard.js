@@ -5,14 +5,14 @@ import welcomeImg from 'src/assets/images/backgrounds/welcome-bg2.png';
 import AuthSocialButtons from 'src/views/authentication/authForms/AuthSocialButtons';
 import apiClient from 'src/api/axiosClient';
 
-const WelcomeCard = () => {
+const WelcomeCard = ({setIsLoading}) => {
   const [showSocialButtons, setShowSocialButtons] = useState(true);
   const [loading, setLoading] = useState(true);
+  
 
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      // console.log('API Response:', res);
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         setShowSocialButtons(!phoneId || phoneId.trim() === '');
@@ -60,7 +60,7 @@ const WelcomeCard = () => {
                   <Typography variant="subtitle2" my={2} color="textSecondary">
                     You have earned 54% more than last month which is great thing.
                   </Typography>
-                  {showSocialButtons && <AuthSocialButtons title="Sign in with" />}
+                  {showSocialButtons && <AuthSocialButtons   setIsLoading = {setIsLoading}  title="Sign in with" />}
                 </>
               )}
             </Box>
