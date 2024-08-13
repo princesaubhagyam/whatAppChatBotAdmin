@@ -62,7 +62,7 @@ const AuthSocialButtons = ({ title }) => {
             console.error("Access Token is not found")
           }
         } else {
-          toast.error('User cancelled login or did not fully authorize.', { duration: 2000 });
+          toast.error('User cancelled login or did not fully authorize. Please go to Dashborad and click again on the Sign in with FB', { duration: 5000 });
           console.error('User cancelled login or did not fully authorize.');
           navigate('/auth/login');
         }
@@ -156,7 +156,6 @@ function getBusinessId(verifyFbAccessToken){
     apiClient.patch(`auth/update_user_fb_info/`,
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
-        console.log(response,"updateUserFbInfo")
         if(response.data.status){
           verifiedAccount(accessToken,phoneId)
         }
@@ -178,7 +177,11 @@ function getBusinessId(verifyFbAccessToken){
       headers: {
         'Access-Token': accessToken
       }}).then((response)=>{
-        console.log(response,"response====")
+
+        if(response.data.status){
+          toast.success("WABA Successful !", { duration: 2000 });
+          navigate('/dashboard');
+        }
       })
       .catch((error)=>{
         console.log(error,"error")
