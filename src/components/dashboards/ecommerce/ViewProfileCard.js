@@ -21,7 +21,7 @@ import { Cancel, CameraAlt } from '@mui/icons-material';
 import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 
-const ViewProfileCard = ({isLoading}) => {
+const ViewProfileCard = ({ isLoading }) => {
   const [contactName, setContactName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profileDetails, setProfileDetails] = useState({});
@@ -32,7 +32,6 @@ const ViewProfileCard = ({isLoading}) => {
   const [newProfilePictureURL, setNewProfilePictureURL] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
-
 
   const fetchData = async () => {
     try {
@@ -454,13 +453,18 @@ const ViewProfileCard = ({isLoading}) => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '0px',
+                  padding: '18px',
                   cursor: 'pointer',
                   height: '18px',
                 }}
                 onClick={handleToggle}
               >
-                <Typography color="primary" sx={{ cursor: 'pointer' }}>
+                <Typography
+                  color="primary"
+                  sx={{ cursor: 'pointer' }}
+                  fontSize={'0.98rem'}
+                  fontWeight={400}
+                >
                   View your profile
                 </Typography>
                 <IconButton>{open ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>

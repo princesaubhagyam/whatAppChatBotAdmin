@@ -13,16 +13,39 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
-const colors = ['#00FF00', '#808080', '#0000FF', '#FFFF00', '#FF0000'];
+const customLegendPlugin = {
+  id: 'customLegend',
+  beforeDraw(chart, args, options) {
+    const { ctx, chartArea, legend } = chart;
+    const { labels } = legend.options;
+
+   
+    ctx.clearRect(0, 0, chartArea.width, chartArea.height);
+
+    
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font = `bold 12px Arial`;
+
+    legend.legendItems.forEach((item, index) => {
+      ctx.fillStyle = labels.color || '#000';
+      const x = chartArea.left + 10;
+      const y = chartArea.top + (index + 1) * 20;
+
+      ctx.fillText(item.text, x, y);
+    });
+  },
+};
+
+const colors = ['#16db65', '#495057', '#0496ff', '#ffc300', '#FF0000'];
 const barWidths = [50, 50, 50, 50, 50];
 
 const BarGraph = ({ graphData }) => {
   const data = {
-    //labels: graphData.map((entry) => `${entry.name} (${entry.number}) : ${entry.value}%`),
     labels: graphData.map((entry) => `${entry.name} (${entry.number})`),
     datasets: [
       {
-        // label: null,
+        label: 'Percentage(%)',
         data: graphData.map((entry) => entry.value),
         backgroundColor: colors,
         borderColor: colors,
@@ -34,9 +57,21 @@ const BarGraph = ({ graphData }) => {
 
   const options = {
     responsive: true,
+    layout: {
+      padding: {
+        top: 20,
+        bottom: 20,
+      },
+    },
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: '#FF00FF',
+          generateLabels: () => [],
+        },
+
+        plugins: [customLegendPlugin],
       },
       tooltip: {
         callbacks: {
@@ -64,16 +99,39 @@ const BarGraph = ({ graphData }) => {
       x: {
         barPercentage: 0.8,
         categoryPercentage: 1.0,
+        ticks: {
+          padding: 10,
+        },
+        title: {
+          display: true,
+          text: 'Status',
+          color: '#000000',
+          font: {
+            size: 14,
+            weight: 'bold',
+          },
+        },
+
+        offset: true,
       },
       y: {
         beginAtZero: true,
         max: 100,
+        title: {
+          display: true,
+          text: 'Percentage(%)',
+          color: '#000000',
+          font: {
+            size: 15,
+            weight: 'bold',
+          },
+        },
       },
     },
   };
 
   return (
-    <div style={{ width: '700px', height: '400px' }}>
+    <div style={{ width: '900px', height: '450px', paddingTop:'20px' }}>
       <Bar data={data} options={options} />
     </div>
   );
