@@ -14,7 +14,7 @@ const QualityRatingCard = () => {
         const metaClient = createMetaAxiosInstance({ addBAId: false });
         const phoneId = localStorage.getItem('phone_id');
         const response = await metaClient.get(`${phoneId}`);
-        console.log('response quality', response)
+        console.log('response quality', response);
         const fetchedQualityRating = response?.data?.quality_rating;
         const fetchedApiStatus = response?.data?.throughput?.level;
 
@@ -27,7 +27,7 @@ const QualityRatingCard = () => {
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -57,7 +57,7 @@ const QualityRatingCard = () => {
           <div>
             <Typography>Quality Rating</Typography>
             {loading ? (
-              <Skeleton variant="text" width={100} animation="wave"/>
+              <Skeleton variant="text" width={100} animation="wave" />
             ) : (
               <Badge
                 anchorOrigin={{

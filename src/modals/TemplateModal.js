@@ -39,9 +39,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const HeaderComponent = ({ componentData, updateHeaderLink }) => {
-
   switch (componentData.format) {
-    
     case 'IMAGE':
       return (
         <>
@@ -291,7 +289,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       open={open}
       onClose={() => {
         //handleClose();
-        resetTemplateSelection(); 
+        resetTemplateSelection();
       }}
       closeAfterTransition
       maxWidth={'md'}
@@ -330,7 +328,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                 ))}
               </Select>
             </FormControl>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} minWidth={'650px'} maxWidth={'750px'}>
               <Grid item xs={12} sm={6}>
                 <Stack gap={2}>
                   {broadcastDetails?.template &&
@@ -353,7 +351,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                     ))}
                 </Stack>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} lg={6}>
                 <Box>
                   {templateDetails ? (
                     <CardMedia
@@ -424,7 +422,8 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                       component="img"
                                       image={headerHandle}
                                       title={component.type}
-                                      sx={{ height: 200 }}
+                                      sx={{ height: 200}}
+
                                     />
                                   );
                                 }

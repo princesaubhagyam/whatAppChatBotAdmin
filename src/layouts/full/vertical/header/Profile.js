@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Menu, Avatar, Typography, IconButton, MenuItem, Stack } from '@mui/material';
-import axios from 'axios';
+import { Box, Menu, Avatar, Typography, IconButton, MenuItem, Stack, Skeleton } from '@mui/material';
+
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import apiClient from 'src/api/axiosClient';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
-  const [walletBalance, setWalletBalance] = useState();
+  const [walletBalance, setWalletBalance] = useState(null);
+  const [apiStatus, setApiStatus] = useState(null); // Initial state is null for skeleton
 
   const { user } = useUser();
 
@@ -17,7 +18,6 @@ const Profile = () => {
       try {
         const response = await apiClient.get('/wallet/');
         if (response.status === 200) {
-          // console.log(response);
           setWalletBalance(response.data.data.balance);
         }
       } catch (error) {
@@ -25,7 +25,25 @@ const Profile = () => {
       }
     };
 
+    const fetchApiStatus = async () => {
+      try {
+        const phoneId = localStorage.getItem('phone_id');
+        const token = localStorage.getItem('access_meta');
+        const response = await apiClient.get(`/auth/api_status/?phone_id=${phoneId}`, {
+          headers: {
+            'Access-Token': token,
+          },
+        });
+        if (response.status === 200) {
+          setApiStatus(response.data.api_status);
+        }
+      } catch (error) {
+        console.error('Error fetching API status:', error);
+      }
+    };
+
     fetchWalletBalance();
+    fetchApiStatus();
   }, []);
 
   const handleClick2 = (event) => {
@@ -59,23 +77,31 @@ const Profile = () => {
         >
           WABA Status:
         </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 500,
-            color: '#1A4D2E',
-          }}
-        >
-          LIVE
-        </Typography>
+        {apiStatus === null ? (
+          <Skeleton variant="text" width={50} height={30} animation={'wave'}/>
+        ) : (
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 500,
+              color: '#1A4D2E',
+            }}
+          >
+            {apiStatus}
+          </Typography>
+        )}
       </Stack>
-      <Stack direction={'row'}>
+      <Stack direction={'row'} spacing={2} alignItems="center">
         <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
           Wallet
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
-          ₹{walletBalance}
-        </Typography>
+        {walletBalance === null ? (
+          <Skeleton variant="text" width={50} height={30} animation={'wave'}/>
+        ) : (
+          <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+            ₹{walletBalance}
+          </Typography>
+        )}
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton

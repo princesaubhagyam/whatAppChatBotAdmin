@@ -16,6 +16,7 @@ const initialState = {
   chatHistory: null,
   selectedBroadcast: null,
   isHistory: false,
+  activeBroadcastId: null,
 };
 
 export const ChatSlice = createSlice({
@@ -38,6 +39,7 @@ export const ChatSlice = createSlice({
     },
     selectBroadcast: (state, action) => {
       state.selectedBroadcast = action.payload;
+      state.activeBroadcastId = action.payload.id;
     },
     sendMsg: (state, action) => {
       const { msg, phoneNo, chatId } = action.payload;
@@ -88,6 +90,8 @@ export const fetchIsHistoryStatus = (broadcastId) => async (dispatch) => {
     const res = await apiClient.get(`/broadcast-history_checker/${broadcastId}/`);
     if (res.status === 200) {
       dispatch(setIsHistory(res.data.is_history));
+      console.log('state updated');
+      
     }
   } catch (error) {
     console.warn('Error fetching history status:', error);
@@ -141,5 +145,6 @@ export const selectChatId = (state) => state.chat.chatId;
 export const selectChatPhoneNo = (state) => state.chat.chatPhoneNo;
 export const selectChatHistory = (state) => state.chat.chatHistory;
 export const selectIsHistory = (state) => state.chat.isHistory;
+export const selectActiveBroadcastId = (state) => state.chat.activeBroadcastId;
 
 export default ChatSlice.reducer;

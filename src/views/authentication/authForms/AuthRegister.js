@@ -4,16 +4,15 @@ import {
   Typography,
   FormControl,
   Stack,
-  Button,
   InputAdornment,
   OutlinedInput,
   FormHelperText,
   Select,
   MenuItem,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
 import countryCodes from 'src/utils/Countrycode.json';
@@ -22,7 +21,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
     full_name: '',
     email: '',
-    mobile: '',
+    mobile: '+91',
     password: '',
     confirm_password: '',
   };

@@ -14,10 +14,13 @@ import {
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
-import { IconPlus, IconDotsVertical, IconEdit, IconFileImport } from '@tabler/icons';
+import { IconEdit, IconFileImport } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
-import apiClient from 'src/api/axiosClient';
+import {
+  fetchIsHistoryStatus,
+ 
+} from 'src/store/apps/chat/ChatSlice';
 import EventContext from 'src/BroadcastContext';
 
 const getInitials = (name) => {
@@ -32,21 +35,11 @@ const ChatListingMember = ({ getBroadcastList }) => {
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isHistory, setIsHistory] = useState(false);
+  const isHistory = useSelector((state) => state.chatReducer.isHistory); // Fetch from Redux
   const { isOn } = useContext(EventContext);
-  
-
   useEffect(() => {
     if (activeBroadcast) {
-      apiClient
-        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
-        .then((response) => {
-          setIsHistory(response.data.is_history);
-
-        })
-        .catch((error) => {
-          console.error('Error fetching history status:', error);
-        });
+      dispatch(fetchIsHistoryStatus(activeBroadcast.id));
     }
   }, [activeBroadcast, isOn]);
 
@@ -68,31 +61,31 @@ const ChatListingMember = ({ getBroadcastList }) => {
                 {activeBroadcast.members} members
               </Typography>
               {!isHistory && (
-                <Button
-                  sx={{
-                    height: '25px',
-                    width: '40px',
-                    minWidth: '40px',
-                    padding: '8px',
-                  }}
-                  onClick={() => setIsMemberModalOpen(true)}
-                >
-                  <IconEdit size={'20'} />
-                </Button>
-              )}
+                <>
+                  <Button
+                    sx={{
+                      height: '25px',
+                      width: '40px',
+                      minWidth: '40px',
+                      padding: '8px',
+                    }}
+                    onClick={() => setIsMemberModalOpen(true)}
+                  >
+                    <IconEdit size={'20'} />
+                  </Button>
 
-              {!isHistory && (
-                <Button
-                  sx={{
-                    height: '25px',
-                    width: '40px',
-                    minWidth: '40px',
-                    padding: '8px',
-                  }}
-                  onClick={() => setIsImportModalOpen(true)}
-                >
-                  <IconFileImport size={'19'} />
-                </Button>
+                  <Button
+                    sx={{
+                      height: '25px',
+                      width: '40px',
+                      minWidth: '40px',
+                      padding: '8px',
+                    }}
+                    onClick={() => setIsImportModalOpen(true)}
+                  >
+                    <IconFileImport size={'19'} />
+                  </Button>
+                </>
               )}
             </Stack>
           </Box>
@@ -122,7 +115,6 @@ const ChatListingMember = ({ getBroadcastList }) => {
                               ? 'warning'
                               : 'secondary'
                           }
-                          //variant="dot"
                           anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'right',

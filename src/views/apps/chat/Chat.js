@@ -29,11 +29,12 @@ const Chats = ({ checkBroadcastHistory }) => {
   const dispatch = useDispatch();
   const [isAnalytics, setIsAnalytics] = useState(false);
   const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
-  const broadcastsFromRedux = useSelector((state) => state.chatReducer.broadcasts);
+  const [selectedBroadcast, setSelectedBroadcast] = useState(null);
+  const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
+
   const getBroadcastList = async () => {
     setLoading(true);
     const broadcastsRes = await getBroadcastsData();
-    // setBroadcasts(broadcastsRes);
     dispatch(setBroadcastList(broadcastsRes));
     setLoading(false);
   };
@@ -41,6 +42,22 @@ const Chats = ({ checkBroadcastHistory }) => {
   useEffect(() => {
     getBroadcastList();
   }, []);
+
+  useEffect(() => {
+    if (selectedBroadcast) {
+      setIsBroadcastDeleted(false); 
+    }
+  }, [selectedBroadcast]);
+
+  const handleBroadcastDelete = () => {
+    setIsBroadcastDeleted(true);
+    setSelectedBroadcast(null); 
+  };
+  
+  const handleBroadcastSelect = (broadcast) => {
+    setSelectedBroadcast(broadcast);
+    setIsBroadcastDeleted(false); // Reset this state
+  };
 
   if (loading) {
     return <Spinner />;
@@ -71,28 +88,33 @@ const Chats = ({ checkBroadcastHistory }) => {
                 broadcasts={broadcasts}
                 getBroadcastsData={getBroadcastList}
                 sx={{ flex: '0 1 300px', overflowY: 'auto' }}
+                onBroadcastDelete={handleBroadcastDelete}
+                onBroadcastSelect={handleBroadcastSelect}
               />
-              <Box
-                sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' /*height: '85vh'*/ }}
-              >
-                <ChatContent
-                  toggleChatSidebar={() => setMobileSidebarOpen(true)}
-                  sx={{ flexGrow: 1 }}
-                  checkBroadcastHistory={checkBroadcastHistory}
-                  setIsAnalytics={setIsAnalytics}
+              {!isBroadcastDeleted && (
+                <Box
+                  sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+                >
+                  <ChatContent
+                    toggleChatSidebar={() => setMobileSidebarOpen(true)}
+                    sx={{ flexGrow: 1 }}
+                    checkBroadcastHistory={checkBroadcastHistory}
+                    setIsAnalytics={setIsAnalytics}
+                  />
+                  <Divider />
+                  <ChatMsgSent checkBroadcastHistory={checkBroadcastHistory} />
+                </Box>
+              )}
+              {!isBroadcastDeleted && (
+                <ChatSidebarMember
+                  sx={{ flex: '0 1 300px', overflowY: 'auto' }}
+                  getBroadcastList={getBroadcastList}
                 />
-                <Divider />
-                <ChatMsgSent checkBroadcastHistory={checkBroadcastHistory} />
-              </Box>
-              <ChatSidebarMember
-                sx={{ flex: '0 1 300px', overflowY: 'auto' }}
-                getBroadcastList={getBroadcastList}
-              />
+              )}
             </>
           )}
         </AppCard>
       </PageContainer>
-      {/* <BroadcastTableList broadcasts={broadcasts} /> */}
     </>
   );
 };
