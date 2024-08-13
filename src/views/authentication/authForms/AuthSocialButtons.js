@@ -9,7 +9,7 @@ import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast'
 
 
-const AuthSocialButtons = ({ title,setIsLoading }) => {
+const AuthSocialButtons = ({ title }) => {
   const navigate = useNavigate();
  
 
@@ -53,6 +53,7 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
     window.FB.login(
       function (response) {
         if (response.authResponse) {
+          console.log(response,"window.FB.login")
           const fbAccessToken = response.authResponse.code;
           if (fbAccessToken) {
             getAccessTokenForBusiness(fbAccessToken)
@@ -85,8 +86,8 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
   try {
     apiClient.get(`auth/get_access_token_for_business/?code=${fbAccessToken}`)
     .then((response) => {
+      console.log(response,"getAccessTokenForBusiness")
       if(response.data.status){
-        setIsLoading(true)
         let verifyFbAccessToken = response.data.data.access_token
         getBusinessId(verifyFbAccessToken)
       }
@@ -107,6 +108,7 @@ function getBusinessId(verifyFbAccessToken){
       }
     })
       .then((response) => {
+        console.log(response,"getBusinessId")
         if(response.data.status){
           const whatsappId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
           getWhatsappBusinessMessaging(verifyFbAccessToken,whatsappId.target_ids[0])
@@ -130,9 +132,10 @@ function getBusinessId(verifyFbAccessToken){
         }
       })
         .then((response) => {
+          console.log(response,"getWhatsappBusinessMessaging")
           if(response.data.status){
             const phoneId = response.data.data.id
-            updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
+            // updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
 
           }
         })
@@ -158,7 +161,8 @@ function getBusinessId(verifyFbAccessToken){
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
         if(response.data.status){
-          verifiedAccount(accessToken,phoneId)
+          console.log(response,"response")
+          // verifiedAccount(accessToken,phoneId)
         }
       }).catch((error)=>{
         toast.error(error.toString(), { duration: 2000 });

@@ -61,10 +61,7 @@ const WelcomeCard = ({setIsLoading}) => {
                   <Typography variant="subtitle2" my={2} color="textSecondary">
                     You have earned 54% more than last month which is great thing.
                   </Typography>
-                  {showSocialButtons && <AuthSocialButtons 
-                                        setIsLoading ={setIsLoading}
-
-                  title="Sign in with" />}
+                  {showSocialButtons && <AuthSocialButtons  title="Sign in with" />}
                 </>
               )}
             </Box>
