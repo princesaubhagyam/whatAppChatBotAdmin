@@ -9,7 +9,7 @@ import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast'
 
 
-const AuthSocialButtons = ({ title }) => {
+const AuthSocialButtons = ({ title,  setIsLoading }) => {
   const navigate = useNavigate();
  
 
@@ -86,6 +86,7 @@ const AuthSocialButtons = ({ title }) => {
     apiClient.get(`auth/get_access_token_for_business/?code=${fbAccessToken}`)
     .then((response) => {
       if(response.data.status){
+        setIsLoading(true)
         let verifyFbAccessToken = response.data.data.access_token
         getBusinessId(verifyFbAccessToken)
       }
@@ -180,7 +181,7 @@ function getBusinessId(verifyFbAccessToken){
 
         if(response.data.status){
           toast.success("WABA Successful !", { duration: 2000 });
-          navigate('/dashboard');
+          navigate('/' || "/home");
         }
       })
       .catch((error)=>{

@@ -18,15 +18,13 @@ import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRating
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
-// import Spinner from "src/views/spinner/Spinner"
-// import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
-// import TwoStepVerification from '../../components/Models/TwoStepVerification';
+import Spinner from "src/views/spinner/Spinner"
 
 const Ecommerce = () => {
   // console.log('hello');
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
-  // const [isLoading,setIsLoading] = useState(false)
+  const [isLoading,setIsLoading] = useState(false)
 
   const checkFacebookLogin = async () => {
     try {
@@ -52,21 +50,21 @@ const Ecommerce = () => {
   useEffect(() => {
     checkFacebookLogin();
   }, []);
-  // useEffect(()=>{
-  //  setTimeout(()=>{
-  //   setIsLoading(false)
-  //  },2000)
-  // },[isLoading])
+  useEffect(()=>{
+   setTimeout(()=>{
+    setIsLoading(false)
+   },3000)
+  },[isLoading])
 
   return (
-    // isLoading ?< Spinner /> :
+     isLoading ?< Spinner /> :
     <Box mt={3}>
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={3}>
         {/* column */}
         <Grid item xs={12} lg={8}>
           <WelcomeCard  
-            // setIsLoading = {setIsLoading}
+           setIsLoading = {setIsLoading}
           />
         </Grid>
 
