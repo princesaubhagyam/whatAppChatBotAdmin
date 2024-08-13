@@ -90,9 +90,9 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
           city: '',
           tag: '',
         });
-        setCountryCode('+91'); // Reset to default code
+        setCountryCode('+91'); 
         handleClose();
-        onAddContact(response.data); // Pass the new contact data back to the parent
+        onAddContact(response.data); 
       } catch (error) {
         toast.error('Failed to create contact.');
       } finally {

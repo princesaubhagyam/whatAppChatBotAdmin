@@ -15,13 +15,13 @@ import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
-import countryCodes from 'src/utils/Countrycode.json'
+import countryCodes from 'src/utils/Countrycode.json';
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
     full_name: '',
     email: '',
-    mobile: '+91',
+    mobile: '',
     password: '',
     confirm_password: '',
   };
@@ -29,7 +29,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const [credentials, setCredentials] = React.useState(initCredentials);
   const [loading, setLoading] = React.useState(false);
-  const [countryCode, setCountryCode] = useState('+91'); 
+  const [countryCode, setCountryCode] = useState('+91');
   const [errors, setErrors] = React.useState({});
 
   // const countryCodes = [
@@ -77,12 +77,16 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   };
 
   const handleCountryCodeChange = (e) => {
-    setCountryCode(e.target.value);
+    const newCountryCode = e.target.value;
+    setCountryCode(newCountryCode);
+
     setCredentials((prev) => ({
       ...prev,
-      mobile: e.target.value + prev.mobile.replace(/^\+\d+/, ''), // Update mobile number with new country code
+      mobile: newCountryCode + prev.mobile.replace(/^\+\d+/, ''), 
     }));
+    console.log('moile');
   };
+  console.log(countryCode);
 
   const validateForm = () => {
     let isValid = true;
@@ -181,7 +185,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               >
                 {countryCodes.map((code) => (
                   <MenuItem key={code.dial_code} value={code.dial_code}>
-                    {code.code}
+                    {code.code} {code.dial_code}
                   </MenuItem>
                 ))}
               </Select>
