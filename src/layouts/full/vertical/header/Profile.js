@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Menu, Avatar, Typography, IconButton, MenuItem, Stack, Skeleton } from '@mui/material';
+import {
+  Box,
+  Menu,
+  Avatar,
+  Typography,
+  IconButton,
+  MenuItem,
+  Stack,
+  Skeleton,
+} from '@mui/material';
 
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
@@ -9,7 +18,7 @@ import apiClient from 'src/api/axiosClient';
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
-  const [apiStatus, setApiStatus] = useState(null); // Initial state is null for skeleton
+  const [apiStatus, setApiStatus] = useState(null);
 
   const { user } = useUser();
 
@@ -77,9 +86,20 @@ const Profile = () => {
         >
           WABA Status:
         </Typography>
-        {apiStatus === null ? (
+        {/* {apiStatus === null ? (
           <Skeleton variant="text" width={50} height={30} animation={'wave'}/>
         ) : (
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 500,
+              color: '#1A4D2E',
+            }}
+          >
+            {apiStatus || ''} 
+          </Typography>
+        )} */}
+        {apiStatus !== null && (
           <Typography
             variant="h6"
             sx={{
@@ -96,7 +116,7 @@ const Profile = () => {
           Wallet
         </Typography>
         {walletBalance === null ? (
-          <Skeleton variant="text" width={50} height={30} animation={'wave'}/>
+          <Skeleton variant="text" width={50} height={30} animation={'wave'} />
         ) : (
           <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
             ₹{walletBalance}

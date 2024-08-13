@@ -453,7 +453,8 @@ const TemplatesTableList = () => {
                   <TableRow>
                     <TableCell colSpan={5} align="center">
                       <Typography>
-                        Wait until the status update it will be Approved it may take 2-5 minutes
+                        Once you have created your template you can submit it for approval. It can
+                        take up to 24 hours.
                       </Typography>
                       <CircularProgress />
                     </TableCell>
