@@ -28,7 +28,7 @@ const Ecommerce = () => {
 
   const checkFacebookLogin = async () => {
     try {
-      const res = await apiClient.get('/auth/user_profile/');
+      const res = await apiClient.get('/auth/user_profile/')
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 
@@ -91,12 +91,13 @@ const Ecommerce = () => {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-            <QualityRatingCard />
-              {/* {loading ? (
+              {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
-                <QualityRatingCard />
-              ) : null} */}
+                <QualityRatingCard
+                isLoading ={isLoading}
+                />
+              ) : null}
             </Grid>
             {/* <Grid item xs={12} lg={14}>
               <ViewProfileCard />
@@ -124,9 +125,7 @@ const Ecommerce = () => {
           <SetUpProfileCard />
         </Grid>
         <Grid item xs={12} lg={14}>
-        <ViewProfileCard />
-
-          {/* {loading ? (
+          {loading ? (
             <Skeleton
               variant="rounded"
               width={1069}
@@ -136,9 +135,11 @@ const Ecommerce = () => {
             />
           ) : showCard ? (
             <>
-              <ViewProfileCard />
+              <ViewProfileCard
+              isLoading ={isLoading} 
+              />
             </>
-          ) : null} */}
+          ) : null}
         </Grid>
         {/* column */}
         <Grid item xs={12} lg={4}>

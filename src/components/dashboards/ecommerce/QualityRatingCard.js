@@ -11,14 +11,13 @@ const QualityRatingCard = ( { isLoading}) => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [isLoading]);
 
   const fetchData = async () => {
     try {
       const metaClient =  createMetaAxiosInstance({ addBAId: false });
       const phoneId = localStorage.getItem('phone_id');
       const response = await metaClient.get(`${phoneId}`);
-      console.log('response quality', response)
       const fetchedQualityRating = response?.data?.quality_rating;
       const fetchedApiStatus = response?.data?.throughput?.level;
       setQualityRating(fetchedQualityRating);

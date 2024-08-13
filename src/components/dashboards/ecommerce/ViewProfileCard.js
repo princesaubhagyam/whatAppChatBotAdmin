@@ -21,7 +21,7 @@ import { Cancel, CameraAlt } from '@mui/icons-material';
 import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 
-const ViewProfileCard = () => {
+const ViewProfileCard = ({isLoading}) => {
   const [contactName, setContactName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profileDetails, setProfileDetails] = useState({});
@@ -65,7 +65,7 @@ const ViewProfileCard = () => {
   };
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [isLoading]);
 
   const handleToggle = () => {
     setOpen(!open);

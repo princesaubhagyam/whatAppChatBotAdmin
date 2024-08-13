@@ -16,7 +16,6 @@ const WelcomeCard = ({setIsLoading}) => {
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         setShowSocialButtons(!phoneId || phoneId.trim() === '');
-        console.log(res.data)
       }
     } catch (error) {
       console.error('Error fetching Facebook meta info:', error);

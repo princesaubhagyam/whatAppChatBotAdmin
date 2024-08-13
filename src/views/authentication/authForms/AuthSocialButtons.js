@@ -176,7 +176,17 @@ function getBusinessId(verifyFbAccessToken){
     try {
       apiClient.get(`auth/user_profile/`)
       .then((response)=>{
-       console.log(response,"========")
+        if(response.data.status) {
+           if(response.data.data.facebook_meta_data){
+            localStorage.setItem('graph_api_url', response.data.data.facebook_meta_data.graph_api_url);
+            localStorage.setItem('api_version',response.data.data.facebook_meta_data.api_version);
+            localStorage.setItem('app_id', response.data.data.facebook_meta_data.app_id);
+            localStorage.setItem('embedded_configuration_id', response.data.data.facebook_meta_data.embedded_configuration_id);
+            localStorage.setItem('phone_id', response.data.data.facebook_meta_data.phone_id);
+            localStorage.setItem('whatsapp_business_account_id', response.data.data.facebook_meta_data.whatsapp_business_account_id);
+            localStorage.setItem('access_meta',response.data.data.facebook_meta_data.access_token);
+           }
+        }
       }).catch((error)=>{
          console.error(error)
       })
