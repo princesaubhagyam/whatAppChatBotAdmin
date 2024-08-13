@@ -55,15 +55,15 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
         if (response.authResponse) {
           const fbAccessToken = response.authResponse.code;
           if (fbAccessToken) {
-            console.log(fbAccessToken,"fbAccessToken")
             getAccessTokenForBusiness(fbAccessToken)
           }
           else {
+            toast.error('Access Token is not found.', { duration: 2000 });
             console.error("Access Token is not found")
           }
         } else {
           toast.error('User cancelled login or did not fully authorize.', { duration: 2000 });
-          console.log('User cancelled login or did not fully authorize.');
+          console.error('User cancelled login or did not fully authorize.');
           navigate('/auth/login');
         }
       },
@@ -85,18 +85,17 @@ const AuthSocialButtons = ({ title,setIsLoading }) => {
   try {
     apiClient.get(`auth/get_access_token_for_business/?code=${fbAccessToken}`)
     .then((response) => {
-      console.log(response,"verifyFbAccessToken response")
       if(response.data.status){
         setIsLoading(true)
         let verifyFbAccessToken = response.data.data.access_token
-        console.log(verifyFbAccessToken,"verifyFbAccessToken")
         getBusinessId(verifyFbAccessToken)
       }
     }).catch((error)=>{
+      toast.error(error.toString(), { duration: 2000 });
       console.error(error)
     })
   } catch (error) {
-    
+    toast.error(error.toString(), { duration: 2000 });
   }
  }
  
@@ -108,17 +107,17 @@ function getBusinessId(verifyFbAccessToken){
       }
     })
       .then((response) => {
-        console.log(response,"response whatsappId")
         if(response.data.status){
           const whatsappId = response.data.data.data.granular_scopes.find(scopeObj => scopeObj.scope === "whatsapp_business_messaging");
-           console.log(whatsappId,"whatsappId")
           getWhatsappBusinessMessaging(verifyFbAccessToken,whatsappId.target_ids[0])
         }
       })
       .catch((error) => {
-        console.log(error)
+        toast.error(error.toString(), { duration: 2000 });
+        console.error(error)
       })
   } catch (error) {
+    toast.error(error.toString(), { duration: 2000 });
     console.error(error,"error")
   }
 }
@@ -131,24 +130,18 @@ function getBusinessId(verifyFbAccessToken){
         }
       })
         .then((response) => {
-          console.log(response,"respons phoneId ")
           if(response.data.status){
-            const reqBody2 = {
-              data : response.data.data,
-              accessToken : verifyFbAccessToken
-            }
-            console.log(reqBody2,"reqBody2")
-            localStorage.setItem("reqBody",JSON.stringify(reqBody2))
             const phoneId = response.data.data.id
-            console.log(phoneId,"phoneId")
             updateUserFbInfo(verifyFbAccessToken,whatsappId,phoneId)
 
           }
         })
         .catch((error) => {
-          console.log(error)
+          toast.error(error.toString(), { duration: 2000 });
+          console.error(error)
         })
     } catch (error) {
+      toast.error(error.toString(), { duration: 2000 });
       console.error(error,"error")
     }
   }
@@ -165,10 +158,8 @@ function getBusinessId(verifyFbAccessToken){
       reqBody,{ headers: {'Access-Token': userAccessToken,}})
       .then((response)=>{
         if(response.data.status){
-          toast.success('WABA successful! Please Verify Account', { duration: 2000 })
-          window.location.reload()
+          verifiedAccount(accessToken,phoneId)
         }
-        console.log(response,"updateUserFbInfo")
       }).catch((error)=>{
         toast.error(error.toString(), { duration: 2000 });
         console.error(error)
@@ -176,9 +167,27 @@ function getBusinessId(verifyFbAccessToken){
     
   } catch (error) {
     toast.error(error.toString(), { duration: 2000 });
-     console.log(error)
+     console.error(error)
   }
+ }
 
+ function verifiedAccount(accessToken,phoneId){
+  try { 
+    const reqBody ={pin : "123456" } 
+    apiClient.post(`auth/registerphone/${phoneId}/`,reqBody,{
+      headers: {
+        'Access-Token': accessToken
+      }}).then((response)=>{
+        console.log(response,"response====")
+      })
+      .catch((error)=>{
+        console.log(error,"error")
+        toast.error(error.toString(), { duration: 2000 });
+      })
+  } catch (error) {
+    console.log(error,"error")
+    toast.error(error.toString(), { duration: 2000 });
+  }
  }
 
   return (

@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Stack, Badge, Skeleton,Button } from '@mui/material';
+import { Card, CardContent, Typography, Stack, Badge, Skeleton} from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
-import TwoStepVerification from '../../Models/TwoStepVerification';
 
 const QualityRatingCard = ( { isLoading}) => {
-  const [remainingQuota,
-    //  setRemainingQuota
-    ] = useState(1000);
-  const [open, setOpen] = useState(false);
+  const [remainingQuota,] = useState(1000);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
   const [loading, setLoading] = useState(true); // Added loading state
-  const [allUserInfo, setAllUserInfo] = useState({})
-  const [triggerRerender, setTriggerRerender] = useState();
 
 
   useEffect(() => {
     fetchData();
-  }, [triggerRerender]);
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -27,7 +21,6 @@ const QualityRatingCard = ( { isLoading}) => {
       console.log('response quality', response)
       const fetchedQualityRating = response?.data?.quality_rating;
       const fetchedApiStatus = response?.data?.throughput?.level;
-
       setQualityRating(fetchedQualityRating);
       setApiStatus(fetchedApiStatus);
       setLoading(false);
@@ -37,15 +30,6 @@ const QualityRatingCard = ( { isLoading}) => {
       setLoading(false); 
     }
   };
-
-  const handleClickOpen = () => { 
-    const data = localStorage.getItem('reqBody');
-    setAllUserInfo(()=>(JSON.parse(data)))
-    setOpen(true);
-  };
-
-
-
   return (
     <Card>
       <CardContent sx={{ py: 2 }}>
@@ -61,19 +45,6 @@ const QualityRatingCard = ( { isLoading}) => {
                 badgeContent={apiStatus}
                 color="primary"
               ></Badge>
-            {/* {loading ? (
-              <Skeleton variant="text" width={100} animation="wave" />
-            ) : (
-              <Badge
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                sx={{ marginLeft: '2.3rem' }}
-                badgeContent={apiStatus}
-                color="primary"
-              ></Badge>
-            )} */}
           </div>
           <div>
             <Typography>Quality Rating</Typography>
@@ -128,22 +99,7 @@ const QualityRatingCard = ( { isLoading}) => {
             )}
           </div>
         </Stack>
-      </CardContent>
-{ 
- loading ? (
-  <Skeleton variant="text" width={100} animation="wave"/>
-) : apiStatus === 'STANDARD' ? " " :  <Button 
-  onClick={handleClickOpen}
- variant="contained">Please Verify Your Account</Button>
-} 
-     
-      <TwoStepVerification
-       open ={open}
-       setOpen ={setOpen}
-       allUserInfo ={allUserInfo}
-       fetchData = {fetchData}
-       setTriggerRerender= {setTriggerRerender}
-      />
+      </CardContent>     
     </Card>
   );
 };
