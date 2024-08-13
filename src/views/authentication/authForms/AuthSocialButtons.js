@@ -176,6 +176,7 @@ function getBusinessId(verifyFbAccessToken){
     try {
       apiClient.get(`auth/user_profile/`)
       .then((response)=>{
+        console.log(response,"response addUserInfo")
         if(response.data.status) {
            if(response.data.data.facebook_meta_data){
             localStorage.setItem('graph_api_url', response.data.data.facebook_meta_data.graph_api_url);
