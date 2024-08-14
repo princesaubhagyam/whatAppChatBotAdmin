@@ -145,7 +145,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
                 >
                   {countryCodes.map((code) => (
                     <MenuItem key={code.dial_code} value={code.dial_code}>
-                      {/* {code.code} ({code.dial_codes.substring(1)}) */}
+                      {code.code} ({code.dial_code})
                     </MenuItem>
                   ))}
                 </Select>

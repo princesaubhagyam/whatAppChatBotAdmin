@@ -338,7 +338,7 @@ export default function CreateTemplate() {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        toast.error(error.response.data.error.message, { duration: 2000 });
+        toast.error(error.response.data.error.error_user_title, { duration: 2000 });
       }
     },
   });

@@ -440,12 +440,12 @@ const BroadcastMemberModal = ({
                                 {row.city ? row.city : '-'}
                               </Typography>
                             </TableCell>
-                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                            <TableCell align="left" sx={{ padding: '0px' }}>
                               <Typography
-                                fontWeight="400"
+                                fontWeight="400 !important"
                                 variant="h6"
-                                fontSize={14}
-                                padding="13px 4px"
+                                fontSize="14px !important"
+                                padding="13px 4px !important"
                               >
                                 {row.tag ? row.tag : '-'}
                               </Typography>
