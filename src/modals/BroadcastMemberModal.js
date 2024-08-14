@@ -65,10 +65,14 @@ const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
 ];
 
 const EnhancedTableHead = (props) => {
-  const { order, orderBy, onRequestSort } = props;
+  const { order, orderBy, onRequestSort, numSelected, onSelectAllClick, rowCount, selected } =
+    props;
+  // const isAllSelected = rowCount === numSelected && selected.length === rowCount;
+  // const isSomeSelected = numSelected > 0 && numSelected < rowCount;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -76,8 +80,18 @@ const EnhancedTableHead = (props) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ padding: '4.5px' }} />
-
+        <TableCell padding="checkbox">
+          <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={numSelected === rowCount}
+            onChange={onSelectAllClick}
+            color="primary"
+            // indeterminate={isSomeSelected}
+            // checked={isAllSelected}
+            // onChange={onSelectAllClick}
+            // color="primary"
+          />
+        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -122,6 +136,10 @@ const BroadcastMemberModal = ({
   const [memberIds, setMemberIds] = useState([]);
   const [allContacts, setAllContacts] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [selected, setSelected] = useState([]);
+  console.log('....', memberIds);
+
+  const [numSelected, setNumSelected] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
     operator: 'contains',
@@ -141,7 +159,6 @@ const BroadcastMemberModal = ({
             .filter((contact) => contact.is_member)
             .map((contact) => contact.id),
         );
-      
       }
     } catch (err) {
       toast.error(
@@ -157,6 +174,18 @@ const BroadcastMemberModal = ({
       getApiData();
     }
   }, [open]);
+
+  useEffect(() => {
+    // Update selected state based on memberIds
+    setSelected(
+      broadcastContacts.filter((contact) => contact.is_member).map((contact) => contact.id),
+    );
+  }, [broadcastContacts]);
+
+  useEffect(() => {
+    // Update memberIds based on selected
+    setMemberIds(selected);
+  }, [selected]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -207,6 +236,36 @@ const BroadcastMemberModal = ({
     setOpenFilterDialog(false);
   };
 
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = broadcastContacts.map((n) => n.id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -216,15 +275,13 @@ const BroadcastMemberModal = ({
     setPage(0);
   };
 
-  const handleSelectedMemberStateUpdate = (memberId) => {
-    const tmpMembers = [...memberIds];
-    const idx = tmpMembers.indexOf(memberId);
-    if (idx === -1) {
-      tmpMembers.push(memberId);
+  const handleSelectedMemberStateUpdate = (id) => {
+    // Toggle selection
+    if (selected.includes(id)) {
+      setSelected(selected.filter((item) => item !== id));
     } else {
-      tmpMembers.splice(idx, 1);
+      setSelected([...selected, id]);
     }
-    setMemberIds(tmpMembers);
   };
 
   const updateBroadcastMembers = async () => {
@@ -232,6 +289,7 @@ const BroadcastMemberModal = ({
       const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
         contacts: memberIds,
       });
+
       if (res.status === 200) {
         toast.success('Broadcast members updated successfully!');
         handleClose();
@@ -325,19 +383,30 @@ const BroadcastMemberModal = ({
                       order={order}
                       orderBy={orderBy}
                       onRequestSort={handleRequestSort}
+                      numSelected={selected.length}
+                      onSelectAllClick={handleSelectAllClick}
+                      rowCount={paginatedContacts.length}
                     />
                     <TableBody>
                       {paginatedContacts.map((row, idx) => {
-                        const labelId = `enhanced-table-checkbox-${idx}`;
+                        const isItemSelected = selected.indexOf(row.id) !== -1;
+                        console.log('isselected', isItemSelected);
+
                         return (
-                          <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id}
+                            onClick={(event) => handleClick(event, row.id)}
+                            selected={isItemSelected}
+                          >
                             <TableCell padding="checkbox">
                               <Checkbox
-                                color="primary"
-                                checked={memberIds.includes(row.id)}
-                                onChange={() => handleSelectedMemberStateUpdate(row.id)}
+                                checked={isItemSelected}
+                                onChange={(event) => handleClick(event, row.id)}
                                 inputProps={{
-                                  'aria-labelledby': labelId,
+                                  'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
                                 }}
                               />
                             </TableCell>
@@ -369,6 +438,16 @@ const BroadcastMemberModal = ({
                                 padding="13px 4px !important"
                               >
                                 {row.city ? row.city : '-'}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.tag ? row.tag : '-'}
                               </Typography>
                             </TableCell>
                           </TableRow>

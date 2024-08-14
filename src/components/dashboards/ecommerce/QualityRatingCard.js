@@ -6,7 +6,7 @@ const QualityRatingCard = ( { isLoading }) => {
   const [remainingQuota,] = useState(1000);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true); 
 
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const QualityRatingCard = ( { isLoading }) => {
       setQualityRating(fetchedQualityRating);
       setApiStatus(fetchedApiStatus);
       setLoading(false);
+      console.log('QualityRatingCard - qualityRating:', fetchedQualityRating);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {

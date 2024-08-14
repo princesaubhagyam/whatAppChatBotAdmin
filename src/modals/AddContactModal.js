@@ -33,13 +33,14 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     city: '',
     tag: '',
   });
-
+  console.log('country', countryCode);
   const handleChange = (event) => {
     const { name, value } = event.target;
     setContactDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
+    console.log('----', contactDetails);
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: '',
@@ -90,9 +91,9 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
           city: '',
           tag: '',
         });
-        setCountryCode('+91'); 
+        setCountryCode('+91');
         handleClose();
-        onAddContact(response.data); 
+        onAddContact(response.data);
       } catch (error) {
         toast.error('Failed to create contact.');
       } finally {
@@ -144,7 +145,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
                 >
                   {countryCodes.map((code) => (
                     <MenuItem key={code.dial_code} value={code.dial_code}>
-                      {code.code} ({code.dial_code})
+                      {/* {code.code} ({code.dial_codes.substring(1)}) */}
                     </MenuItem>
                   ))}
                 </Select>
