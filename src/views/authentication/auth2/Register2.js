@@ -3,66 +3,89 @@ import { Grid, Box, Card, Typography, Stack } from '@mui/material';
 import { Link } from 'react-router-dom';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
-
+import img from 'src/assets/images/backgrounds/baner.jpg';
 import AuthRegister from '../authForms/AuthRegister';
 
 const Register2 = () => (
-  <PageContainer title="Register" description="this is Register page">
-    <Box
-      sx={{
-        position: 'relative',
-        '&:before': {
-          content: '""',
-          background: 'radial-gradient(#d2f1df, #d3d7fa, #bad8f4)',
-          backgroundSize: '400% 400%',
-          animation: 'gradient 15s ease infinite',
-          position: 'absolute',
-          height: '100%',
-          width: '100%',
-          opacity: '0.3',
-        },
-      }}
-    >
-      <Grid container spacing={0} justifyContent="center" sx={{ height: '100vh' }}>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          lg={5}
-          xl={4}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Card elevation={9} sx={{ p: 4, m: 3, zIndex: 1, width: '100%', maxWidth: '450px' }}>
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <Logo />
-            </Box>
-            <AuthRegister
-              subtitle={
-                <Stack direction="row" spacing={1} mt={3}>
-                  <Typography color="textSecondary" variant="h6" fontWeight="400">
-                    Already have an Account?
-                  </Typography>
-                  <Typography
-                    component={Link}
-                    to="/auth/login"
-                    fontWeight="500"
-                    sx={{
-                      textDecoration: 'none',
-                      color: 'primary.main',
-                    }}
-                  >
-                    Sign In
-                  </Typography>
-                </Stack>
-              }
-            />
-          </Card>
+  <>
+    <PageContainer title="Register" description="this is Register page">
+      <Box
+        sx={{
+          position: 'relative',
+          height: '100vh',
+        }}
+      >
+        <Grid container spacing={0} sx={{ height: '100%' }}>
+          {/* Image Section */}
+          <Grid
+            item
+            xs={6}
+            md={5}
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              backgroundImage: `url(${img})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          ></Grid>
+
+          <Grid
+            item
+            xs={12}
+            md={7}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ backgroundColor: 'white' }}
+          >
+            <Card
+              elevation={9}
+              sx={{
+                p: 4,
+                zIndex: 1,
+                width: '100%',
+                maxWidth: '460px',
+                boxShadow: 'none !important',
+                borderRadius: '0px !important',
+                padding: '0px !important',
+              }}
+            >
+              <Box display="flex" flexDirection="column">
+                <Typography
+                  variant="h3"
+                  color={'primary.main'}
+                  fontWeight={700}
+                  lineHeight={'3.75rem'}
+                >
+                  Create Your Saubhagyam Account
+                </Typography>
+              </Box>
+              <AuthRegister
+                subtitle={
+                  <Stack direction="row" spacing={1} mt={3}>
+                    <Typography color="textSecondary" variant="h6" fontWeight="400">
+                      Already have an Account?
+                    </Typography>
+                    <Typography
+                      component={Link}
+                      to="/auth/login"
+                      fontWeight="500"
+                      sx={{
+                        textDecoration: 'none',
+                        color: 'primary.main',
+                      }}
+                    >
+                      Sign In
+                    </Typography>
+                  </Stack>
+                }
+              />
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
-  </PageContainer>
+      </Box>
+    </PageContainer>
+  </>
 );
 
 export default Register2;

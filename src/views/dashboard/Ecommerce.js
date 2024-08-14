@@ -9,7 +9,7 @@ import WelcomeCard from 'src/components/dashboards/ecommerce/WelcomeCard';
 // import RevenueUpdates from 'src/components/dashboards/ecommerce/RevenueUpdates';
 // import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
 // import TotalEarning from 'src/components/dashboards/ecommerce/TotalEarning';
-import ProductsSold from 'src/components/dashboards/ecommerce/ProductsSold';
+
 // import MonthlyEarnings from 'src/components/dashboards/ecommerce/MonthlyEarnings';
 // import ProductPerformances from 'src/components/dashboards/ecommerce/ProductPerformances';
 // import RecentTransactions from 'src/components/dashboards/ecommerce/RecentTransactions';
@@ -18,8 +18,14 @@ import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRating
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
-import BasicAlerts from "../../components/alert/Alert"
+// import BasicAlerts from "../../components/alert/Alert"
 import Spinner from "src/views/spinner/Spinner"
+import ProfileDetail from 'src/components/dashboards/ecommerce/ProfileDetail';
+// import { Payment } from '@mui/icons-material';
+// import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
+import CurrentPlan from 'src/components/dashboards/ecommerce/CurrentPlan';
+// import TwoStepVerificationOTP from '../../components/Models/TwoStepVerificationOTP';
+// import TwoStepVerification from '../../components/Models/TwoStepVerification';
 
 const Ecommerce = () => {
   // console.log('hello');
@@ -30,7 +36,7 @@ const Ecommerce = () => {
 
   const checkFacebookLogin = async () => {
     try {
-      const res = await apiClient.get('/auth/user_profile/')
+      const res = await apiClient.get('/auth/user_profile/');
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
 
@@ -64,22 +70,28 @@ const Ecommerce = () => {
        {/* { "UNKNOWN" ==="UNKNOWN" ?  <BasicAlerts /> : null} */}
     <Box mt={3}> 
       {/* <AuthSocialButtons title="Sign in with" /> */}
-      <Grid container spacing={3}>
+      <Grid container spacing={2}>
         {/* column */}
         <Grid item xs={12} lg={8}>
-          <WelcomeCard  
-           setIsLoading = {setIsLoading}
-          />
+          <WelcomeCard setIsLoading={setIsLoading} />
         </Grid>
 
         {/* column */}
         <Grid item xs={12} lg={4}>
-          <Grid container spacing={3}>
-            {/* <Grid item xs={12} sm={6}>
-              <Payment />
-            </Grid> */}
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={6} lg={12}>
-              <ProductsSold />
+              {loading ? (
+                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+              ) : showCard ? (
+                <ProfileDetail />
+              ) : null}
+            </Grid>
+            <Grid item xs={12} sm={6} lg={12}>
+              {loading ? (
+                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+              ) : showCard ? (
+                <CurrentPlan />
+              ) : null}
             </Grid>
           </Grid>
         </Grid>
@@ -94,7 +106,7 @@ const Ecommerce = () => {
         </Grid> */}
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item xs={12} paddingTop={'10px !important'}>
               {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
@@ -127,7 +139,11 @@ const Ecommerce = () => {
         </Grid> */}
         {/* column */}
         <Grid item xs={12} sm={6} lg={4}>
-          <SetUpProfileCard />
+          {loading ? (
+            <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+          ) : showCard ? (
+            <SetUpProfileCard />
+          ) : null}
         </Grid>
         <Grid item xs={12} lg={14}>
           {loading ? (
@@ -140,9 +156,7 @@ const Ecommerce = () => {
             />
           ) : showCard ? (
             <>
-              <ViewProfileCard
-              isLoading ={isLoading} 
-              />
+              <ViewProfileCard isLoading={isLoading} />
             </>
           ) : null}
         </Grid>

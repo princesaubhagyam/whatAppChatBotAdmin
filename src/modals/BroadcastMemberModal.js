@@ -120,7 +120,7 @@ const BroadcastMemberModal = ({
   const [loading, setLoading] = useState(true);
   const [broadcastContacts, setBroadcastContacts] = useState([]);
   const [memberIds, setMemberIds] = useState([]);
-  const [allContacts, setAllContacts] = useState([]); // New state to keep original data
+  const [allContacts, setAllContacts] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
@@ -135,12 +135,13 @@ const BroadcastMemberModal = ({
       const res = await apiClient.get(`update_broadcast_members/${activeBroadcastId}`);
       if (res.status === 200) {
         setBroadcastContacts(res.data.data.all_contacts);
-        setAllContacts(res.data.data.all_contacts); // Store the original data
+        setAllContacts(res.data.data.all_contacts);
         setMemberIds(
           res.data.data.all_contacts
             .filter((contact) => contact.is_member)
             .map((contact) => contact.id),
         );
+      
       }
     } catch (err) {
       toast.error(
@@ -177,7 +178,7 @@ const BroadcastMemberModal = ({
       operator: 'contains',
       value: '',
     });
-    setBroadcastContacts(allContacts); // Reset to original data
+    setBroadcastContacts(allContacts);
     setOpenFilterDialog(false);
     setSearch('');
   };
@@ -432,8 +433,7 @@ const BroadcastMemberModal = ({
                   name="value"
                   value={filterCriteria.value}
                   onChange={handleFilterChange}
-                  sx={{ width: '265px'}}
-                  
+                  sx={{ width: '265px' }}
                 />
               </Grid>
             </Grid>

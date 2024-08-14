@@ -167,7 +167,13 @@ const EnhancedTableToolbar = (props) => {
 
   return (
     <>
-      <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px' }}>
+      <Stack
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          marginBottom: '15px',
+        }}
+      >
         {numSelected > 0 ? (
           <Stack
             sx={{
@@ -198,7 +204,6 @@ const EnhancedTableToolbar = (props) => {
             </Box>
           </Stack>
         ) : (
-          // When no items are selected
           <>
             <Stack>
               <Box sx={{ flex: '1 1 100%' }} border={0}>
@@ -220,7 +225,15 @@ const EnhancedTableToolbar = (props) => {
               </Box>
             </Stack>
             {showButtons && (
-              <Stack sx={{ flexDirection: 'row', gap: 2 }}>
+              <Stack
+                sx={{
+                  flexDirection: { xs: 'row', sm: 'row' },
+                  gap: 2,
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  marginTop: { xs: '3px', sm: '3px', lg: '0px' },
+                }}
+              >
                 <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
                   <FilterAltIcon size="1.1rem" />
                 </IconButton>

@@ -4,19 +4,18 @@ import {
   Typography,
   FormControl,
   Stack,
-  Button,
   InputAdornment,
   OutlinedInput,
   FormHelperText,
   Select,
   MenuItem,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
-import countryCodes from 'src/utils/Countrycode.json'
+import countryCodes from 'src/utils/Countrycode.json';
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -30,7 +29,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const [credentials, setCredentials] = React.useState(initCredentials);
   const [loading, setLoading] = React.useState(false);
-  const [countryCode, setCountryCode] = useState('+91'); 
+  const [countryCode, setCountryCode] = useState('+91');
   const [errors, setErrors] = React.useState({});
 
   // const countryCodes = [
@@ -78,12 +77,16 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   };
 
   const handleCountryCodeChange = (e) => {
-    setCountryCode(e.target.value);
+    const newCountryCode = e.target.value;
+    setCountryCode(newCountryCode);
+
     setCredentials((prev) => ({
       ...prev,
-      mobile: e.target.value + prev.mobile.replace(/^\+\d+/, ''), // Update mobile number with new country code
+      mobile: newCountryCode + prev.mobile.replace(/^\+\d+/, ''), 
     }));
+    console.log('moile');
   };
+  console.log(countryCode);
 
   const validateForm = () => {
     let isValid = true;
@@ -136,8 +139,13 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       )}
 
       {subtext}
-      <form onSubmit={(e) => { e.preventDefault(); handleSignUp(); }}>
-        <Stack spacing={2}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSignUp();
+        }}
+      >
+        <Stack spacing={2} gap={'0.80rem'}>
           <FormControl fullWidth error={!!errors.full_name}>
             <OutlinedInput
               startAdornment={
@@ -177,7 +185,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               >
                 {countryCodes.map((code) => (
                   <MenuItem key={code.dial_code} value={code.dial_code}>
-                    {code.code}
+                    {code.code} {code.dial_code}
                   </MenuItem>
                 ))}
               </Select>

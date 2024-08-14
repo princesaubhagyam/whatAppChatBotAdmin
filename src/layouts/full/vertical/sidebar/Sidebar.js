@@ -3,8 +3,7 @@ import SidebarItems from './SidebarItems';
 import Logo from '../../shared/logo/Logo';
 import { useSelector, useDispatch } from 'react-redux';
 import { hoverSidebar, toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
-import Scrollbar from 'src/components/custom-scroll/Scrollbar';
-import { Profile } from './SidebarProfile/Profile';
+import LogoImg from 'src/assets/images/logos/home_logo.png';
 
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
@@ -30,11 +29,13 @@ const Sidebar = () => {
     return (
       <Box
         sx={{
-          width: toggleWidth,
+          //width: toggleWidth,
+
           flexShrink: 0,
           ...(customizer.isCollapse && {
             position: 'absolute',
           }),
+          width: '100px',
         }}
       >
         {/* ------------------------------------------- */}
@@ -51,8 +52,9 @@ const Sidebar = () => {
               transition: theme.transitions.create('width', {
                 duration: theme.transitions.duration.shortest,
               }),
-              width: toggleWidth,
+              width: '100px',
               boxSizing: 'border-box',
+              overflowY: 'visible',
             },
           }}
         >
@@ -67,13 +69,15 @@ const Sidebar = () => {
                   : customizer.activeSidebarBg,
               color: customizer.activeSidebarBg === '#ffffff' ? '' : 'white',
               height: '100%',
+              
             }}
           >
             {/* ------------------------------------------- */}
             {/* Logo */}
             {/* ------------------------------------------- */}
-            <Box px={2}>
-              <Logo />
+            <Box p={2} textAlign={'center'}>
+              {/* <Logo/> */}
+              <img src={LogoImg} alt='img' height={'60px'} width={'60px'}></img>
             </Box>
             {/* <Scrollbar sx={{ height: 'calc(100% - 190px)' }}> */}
             {/* ------------------------------------------- */}

@@ -452,7 +452,10 @@ const TemplatesTableList = () => {
                 {tableLoading ? (
                   <TableRow>
                     <TableCell colSpan={5} align="center">
-                      <Typography>Wait until the status update it will be Approved it may take 2-5 minutes</Typography>
+                      <Typography>
+                        Once you have created your template you can submit it for approval. It can
+                        take up to 24 hours.
+                      </Typography>
                       <CircularProgress />
                     </TableCell>
                   </TableRow>
@@ -584,6 +587,7 @@ const TemplatesTableList = () => {
                     padding: 1,
                     boxShadow: '0px 1px 110px #00000025',
                     borderBottom: '1px solid #80808078',
+                    minWidth: '350px',
                   }}
                 >
                   {view.length > 0 &&

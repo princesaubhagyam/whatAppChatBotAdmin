@@ -15,6 +15,8 @@ const initialState = {
   chatSearch: '',
   chatHistory: null,
   selectedBroadcast: null,
+  isHistory: false,
+  activeBroadcastId: null,
 };
 
 export const ChatSlice = createSlice({
@@ -30,12 +32,14 @@ export const ChatSlice = createSlice({
     SearchChat: (state, action) => {
       state.chatSearch = action.payload;
     },
+    
     setChatHistory: (state, action) => {
       console.log(action.payload);
       state.chatHistory = action.payload;
     },
     selectBroadcast: (state, action) => {
       state.selectedBroadcast = action.payload;
+      state.activeBroadcastId = action.payload.id;
     },
     sendMsg: (state, action) => {
       const { msg, phoneNo, chatId } = action.payload;
@@ -61,10 +65,13 @@ export const ChatSlice = createSlice({
           : chat,
       );
     },
+    setIsHistory: (state, action) => {
+      state.isHistory = action.payload;
+    },
   },
 });
 
-export const { SearchChat, setBroadcastList, sendMsg, selectBroadcast, setChatHistory } =
+export const { SearchChat, setBroadcastList, sendMsg, selectBroadcast, setChatHistory, setIsHistory } =
   ChatSlice.actions;
 
 export const fetchBroadcasts = () => async () => {
@@ -75,6 +82,19 @@ export const fetchBroadcasts = () => async () => {
     }
   } catch (err) {
     throw new Error(err);
+  }
+};
+
+export const fetchIsHistoryStatus = (broadcastId) => async (dispatch) => {
+  try {
+    const res = await apiClient.get(`/broadcast-history_checker/${broadcastId}/`);
+    if (res.status === 200) {
+      dispatch(setIsHistory(res.data.is_history));
+      console.log('state updated');
+      
+    }
+  } catch (error) {
+    console.warn('Error fetching history status:', error);
   }
 };
 
@@ -124,5 +144,7 @@ const sendMessage = async (msg, to) => {
 export const selectChatId = (state) => state.chat.chatId;
 export const selectChatPhoneNo = (state) => state.chat.chatPhoneNo;
 export const selectChatHistory = (state) => state.chat.chatHistory;
+export const selectIsHistory = (state) => state.chat.isHistory;
+export const selectActiveBroadcastId = (state) => state.chat.activeBroadcastId;
 
 export default ChatSlice.reducer;
