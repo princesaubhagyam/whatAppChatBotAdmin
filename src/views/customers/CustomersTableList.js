@@ -303,6 +303,7 @@ const CustomersTableList = () => {
     contact: ' ',
     name: '',
     tag: '',
+    cc :''
   });
   const [allDataForEdit, setAllDataForEdit] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -350,6 +351,7 @@ const CustomersTableList = () => {
             contact: item.contact,
             name: item.name,
             tag: item.tag,
+            cc : `+${item.cc}`
           });
         }
         return;
@@ -562,7 +564,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.contact}
+                              {row.full_mobile}
                             </Typography>{' '}
                           </TableCell>
                           <TableCell sx={{ padding: '0px', minWidth: '180px' }}>

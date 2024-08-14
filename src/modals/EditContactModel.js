@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, Modal, TextField, Grid, Typography } from '@mui/material';
+import { Box, Button, Modal, TextField, Grid, Typography, Select, MenuItem, Stack, FormControl } from '@mui/material';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
+import countryCodes from 'src/utils/Countrycode.json';
 
 const EditContactModal = ({
   open,
@@ -21,6 +22,7 @@ const EditContactModal = ({
     contact: '',
     city: '',
     tag: '',
+    cc: ''
   });
   console.log(editData, 'editData');
   function handleClose() {
@@ -30,8 +32,18 @@ const EditContactModal = ({
       contact: ' ',
       name: '',
       tag: '',
+      cc: ''
     });
   }
+
+
+  function handleCountryCodeChange(e) {
+    setEditData((prevDetails) => ({
+      ...prevDetails,
+      cc: e.target.value,
+    }))
+  }
+
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -53,6 +65,7 @@ const EditContactModal = ({
       contact: '',
       city: '',
       tag: '',
+      cc: '',
     };
 
     // Validate each field
@@ -77,6 +90,7 @@ const EditContactModal = ({
         setLoading(true);
         const contactDataEdit = {
           ...editData,
+          cc: (editData.cc).replace("+", ""),
           city: editData.city.trim() || '-',
           tag: editData.tag.trim() || '-',
         };
@@ -124,56 +138,71 @@ const EditContactModal = ({
         <Typography variant="h5" component="h2" gutterBottom>
           Edit Contact
         </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={editData.name}
-              onChange={handleChange}
-              error={!!errors.name}
-              helperText={errors.name}
-              placeholder="Enter name"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Contact"
-              name="contact"
-              value={editData.contact}
-              onChange={handleChange}
-              error={!!errors.contact}
-              helperText={errors.contact}
-              placeholder="91952XXXXXXX"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="City"
-              name="city"
-              value={editData.city}
-              onChange={handleChange}
-              error={!!errors.city}
-              helperText={errors.city}
-              placeholder="Enter City"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Tag"
-              name="tag"
-              value={editData.tag}
-              onChange={handleChange}
-              error={!!errors.tag}
-              helperText={errors.tag}
-              placeholder="Enter tag"
-            />
-          </Grid>
-        </Grid>
+
+        <Stack container spacing={2}>
+          <TextField
+            fullWidth
+            label="Name"
+            name="name"
+            value={editData.name}
+            onChange={handleChange}
+            error={!!errors.name}
+            helperText={errors.name}
+            placeholder="Enter name"
+          />
+          <FormControl fullWidth error={!!errors.contact}>
+            <Grid container spacing={1} alignItems="center">
+              <Grid item>
+                <Select
+                  value={editData.cc}
+                  onChange={handleCountryCodeChange}
+                  sx={{ width: 'auto', minWidth: '100px' }}
+                >
+                  {countryCodes.map((code) => (
+                    <MenuItem key={code.dial_code} value={code.dial_code}>
+                      {code.code} ({code.dial_code})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  fullWidth
+                  label="Contact"
+                  name="contact"
+                  value={editData.contact}
+                  onChange={handleChange}
+                  error={!!errors.contact}
+                  helperText={errors.contact}
+                  placeholder="91952XXXXXXX"
+                />
+              </Grid>
+            </Grid>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            label="City"
+            name="city"
+            value={editData.city}
+            onChange={handleChange}
+            error={!!errors.city}
+            helperText={errors.city}
+            placeholder="Enter City"
+          />
+
+          <TextField
+            fullWidth
+            label="Tag"
+            name="tag"
+            value={editData.tag}
+            onChange={handleChange}
+            error={!!errors.tag}
+            helperText={errors.tag}
+            placeholder="Enter tag"
+          />
+
+        </Stack>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <LoadingButton
             onClick={handleEdit}
