@@ -4,15 +4,12 @@ import {
   FormControlLabel,
   Grid,
   MenuItem,
-  FormControl,
+  Select,
   Typography,
   FormHelperText,
   CardMedia,
   Radio,
   RadioGroup,
-  Snackbar,
-  Stack,
-  Card,
   InputAdornment,
   IconButton,
   TextField,
@@ -33,17 +30,12 @@ import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Undo from '@mui/icons-material/Undo';
-import LaunchIcon from '@mui/icons-material/Launch';
-import Launch from '@mui/icons-material/Launch';
-import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
-import { Replay5Outlined, Reply } from '@mui/icons-material';
+import Launch from '@mui/icons-material/Launch'
+import { Reply } from '@mui/icons-material';
 import toast from 'react-hot-toast';
-import * as Yup from 'yup';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import axios from 'axios';
 import apiClient from 'src/api/axiosClient';
+import countryCodes from "../../utils/Countrycode.json"
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -78,50 +70,51 @@ const validationSchema = yup.object({
   category: yup.string().required('Category is Required'),
   language: yup.string().required('Language is Required'),
 });
-const validatioSecondSchema = yup.object().shape({
-  type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
-  format: yup.string().when('type', {
-    is: 'HEADER',
-    then: yup.string().oneOf(['TEXT']).required(),
-    otherwise: yup.string().notRequired(),
-  }),
-  text: yup.string().when('type', {
-    is: 'BODY',
-    then: yup.string().required(),
-    otherwise: yup.string().notRequired(),
-  }),
-  example: yup.object().when('type', {
-    is: 'HEADER',
-    then: yup
-      .object({
-        header_text: yup.array().of(yup.string()).required(),
-      })
-      .required(),
-    is: 'BODY',
-    then: yup
-      .object({
-        body_text: yup.array().of(yup.array().of(yup.string())).required(),
-      })
-      .required(),
-    otherwise: yup.object().notRequired(),
-  }),
-  buttons: yup.array().when('type', {
-    is: 'BUTTONS',
-    then: yup
-      .array()
-      .of(
-        yup
-          .object()
-          .shape({
-            type: yup.string().oneOf(['QUICK_REPLY']).required(),
-            text: yup.string().required('Quick reply button text requied!'),
-          })
-          .required(),
-      )
-      .required(),
-    otherwise: yup.array().notRequired(),
-  }),
-});
+
+// const validatioSecondSchema = yup.object().shape({
+//   type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
+//   format: yup.string().when('type', {
+//     is: 'HEADER',
+//     then: yup.string().oneOf(['TEXT']).required(),
+//     otherwise: yup.string().notRequired(),
+//   }),
+//   text: yup.string().when('type', {
+//     is: 'BODY',
+//     then: yup.string().required(),
+//     otherwise: yup.string().notRequired(),
+//   }),
+//   example: yup.object().when('type', {
+//     is: 'HEADER',
+//     then: yup
+//       .object({
+//         header_text: yup.array().of(yup.string()).required(),
+//       })
+//       .required(),
+//     is: 'BODY',
+//     then: yup
+//       .object({
+//         body_text: yup.array().of(yup.array().of(yup.string())).required(),
+//       })
+//       .required(),
+//     otherwise: yup.object().notRequired(),
+//   }),
+//   buttons: yup.array().when('type', {
+//     is: 'BUTTONS',
+//     then: yup
+//       .array()
+//       .of(
+//         yup
+//           .object()
+//           .shape({
+//             type: yup.string().oneOf(['QUICK_REPLY']).required(),
+//             text: yup.string().required('Quick reply button text requied!'),
+//           })
+//           .required(),
+//       )
+//       .required(),
+//     otherwise: yup.array().notRequired(),
+//   }),
+// });
 export default function CreateTemplate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -136,6 +129,8 @@ export default function CreateTemplate() {
   const [callToActionURL, setCallToActionURL] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
+  const [countryCode, setCountryCode] = useState('+91');
+  console.log(countryCode,"countryCode")
   const [mediaRes, setMediaRes] = useState();
   //console.log('mediares',mediaRes);
   const CHARACTER_LIMIT = 1000;
@@ -162,6 +157,11 @@ export default function CreateTemplate() {
     formikTemplate.values.body = formikTemplate.values.body + `{{${variables.length + 1}}}`;
   };
 
+  const handleCountryCodeChange = (e) => {
+    setCountryCode(e.target.value);
+  };
+
+
   const removeVariable = (id) => {
     setVariables(variables.filter((variable) => variable.id !== id));
     const placeholderToRemove = `{{${id}}}`;
@@ -177,10 +177,10 @@ export default function CreateTemplate() {
     });
     setVariables(newVariables);
   };
-  const addVariableTitle = () => {
-    setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
-    formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
-  };
+  // const addVariableTitle = () => {
+  //   setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+  //   formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
+  // };
 
   const removeVariableTitle = (id) => {
     setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
@@ -276,16 +276,17 @@ export default function CreateTemplate() {
               mediaType === 'image'
                 ? 'IMAGE'
                 : mediaType === 'video'
-                ? 'VIDEO'
-                : mediaType === 'document'
-                ? 'DOCUMENT'
-                : '',
+                  ? 'VIDEO'
+                  : mediaType === 'document'
+                    ? 'DOCUMENT'
+                    : '',
 
             example: {
               header_handle: [mediaRes],
             },
           };
         }
+        <div>This is the key point</div>
         if (phoneNumber) {
           reqBody.components[3] = {
             type: 'BUTTONS',
@@ -293,7 +294,7 @@ export default function CreateTemplate() {
               {
                 type: 'PHONE_NUMBER',
                 text: values.buttonText,
-                phone_number: phoneNumber,
+                phone_number: (countryCode+phoneNumber).replace("+",""),
               },
             ],
           };
@@ -337,8 +338,7 @@ export default function CreateTemplate() {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-
-        toast.error(error.response.data.error.error_user_msg, { duration: 2000 });
+        toast.error(error.response.data.error.message, { duration: 2000 });
       }
     },
   });
@@ -676,10 +676,10 @@ export default function CreateTemplate() {
                                   mediaType === 'image'
                                     ? 'image/*'
                                     : mediaType === 'video'
-                                    ? 'video/*'
-                                    : mediaType === 'document'
-                                    ? 'application/pdf'
-                                    : ''
+                                      ? 'video/*'
+                                      : mediaType === 'document'
+                                        ? 'application/pdf'
+                                        : ''
                                 }
                                 onChange={handleMediaContentChange}
                               />
@@ -723,7 +723,7 @@ export default function CreateTemplate() {
                       ),
                     }}
 
-                    // dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
                   {variables &&
                     variables?.map((variable, index) => (
@@ -831,7 +831,25 @@ export default function CreateTemplate() {
                         <>
                           <Grid>
                             <CustomFormLabel htmlFor="phoneNumber">Phone Number</CustomFormLabel>
-
+                            <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',  
+                                  justifyContent: 'flex-start',  
+                                  gap: 2, 
+                                }}
+                            >
+                            <Select
+                              value={countryCode}
+                              onChange={handleCountryCodeChange}
+                              sx={{ width: 'auto', padding: '0px', height: '35px', lineHeight: '35px' }}
+                            >
+                              {countryCodes.map((code) => (
+                                <MenuItem key={code.dial_code} value={code.dial_code}>
+                                  {code.code} {code.dial_code}
+                                </MenuItem>
+                              ))}
+                            </Select>
                             <CustomTextField
                               fullWidth
                               id="phoneNumber"
@@ -844,6 +862,7 @@ export default function CreateTemplate() {
                                 {formikTemplate.errors.phoneNumber}
                               </FormHelperText>
                             )}
+                            </Box>
                           </Grid>
                         </>
                       )}
@@ -975,9 +994,9 @@ export default function CreateTemplate() {
                                 display: 'flex',
                                 justifyContent: 'center',
                               }}
-                              // variant="contained"
-                              // color="primary"
-                              // size="small"
+                            // variant="contained"
+                            // color="primary"
+                            // size="small"
                             >
                               {/* <Undo size={24} style={{ marginRight: 2 }} /> */}
                               {buttonIcon}

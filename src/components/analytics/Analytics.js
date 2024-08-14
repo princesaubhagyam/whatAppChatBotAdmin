@@ -5,7 +5,6 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import CloseIcon from '@mui/icons-material/Close';
-import { BarChart } from '@mui/x-charts/BarChart';
 import { useSelector } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +13,7 @@ import { Typography, Divider } from '@mui/material';
 import Spinner from '../../views/spinner/Spinner';
 import BarGraph from './BarGraph';
 import EventContext from 'src/BroadcastContext';
+import NoData from '../noData/NoData';
 
 function Analytics({ setIsAnalytics }) {
   const [value, setValue] = React.useState('graph');
@@ -22,6 +22,8 @@ function Analytics({ setIsAnalytics }) {
   const [sentData, setSentData] = React.useState([]);
   const [delivered, setDelivered] = React.useState([]);
   const [read, setRead] = React.useState([]);
+  const [replied, setReplied] = React.useState([])
+  const [failed, setFailed] = React.useState([])
   const [loading, setLoading] = React.useState(true);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [graphData, setGraphData] = useState([]);
@@ -64,7 +66,7 @@ function Analytics({ setIsAnalytics }) {
           });
       }
       setLoading(false);
-    } catch (error) {}
+    } catch (error) { }
   }
 
   console.log(messageStatuses, 'messageStatuses===');
@@ -84,6 +86,8 @@ function Analytics({ setIsAnalytics }) {
     getDataByStatus('sent', setSentData);
     getDataByStatus('delivered', setDelivered);
     getDataByStatus('read', setRead);
+    getDataByStatus('replied', setReplied);
+    getDataByStatus('failed', setFailed);
   }
 
   return (
@@ -130,22 +134,19 @@ function Analytics({ setIsAnalytics }) {
                 aria-label="lab API tabs example"
                 sx={{ padding: '0px !important' }}
               >
-                <Tab label="Sent" value="inner-sent" />
-                <Tab label="Delivered" value="inner-deliver" />
-                <Tab label="Read" value="inner-read" />
+                <Tab label={`Sent(${sentData && sentData[0] && sentData[0].length > 0 ?  sentData[0].length : 0 })`} value="inner-sent" />
+                <Tab label={`Delivered( ${delivered && delivered[0] && delivered[0].length > 0 ? delivered[0].length : 0})`} value="inner-deliver" />
+                <Tab label={`Read(${read && read[0] && read[0].length > 0 ? read[0].length : 0 })`} value="inner-read" />
+                <Tab label={`Replied (${replied && replied[0] && replied[0].length > 0 ? replied[0].length : 0})`} value="inner-replied" />
+                <Tab label={`Failed (${failed && failed[0] && failed[0].length > 0 ? failed[0].length : 0})`} value="inner-failed" />
               </TabList>
             </Box>
             <TabPanel value="inner-sent">
-              {loading ? (
-                <Spinner />
-              ) : (
-                sentData &&
-                sentData.length > 0 &&
-                sentData[0].map(function (item, index) {
+              {sentData && Array.isArray(sentData) && sentData.length > 0 && Array.isArray(sentData[0]) && sentData[0].length > 0 ?
+                (sentData[0].map(function (item, index) {
                   let firstLetter = item.recipient_contact__name?.charAt(0);
-
                   return (
-                    <>
+                    <div key={index}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -175,66 +176,101 @@ function Analytics({ setIsAnalytics }) {
                           marginTop: '20px',
                         }}
                       ></Divider>
-                    </>
-                  );
-                })
-              )}
+                    </div>);
+                })) : <NoData />}
             </TabPanel>
             <TabPanel value="inner-deliver">
               {loading ? (
                 <Spinner />
               ) : (
-                delivered &&
-                delivered.length > 0 &&
-                delivered[0].map(function (item, index) {
-                  let firstLetter = item.recipient_contact__name?.charAt(0);
-
-                  return (
-                    <>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          paddingTop: '10px',
-                        }}
-                      >
-                        <Stack direction="row" spacing={2}>
-                          <Avatar>{firstLetter}</Avatar>
-                        </Stack>
+                delivered && Array.isArray(delivered) && delivered.length > 0 && Array.isArray(delivered[0]) && delivered[0].length > 0 ?
+                  delivered[0].map(function (item, index) {
+                    let firstLetter = item.recipient_contact__name?.charAt(0);
+                    return (
+                      <div key={index}>
                         <Box
                           sx={{
-                            marginLeft: '30px',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            paddingTop: '10px',
                           }}
                         >
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {' '}
-                            {item.recipient_contact__name}{' '}
-                          </Typography>
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {item.recipient_contact__contact}
-                          </Typography>
+                          <Stack direction="row" spacing={2}>
+                            <Avatar>{firstLetter}</Avatar>
+                          </Stack>
+                          <Box
+                            sx={{
+                              marginLeft: '30px',
+                            }}
+                          >
+                            <Typography component="p" sx={{ margin: 0 }}>
+                              {' '}
+                              {item.recipient_contact__name}{' '}
+                            </Typography>
+                            <Typography component="p" sx={{ margin: 0 }}>
+                              {item.recipient_contact__contact}
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                      <Divider
-                        sx={{
-                          marginTop: '20px',
-                        }}
-                      ></Divider>
-                    </>
-                  );
-                })
+                        <Divider
+                          sx={{
+                            marginTop: '20px',
+                          }}
+                        ></Divider>
+                      </div>
+                    );
+                  }) : <NoData />
               )}
             </TabPanel>
             <TabPanel value="inner-read">
               {loading ? (
                 <Spinner />
-              ) : (
-                read &&
-                read.length > 0 &&
-                read[0].map(function (item, index) {
+              ) : (read && Array.isArray(read) && read.length > 0 && Array.isArray(read[0]) && read[0].length > 0 ? read[0].map(function (item, index) {
+                let firstLetter = item.recipient_contact__name?.charAt(0);
+                return (
+                  <div key={index}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        paddingTop: '10px',
+                      }}
+                    >
+                      <Stack direction="row" spacing={2}>
+                        <Avatar>{firstLetter}</Avatar>
+                      </Stack>
+                      <Box
+                        sx={{
+                          marginLeft: '30px',
+                        }}
+                      >
+                        <Typography component="p" sx={{ margin: 0 }}>
+                          {' '}
+                          {item.recipient_contact__name}{' '}
+                        </Typography>
+                        <Typography component="p" sx={{ margin: 0 }}>
+                          {item.recipient_contact__contact}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Divider
+                      sx={{
+                        marginTop: '20px',
+                      }}
+                    ></Divider>
+                  </div>
+                );
+              }) : <NoData />
+              )}
+            </TabPanel>
+            <TabPanel value="inner-replied">
+              {loading ? (
+                <Spinner />
+              ) : (replied && Array.isArray(replied) && replied.length > 0 && Array.isArray(replied[0]) && replied[0].length > 0 ?
+                replied[0].map(function (item, index) {
                   let firstLetter = item.recipient_contact__name?.charAt(0);
                   return (
-                    <>
+                    <div key={index}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -264,9 +300,51 @@ function Analytics({ setIsAnalytics }) {
                           marginTop: '20px',
                         }}
                       ></Divider>
-                    </>
+                    </div>
                   );
-                })
+                }) : <NoData />
+              )}
+            </TabPanel>
+            <TabPanel value="inner-failed">
+              {loading ? (
+                <Spinner />
+              ) : (failed && Array.isArray(failed) && failed.length > 0 && Array.isArray(failed[0]) && failed[0].length > 0 ?
+                failed[0].map(function (item, index) {
+                  let firstLetter = item.recipient_contact__name?.charAt(0);
+                  return (
+                    <div>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          paddingTop: '10px',
+                        }}
+                      >
+                        <Stack direction="row" spacing={2}>
+                          <Avatar>{firstLetter}</Avatar>
+                        </Stack>
+                        <Box
+                          sx={{
+                            marginLeft: '30px',
+                          }}
+                        >
+                          <Typography component="p" sx={{ margin: 0 }}>
+                            {' '}
+                            {item.recipient_contact__name}{' '}
+                          </Typography>
+                          <Typography component="p" sx={{ margin: 0 }}>
+                            {item.recipient_contact__contact}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Divider
+                        sx={{
+                          marginTop: '20px',
+                        }}
+                      ></Divider>
+                    </div>
+                  );
+                }) : <NoData />
               )}
             </TabPanel>
           </TabContext>

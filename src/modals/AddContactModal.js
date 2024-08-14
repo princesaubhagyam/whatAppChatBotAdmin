@@ -78,7 +78,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         setLoading(true);
         const contactData = {
           name: contactDetails.name.trim(),
-          contact: countryCode + contactDetails.contact.trim(),
+          contact: (countryCode + contactDetails.contact.trim()).replace("+", ""),
           city: contactDetails.city.trim() || '-',
           tag: contactDetails.tag.trim() || '-',
         };

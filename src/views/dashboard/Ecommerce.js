@@ -32,7 +32,6 @@ const Ecommerce = () => {
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLoading,setIsLoading] = useState(false)
-  const [userQaulity,setUserQaulity] = useState("")
 
   const checkFacebookLogin = async () => {
     try {
@@ -112,7 +111,6 @@ const Ecommerce = () => {
               ) : showCard ? (
                 <QualityRatingCard
                 isLoading ={isLoading}
-                setUserQaulity= {setUserQaulity}
                 />
               ) : null}
             </Grid>

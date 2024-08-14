@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Stack, Badge, Skeleton} from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 
-const QualityRatingCard = ( { isLoading ,setUserQaulity}) => {
+const QualityRatingCard = ( { isLoading }) => {
   const [remainingQuota,] = useState(1000);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
@@ -21,7 +21,6 @@ const QualityRatingCard = ( { isLoading ,setUserQaulity}) => {
       const fetchedQualityRating = response?.data?.quality_rating;
       const fetchedApiStatus = response?.data?.throughput?.level;
       setQualityRating(fetchedQualityRating);
-      setUserQaulity(fetchedQualityRating)
       setApiStatus(fetchedApiStatus);
       setLoading(false);
     } catch (error) {

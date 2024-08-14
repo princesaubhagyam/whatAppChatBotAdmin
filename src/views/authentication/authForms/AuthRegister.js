@@ -40,8 +40,9 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   // ];
 
   const signUpAPICall = async (creds) => {
-    try {
-      const res = await apiClient.post('/auth/signup/', { ...creds });
+    try { 
+      const temp = {...creds, mobile : (countryCode + creds.mobile).replace("+","")}
+      const res = await apiClient.post('/auth/signup/', { ...temp });
       if (res.status === 201) {
         navigate('/auth/login');
         toast.success('Sign up successful!');
@@ -77,14 +78,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   };
 
   const handleCountryCodeChange = (e) => {
-    const newCountryCode = e.target.value;
-    setCountryCode(newCountryCode);
-
-    setCredentials((prev) => ({
-      ...prev,
-      mobile: newCountryCode + prev.mobile.replace(/^\+\d+/, ''), 
-    }));
-    console.log('moile');
+    setCountryCode(e.target.value);
   };
   console.log(countryCode);
 
