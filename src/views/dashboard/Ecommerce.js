@@ -18,6 +18,7 @@ import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRating
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
 import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
+import BasicAlerts from "../../components/alert/Alert"
 import Spinner from "src/views/spinner/Spinner"
 
 const Ecommerce = () => {
@@ -25,6 +26,7 @@ const Ecommerce = () => {
   const [showCard, setShowcard] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isLoading,setIsLoading] = useState(false)
+  const [userQaulity,setUserQaulity] = useState("")
 
   const checkFacebookLogin = async () => {
     try {
@@ -54,11 +56,13 @@ const Ecommerce = () => {
    setTimeout(()=>{
     setIsLoading(false)
    },3000)
-  },[isLoading])
+  },[])
 
   return (
      isLoading ?< Spinner /> :
-    <Box mt={3}>
+     <>
+       {/* { "UNKNOWN" ==="UNKNOWN" ?  <BasicAlerts /> : null} */}
+    <Box mt={3}> 
       {/* <AuthSocialButtons title="Sign in with" /> */}
       <Grid container spacing={3}>
         {/* column */}
@@ -96,6 +100,7 @@ const Ecommerce = () => {
               ) : showCard ? (
                 <QualityRatingCard
                 isLoading ={isLoading}
+                setUserQaulity= {setUserQaulity}
                 />
               ) : null}
             </Grid>
@@ -161,6 +166,7 @@ const Ecommerce = () => {
         </Grid>
       </Grid>
     </Box>
+    </>
   );
 };
 

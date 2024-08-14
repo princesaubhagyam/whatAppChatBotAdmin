@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Stack, Badge, Skeleton} from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 
-const QualityRatingCard = ( { isLoading}) => {
+const QualityRatingCard = ( { isLoading ,setUserQaulity}) => {
   const [remainingQuota,] = useState(1000);
   const [apiStatus, setApiStatus] = useState(null);
   const [qualityRating, setQualityRating] = useState(null);
@@ -21,6 +21,7 @@ const QualityRatingCard = ( { isLoading}) => {
       const fetchedQualityRating = response?.data?.quality_rating;
       const fetchedApiStatus = response?.data?.throughput?.level;
       setQualityRating(fetchedQualityRating);
+      setUserQaulity(fetchedQualityRating)
       setApiStatus(fetchedApiStatus);
       setLoading(false);
     } catch (error) {
@@ -30,6 +31,7 @@ const QualityRatingCard = ( { isLoading}) => {
     }
   };
   return (
+    <> 
     <Card>
       <CardContent sx={{ py: 2 }}>
         <Stack flexDirection={'row'} justifyContent={'space-between'}>
@@ -100,6 +102,7 @@ const QualityRatingCard = ( { isLoading}) => {
         </Stack>
       </CardContent>     
     </Card>
+    </>
   );
 };
 

@@ -176,7 +176,7 @@ function getBusinessId(verifyFbAccessToken){
     try {
       apiClient.get(`auth/user_profile/`)
       .then((response)=>{
-        console.log(response,"response addUserInfo")
+        console.log(response,"response ")
         if(response.data.status) {
            if(response.data.data.facebook_meta_data){
             localStorage.setItem('graph_api_url', response.data.data.facebook_meta_data.graph_api_url);
@@ -205,7 +205,7 @@ function getBusinessId(verifyFbAccessToken){
 
         if(response.data.status){
           toast.success("WABA Successful !", { duration: 2000 });
-          navigate('/' || "/home");
+          navigate('/auth/login');
         }
       })
       .catch((error)=>{
