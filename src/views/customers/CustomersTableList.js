@@ -562,7 +562,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.contact}
+                              {row.full_mobile}
                             </Typography>{' '}
                           </TableCell>
                           <TableCell sx={{ padding: '0px', minWidth: '180px' }}>

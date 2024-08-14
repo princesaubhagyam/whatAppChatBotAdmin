@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Stack,
+  FormHelperText,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
@@ -32,15 +33,15 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     contact: '',
     city: '',
     tag: '',
+    cc: '',
   });
-  console.log('country', countryCode);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setContactDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
-    console.log('----', contactDetails);
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: '',
@@ -49,6 +50,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
 
   const handleCountryCodeChange = (event) => {
     setCountryCode(event.target.value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      cc: '',
+    }));
   };
 
   const validateFields = () => {
@@ -58,6 +63,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
       contact: '',
       city: '',
       tag: '',
+      cc: '',
     };
 
     if (!contactDetails.name.trim()) {
@@ -66,6 +72,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     }
     if (!contactDetails.contact.trim()) {
       tempErrors.contact = 'Contact is required';
+      isValid = false;
+    }
+    if (!countryCode.trim()) {
+      tempErrors.cc = 'Country code is required';
       isValid = false;
     }
 
@@ -79,9 +89,10 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         setLoading(true);
         const contactData = {
           name: contactDetails.name.trim(),
-          contact: (countryCode + contactDetails.contact.trim()).replace("+", ""),
+          contact: contactDetails.contact.trim(),
           city: contactDetails.city.trim() || '-',
           tag: contactDetails.tag.trim() || '-',
+          cc: countryCode.replace('+', ''), 
         };
         const response = await apiClient.post('/api/contacts/', contactData);
         toast.success('Contact created successfully!', { closeButton: true });
@@ -135,7 +146,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
             placeholder="Enter name"
           />
 
-          <FormControl fullWidth error={!!errors.contact}>
+          <FormControl fullWidth error={!!errors.contact || !!errors.cc}>
             <Grid container spacing={1} alignItems="center">
               <Grid item>
                 <Select
@@ -163,6 +174,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
                 />
               </Grid>
             </Grid>
+            <FormHelperText>{errors.cc}</FormHelperText>
           </FormControl>
 
           <TextField
