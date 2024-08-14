@@ -90,13 +90,9 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         setLoading(true);
         const contactData = {
           name: contactDetails.name.trim(),
-<<<<<<< HEAD
           cc : countryCode.replace("+", ""),
           contact: contactDetails.contact.trim(),
           // contact: (countryCode + contactDetails.contact.trim()).replace("+", ""),
-=======
-          contact: contactDetails.contact.trim(),
->>>>>>> 236915f414a86be4d980c6f9c7d26fc1b4cc1b9b
           city: contactDetails.city.trim() || '-',
           tag: contactDetails.tag.trim() || '-',
           cc: countryCode.replace('+', ''), 
