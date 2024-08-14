@@ -14,6 +14,7 @@ import Spinner from '../../views/spinner/Spinner';
 import BarGraph from './BarGraph';
 import EventContext from 'src/BroadcastContext';
 import NoData from '../noData/NoData';
+// import VerifyLoader from "../noData/verifyLoader/VerifyLoader"
 
 function Analytics({ setIsAnalytics }) {
   const [value, setValue] = React.useState('graph');
