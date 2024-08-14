@@ -30,12 +30,12 @@ import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Launch from '@mui/icons-material/Launch'
+import Launch from '@mui/icons-material/Launch';
 import { Reply } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import DeleteIcon from '@mui/icons-material/Delete';
 import apiClient from 'src/api/axiosClient';
-import countryCodes from "../../utils/Countrycode.json"
+import countryCodes from '../../utils/Countrycode.json';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -71,50 +71,50 @@ const validationSchema = yup.object({
   language: yup.string().required('Language is Required'),
 });
 
-// const validatioSecondSchema = yup.object().shape({
-//   type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
-//   format: yup.string().when('type', {
-//     is: 'HEADER',
-//     then: yup.string().oneOf(['TEXT']).required(),
-//     otherwise: yup.string().notRequired(),
-//   }),
-//   text: yup.string().when('type', {
-//     is: 'BODY',
-//     then: yup.string().required(),
-//     otherwise: yup.string().notRequired(),
-//   }),
-//   example: yup.object().when('type', {
-//     is: 'HEADER',
-//     then: yup
-//       .object({
-//         header_text: yup.array().of(yup.string()).required(),
-//       })
-//       .required(),
-//     is: 'BODY',
-//     then: yup
-//       .object({
-//         body_text: yup.array().of(yup.array().of(yup.string())).required(),
-//       })
-//       .required(),
-//     otherwise: yup.object().notRequired(),
-//   }),
-//   buttons: yup.array().when('type', {
-//     is: 'BUTTONS',
-//     then: yup
-//       .array()
-//       .of(
-//         yup
-//           .object()
-//           .shape({
-//             type: yup.string().oneOf(['QUICK_REPLY']).required(),
-//             text: yup.string().required('Quick reply button text requied!'),
-//           })
-//           .required(),
-//       )
-//       .required(),
-//     otherwise: yup.array().notRequired(),
-//   }),
-// });
+const validatioSecondSchema = yup.object().shape({
+  type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
+  format: yup.string().when('type', {
+    is: 'HEADER',
+    then: yup.string().oneOf(['TEXT']).required(),
+    otherwise: yup.string().notRequired(),
+  }),
+  text: yup.string().when('type', {
+    is: 'BODY',
+    then: yup.string().required(),
+    otherwise: yup.string().notRequired(),
+  }),
+  example: yup.object().when('type', {
+    is: 'HEADER',
+    then: yup
+      .object({
+        header_text: yup.array().of(yup.string()).required(),
+      })
+      .required(),
+    is: 'BODY',
+    then: yup
+      .object({
+        body_text: yup.array().of(yup.array().of(yup.string())).required(),
+      })
+      .required(),
+    otherwise: yup.object().notRequired(),
+  }),
+  buttons: yup.array().when('type', {
+    is: 'BUTTONS',
+    then: yup
+      .array()
+      .of(
+        yup
+          .object()
+          .shape({
+            type: yup.string().oneOf(['QUICK_REPLY']).required(),
+            text: yup.string().required('Quick reply button text requied!'),
+          })
+          .required(),
+      )
+      .required(),
+    otherwise: yup.array().notRequired(),
+  }),
+});
 export default function CreateTemplate() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -130,7 +130,7 @@ export default function CreateTemplate() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
   const [countryCode, setCountryCode] = useState('+91');
-  console.log(countryCode,"countryCode")
+  console.log(countryCode, 'countryCode');
   const [mediaRes, setMediaRes] = useState();
   //console.log('mediares',mediaRes);
   const CHARACTER_LIMIT = 1000;
@@ -160,7 +160,6 @@ export default function CreateTemplate() {
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
-
 
   const removeVariable = (id) => {
     setVariables(variables.filter((variable) => variable.id !== id));
@@ -204,6 +203,7 @@ export default function CreateTemplate() {
       footer: '',
       text: '',
     },
+    //validatioSecondSchema: validatioSecondSchema,
     onSubmit: async (values) => {
       setLoading(true);
       try {
@@ -276,17 +276,17 @@ export default function CreateTemplate() {
               mediaType === 'image'
                 ? 'IMAGE'
                 : mediaType === 'video'
-                  ? 'VIDEO'
-                  : mediaType === 'document'
-                    ? 'DOCUMENT'
-                    : '',
+                ? 'VIDEO'
+                : mediaType === 'document'
+                ? 'DOCUMENT'
+                : '',
 
             example: {
               header_handle: [mediaRes],
             },
           };
         }
-        <div>This is the key point</div>
+        <div>This is the key point</div>;
         if (phoneNumber) {
           reqBody.components[3] = {
             type: 'BUTTONS',
@@ -294,7 +294,7 @@ export default function CreateTemplate() {
               {
                 type: 'PHONE_NUMBER',
                 text: values.buttonText,
-                phone_number: (countryCode+phoneNumber).replace("+",""),
+                phone_number: (countryCode + phoneNumber).replace('+', ''),
               },
             ],
           };
@@ -331,7 +331,10 @@ export default function CreateTemplate() {
 
           if (response) {
             setLoading(false);
-            toast.success('Template created please wait until your template being verified by Meta this process may take 2-5 minutes', { duration: 5000 });
+            toast.success(
+              'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
+              { duration: 5000 },
+            );
             navigate('/templates');
           }
         }
@@ -597,7 +600,8 @@ export default function CreateTemplate() {
                             id="text"
                             name="text"
                             value={formikTemplate.values.text}
-                            onChange={handleFieldChangeTitle}
+                            //onChange={handleFieldChangeTitle}
+                            onChange={formikTemplate.handleChange}
                             inputProps={{
                               maxLength: CHARACTER_LIMIT_TEXT,
                             }}
@@ -610,6 +614,7 @@ export default function CreateTemplate() {
                                 </InputAdornment>
                               ),
                             }}
+                            required
                           />
 
                           {formikTemplate.errors.text && (
@@ -617,7 +622,7 @@ export default function CreateTemplate() {
                               {formikTemplate.errors.text}
                             </FormHelperText>
                           )}
-                          {variablesTitle.map((variable, index) => (
+                          {/* {variablesTitle.map((variable, index) => (
                             <Box display="flex" alignItems="center" mt={2} key={variable.id}>
                               <TextField
                                 fullWidth
@@ -634,7 +639,7 @@ export default function CreateTemplate() {
                                 <DeleteIcon />
                               </IconButton>
                             </Box>
-                          ))}
+                          ))} */}
                           {/* <Box mt={2}>
                             <Button
                               variant="outlined"
@@ -676,10 +681,10 @@ export default function CreateTemplate() {
                                   mediaType === 'image'
                                     ? 'image/*'
                                     : mediaType === 'video'
-                                      ? 'video/*'
-                                      : mediaType === 'document'
-                                        ? 'application/pdf'
-                                        : ''
+                                    ? 'video/*'
+                                    : mediaType === 'document'
+                                    ? 'application/pdf'
+                                    : ''
                                 }
                                 onChange={handleMediaContentChange}
                               />
@@ -722,8 +727,8 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
-
-                  // dangerouslySetInnerHTML={{ __html: previewHtml }}
+                    required
+                    // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
                   {variables &&
                     variables?.map((variable, index) => (
@@ -769,6 +774,7 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
+                    required
                   />
                   {formikTemplate.errors.footer && (
                     <FormHelperText error id="footer">
@@ -818,6 +824,7 @@ export default function CreateTemplate() {
                             name="callToActionURL"
                             value={callToActionURL}
                             onChange={(e) => setCallToActionURL(e.target.value)}
+                            required
                           />
                           {formikTemplate.errors.callToActionURL && (
                             <FormHelperText error id="callToActionURL">
@@ -832,36 +839,42 @@ export default function CreateTemplate() {
                           <Grid>
                             <CustomFormLabel htmlFor="phoneNumber">Phone Number</CustomFormLabel>
                             <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                              }}
+                            >
+                              <Select
+                                value={countryCode}
+                                onChange={handleCountryCodeChange}
                                 sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',  
-                                  justifyContent: 'flex-start',  
-                                  gap: 2, 
+                                  width: 'auto',
+                                  padding: '0px',
+                                  height: '35px',
+                                  lineHeight: '35px',
                                 }}
-                            >
-                            <Select
-                              value={countryCode}
-                              onChange={handleCountryCodeChange}
-                              sx={{ width: 'auto', padding: '0px', height: '35px', lineHeight: '35px' }}
-                            >
-                              {countryCodes.map((code) => (
-                                <MenuItem key={code.dial_code} value={code.dial_code}>
-                                  {code.code} {code.dial_code}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                            <CustomTextField
-                              fullWidth
-                              id="phoneNumber"
-                              name="phoneNumber"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                            />
-                            {formikTemplate.errors.phoneNumber && (
-                              <FormHelperText error id="phoneNumber">
-                                {formikTemplate.errors.phoneNumber}
-                              </FormHelperText>
-                            )}
+                              >
+                                {countryCodes.map((code) => (
+                                  <MenuItem key={code.dial_code} value={code.dial_code}>
+                                    {code.code} {code.dial_code}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                              <CustomTextField
+                                fullWidth
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                required
+                              />
+                              {formikTemplate.errors.phoneNumber && (
+                                <FormHelperText error id="phoneNumber">
+                                  {formikTemplate.errors.phoneNumber}
+                                </FormHelperText>
+                              )}
                             </Box>
                           </Grid>
                         </>
@@ -994,9 +1007,9 @@ export default function CreateTemplate() {
                                 display: 'flex',
                                 justifyContent: 'center',
                               }}
-                            // variant="contained"
-                            // color="primary"
-                            // size="small"
+                              // variant="contained"
+                              // color="primary"
+                              // size="small"
                             >
                               {/* <Undo size={24} style={{ marginRight: 2 }} /> */}
                               {buttonIcon}
