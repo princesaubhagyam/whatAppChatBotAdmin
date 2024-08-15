@@ -26,6 +26,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     contact: '',
     city: '',
     tag: '',
+    cc : ''
   });
   const [countryCode, setCountryCode] = useState('+91');
   const [errors, setErrors] = useState({
@@ -89,7 +90,9 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         setLoading(true);
         const contactData = {
           name: contactDetails.name.trim(),
+          cc : countryCode.replace("+", ""),
           contact: contactDetails.contact.trim(),
+          // contact: (countryCode + contactDetails.contact.trim()).replace("+", ""),
           city: contactDetails.city.trim() || '-',
           tag: contactDetails.tag.trim() || '-',
           cc: countryCode.replace('+', ''), 

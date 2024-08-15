@@ -20,9 +20,12 @@ import { IconEdit, IconFileImport, IconSearch } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 import { fetchIsHistoryStatus, fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
-import EventContext from 'src/BroadcastContext';
+
 import NoData from 'src/components/noData/NoData';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
+
+import EventContext from 'src/BroadcastContext';
+import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -161,7 +164,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
                             fontSize={14}
                             lineHeight={1.3}
                           >
-                            {member.name}
+                            {FirstLetterCapitalOfString(member.name)}
                           </Typography>
                         }
                         secondary={
