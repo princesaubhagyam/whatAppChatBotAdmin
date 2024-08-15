@@ -14,8 +14,10 @@ import Spinner from '../../views/spinner/Spinner';
 import BarGraph from './BarGraph';
 import EventContext from 'src/BroadcastContext';
 import NoData from '../noData/NoData';
-// import VerifyLoader from "../noData/verifyLoader/VerifyLoader"
-
+// import VerifyLoader from "src/components/noData/verifyLoader/VerifyLoader"
+import Scrollbar from 'src/components/custom-scroll/Scrollbar';
+import {FirstLetterCapitalOfString} from "src/utils/FirstLetterCapitalOfString"
+ 
 function Analytics({ setIsAnalytics }) {
   const [value, setValue] = React.useState('graph');
   const [innerValue, setInnervalue] = React.useState('inner-sent');
@@ -135,58 +137,114 @@ function Analytics({ setIsAnalytics }) {
                 aria-label="lab API tabs example"
                 sx={{ padding: '0px !important' }}
               >
-                <Tab label={`Sent(${sentData && sentData[0] && sentData[0].length > 0 ?  sentData[0].length : 0 })`} value="inner-sent" />
-                <Tab label={`Delivered( ${delivered && delivered[0] && delivered[0].length > 0 ? delivered[0].length : 0})`} value="inner-deliver" />
-                <Tab label={`Read(${read && read[0] && read[0].length > 0 ? read[0].length : 0 })`} value="inner-read" />
+                <Tab label={`Sent (${sentData && sentData[0] && sentData[0].length > 0 ? sentData[0].length : 0})`} value="inner-sent" />
+                <Tab label={`Delivered (${delivered && delivered[0] && delivered[0].length > 0 ? delivered[0].length : 0})`} value="inner-deliver" />
+                <Tab label={`Read (${read && read[0] && read[0].length > 0 ? read[0].length : 0})`} value="inner-read" />
                 <Tab label={`Replied (${replied && replied[0] && replied[0].length > 0 ? replied[0].length : 0})`} value="inner-replied" />
                 <Tab label={`Failed (${failed && failed[0] && failed[0].length > 0 ? failed[0].length : 0})`} value="inner-failed" />
               </TabList>
             </Box>
-            <TabPanel value="inner-sent">
-              {sentData && Array.isArray(sentData) && sentData.length > 0 && Array.isArray(sentData[0]) && sentData[0].length > 0 ?
-                (sentData[0].map(function (item, index) {
-                  let firstLetter = item.recipient_contact__name?.charAt(0);
-                  return (
-                    <div key={index}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          paddingTop: '10px',
-                        }}
-                      >
-                        <Stack direction="row" spacing={2}>
-                          <Avatar>{firstLetter}</Avatar>
-                        </Stack>
-                        <Box
-                          sx={{
-                            marginLeft: '30px',
-                          }}
-                        >
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {' '}
-                            {item.recipient_contact__name}{' '}
-                          </Typography>
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {item.recipient_contact__contact}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Divider
-                        sx={{
-                          marginTop: '20px',
-                        }}
-                      ></Divider>
-                    </div>);
-                })) : <NoData />}
+            <TabPanel
+              value="inner-sent">
+              <Scrollbar
+                sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}
+              >
+                <Box>
+                  {sentData && Array.isArray(sentData) && sentData.length > 0 && Array.isArray(sentData[0]) && sentData[0].length > 0 ?
+                    (sentData[0].map(function (item, index) {
+                      let firstLetter = (item.recipient_contact__name?.charAt(0)).toUpperCase();
+                      return (
+                        <div key={index}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              paddingTop: '10px',
+                            }}
+                          >
+                            <Stack direction="row" spacing={2}>
+                              <Avatar>{firstLetter}</Avatar>
+                            </Stack>
+                            <Box
+                              sx={{
+                                marginLeft: '30px',
+                              }}
+                            >
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {' '}
+                                { FirstLetterCapitalOfString(item.recipient_contact__name)}{' '}
+                              </Typography>
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {item.recipient_contact__contact}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Divider
+                            sx={{
+                              marginTop: '20px',
+                            }}
+                          ></Divider>
+                        </div>);
+                    })) : <NoData />}
+                </Box>
+              </Scrollbar>
             </TabPanel>
             <TabPanel value="inner-deliver">
-              {loading ? (
-                <Spinner />
-              ) : (
-                delivered && Array.isArray(delivered) && delivered.length > 0 && Array.isArray(delivered[0]) && delivered[0].length > 0 ?
-                  delivered[0].map(function (item, index) {
-                    let firstLetter = item.recipient_contact__name?.charAt(0);
+              <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}  >
+                <Box>
+                  {loading ? (
+                    <Spinner />
+                  ) : (
+                    delivered && Array.isArray(delivered) && delivered.length > 0 && Array.isArray(delivered[0]) && delivered[0].length > 0 ?
+                      delivered[0].map(function (item, index) {
+                        let firstLetter = (item.recipient_contact__name?.charAt(0)).toUpperCase();
+                        return (
+                          <div key={index}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                paddingTop: '10px',
+                              }}
+                            >
+                              <Stack direction="row" spacing={2}>
+                                <Avatar>{firstLetter}</Avatar>
+                              </Stack>
+                              <Box
+                                sx={{
+                                  marginLeft: '30px',
+                                }}
+                              >
+                                <Typography component="p" sx={{ margin: 0 }}>
+                                  {' '}
+                                  { FirstLetterCapitalOfString(item.recipient_contact__name)}{' '}
+                                </Typography>
+                                <Typography component="p" sx={{ margin: 0 }}>
+                                  {item.recipient_contact__contact}
+                                </Typography>
+                              </Box>
+                            </Box>
+                            <Divider
+                              sx={{
+                                marginTop: '20px',
+                              }}
+                            ></Divider>
+                          </div>
+                        );
+                      }) : <NoData />
+                  )}
+                </Box>
+              </Scrollbar>
+            </TabPanel>
+            <TabPanel
+
+              value="inner-read">
+              <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}  >
+                <Box>
+                  {loading ? (
+                    <Spinner />
+                  ) : (read && Array.isArray(read) && read.length > 0 && Array.isArray(read[0]) && read[0].length > 0 ? read[0].map(function (item, index) {
+                    let firstLetter = (item.recipient_contact__name?.charAt(0)).toUpperCase();
                     return (
                       <div key={index}>
                         <Box
@@ -206,7 +264,7 @@ function Analytics({ setIsAnalytics }) {
                           >
                             <Typography component="p" sx={{ margin: 0 }}>
                               {' '}
-                              {item.recipient_contact__name}{' '}
+                              { FirstLetterCapitalOfString(item.recipient_contact__name)}{' '}
                             </Typography>
                             <Typography component="p" sx={{ margin: 0 }}>
                               {item.recipient_contact__contact}
@@ -221,132 +279,103 @@ function Analytics({ setIsAnalytics }) {
                       </div>
                     );
                   }) : <NoData />
-              )}
+                  )}
+                </Box>
+              </Scrollbar>
             </TabPanel>
-            <TabPanel value="inner-read">
-              {loading ? (
-                <Spinner />
-              ) : (read && Array.isArray(read) && read.length > 0 && Array.isArray(read[0]) && read[0].length > 0 ? read[0].map(function (item, index) {
-                let firstLetter = item.recipient_contact__name?.charAt(0);
-                return (
-                  <div key={index}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        paddingTop: '10px',
-                      }}
-                    >
-                      <Stack direction="row" spacing={2}>
-                        <Avatar>{firstLetter}</Avatar>
-                      </Stack>
-                      <Box
-                        sx={{
-                          marginLeft: '30px',
-                        }}
-                      >
-                        <Typography component="p" sx={{ margin: 0 }}>
-                          {' '}
-                          {item.recipient_contact__name}{' '}
-                        </Typography>
-                        <Typography component="p" sx={{ margin: 0 }}>
-                          {item.recipient_contact__contact}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Divider
-                      sx={{
-                        marginTop: '20px',
-                      }}
-                    ></Divider>
-                  </div>
-                );
-              }) : <NoData />
-              )}
+            <TabPanel
+              value="inner-replied">
+              <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}  >
+                <Box>
+                  {loading ? (
+                    <Spinner />
+                  ) : (replied && Array.isArray(replied) && replied.length > 0 && Array.isArray(replied[0]) && replied[0].length > 0 ?
+                    replied[0].map(function (item, index) {
+                      let firstLetter = (item.recipient_contact__name?.charAt(0)).toUpperCase();
+                      return (
+                        <div key={index}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              paddingTop: '10px',
+                            }}
+                          >
+                            <Stack direction="row" spacing={2}>
+                              <Avatar>{firstLetter}</Avatar>
+                            </Stack>
+                            <Box
+                              sx={{
+                                marginLeft: '30px',
+                              }}
+                            >
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {' '}
+                                { FirstLetterCapitalOfString(item.recipient_contact__name)}{' '}
+                              </Typography>
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {item.recipient_contact__contact}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Divider
+                            sx={{
+                              marginTop: '20px',
+                            }}
+                          ></Divider>
+                        </div>
+                      );
+                    }) : <NoData />
+                  )}
+                </Box>
+              </Scrollbar>
             </TabPanel>
-            <TabPanel value="inner-replied">
-              {loading ? (
-                <Spinner />
-              ) : (replied && Array.isArray(replied) && replied.length > 0 && Array.isArray(replied[0]) && replied[0].length > 0 ?
-                replied[0].map(function (item, index) {
-                  let firstLetter = item.recipient_contact__name?.charAt(0);
-                  return (
-                    <div key={index}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          paddingTop: '10px',
-                        }}
-                      >
-                        <Stack direction="row" spacing={2}>
-                          <Avatar>{firstLetter}</Avatar>
-                        </Stack>
-                        <Box
-                          sx={{
-                            marginLeft: '30px',
-                          }}
-                        >
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {' '}
-                            {item.recipient_contact__name}{' '}
-                          </Typography>
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {item.recipient_contact__contact}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Divider
-                        sx={{
-                          marginTop: '20px',
-                        }}
-                      ></Divider>
-                    </div>
-                  );
-                }) : <NoData />
-              )}
-            </TabPanel>
-            <TabPanel value="inner-failed">
-              {loading ? (
-                <Spinner />
-              ) : (failed && Array.isArray(failed) && failed.length > 0 && Array.isArray(failed[0]) && failed[0].length > 0 ?
-                failed[0].map(function (item, index) {
-                  let firstLetter = item.recipient_contact__name?.charAt(0);
-                  return (
-                    <div>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          paddingTop: '10px',
-                        }}
-                      >
-                        <Stack direction="row" spacing={2}>
-                          <Avatar>{firstLetter}</Avatar>
-                        </Stack>
-                        <Box
-                          sx={{
-                            marginLeft: '30px',
-                          }}
-                        >
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {' '}
-                            {item.recipient_contact__name}{' '}
-                          </Typography>
-                          <Typography component="p" sx={{ margin: 0 }}>
-                            {item.recipient_contact__contact}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Divider
-                        sx={{
-                          marginTop: '20px',
-                        }}
-                      ></Divider>
-                    </div>
-                  );
-                }) : <NoData />
-              )}
+            <TabPanel
+              value="inner-failed">
+              <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}  >
+                <Box>
+                  {loading ? (
+                    <Spinner />
+                  ) : (failed && Array.isArray(failed) && failed.length > 0 && Array.isArray(failed[0]) && failed[0].length > 0 ?
+                    failed[0].map(function (item, index) {
+                      let firstLetter = (item.recipient_contact__name?.charAt(0)).toUpperCase();
+                      return (
+                        <div key={index}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              paddingTop: '10px',
+                            }}
+                          >
+                            <Stack direction="row" spacing={2}>
+                              <Avatar>{firstLetter}</Avatar>
+                            </Stack>
+                            <Box
+                              sx={{
+                                marginLeft: '30px',
+                              }}
+                            >
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {' '}
+                                { FirstLetterCapitalOfString(item.recipient_contact__name)}{' '}
+                              </Typography>
+                              <Typography component="p" sx={{ margin: 0 }}>
+                                {item.recipient_contact__contact}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Divider
+                            sx={{
+                              marginTop: '20px',
+                            }}
+                          ></Divider>
+                        </div>
+                      );
+                    }) : <NoData />
+                  )}
+                </Box>
+              </Scrollbar>
             </TabPanel>
           </TabContext>
         </TabPanel>

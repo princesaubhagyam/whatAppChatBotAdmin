@@ -32,12 +32,15 @@ import { DeleteOutline } from '@mui/icons-material';
 import EventContext from 'src/BroadcastContext';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
+import { FullStringCapital } from "src/utils/FullStringCapital"
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroadcastSelect }) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
-  const [broadcastData, setBroadcastData] = useState(broadcasts);
+  // const [broadcastData, setBroadcastData] = useState(broadcasts);
+  const [broadcastData, setBroadcastData] = useState([]);
   const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,11 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [isHistory, setIsHistory] = useState(undefined);
+  const [nextUrl, setNextUrl] = useState('/api/broadcasts/');
+  const [hasMore, setHasMore] = useState(true);
+  // const [data, setData] = useState([]);
+  // console.log(data, "data===")
+  // console.log(nextUrl, "nextUrl")
 
   const [newBroadcastName, setNewBroadcastName] = useState('');
   useEffect(() => {
@@ -78,6 +86,24 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
     onBroadcastSelect(chat); // Notify parent component
   };
 
+  const getBroadcastsDataApi = async () => {
+    if (nextUrl) {
+      try {
+        const response = await apiClient.get(nextUrl);
+        const next = response.data.data.next;
+        const results = response.data.data.results
+        setBroadcastData((prevData) => [...prevData, ...results]);
+        setNextUrl(next);
+        setHasMore(!!next);
+      } catch (error) {
+        toast.error('Error fetching data from API:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getBroadcastsDataApi()
+  }, [nextUrl])
   const handleDeleteBroadcast = () => {
     if (selectedBroadcastId) {
       setLoading(true);
@@ -175,75 +201,81 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
             maxHeight: '550px',
           }}
         >
-          {broadcastData && broadcastData.length ? (
+          <InfiniteScroll
+            dataLength={broadcastData.length}
+            next={getBroadcastsDataApi}
+            hasMore={hasMore}
+            loader={<Box m={2}><Skeleton variant="rectangular" width="100%" height={50} /></Box>}
+          >
+            {broadcastData && broadcastData.length ? (
             broadcastData.map((chat) => (
-              <Box
-                sx={{
-                  borderBottom: '3px solid #e5eaef',
-                  borderRadius: 0,
-                  backgroundColor: selectedBroadcastId === chat.id ? '#bdbcbc9e' : 'transparent',
-                  '&:hover': { backgroundColor: '#bdbcbc9e !important' },
-                  display: 'flex',
-                  alignItems: 'center',
-                  paddingRight: '10px',
-                }}
-                key={chat.id}
-              >
-                <ListItemButton
-                  onClick={() => handleBroadcastClick(chat)}
+                <Box
                   sx={{
-                    py: 1,
-                    px: 1,
-                    alignItems: 'start',
-                    '&:hover': { backgroundColor: 'transparent !important' },
+                    borderBottom: '3px solid #e5eaef',
+                    borderRadius: 0,
+                    backgroundColor: selectedBroadcastId === chat.id ? '#bdbcbc9e' : 'transparent',
+                    '&:hover': { backgroundColor: '#bdbcbc9e !important' },
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingRight: '10px',
                   }}
-                  selected={activeChat === chat.id}
+                  key={chat.id}
                 >
-                  <ListItemAvatar>
-                    <Badge
-                      color={
-                        chat.status === 'online'
-                          ? 'success'
-                          : chat.status === 'busy'
-                          ? 'error'
-                          : chat.status === 'away'
-                          ? 'warning'
-                          : 'secondary'
-                      }
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                      }}
-                      overlap="circular"
-                    >
-                      <Avatar sx={{ width: 42, height: 42 }}>
-                        <IconUsers size={25} />
-                      </Avatar>
-                    </Badge>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Typography
-                        variant="subtitle2"
-                        fontWeight={600}
-                        fontSize={14}
-                        lineHeight={1.3}
-                      >
-                        {chat.title}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="subtitle1" fontSize={13}>
-                        {chat.members} members
-                      </Typography>
-                    }
-                    secondaryTypographyProps={{
-                      noWrap: true,
+                  <ListItemButton
+                    onClick={() => handleBroadcastClick(chat)}
+                    sx={{
+                      py: 1,
+                      px: 1,
+                      alignItems: 'start',
+                      '&:hover': { backgroundColor: 'transparent !important' },
                     }}
-                    sx={{ my: 0 }}
-                  />
-                </ListItemButton>
-                {/* {selectedBroadcastId === chat.id && !isHistory && (
+                    selected={activeChat === chat.id}
+                  >
+                    <ListItemAvatar>
+                      <Badge
+                        color={
+                          chat.status === 'online'
+                            ? 'success'
+                            : chat.status === 'busy'
+                              ? 'error'
+                              : chat.status === 'away'
+                                ? 'warning'
+                                : 'secondary'
+                        }
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        overlap="circular"
+                      >
+                        <Avatar sx={{ width: 42, height: 42 }}>
+                          <IconUsers size={25} />
+                        </Avatar>
+                      </Badge>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight={600}
+                          fontSize={14}
+                          lineHeight={1.3}
+                        >
+                          {FullStringCapital(chat.title)}
+                        </Typography>
+                      }
+                      secondary={
+                        <Typography variant="subtitle1" fontSize={13}>
+                          {chat.members} members
+                        </Typography>
+                      }
+                      secondaryTypographyProps={{
+                        noWrap: true,
+                      }}
+                      sx={{ my: 0 }}
+                    />
+                  </ListItemButton>
+                  {/* {selectedBroadcastId === chat.id && !isHistory && (
                   <IconButton size="small" color="error" onClick={handleOpenDeleteDialog}>
                     <DeleteOutline />
                   </IconButton>
@@ -253,46 +285,47 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
                     <IconEdit />
                   </IconButton>
                 )} */}
-                {selectedBroadcastId === chat.id && (
-                  <>
-                    {isHistory === undefined ? (
-                      <>
-                        <Skeleton
-                          variant="circular"
-                          width={30}
-                          height={30}
-                          sx={{ m: 1, bgcolor: 'transparent' }}
-                        />
-                        <Skeleton
-                          variant="circular"
-                          width={30}
-                          height={30}
-                          sx={{ m: 1, bgcolor: 'transparent' }}
-                        />
-                      </>
-                    ) : (
-                      !isHistory && (
+                  {selectedBroadcastId === chat.id && (
+                    <>
+                      {isHistory === undefined ? (
                         <>
-                          <IconButton size="small" color="error" onClick={handleOpenDeleteDialog}>
-                            <DeleteOutline />
-                          </IconButton>
-                          <IconButton size="small" color="primary" onClick={handleOpenEditDialog}>
-                            <IconEdit />
-                          </IconButton>
+                          <Skeleton
+                            variant="circular"
+                            width={30}
+                            height={30}
+                            sx={{ m: 1, bgcolor: 'transparent' }}
+                          />
+                          <Skeleton
+                            variant="circular"
+                            width={30}
+                            height={30}
+                            sx={{ m: 1, bgcolor: 'transparent' }}
+                          />
                         </>
-                      )
-                    )}
-                  </>
-                )}
-              </Box>
-            ))
-          ) : (
-            <Box m={2}>
+                      ) : (
+                        !isHistory && (
+                          <>
+                            <IconButton size="small" color="error" onClick={handleOpenDeleteDialog}>
+                              <DeleteOutline />
+                            </IconButton>
+                            <IconButton size="small" color="primary" onClick={handleOpenEditDialog}>
+                              <IconEdit />
+                            </IconButton>
+                          </>
+                        )
+                      )}
+                    </>
+                  )}
+                </Box>
+              ))
+            ) : ( !hasMore && (
+              <Box m={2}>
               <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
                 No Contacts Found!
               </Alert>
             </Box>
-          )}
+            ))}
+          </InfiniteScroll>
         </Scrollbar>
       </List>
       <ImportBroadcastModal

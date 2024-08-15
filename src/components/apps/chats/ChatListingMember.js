@@ -19,9 +19,9 @@ import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 import {
   fetchIsHistoryStatus,
- 
 } from 'src/store/apps/chat/ChatSlice';
 import EventContext from 'src/BroadcastContext';
+import { FirstLetterCapitalOfString } from "src/utils/FirstLetterCapitalOfString"
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -132,7 +132,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
                             fontSize={14}
                             lineHeight={1.3}
                           >
-                            {member.name}
+                            { FirstLetterCapitalOfString(member.name)}
                           </Typography>
                         }
                         secondary={
