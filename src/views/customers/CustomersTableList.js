@@ -8,11 +8,11 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Toolbar,
+  // Toolbar,
   IconButton,
   Tooltip,
   Typography,
-  Avatar,
+  // Avatar,
   TextField,
   InputAdornment,
   Paper,
@@ -28,12 +28,14 @@ import {
   Select,
   Stack,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
+import { IconSearch,
+  //  IconFilter, IconTrash,
+    IconFileImport, IconPlus } from '@tabler/icons';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import toast from 'react-hot-toast';
@@ -41,6 +43,7 @@ import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
 import EditContactModal from '../../modals/EditContactModel';
+import {FirstLetterCapitalOfString} from "src/utils/FirstLetterCapitalOfString"
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -141,8 +144,8 @@ const EnhancedTableToolbar = (props) => {
     setOpenAddContactModal,
     showButtons,
     handleOpenFilterDialog,
-    isSelected,
-    isItemSelected,
+    // isSelected,
+    // isItemSelected,
     handleDelete,
     handleEdit,
   } = props;
@@ -303,6 +306,7 @@ const CustomersTableList = () => {
     contact: ' ',
     name: '',
     tag: '',
+    cc :''
   });
   const [allDataForEdit, setAllDataForEdit] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -350,6 +354,7 @@ const CustomersTableList = () => {
             contact: item.contact,
             name: item.name,
             tag: item.tag,
+            cc : `+${item.cc}`
           });
         }
         return;
@@ -405,7 +410,7 @@ const CustomersTableList = () => {
       return false;
     });
 
-    console.log('Filtered Rows:', filteredRows);
+    // console.log('Filtered Rows:', filteredRows);
 
     setRows(filteredRows);
     setOpenFilterDialog(false);
@@ -552,7 +557,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.name}
+                              { FirstLetterCapitalOfString(row.name)}
                             </Typography>
                           </TableCell>
                           <TableCell sx={{ padding: '0px', minWidth: '150px' }}>
@@ -562,7 +567,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.contact}
+                              {row.full_mobile}
                             </Typography>{' '}
                           </TableCell>
                           <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
@@ -572,7 +577,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.city ? row.city : '-'}
+                              {row.city ?FirstLetterCapitalOfString(row.city)  : '-'}
                             </Typography>
                           </TableCell>
                           <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
@@ -582,7 +587,7 @@ const CustomersTableList = () => {
                               fontSize={14}
                               padding="13px 4px"
                             >
-                              {row.tag ? row.tag : '-'}
+                              {row.tag ? FirstLetterCapitalOfString(row.tag)  : '-'}
                             </Typography>
                           </TableCell>
                           {/* <TableCell>

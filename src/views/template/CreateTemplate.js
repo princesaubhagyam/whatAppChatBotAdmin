@@ -13,6 +13,7 @@ import {
   InputAdornment,
   IconButton,
   TextField,
+  Autocomplete
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -30,12 +31,12 @@ import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Launch from '@mui/icons-material/Launch'
+import Launch from '@mui/icons-material/Launch';
 import { Reply } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import DeleteIcon from '@mui/icons-material/Delete';
 import apiClient from 'src/api/axiosClient';
-import countryCodes from "../../utils/Countrycode.json"
+import countryCodes from '../../utils/Countrycode.json';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -46,7 +47,7 @@ const BCrumb = [
 const category = [
   { value: 'MARKETING', label: 'Marketing' },
   { value: 'UTILITY', label: 'Utility' },
-  { value: 'AUTHENTICATION', label: 'Authentication' },
+  // { value: 'AUTHENTICATION', label: 'Authentication' },
 ];
 
 yup.addMethod(yup.string, 'containsUnderscore', function (message) {
@@ -117,6 +118,7 @@ const validationSchema = yup.object({
 // });
 export default function CreateTemplate() {
   const navigate = useNavigate();
+  const [languages,] = useState(() => ([...Languages]))
   const [step, setStep] = useState(0);
   const [HeaderSelect, setHeaderSelect] = useState('TEXT');
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
@@ -130,7 +132,7 @@ export default function CreateTemplate() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
   const [countryCode, setCountryCode] = useState('+91');
-  console.log(countryCode,"countryCode")
+  // console.log(countryCode, 'countryCode');
   const [mediaRes, setMediaRes] = useState();
   //console.log('mediares',mediaRes);
   const CHARACTER_LIMIT = 1000;
@@ -144,13 +146,15 @@ export default function CreateTemplate() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      // console.log("values", values)
       setStep(1);
       setPreData(values);
     },
   });
+  // console.log("formik", formik)
 
   const [variables, setVariables] = useState([]);
-  const [variablesTitle, setVariablesTitle] = useState([]);
+  // const [variablesTitle, setVariablesTitle] = useState([]);
   //console.log(variablesTitle, variables);
   const addVariable = () => {
     setVariables([...variables, { id: variables.length + 1, value: '' }]);
@@ -160,7 +164,6 @@ export default function CreateTemplate() {
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
-
 
   const removeVariable = (id) => {
     setVariables(variables.filter((variable) => variable.id !== id));
@@ -182,21 +185,21 @@ export default function CreateTemplate() {
   //   formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
   // };
 
-  const removeVariableTitle = (id) => {
-    setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
-    const placeholderToRemove = `{{${id}}}`;
-    formikTemplate.values.text = formikTemplate.values.text.replace(placeholderToRemove, '');
-  };
+  // const removeVariableTitle = (id) => {
+  //   setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
+  //   const placeholderToRemove = `{{${id}}}`;
+  //   formikTemplate.values.text = formikTemplate.values.text.replace(placeholderToRemove, '');
+  // };
 
-  const handleVariableChangeTitle = (id, event) => {
-    const newVariables = variablesTitle.map((variable) => {
-      if (variable.id === id) {
-        return { ...variable, value: event.target.value };
-      }
-      return variable;
-    });
-    setVariablesTitle(newVariables);
-  };
+  // const handleVariableChangeTitle = (id, event) => {
+  //   const newVariables = variablesTitle.map((variable) => {
+  //     if (variable.id === id) {
+  //       return { ...variable, value: event.target.value };
+  //     }
+  //     return variable;
+  //   });
+  //   setVariablesTitle(newVariables);
+  // };
   const formikTemplate = useFormik({
     initialValues: {
       body: '',
@@ -204,6 +207,7 @@ export default function CreateTemplate() {
       footer: '',
       text: '',
     },
+    //validatioSecondSchema: validatioSecondSchema,
     onSubmit: async (values) => {
       setLoading(true);
       try {
@@ -286,7 +290,7 @@ export default function CreateTemplate() {
             },
           };
         }
-        <div>This is the key point</div>
+        <div>This is the key point</div>;
         if (phoneNumber) {
           reqBody.components[3] = {
             type: 'BUTTONS',
@@ -294,7 +298,7 @@ export default function CreateTemplate() {
               {
                 type: 'PHONE_NUMBER',
                 text: values.buttonText,
-                phone_number: (countryCode+phoneNumber).replace("+",""),
+                phone_number: (countryCode + phoneNumber).replace('+', ''),
               },
             ],
           };
@@ -331,7 +335,10 @@ export default function CreateTemplate() {
 
           if (response) {
             setLoading(false);
-            toast.success('Template created please wait until your template being verified by Meta this process may take 2-5 minutes', { duration: 5000 });
+            toast.success(
+              'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
+              { duration: 5000 },
+            );
             navigate('/templates');
           }
         }
@@ -464,17 +471,17 @@ export default function CreateTemplate() {
 
     formikTemplate.handleChange(e);
   };
-  const handleFieldChangeTitle = (e) => {
-    let num = countPlaceholders(e.target.value);
-    if (variablesTitle.length < num) {
-      setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
-    }
-    if (variablesTitle.length > num) {
-      setVariables(variablesTitle.splice(-1));
-    }
-    setInputLength(e.target.value.length);
-    formikTemplate.handleChange(e);
-  };
+  // const handleFieldChangeTitle = (e) => {
+  //   let num = countPlaceholders(e.target.value);
+  //   if (variablesTitle.length < num) {
+  //     setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+  //   }
+  //   if (variablesTitle.length > num) {
+  //     setVariables(variablesTitle.splice(-1));
+  //   }
+  //   setInputLength(e.target.value.length);
+  //   formikTemplate.handleChange(e);
+  // };
   const countPlaceholders = (template) => {
     const matches = template.match(/{{\d+}}/g);
     return matches ? matches.length : 0;
@@ -532,7 +539,21 @@ export default function CreateTemplate() {
                   Choose languages for your message template. You can delete or add more languages
                   later.
                 </Typography>
-                <CustomSelect
+                  <Autocomplete
+                    id="language"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    name="language"
+                    options={languages}
+                    getOptionLabel={(option) => option.flagname}
+                    onChange={(event, value) => formik.setFieldValue("language", value.value)}
+                    value={formik.values.language?.value}
+                    renderInput={(params) => <TextField {...params}
+                     placeholder="Select your language"
+                    />}
+                  />
+                {/* <CustomSelect
                   id="language"
                   fullWidth
                   name="language"
@@ -550,7 +571,7 @@ export default function CreateTemplate() {
                   <FormHelperText error id="language">
                     {formik.errors.language}
                   </FormHelperText>
-                )}
+                )} */}
               </Grid>
               <Grid item lg={12} md={12} sm={12}>
                 <Button variant="contained" color="primary" sx={{ mr: 1 }} type="submit">
@@ -597,7 +618,8 @@ export default function CreateTemplate() {
                             id="text"
                             name="text"
                             value={formikTemplate.values.text}
-                            onChange={handleFieldChangeTitle}
+                            //onChange={handleFieldChangeTitle}
+                            onChange={formikTemplate.handleChange}
                             inputProps={{
                               maxLength: CHARACTER_LIMIT_TEXT,
                             }}
@@ -610,6 +632,7 @@ export default function CreateTemplate() {
                                 </InputAdornment>
                               ),
                             }}
+                            required
                           />
 
                           {formikTemplate.errors.text && (
@@ -617,7 +640,7 @@ export default function CreateTemplate() {
                               {formikTemplate.errors.text}
                             </FormHelperText>
                           )}
-                          {variablesTitle.map((variable, index) => (
+                          {/* {variablesTitle.map((variable, index) => (
                             <Box display="flex" alignItems="center" mt={2} key={variable.id}>
                               <TextField
                                 fullWidth
@@ -634,7 +657,7 @@ export default function CreateTemplate() {
                                 <DeleteIcon />
                               </IconButton>
                             </Box>
-                          ))}
+                          ))} */}
                           {/* <Box mt={2}>
                             <Button
                               variant="outlined"
@@ -722,7 +745,7 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
-
+                    required
                   // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
                   {variables &&
@@ -769,6 +792,7 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
+                    required
                   />
                   {formikTemplate.errors.footer && (
                     <FormHelperText error id="footer">
@@ -818,6 +842,7 @@ export default function CreateTemplate() {
                             name="callToActionURL"
                             value={callToActionURL}
                             onChange={(e) => setCallToActionURL(e.target.value)}
+                            required
                           />
                           {formikTemplate.errors.callToActionURL && (
                             <FormHelperText error id="callToActionURL">
@@ -832,36 +857,42 @@ export default function CreateTemplate() {
                           <Grid>
                             <CustomFormLabel htmlFor="phoneNumber">Phone Number</CustomFormLabel>
                             <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                              }}
+                            >
+                              <Select
+                                value={countryCode}
+                                onChange={handleCountryCodeChange}
                                 sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',  
-                                  justifyContent: 'flex-start',  
-                                  gap: 2, 
+                                  width: 'auto',
+                                  padding: '0px',
+                                  height: '35px',
+                                  lineHeight: '35px',
                                 }}
-                            >
-                            <Select
-                              value={countryCode}
-                              onChange={handleCountryCodeChange}
-                              sx={{ width: 'auto', padding: '0px', height: '35px', lineHeight: '35px' }}
-                            >
-                              {countryCodes.map((code) => (
-                                <MenuItem key={code.dial_code} value={code.dial_code}>
-                                  {code.code} {code.dial_code}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                            <CustomTextField
-                              fullWidth
-                              id="phoneNumber"
-                              name="phoneNumber"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                            />
-                            {formikTemplate.errors.phoneNumber && (
-                              <FormHelperText error id="phoneNumber">
-                                {formikTemplate.errors.phoneNumber}
-                              </FormHelperText>
-                            )}
+                              >
+                                {countryCodes.map((code) => (
+                                  <MenuItem key={code.dial_code} value={code.dial_code}>
+                                    {code.code} {code.dial_code}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                              <CustomTextField
+                                fullWidth
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                required
+                              />
+                              {formikTemplate.errors.phoneNumber && (
+                                <FormHelperText error id="phoneNumber">
+                                  {formikTemplate.errors.phoneNumber}
+                                </FormHelperText>
+                              )}
                             </Box>
                           </Grid>
                         </>

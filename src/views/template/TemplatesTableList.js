@@ -596,30 +596,11 @@ const TemplatesTableList = () => {
                       switch (component.type) {
                         case 'HEADER': {
                           const headerHandle = component.example?.header_handle?.[0];
-                          const headerText = component.example?.header_text?.[0];
+                          const headerText = component?.text;
 
-                          /* if (headerHandle) {
-                            const isVideo = component.format === 'VIDEO';
-                            return isVideo ? (
-                              <CardMedia
-                                key={component.type}
-                                component="video"
-                                image={headerHandle}
-                                controls
-                                title={component.type}
-                                sx={{ height: 200 }}
-                                autoPlay
-                              />
-                            ) : (
-                              <CardMedia
-                                key={component.type}
-                                component="img"
-                                image={headerHandle}
-                                title={component.type}
-                                sx={{ height: 200 }}
-                              />
-                            );
-                          } */
+                          console.log('Header Handle:', headerHandle);
+                          //console.log('Header Text Array:', headerTextArray);
+                          console.log('Header Text:', headerText);
 
                           if (headerHandle) {
                             const isVideo = component.format === 'VIDEO';
@@ -664,11 +645,14 @@ const TemplatesTableList = () => {
 
                           if (headerText) {
                             return (
-                              <Typography key={'1'} variant="body1">
-                                <span key={'1'}>
-                                  {headerText}
-                                  <br />
-                                </span>
+                              // <Typography key={'1'} variant="body1">
+                              //   <span key={'1'}>
+                              //     {headerText}
+                              //     <br />
+                              //   </span>
+                              // </Typography>
+                              <Typography key={component?.type} variant="h6" fontWeight={500}>
+                                {headerText}
                               </Typography>
                             );
                           }

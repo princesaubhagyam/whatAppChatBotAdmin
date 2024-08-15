@@ -144,7 +144,7 @@ const Profile = () => {
               backgroundColor: 'primary.main',
             }}
           >
-            {user && user.full_name ? user.full_name.charAt(0) : ''}
+            {user && user.full_name ? (user.full_name.charAt(0)).toUpperCase() : ''}
           </Avatar>
         </IconButton>
         <Menu
