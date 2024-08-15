@@ -41,6 +41,7 @@ import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
 import EditContactModal from '../../modals/EditContactModel';
+import DeleteDialog from 'src/modals/DeleteDialog';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -145,9 +146,13 @@ const EnhancedTableToolbar = (props) => {
     isItemSelected,
     handleDelete,
     handleEdit,
+    setOpenDeleteDialog,
   } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
+  };
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
   };
   // const handleDelete = async () => {
   //   try {
@@ -197,7 +202,7 @@ const EnhancedTableToolbar = (props) => {
                 </Tooltip>
               ) : null}
               <Tooltip title="Delete">
-                <IconButton sx={{ color: '#1A4D2E' }} onClick={handleDelete}>
+                <IconButton sx={{ color: '#1A4D2E' }} onClick={handleOpenDeleteDialog}>
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
@@ -289,6 +294,8 @@ const CustomersTableList = () => {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPage, setTotalPages] = useState(0);
   const [rows, setRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
   const [search, setSearch] = useState('');
@@ -298,6 +305,7 @@ const CustomersTableList = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [editData, setEditData] = useState({
     city: '',
     contact: ' ',
@@ -314,30 +322,27 @@ const CustomersTableList = () => {
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
-  }, []);
+  }, [page]);
 
   const getApiData = async () => {
     setLoading(true);
     let allData = [];
-    let pageNum = 1;
-    let hasNextPage = true;
-    while (hasNextPage) {
-      try {
-        const response = await apiClient.get(
-          `/api/contacts/?page=${pageNum}&rows_per_page=${rowsPerPage}`,
-        );
-        allData = allData.concat(response.data.data.results || []);
-        hasNextPage = response.data.next !== null;
-        pageNum += 1;
-      } catch (error) {
-        console.error('Error fetching data from API:', error);
-        hasNextPage = false;
-      }
+    try {
+      const response = await apiClient.get(
+        `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
+      );
+      console.log('contact response', response?.data?.data?.results);
+
+      allData = response?.data?.data?.results;
+      setTotalCount(response?.data?.data?.count);
+      setTotalPages(response?.data?.data?.total_pages);
+      setAllRows(allData);
+      setRows(allData);
+      setAllDataForEdit(allData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
     }
-    setAllRows(allData);
-    setRows(allData);
-    setAllDataForEdit(allData);
-    setLoading(false);
   };
 
   function handleEdit() {
@@ -374,15 +379,32 @@ const CustomersTableList = () => {
     setOpenFilterDialog(true);
   };
 
-  const handleCloseFilterDialog = () => {
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  // const handleCloseFilterDialog = () => {
+  //   setFilterCriteria({
+  //     column: '',
+  //     operator: 'contains',
+  //     value: '',
+  //   });
+  //   setOpenFilterDialog(false);
+  //   setRows(allRows);
+  //   setSearch('');
+  // };
+  const handleClearFilter = () => {
     setFilterCriteria({
       column: '',
       operator: 'contains',
       value: '',
     });
-    setOpenFilterDialog(false);
     setRows(allRows);
     setSearch('');
+  };
+
+  const handleCloseFilterDialog = () => {
+    setOpenFilterDialog(false);
   };
 
   const handleFilterChange = (event) => {
@@ -461,8 +483,26 @@ const CustomersTableList = () => {
     getApiData();
   };
 
-  const handleDelete = async () => {
+  // const handleDelete = async () => {
+  //   try {
+  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
+  //       data: { ids: selected },
+  //     });
+  //     toast.success('Contacts deleted successfully');
+
+  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setSelected([]);
+  //   } catch (error) {
+  //     console.error('Failed to delete contacts:', error);
+  //     toast.error('Failed to delete contacts');
+  //   } finally {
+  //     handleCloseDeleteDialog(); // Close the dialog after deleting
+  //   }
+  // };
+  const handleConfirmDelete = async () => {
     try {
+      //setLoading(true);
       await apiClient.delete(`api/contacts/bulk_delete/`, {
         data: { ids: selected },
       });
@@ -472,8 +512,11 @@ const CustomersTableList = () => {
       setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
       setSelected([]);
     } catch (error) {
+      //setLoading(false);
       console.error('Failed to delete contacts:', error);
       toast.error('Failed to delete contacts');
+    } finally {
+      handleCloseDeleteDialog();
     }
   };
 
@@ -493,7 +536,8 @@ const CustomersTableList = () => {
             showButtons={true}
             handleOpenFilterDialog={handleOpenFilterDialog}
             isItemSelected={selected}
-            handleDelete={handleDelete}
+            //handleDelete={handleDelete}
+            setOpenDeleteDialog={setOpenDeleteDialog}
             handleEdit={handleEdit}
           />
           <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
@@ -513,7 +557,7 @@ const CustomersTableList = () => {
                 />
                 <TableBody>
                   {stableSort(rows, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => {
                       const isItemSelected = isSelected(row.id);
                       const labelId = `enhanced-table-checkbox-${index}`;
@@ -585,30 +629,10 @@ const CustomersTableList = () => {
                               {row.tag ? row.tag : '-'}
                             </Typography>
                           </TableCell>
-                          {/* <TableCell>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {formatDate(createdAtDate)}
-                            </Typography>
-                          </TableCell> */}
-                          {/* <TableCell>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {formatDate(updatedAtDate)}
-                            </Typography>
-                          </TableCell> */}
                         </TableRow>
                       );
                     })}
-                  {emptyRows > 0 && (
+                  {/* {emptyRows > 0 && (
                     <TableRow
                       style={{
                         height: (dense ? 33 : 53) * emptyRows,
@@ -616,14 +640,14 @@ const CustomersTableList = () => {
                     >
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )}
+                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={rows.length}
+              count={totalPage}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -682,7 +706,7 @@ const CustomersTableList = () => {
               <DialogActions sx={{ justifyContent: 'space-around', padding: '0px' }}>
                 <Button
                   variant="contained"
-                  onClick={handleCloseFilterDialog}
+                  onClick={handleClearFilter}
                   sx={{
                     backgroundColor: '#b4b4b4',
                     '&:hover': {
@@ -710,6 +734,11 @@ const CustomersTableList = () => {
             open={openImportModal}
             handleClose={() => setOpenImportModal(false)}
             getApiData={getApiData}
+          />
+          <DeleteDialog
+            open={openDeleteDialog}
+            onClose={handleCloseDeleteDialog}
+            onConfirm={handleConfirmDelete}
           />
 
           <AddContactModal

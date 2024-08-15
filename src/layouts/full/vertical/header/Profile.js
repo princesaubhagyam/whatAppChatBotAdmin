@@ -204,10 +204,10 @@ const Profile = () => {
                     },
                   }}
                   onClick={() => {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('ref');
-                    localStorage.removeItem('access_app');
+                    localStorage.clear();
+
                     handleClose2();
+                    window.location.reload();
                   }}
                   component={Link}
                   to="/auth/login"

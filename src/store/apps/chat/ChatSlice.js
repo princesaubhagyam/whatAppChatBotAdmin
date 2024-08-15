@@ -88,12 +88,25 @@ export const fetchBroadcasts = () => async () => {
   }
 };
 
+export const fetchSelectedBroadcasts = (broadcastId) => async (dispatch) => {
+  try {
+    const response = await apiClient.get(`/api/broadcasts/${broadcastId}`);
+    console.log(response);
+    if (response) {
+      console.log('response.data', response.data);
+      dispatch(selectBroadcast(response.data.data));
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 export const fetchIsHistoryStatus = (broadcastId) => async (dispatch) => {
   try {
     const res = await apiClient.get(`/broadcast-history_checker/${broadcastId}/`);
     if (res.status === 200) {
       dispatch(setIsHistory(res.data.is_history));
-      console.log('state updated');
+      // fetchSelectedBroadcasts(broadcastId)
     }
   } catch (error) {
     console.warn('Error fetching history status:', error);
@@ -120,7 +133,7 @@ export const fetchQualityRating = () => async (dispatch) => {
   try {
     const metaClient = createMetaAxiosInstance({ addBAId: false });
     const phoneId = localStorage.getItem('phone_id');
-    if (phoneId !==null) {
+    if (phoneId !== null) {
       const response = await metaClient.get(`${phoneId}`);
       const fetchedQualityRating = response?.data?.quality_rating;
       console.log('Redux - Fetched qualityRating:', fetchedQualityRating);

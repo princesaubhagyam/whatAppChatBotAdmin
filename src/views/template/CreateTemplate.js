@@ -962,7 +962,7 @@ export default function CreateTemplate() {
                               controls={mediaType === 'video'}
                               controlsList={mediaType === 'video' && []}
                               title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
-                              sx={{ height: 140, mb: 2 }}
+                              sx={{ mb: 2 }}
                             />
                           )
                         ) : null}
@@ -1032,10 +1032,10 @@ export default function CreateTemplate() {
                     sx={{ mr: 1 }}
                     type="submit"
                   >
-                    Save
+                    Create
                   </LoadingButton>
-                  <Button variant="contained" color="error" onClick={() => navigate('/templates')}>
-                    Cancel
+                  <Button variant="contained" color="error" onClick={() => setStep(0)}>
+                    Back
                   </Button>
                 </Grid>
               </Grid>

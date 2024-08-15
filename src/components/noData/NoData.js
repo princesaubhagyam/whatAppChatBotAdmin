@@ -20,7 +20,7 @@ function NoData(){
         alignItems="center"
         justifyContent="center"
         sx={{
-            fontSize: '2rem', 
+            fontSize: '1.8rem', 
             fontFamily: 'Arial, sans-serif',
             fontWeight: 'bold',
           }}

@@ -305,6 +305,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
               p: 4,
               width: '100%',
               minWidth: '500px',
+              minHeight: '500px',
             }}
           >
             <Typography variant="h6" component="h2" mb={2}>
@@ -398,7 +399,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                       image={headerHandle}
                                       controls
                                       title={component.type}
-                                      sx={{ height: 200 }}
+                                      //sx={{ height: 200 }}
                                       autoPlay
                                     />
                                   );
@@ -408,7 +409,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                       <iframe
                                         src={headerHandle}
                                         width="100%"
-                                        height="200px"
+                                        height="400px"
                                         title="Document Preview"
                                         style={{ border: 'none', overflow: 'hidden' }}
                                       ></iframe>
@@ -421,8 +422,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                       component="img"
                                       image={headerHandle}
                                       title={component.type}
-                                      sx={{ height: 200}}
-
+                                      //sx={{ height: 200 }}
                                     />
                                   );
                                 }

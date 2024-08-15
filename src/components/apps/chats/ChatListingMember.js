@@ -11,17 +11,18 @@ import {
   Typography,
   Button,
   Stack,
+  InputAdornment,
+  TextField,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
-import { IconEdit, IconFileImport } from '@tabler/icons';
+import { IconEdit, IconFileImport, IconSearch } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
-import {
-  fetchIsHistoryStatus,
- 
-} from 'src/store/apps/chat/ChatSlice';
+import { fetchIsHistoryStatus, fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
 import EventContext from 'src/BroadcastContext';
+import NoData from 'src/components/noData/NoData';
+import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -35,13 +36,25 @@ const ChatListingMember = ({ getBroadcastList }) => {
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const isHistory = useSelector((state) => state.chatReducer.isHistory); // Fetch from Redux
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const isHistory = useSelector((state) => state.chatReducer.isHistory);
   const { isOn } = useContext(EventContext);
+
   useEffect(() => {
     if (activeBroadcast) {
       dispatch(fetchIsHistoryStatus(activeBroadcast.id));
     }
   }, [activeBroadcast, isOn]);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredMembers = activeBroadcast?.contacts?.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.full_mobile.includes(searchQuery),
+  );
 
   return (
     <>
@@ -56,45 +69,61 @@ const ChatListingMember = ({ getBroadcastList }) => {
           >
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Typography style={{ fontSize: '12px' }}>
-                <b style={{ fontSize: '1rem' }}>Members in broadcast</b>
+                <b style={{ fontSize: '1rem' }}>Members</b>
                 <br />
                 {activeBroadcast.members} members
               </Typography>
-              {!isHistory && (
-                <>
-                  <Button
-                    sx={{
-                      height: '25px',
-                      width: '40px',
-                      minWidth: '40px',
-                      padding: '8px',
-                    }}
-                    onClick={() => setIsMemberModalOpen(true)}
-                  >
-                    <IconEdit size={'20'} />
-                  </Button>
+              <Stack direction="row" gap={1}>
+                {!isHistory && (
+                  <>
+                    <Button
+                      sx={{
+                        height: '25px',
+                        width: '40px',
+                        minWidth: '40px',
+                        padding: '8px',
+                      }}
+                      onClick={() => setIsMemberModalOpen(true)}
+                    >
+                      <IconEdit size={'20'} />
+                    </Button>
 
-                  <Button
-                    sx={{
-                      height: '25px',
-                      width: '40px',
-                      minWidth: '40px',
-                      padding: '8px',
-                    }}
-                    onClick={() => setIsImportModalOpen(true)}
-                  >
-                    <IconFileImport size={'19'} />
-                  </Button>
-                </>
-              )}
+                    <Button
+                      sx={{
+                        height: '25px',
+                        width: '40px',
+                        minWidth: '40px',
+                        padding: '8px',
+                      }}
+                      onClick={() => setIsImportModalOpen(true)}
+                    >
+                      <IconFileImport size={'19'} />
+                    </Button>
+                  </>
+                )}
+              </Stack>
             </Stack>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search members..."
+              variant="outlined"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconSearch size="1.1rem" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mt: 0, borderRadius: 4 }}
+            />
           </Box>
           <List sx={{ px: 0 }}>
-            <Scrollbar
-              sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '550px' }}
-            >
-              {activeBroadcast && activeBroadcast.contacts ? (
-                activeBroadcast.contacts.map((member) => (
+            <Scrollbar sx={{ height: { lg: '70vh !important', md: '100vh' }, maxHeight: '550px' }}>
+              {filteredMembers && filteredMembers.length > 0 ? (
+                filteredMembers.map((member) => (
                   <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={member.id}>
                     <ListItemButton
                       sx={{
@@ -137,7 +166,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
                         }
                         secondary={
                           <Typography variant="subtitle1" fontSize={13}>
-                            +{member.contact}
+                            {member.full_mobile}
                           </Typography>
                         }
                         secondaryTypographyProps={{
@@ -151,9 +180,10 @@ const ChatListingMember = ({ getBroadcastList }) => {
                 ))
               ) : (
                 <Box m={2}>
-                  <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
+                  {/* <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
                     No Contacts Found!
-                  </Alert>
+                  </Alert> */}
+                  <Nodatainsearch />
                 </Box>
               )}
             </Scrollbar>

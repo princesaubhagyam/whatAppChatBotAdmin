@@ -614,7 +614,7 @@ const TemplatesTableList = () => {
                                   image={headerHandle}
                                   controls
                                   title={component.type}
-                                  sx={{ height: 200 }}
+                                  //sx={{ height: 200 }}
                                   autoPlay
                                 />
                               );
@@ -624,7 +624,7 @@ const TemplatesTableList = () => {
                                   <iframe
                                     src={headerHandle}
                                     width="100%"
-                                    height="200px"
+                                    height="500px"
                                     title="Document Preview"
                                     style={{ border: 'none', overflow: 'hidden' }}
                                   ></iframe>
@@ -637,7 +637,7 @@ const TemplatesTableList = () => {
                                   component="img"
                                   image={headerHandle}
                                   title={component.type}
-                                  sx={{ height: 200 }}
+                                  // sx={{ height: 200 }}
                                 />
                               );
                             }

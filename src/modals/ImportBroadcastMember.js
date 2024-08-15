@@ -58,7 +58,7 @@ const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
   }, [open]);
 
   const sampleFileUrl =
-    'https://saubhagyam503.pythonanywhere.com/static/import_samples/broadcast.csv';
+    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);

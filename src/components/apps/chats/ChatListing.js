@@ -32,6 +32,7 @@ import { DeleteOutline } from '@mui/icons-material';
 import EventContext from 'src/BroadcastContext';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
+import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroadcastSelect }) => {
   const dispatch = useDispatch();
@@ -171,7 +172,7 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
       <List sx={{ px: 0 }}>
         <Scrollbar
           sx={{
-            height: { lg: '75vh', md: '100vh' },
+            height: { lg: '75vh !important', md: '100vh' },
             maxHeight: '550px',
           }}
         >
@@ -288,9 +289,10 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
             ))
           ) : (
             <Box m={2}>
-              <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
+              {/* <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
                 No Contacts Found!
-              </Alert>
+              </Alert> */}
+              <Nodatainsearch />
             </Box>
           )}
         </Scrollbar>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -34,6 +34,7 @@ import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { selectBroadcast } from 'src/store/apps/chat/ChatSlice';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import EventContext from 'src/BroadcastContext';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -138,7 +139,7 @@ const BroadcastMemberModal = ({
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [selected, setSelected] = useState([]);
   console.log('....', memberIds);
-
+  //const { toggleOnOff } = useContext(EventContext);
   const [numSelected, setNumSelected] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
@@ -201,15 +202,28 @@ const BroadcastMemberModal = ({
     setOpenFilterDialog(true);
   };
 
-  const handleCloseFilterDialog = () => {
+  // const handleCloseFilterDialog = () => {
+  //   setFilterCriteria({
+  //     column: '',
+  //     operator: 'contains',
+  //     value: '',
+  //   });
+  //   setBroadcastContacts(allContacts);
+  //   setOpenFilterDialog(false);
+  //   setSearch('');
+  // };
+  const handleClearFilter = () => {
     setFilterCriteria({
       column: '',
       operator: 'contains',
       value: '',
     });
     setBroadcastContacts(allContacts);
-    setOpenFilterDialog(false);
     setSearch('');
+  };
+
+  const handleCloseFilterDialog = () => {
+    setOpenFilterDialog(false);
   };
 
   const handleFilterChange = (event) => {
@@ -256,7 +270,6 @@ const BroadcastMemberModal = ({
     setSelected(newSelected);
   };
 
-  
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = broadcastContacts.map((n) => n.id);
@@ -294,6 +307,7 @@ const BroadcastMemberModal = ({
         toast.success('Broadcast members updated successfully!');
         handleClose();
         getBroadcastList();
+
         dispatch(
           selectBroadcast({
             contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
@@ -370,7 +384,7 @@ const BroadcastMemberModal = ({
                     Update
                   </Button>
                   <Button color="error" variant="contained" onClick={handleClose}>
-                    Close
+                    Cancel
                   </Button>
                 </Stack>
               </Toolbar>
@@ -427,7 +441,7 @@ const BroadcastMemberModal = ({
                                 fontSize="14px !important"
                                 padding="13px 4px !important"
                               >
-                                {row.contact}
+                                {row.full_mobile}
                               </Typography>
                             </TableCell>
                             <TableCell align="left" sx={{ padding: '0px' }}>
@@ -520,7 +534,7 @@ const BroadcastMemberModal = ({
           <DialogActions sx={{ justifyContent: 'space-between', padding: '0px' }}>
             <Button
               variant="contained"
-              onClick={handleCloseFilterDialog}
+              onClick={handleClearFilter}
               sx={{
                 backgroundColor: '#b4b4b4',
                 '&:hover': {
