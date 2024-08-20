@@ -54,7 +54,6 @@ function Analytics({ setIsAnalytics }) {
           .then((response) => {
             setMessageStatuses(response?.data?.data?.broadcast_histories[0]?.message_statuses);
             if (response?.data?.data?.broadcast_histories[0]?.message_statuses) {
-              console.log(response?.data?.data?.broadcast_histories[0]?.message_statuses, 'data');
               setGraphData(
                 response?.data?.data?.broadcast_histories[0]?.message_statuses.map((data) => ({
                   name: data.status,
@@ -71,9 +70,6 @@ function Analytics({ setIsAnalytics }) {
       setLoading(false);
     } catch (error) { }
   }
-
-  console.log(messageStatuses, 'messageStatuses===');
-
   function getDataByStatus(status, setData) {
     setLoading(true);
     if (messageStatuses && messageStatuses.length > 0) {

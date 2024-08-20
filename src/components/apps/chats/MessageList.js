@@ -68,7 +68,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
       recipients: [],
     },
   ]);
-  console.log(chartData);
+  // console.log(chartData);
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {
