@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
-import { animated } from 'react-spring/dist/react-spring.cjs';
+import { animated } from 'react-spring';
 import { Collapse } from '@mui/material';
 
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';

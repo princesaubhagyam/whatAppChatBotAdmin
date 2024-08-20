@@ -360,7 +360,7 @@ const CustomersTableList = () => {
 
   const applyFilter = () => {
     const { column, value } = filterCriteria;
-
+    console.log(column,value)
     if (!column || !value) {
       console.error('Column or value is not defined:', column, value);
       return;
