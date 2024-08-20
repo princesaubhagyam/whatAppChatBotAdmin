@@ -26,7 +26,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     contact: '',
     city: '',
     tag: '',
-    cc : ''
+    cc: '',
   });
   const [countryCode, setCountryCode] = useState('+91');
   const [errors, setErrors] = useState({
@@ -90,12 +90,12 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
         setLoading(true);
         const contactData = {
           name: contactDetails.name.trim(),
-          cc : countryCode.replace("+", ""),
+          cc: countryCode.replace('+', ''),
           contact: contactDetails.contact.trim(),
           // contact: (countryCode + contactDetails.contact.trim()).replace("+", ""),
           city: contactDetails.city.trim() || '-',
           tag: contactDetails.tag.trim() || '-',
-          cc: countryCode.replace('+', ''), 
+          cc: countryCode.replace('+', ''),
         };
         const response = await apiClient.post('/api/contacts/', contactData);
         toast.success('Contact created successfully!', { closeButton: true });
@@ -207,7 +207,7 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
             onClick={handleCreate}
             variant="contained"
             color="primary"
-            disabled={loading}
+            loading={loading}
             loadingPosition="start"
             loadingIndicator={
               <React.Fragment>

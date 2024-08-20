@@ -32,7 +32,7 @@ import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { selectBroadcast } from 'src/store/apps/chat/ChatSlice';
+import { selectBroadcast, setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import EventContext from 'src/BroadcastContext';
 
@@ -84,9 +84,12 @@ const EnhancedTableHead = (props) => {
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={numSelected === rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             color="primary"
+            inputProps={{
+              'aria-label': 'select all',
+            }}
             // indeterminate={isSomeSelected}
             // checked={isAllSelected}
             // onChange={onSelectAllClick}
@@ -126,6 +129,7 @@ const BroadcastMemberModal = ({
   activeBroadcastId,
   activeBroadcast,
   getBroadcastList = () => {},
+  onUpdateMembers,
 }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -138,7 +142,7 @@ const BroadcastMemberModal = ({
   const [allContacts, setAllContacts] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [selected, setSelected] = useState([]);
-  console.log('....', memberIds);
+  //console.log('....', memberIds);
   //const { toggleOnOff } = useContext(EventContext);
   const [numSelected, setNumSelected] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
@@ -297,6 +301,31 @@ const BroadcastMemberModal = ({
     }
   };
 
+  // const updateBroadcastMembers = async () => {
+  //   try {
+  //     const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
+  //       contacts: memberIds,
+  //     });
+
+  //     if (res.status === 200) {
+  //       toast.success('Broadcast members updated successfully!');
+
+  //       //dispatch(updateBroadcastMembers(res.data.data.contacts));
+  //       handleClose();
+  //       getBroadcastList();
+  //       onUpdateMembers(res.data.data.contacts);
+  //       dispatch(
+  //         selectBroadcast({
+  //           contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
+  //           ...activeBroadcast,
+  //         }),
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.warn(error);
+  //     toast.error(error?.response?.data?.message ?? 'There was an error!');
+  //   }
+  // };
   const updateBroadcastMembers = async () => {
     try {
       const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
@@ -305,12 +334,14 @@ const BroadcastMemberModal = ({
 
       if (res.status === 200) {
         toast.success('Broadcast members updated successfully!');
-        handleClose();
-        getBroadcastList();
 
+        dispatch(setBroadcastList(res.data.data.contacts));
+        handleClose();
+        getBroadcastList(); // Refresh the broadcast list
+        onUpdateMembers(res.data.data.contacts); // Update members in the modal
         dispatch(
           selectBroadcast({
-            contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
+            contacts: res.data.data.contacts, // Make sure to use updated contacts
             ...activeBroadcast,
           }),
         );
@@ -404,7 +435,6 @@ const BroadcastMemberModal = ({
                     <TableBody>
                       {paginatedContacts.map((row, idx) => {
                         const isItemSelected = selected.indexOf(row.id) !== -1;
-                        console.log('isselected', isItemSelected);
 
                         return (
                           <TableRow
@@ -422,6 +452,7 @@ const BroadcastMemberModal = ({
                                 inputProps={{
                                   'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
                                 }}
+                                color="primary"
                               />
                             </TableCell>
                             <TableCell sx={{ padding: '0px', minWidth: '120px' }}>

@@ -33,9 +33,12 @@ import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { IconSearch,
+import {
+  IconSearch,
   //  IconFilter, IconTrash,
-    IconFileImport, IconPlus } from '@tabler/icons';
+  IconFileImport,
+  IconPlus,
+} from '@tabler/icons';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import toast from 'react-hot-toast';
@@ -44,7 +47,8 @@ import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
 import EditContactModal from '../../modals/EditContactModel';
 import DeleteDialog from 'src/modals/DeleteDialog';
-import {FirstLetterCapitalOfString} from "src/utils/FirstLetterCapitalOfString"
+import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
+import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -314,7 +318,7 @@ const CustomersTableList = () => {
     contact: ' ',
     name: '',
     tag: '',
-    cc :''
+    cc: '',
   });
   const [allDataForEdit, setAllDataForEdit] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -326,26 +330,45 @@ const CustomersTableList = () => {
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
-  }, [page]);
+  }, [page, rowsPerPage]);
 
+  // const getApiData = async () => {
+  //   setLoading(true);
+  //   let allData = [];
+  //   try {
+  //     const response = await apiClient.get(
+  //       `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
+  //     );
+  //     console.log('contact response', response?.data?.data?.results);
+
+  //     allData = response?.data?.data?.results;
+  //     setTotalCount(response?.data?.data?.count);
+  //     setTotalPages(response?.data?.data?.total_pages);
+  //     setAllRows(allData);
+  //     setRows(allData);
+  //     setAllDataForEdit(allData);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //   }
+  // };
   const getApiData = async () => {
     setLoading(true);
-    let allData = [];
     try {
       const response = await apiClient.get(
         `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
       );
-      console.log('contact response', response?.data?.data?.results);
+      const allData = response?.data?.data?.results;
 
-      allData = response?.data?.data?.results;
       setTotalCount(response?.data?.data?.count);
       setTotalPages(response?.data?.data?.total_pages);
-      setAllRows(allData);
       setRows(allData);
+      setAllRows(allData);
       setAllDataForEdit(allData);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data from API:', error);
+      setLoading(false);
     }
   };
 
@@ -359,7 +382,7 @@ const CustomersTableList = () => {
             contact: item.contact,
             name: item.name,
             tag: item.tag,
-            cc : `+${item.cc}`
+            cc: `+${item.cc}`,
           });
         }
         return;
@@ -367,16 +390,44 @@ const CustomersTableList = () => {
     setEdit(true);
   }
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-    if (event.target.value === '') {
-      setRows(allRows);
+  // const handleSearch = (event) => {
+  //   setSearch(event.target.value);
+  //   if (event.target.value === '') {
+  //     setRows(allRows);
+  //   } else {
+  //     const filteredRows = allRows.filter((row) =>
+  //       row.name.toLowerCase().includes(event.target.value.toLowerCase()),
+  //     );
+  //     // console.log('=====', filteredRows);
+  //     setRows(filteredRows);
+  //   }
+  // };
+  const handleSearch = async (event) => {
+    const searchValue = event.target.value;
+    setSearch(searchValue);
+
+    // Reset to the first page whenever a new search is performed
+    setPage(0);
+
+    if (searchValue === '') {
+      // If search input is cleared, fetch data for the initial page without any filters
+      getApiData();
     } else {
-      const filteredRows = allRows.filter((row) =>
-        row.name.toLowerCase().includes(event.target.value.toLowerCase()),
-      );
-      // console.log('=====', filteredRows);
-      setRows(filteredRows);
+      try {
+        //setLoading(true);
+        const response = await apiClient.get(
+          `/api/contacts/?name=${searchValue}&page=${page + 1}&rows_per_page=${rowsPerPage}`,
+        );
+        const filteredRows = response?.data?.data?.results;
+
+        setRows(filteredRows);
+        setTotalCount(response?.data?.data?.count);
+        setTotalPages(response?.data?.data?.total_pages);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+        setLoading(false);
+      }
     }
   };
 
@@ -398,14 +449,31 @@ const CustomersTableList = () => {
   //   setRows(allRows);
   //   setSearch('');
   // };
-  const handleClearFilter = () => {
+  const handleClearFilter = async () => {
     setFilterCriteria({
       column: '',
       operator: 'contains',
       value: '',
     });
-    setRows(allRows);
+
     setSearch('');
+
+    setPage(0);
+
+    try {
+      //setLoading(true);
+      const response = await apiClient.get(`/api/contacts/?page=1&rows_per_page=${rowsPerPage}`);
+      const allData = response?.data?.data?.results;
+
+      setRows(allData);
+      setAllRows(allData);
+      setTotalCount(response?.data?.data?.count);
+      setTotalPages(response?.data?.data?.total_pages);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+      //setLoading(false);
+    }
   };
 
   const handleCloseFilterDialog = () => {
@@ -417,6 +485,27 @@ const CustomersTableList = () => {
     setFilterCriteria((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const applyFilter = () => {
+  //   const { column, value } = filterCriteria;
+
+  //   if (!column || !value) {
+  //     console.error('Column or value is not defined:', column, value);
+  //     return;
+  //   }
+
+  //   const filteredRows = allRows.filter((row) => {
+  //     if (row[column] && typeof row[column] === 'string') {
+  //       return row[column].toLowerCase().includes(value.toLowerCase());
+  //     }
+  //     return false;
+  //   });
+
+  //   // console.log('Filtered Rows:', filteredRows);
+
+  //   setRows(filteredRows);
+  //   setPage(0);
+  //   setOpenFilterDialog(false);
+  // };
   const applyFilter = () => {
     const { column, value } = filterCriteria;
 
@@ -432,9 +521,9 @@ const CustomersTableList = () => {
       return false;
     });
 
-    // console.log('Filtered Rows:', filteredRows);
-
     setRows(filteredRows);
+    setTotalCount(filteredRows.length);
+    setPage(0);
     setOpenFilterDialog(false);
   };
 
@@ -480,6 +569,45 @@ const CustomersTableList = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  // const handleChangePage = async (event, newPage) => {
+  //   setPage(newPage);
+
+  //   try {
+  //     setLoading(true);
+  //     const response = await apiClient.get(
+  //       `/api/contacts?page=${newPage + 1}&rows_per_page=${rowsPerPage}&name=${search}`,
+  //     );
+  //     const newRows = response?.data?.data?.results;
+
+  //     setRows(newRows);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const handleChangeRowsPerPage = async (event) => {
+  //   const newRowsPerPage = parseInt(event.target.value, 10);
+  //   setRowsPerPage(newRowsPerPage);
+  //   setPage(0);
+
+  //   try {
+  //     setLoading(true);
+  //     const response = await apiClient.get(
+  //       `/api/contacts?page=1&rows_per_page=${newRowsPerPage}&name=${search}`,
+  //     );
+  //     const newRows = response?.data?.data?.results;
+
+  //     setRows(newRows);
+  //     setTotalCount(response?.data?.data?.count);
+  //     setTotalPages(response?.data?.data?.total_pages);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //     setLoading(false);
+  //   }
+  // };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -507,7 +635,6 @@ const CustomersTableList = () => {
   // };
   const handleConfirmDelete = async () => {
     try {
-      //setLoading(true);
       await apiClient.delete(`api/contacts/bulk_delete/`, {
         data: { ids: selected },
       });
@@ -515,9 +642,9 @@ const CustomersTableList = () => {
 
       setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
       setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+
       setSelected([]);
     } catch (error) {
-      //setLoading(false);
       console.error('Failed to delete contacts:', error);
       toast.error('Failed to delete contacts');
     } finally {
@@ -561,82 +688,89 @@ const CustomersTableList = () => {
                   rowCount={rows.length}
                 />
                 <TableBody>
-                  {stableSort(rows, getComparator(order, orderBy))
-                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => {
-                      const isItemSelected = isSelected(row.id);
-                      const labelId = `enhanced-table-checkbox-${index}`;
-                      const createdAtDate = new Date(row.created_at);
-                      const updatedAtDate = new Date(row.updated_at);
-                      const formatDate = (date) => {
-                        return date.toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'numeric',
-                          day: 'numeric',
-                        });
-                      };
-                      return (
-                        <TableRow
-                          hover
-                          onClick={(event) => handleClick(event, row.id)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.id}
-                          selected={isItemSelected}
-                        >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              color="primary"
-                              checked={isItemSelected}
-                              inputProps={{
-                                'aria-labelledby': labelId,
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              { FirstLetterCapitalOfString(row.name)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '150px' }}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.full_mobile}
-                            </Typography>{' '}
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.city ?FirstLetterCapitalOfString(row.city)  : '-'}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.tag ? FirstLetterCapitalOfString(row.tag)  : '-'}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                  {rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={headCells.length} align="center">
+                        <Nodatainsearch />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    stableSort(rows, getComparator(order, orderBy))
+                      //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row.id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+
+                        const formatDate = (date) => {
+                          return date.toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                          });
+                        };
+                        return (
+                          <TableRow
+                            hover
+                            onClick={(event) => handleClick(event, row.id)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.id}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                color="primary"
+                                checked={isItemSelected}
+                                inputProps={{
+                                  'aria-labelledby': labelId,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {FirstLetterCapitalOfString(row.name)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '150px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.full_mobile}
+                              </Typography>{' '}
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.city ? FirstLetterCapitalOfString(row.city) : '-'}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.tag ? FirstLetterCapitalOfString(row.tag) : '-'}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                  )}
                   {/* {emptyRows > 0 && (
                     <TableRow
                       style={{
@@ -652,7 +786,7 @@ const CustomersTableList = () => {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={totalPage}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

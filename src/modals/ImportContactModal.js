@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Modal, Fade, Typography } from '@mui/material';
+import { Box, Button, Modal, Fade, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { IconFileImport, IconDownload } from '@tabler/icons';
 import apiClient from 'src/api/axiosClient';
@@ -19,7 +19,7 @@ const VisuallyHiddenInput = styled('input')({
 
 const ImportContactModal = ({ open, handleClose, getApiData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (!open) {
       setSelectedFile(null);
@@ -37,8 +37,9 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      console.log('abc',formData);
+      console.log('abc', formData);
       try {
+        setLoading(true);
         await apiClient.post('/import-contacts/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -53,6 +54,8 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
         } else {
           toast.error('Failed to upload file');
         }
+      } finally {
+        setLoading(false);
       }
     } else {
       toast.error('Please select a file first');
@@ -118,7 +121,20 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
             </Typography>
           )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mr: 2 }}
+              onClick={handleSubmit}
+              loading={loading}
+              loadingPosition="start"
+              loadingIndicator={
+                <React.Fragment>
+                  <CircularProgress size={18} color="inherit" />
+                  {/* Creating.. */}
+                </React.Fragment>
+              }
+            >
               Import
             </Button>
             <Button variant="contained" color="error" onClick={handleClose}>

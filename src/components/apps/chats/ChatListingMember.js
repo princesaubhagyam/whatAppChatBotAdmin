@@ -20,6 +20,7 @@ import { IconEdit, IconFileImport, IconSearch } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 import { fetchIsHistoryStatus, fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
+import { updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 
 import NoData from 'src/components/noData/NoData';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
@@ -39,7 +40,9 @@ const ChatListingMember = ({ getBroadcastList }) => {
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [searchQuery, setSearchQuery] = useState('');
+  const [members, setMembers] = useState(activeBroadcast?.contacts || []);
+  const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
   const isHistory = useSelector((state) => state.chatReducer.isHistory);
   const { isOn } = useContext(EventContext);
 
@@ -48,9 +51,27 @@ const ChatListingMember = ({ getBroadcastList }) => {
       dispatch(fetchIsHistoryStatus(activeBroadcast.id));
     }
   }, [activeBroadcast, isOn]);
+  useEffect(() => {
+    console.log('Active broadcast updated:', activeBroadcast);
+  }, [activeBroadcast]);
+
+  // useEffect(() => {
+  //   if (activeBroadcast) {
+  //     // Update local members and member count
+  //     setMembers(activeBroadcast.contacts || []);
+  //     setMemberCount(activeBroadcast.members || 0);
+  //   }
+  // }, [activeBroadcast]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleUpdateMembers = (updatedMembers) => {
+    setMembers(updatedMembers);
+    setMemberCount(updatedMembers.length);
+    // Dispatch an action to update the activeBroadcast state
+    dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
   };
 
   const filteredMembers = activeBroadcast?.contacts?.filter(
@@ -199,6 +220,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
         activeBroadcastId={activeBroadcast?.id}
         getBroadcastList={getBroadcastList}
         activeBroadcast={activeBroadcast}
+        onUpdateMembers={handleUpdateMembers}
       />
       <ImportBroadcastMember
         open={isImportModalOpen}

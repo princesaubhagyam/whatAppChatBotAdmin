@@ -45,15 +45,21 @@ const Chats = ({ checkBroadcastHistory }) => {
 
   useEffect(() => {
     if (selectedBroadcast) {
-      setIsBroadcastDeleted(false); 
+      setIsBroadcastDeleted(false);
     }
   }, [selectedBroadcast]);
 
   const handleBroadcastDelete = () => {
     setIsBroadcastDeleted(true);
-    setSelectedBroadcast(null); 
+    setSelectedBroadcast(null);
   };
-  
+
+  useEffect(() => {
+    if (selectedBroadcast) {
+      setSelectedBroadcast({ ...selectedBroadcast }); // Trigger re-render
+    }
+  }, [broadcasts]); // Re-render when broadcasts change
+
   const handleBroadcastSelect = (broadcast) => {
     setSelectedBroadcast(broadcast);
     setIsBroadcastDeleted(false); // Reset this state
@@ -92,9 +98,7 @@ const Chats = ({ checkBroadcastHistory }) => {
                 onBroadcastSelect={handleBroadcastSelect}
               />
               {!isBroadcastDeleted && (
-                <Box
-                  sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
-                >
+                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   <ChatContent
                     toggleChatSidebar={() => setMobileSidebarOpen(true)}
                     sx={{ flexGrow: 1 }}
@@ -102,7 +106,12 @@ const Chats = ({ checkBroadcastHistory }) => {
                     setIsAnalytics={setIsAnalytics}
                   />
                   <Divider />
-                  <ChatMsgSent checkBroadcastHistory={checkBroadcastHistory} />
+
+                  <ChatMsgSent
+                    checkBroadcastHistory={checkBroadcastHistory}
+                    memberCount={selectedBroadcast?.members || 0}
+                    getBroadcastsData={getBroadcastList}
+                  />
                 </Box>
               )}
               {!isBroadcastDeleted && (

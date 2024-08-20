@@ -100,7 +100,10 @@ export const fetchSelectedBroadcasts = (broadcastId) => async (dispatch) => {
     throw new Error(err);
   }
 };
-
+export const updateActiveBroadcast = (broadcastId, updatedBroadcast) => ({
+  type: 'UPDATE_ACTIVE_BROADCAST',
+  payload: { broadcastId, updatedBroadcast },
+});
 export const fetchIsHistoryStatus = (broadcastId) => async (dispatch) => {
   try {
     const res = await apiClient.get(`/broadcast-history_checker/${broadcastId}/`);
