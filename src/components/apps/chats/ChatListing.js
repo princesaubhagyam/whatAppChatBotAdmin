@@ -21,6 +21,7 @@ import {
   Modal,
   CircularProgress,
   Skeleton,
+  Tooltip,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
@@ -130,6 +131,14 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
   };
 
   const handleEditBroadcast = () => {
+    if (newBroadcastName.trim() === selectedBroadcast?.title) {
+      // If title hasn't changed, close the dialog without making any API calls
+      setOpenEditDialog(false);
+      //toast.success('No changes detected in the title.');
+      console.log('no changes in your title');
+
+      return;
+    }
     if (selectedBroadcastId && newBroadcastName !== selectedBroadcast?.title) {
       setLoading(true);
       apiClient
@@ -184,17 +193,19 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
             <br />
             View all broadcasts and its analytics
           </Typography>
-          <Button
-            sx={{
-              height: '25px',
-              width: '40px',
-              minWidth: '40px',
-              padding: '8px',
-            }}
-            onClick={handleOpenImportModal}
-          >
-            <IconPlus size={'19'} />
-          </Button>
+          <Tooltip title="Create group ">
+            <Button
+              sx={{
+                height: '25px',
+                width: '40px',
+                minWidth: '40px',
+                padding: '8px',
+              }}
+              onClick={handleOpenImportModal}
+            >
+              <IconPlus size={'19'} />
+            </Button>
+          </Tooltip>
         </Stack>
       </Box>
       <List sx={{ px: 0 }}>
@@ -313,20 +324,24 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
                         ) : (
                           !isHistory && (
                             <>
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={handleOpenDeleteDialog}
-                              >
-                                <DeleteOutline />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                color="primary"
-                                onClick={handleOpenEditDialog}
-                              >
-                                <IconEdit />
-                              </IconButton>
+                              <Tooltip title="Delete group">
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={handleOpenDeleteDialog}
+                                >
+                                  <DeleteOutline />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Edit title">
+                                <IconButton
+                                  size="small"
+                                  color="primary"
+                                  onClick={handleOpenEditDialog}
+                                >
+                                  <IconEdit />
+                                </IconButton>
+                              </Tooltip>
                             </>
                           )
                         )}

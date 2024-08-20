@@ -13,7 +13,7 @@ import {
   InputAdornment,
   IconButton,
   TextField,
-  Autocomplete
+  Autocomplete,
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -118,7 +118,7 @@ const validationSchema = yup.object({
 // });
 export default function CreateTemplate() {
   const navigate = useNavigate();
-  const [languages,] = useState(() => ([...Languages]))
+  const [languages] = useState(() => [...Languages]);
   const [step, setStep] = useState(0);
   const [HeaderSelect, setHeaderSelect] = useState('TEXT');
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
@@ -280,10 +280,10 @@ export default function CreateTemplate() {
               mediaType === 'image'
                 ? 'IMAGE'
                 : mediaType === 'video'
-                  ? 'VIDEO'
-                  : mediaType === 'document'
-                    ? 'DOCUMENT'
-                    : '',
+                ? 'VIDEO'
+                : mediaType === 'document'
+                ? 'DOCUMENT'
+                : '',
 
             example: {
               header_handle: [mediaRes],
@@ -337,7 +337,7 @@ export default function CreateTemplate() {
             setLoading(false);
             toast.success(
               'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
-              { duration: 5000 },
+              { duration: 5000, position: 'top-center' },
             );
             navigate('/templates');
           }
@@ -539,20 +539,20 @@ export default function CreateTemplate() {
                   Choose languages for your message template. You can delete or add more languages
                   later.
                 </Typography>
-                  <Autocomplete
-                    id="language"
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    name="language"
-                    options={languages}
-                    getOptionLabel={(option) => option.flagname}
-                    onChange={(event, value) => formik.setFieldValue("language", value.value)}
-                    value={formik.values.language?.value}
-                    renderInput={(params) => <TextField {...params}
-                     placeholder="Select your language"
-                    />}
-                  />
+                <Autocomplete
+                  id="language"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  name="language"
+                  options={languages}
+                  getOptionLabel={(option) => option.flagname}
+                  onChange={(event, value) => formik.setFieldValue('language', value.value)}
+                  value={formik.values.language?.value}
+                  renderInput={(params) => (
+                    <TextField {...params} placeholder="Select your language" />
+                  )}
+                />
                 {/* <CustomSelect
                   id="language"
                   fullWidth
@@ -699,10 +699,10 @@ export default function CreateTemplate() {
                                   mediaType === 'image'
                                     ? 'image/*'
                                     : mediaType === 'video'
-                                      ? 'video/*'
-                                      : mediaType === 'document'
-                                        ? 'application/pdf'
-                                        : ''
+                                    ? 'video/*'
+                                    : mediaType === 'document'
+                                    ? 'application/pdf'
+                                    : ''
                                 }
                                 onChange={handleMediaContentChange}
                               />
@@ -746,7 +746,7 @@ export default function CreateTemplate() {
                       ),
                     }}
                     required
-                  // dangerouslySetInnerHTML={{ __html: previewHtml }}
+                    // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
                   {variables &&
                     variables?.map((variable, index) => (
@@ -1025,9 +1025,9 @@ export default function CreateTemplate() {
                                 display: 'flex',
                                 justifyContent: 'center',
                               }}
-                            // variant="contained"
-                            // color="primary"
-                            // size="small"
+                              // variant="contained"
+                              // color="primary"
+                              // size="small"
                             >
                               {/* <Undo size={24} style={{ marginRight: 2 }} /> */}
                               {buttonIcon}

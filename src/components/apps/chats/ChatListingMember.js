@@ -5,7 +5,6 @@ import {
   ListItemText,
   ListItemAvatar,
   Box,
-  Alert,
   Badge,
   ListItemButton,
   Typography,
@@ -13,6 +12,7 @@ import {
   Stack,
   InputAdornment,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
@@ -34,7 +34,7 @@ const getInitials = (name) => {
   return initials.toUpperCase();
 };
 
-const ChatListingMember = ({ getBroadcastList }) => {
+const ChatListingMember = ({ getBroadcastList, refresh, handleRefreshChatListingMember }) => {
   const dispatch = useDispatch();
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -50,26 +50,46 @@ const ChatListingMember = ({ getBroadcastList }) => {
       dispatch(fetchIsHistoryStatus(activeBroadcast.id));
     }
   }, [activeBroadcast, isOn]);
+
   useEffect(() => {
     console.log('Active broadcast updated:', activeBroadcast);
   }, [activeBroadcast]);
 
-  // useEffect(() => {
-  //   if (activeBroadcast) {
-  //     // Update local members and member count
-  //     setMembers(activeBroadcast.contacts || []);
-  //     setMemberCount(activeBroadcast.members || 0);
-  //   }
-  // }, [activeBroadcast]);
+  useEffect(() => {
+    if (activeBroadcast) {
+      setMembers(activeBroadcast.contacts || []);
+      setMemberCount(activeBroadcast.members || 0);
+    }
+  }, [activeBroadcast, refresh]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
+  // const handleUpdateMembers = (updatedMembers) => {
+  //   setMembers(updatedMembers);
+  //   setMemberCount(updatedMembers.length);
+  //   // Dispatch an action to update the activeBroadcast state
+  //   dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
+  //   // dispatch(
+  //   //   updateActiveBroadcast({
+  //   //     ...activeBroadcast,
+  //   //     contacts: updatedMembers,
+  //   //   }),
+  //   // );
+  // };
   const handleUpdateMembers = (updatedMembers) => {
     setMembers(updatedMembers);
     setMemberCount(updatedMembers.length);
-    // Dispatch an action to update the activeBroadcast state
+
+    dispatch(
+      updateActiveBroadcast({
+        ...activeBroadcast,
+        contacts: updatedMembers,
+        members: updatedMembers.length,
+      }),
+    );
+
     dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
   };
 
@@ -99,29 +119,33 @@ const ChatListingMember = ({ getBroadcastList }) => {
               <Stack direction="row" gap={1}>
                 {!isHistory && (
                   <>
-                    <Button
-                      sx={{
-                        height: '25px',
-                        width: '40px',
-                        minWidth: '40px',
-                        padding: '8px',
-                      }}
-                      onClick={() => setIsMemberModalOpen(true)}
-                    >
-                      <IconEdit size={'20'} />
-                    </Button>
+                    <Tooltip title="Add members">
+                      <Button
+                        sx={{
+                          height: '25px',
+                          width: '40px',
+                          minWidth: '40px',
+                          padding: '8px',
+                        }}
+                        onClick={() => setIsMemberModalOpen(true)}
+                      >
+                        <IconEdit size={'20'} />
+                      </Button>
+                    </Tooltip>
 
-                    <Button
-                      sx={{
-                        height: '25px',
-                        width: '40px',
-                        minWidth: '40px',
-                        padding: '8px',
-                      }}
-                      onClick={() => setIsImportModalOpen(true)}
-                    >
-                      <IconFileImport size={'19'} />
-                    </Button>
+                    <Tooltip title="Add member from CSV">
+                      <Button
+                        sx={{
+                          height: '25px',
+                          width: '40px',
+                          minWidth: '40px',
+                          padding: '8px',
+                        }}
+                        onClick={() => setIsImportModalOpen(true)}
+                      >
+                        <IconFileImport size={'19'} />
+                      </Button>
+                    </Tooltip>
                   </>
                 )}
               </Stack>
@@ -203,9 +227,6 @@ const ChatListingMember = ({ getBroadcastList }) => {
                 ))
               ) : (
                 <Box m={2}>
-                  {/* <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
-                    No Contacts Found!
-                  </Alert> */}
                   <Nodatainsearch />
                 </Box>
               )}
@@ -225,6 +246,7 @@ const ChatListingMember = ({ getBroadcastList }) => {
         open={isImportModalOpen}
         handleClose={() => setIsImportModalOpen(false)}
         activeBroadcastId={activeBroadcast?.id}
+        getBroadcastList={getBroadcastList}
       />
     </>
   );

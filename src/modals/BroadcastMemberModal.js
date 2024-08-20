@@ -336,11 +336,11 @@ const BroadcastMemberModal = ({
 
         dispatch(setBroadcastList(res.data.data.contacts));
         handleClose();
-        getBroadcastList(); // Refresh the broadcast list
-        onUpdateMembers(res.data.data.contacts); // Update members in the modal
+        getBroadcastList(); 
+        onUpdateMembers(res.data.data.contacts);
         dispatch(
           selectBroadcast({
-            contacts: res.data.data.contacts, // Make sure to use updated contacts
+            contacts: res.data.data.contacts, 
             ...activeBroadcast,
           }),
         );

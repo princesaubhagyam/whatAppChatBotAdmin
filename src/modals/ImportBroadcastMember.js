@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Modal,
-  Fade,
-  Typography,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-} from '@mui/material';
+import { Box, Button, Modal, Fade, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { IconFileImport, IconDownload } from '@tabler/icons';
 import { LoadingButton } from '@mui/lab';
@@ -37,18 +28,24 @@ export const getBroadcastsData = async () => {
     toast.error('Error fetching data from API:', error);
   }
 };
-const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
+const ImportBroadcastMember = ({
+  open,
+  handleClose,
+  activeBroadcastId,
+  getMemberListInGroup,
+  getBroadcastList = () => {},
+}) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const getBroadcastList = async () => {
-    const broadcastsRes = await getBroadcastsData();
-    // setBroadcasts(broadcastsRes);
-    dispatch(setBroadcastList(broadcastsRes));
-  };
+  // const getBroadcastList = async () => {
+  //   const broadcastsRes = await getBroadcastsData();
+  //   // setBroadcasts(broadcastsRes);
+  //   dispatch(setBroadcastList(broadcastsRes));
+  // };
   useEffect(() => {
     if (open) {
       setFile(null);
@@ -85,11 +82,13 @@ const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
             'Content-Type': 'multipart/form-data',
           },
         });
-
+        console.log(response);
         if (response.status === 200 || response.status === 201) {
           toast.success('File uploaded successfully');
           handleClose();
+
           getBroadcastList();
+          getMemberListInGroup();
         }
       } catch (error) {
         console.log(error, '----');
