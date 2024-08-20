@@ -22,7 +22,6 @@ import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
 import { fetchIsHistoryStatus, fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
 import { updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 
-import NoData from 'src/components/noData/NoData';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 import EventContext from 'src/BroadcastContext';

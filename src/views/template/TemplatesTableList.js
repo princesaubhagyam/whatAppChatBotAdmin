@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
-import { format } from 'date-fns';
 import {
   Box,
   Table,
@@ -15,9 +14,7 @@ import {
   Toolbar,
   IconButton,
   Tooltip,
-  FormControlLabel,
   Typography,
-  Avatar,
   TextField,
   InputAdornment,
   Paper,
@@ -28,29 +25,18 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Card,
   CardMedia,
-  Backdrop,
   CircularProgress,
 } from '@mui/material';
-import DeleteDialog from 'src/modals/DeleteDialog';
 import { visuallyHidden } from '@mui/utils';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
-import { Delete, DeleteOutline } from '@mui/icons-material';
+import { DeleteOutline } from '@mui/icons-material';
 import { useState } from 'react';
-import {
-  IconDotsVertical,
-  IconEye,
-  IconFilter,
-  IconMessage2Share,
-  IconSearch,
-  IconTrash,
-} from '@tabler/icons';
+import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons';
 
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
 import { LoadingButton } from '@mui/lab';
 import CachedIcon from '@mui/icons-material/Cached';
-import Spinner from '../spinner/Spinner';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {

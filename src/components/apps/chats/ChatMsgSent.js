@@ -79,7 +79,7 @@ const ChatMsgSent = ({ checkBroadcastHistory, memberCount, getBroadcastList, onU
             height: '40px',
           }}
         >
-          {!isHistory && (
+          {/* {!isHistory && (
             <div style={{ justifyContent: 'center' }}>
               {memberCount > 0 ? (
                 <Button
@@ -101,8 +101,8 @@ const ChatMsgSent = ({ checkBroadcastHistory, memberCount, getBroadcastList, onU
                 </Button>
               )}
             </div>
-          )}
-          {/* {!isHistory && (
+          )} */}
+          {!isHistory && (
             <Button
               style={{ backgroundColor: '#1A4D2E', color: 'white' }}
               onClick={handleOpenTemplateModal}
@@ -111,7 +111,7 @@ const ChatMsgSent = ({ checkBroadcastHistory, memberCount, getBroadcastList, onU
               <IconSend size={16} />
               Send Template
             </Button>
-          )} */}
+          )}
         </form>
       )}
       <TemplateModal

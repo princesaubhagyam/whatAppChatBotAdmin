@@ -34,7 +34,6 @@ import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { selectBroadcast, setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import EventContext from 'src/BroadcastContext';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
