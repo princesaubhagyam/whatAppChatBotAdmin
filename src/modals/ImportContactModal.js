@@ -127,6 +127,7 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
               sx={{ mr: 2 }}
               onClick={handleSubmit}
               loading={loading}
+              disabled={loading} 
               loadingPosition="start"
               loadingIndicator={
                 <React.Fragment>
@@ -135,7 +136,8 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
                 </React.Fragment>
               }
             >
-              Import
+               {loading ? <>Loading...</> :<>Import</> }
+             
             </Button>
             <Button variant="contained" color="error" onClick={handleClose}>
               Close

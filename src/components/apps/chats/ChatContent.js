@@ -30,16 +30,16 @@ import InfoIcon from '@mui/icons-material/Info';
 const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
   // const [open, setOpen] = React.useState(false);
   const [Graph, setGraph] = React.useState([]);
-  console.log('Graph', Graph);
+  // console.log('Graph', Graph);
 
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   // console.log(activeBroadcast.id);
   const [loading, setLoading] = useState(false);
   const chatDetails = useSelector((state) => state.chatReducer.chatHistory);
   const [refreshKey, setRefreshKey] = useState(0);
-  console.log('chatDetails', activeBroadcast);
+  // console.log('chatDetails', activeBroadcast);
   const [isHistory, setIsHistory] = useState(false);
-  console.log('isHistory', isHistory);
+  // console.log('isHistory', isHistory);
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {
