@@ -91,9 +91,9 @@ export const fetchBroadcasts = () => async () => {
 export const fetchSelectedBroadcasts = (broadcastId) => async (dispatch) => {
   try {
     const response = await apiClient.get(`/api/broadcasts/${broadcastId}`);
-    console.log(response);
+    // console.log(response);
     if (response) {
-      console.log('response.data', response.data);
+      // console.log('response.data', response.data);
       dispatch(selectBroadcast(response.data.data));
     }
   } catch (err) {
@@ -124,7 +124,7 @@ export const fetchChatHistoryByPhoneNo = (phoneNo) => async (dispatch) => {
       },
     });
     if (res.status === 200) {
-      console.log(res.data.data, '++++++');
+      // console.log(res.data.data, '++++++');
       dispatch(setChatHistory(res.data.data));
     }
   } catch (error) {
@@ -139,7 +139,7 @@ export const fetchQualityRating = () => async (dispatch) => {
     if (phoneId !== null) {
       const response = await metaClient.get(`${phoneId}`);
       const fetchedQualityRating = response?.data?.quality_rating;
-      console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
+      // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
       dispatch(setQualityRating(fetchedQualityRating));
     }
   } catch (error) {

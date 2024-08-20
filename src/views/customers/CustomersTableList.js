@@ -50,6 +50,7 @@ import DeleteDialog from 'src/modals/DeleteDialog';
 import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -149,9 +150,6 @@ const EnhancedTableToolbar = (props) => {
     setOpenAddContactModal,
     showButtons,
     handleOpenFilterDialog,
-    // isSelected,
-    // isItemSelected,
-    handleDelete,
     handleEdit,
     setOpenDeleteDialog,
   } = props;
@@ -161,22 +159,6 @@ const EnhancedTableToolbar = (props) => {
   const handleOpenDeleteDialog = () => {
     setOpenDeleteDialog(true);
   };
-  // const handleDelete = async () => {
-  //   try {
-  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
-  //       data: { ids: selected },
-  //     });
-  //     toast.success('Contacts deleted successfully');
-  //     // Remove the deleted contacts from the local state
-  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-  //     setSelected([]);
-  //   } catch (error) {
-  //     console.error('Failed to delete contacts:', error);
-  //     toast.error('Failed to delete contacts');
-  //   }
-  // };
-
   return (
     <>
       <Stack
@@ -197,8 +179,7 @@ const EnhancedTableToolbar = (props) => {
             }}
           >
             <Typography variant="h5" marginLeft={'10px'}>
-              {' '}
-              {numSelected} selected{' '}
+            {numSelected} selected
             </Typography>
             <Box>
               {numSelected === 1 ? (
@@ -285,19 +266,18 @@ const EnhancedTableToolbar = (props) => {
 };
 
 EnhancedTableToolbar.propTypes = {
-  //numSelected: PropTypes.number.isRequired,
   numSelected: PropTypes.arrayOf(PropTypes.number).isRequired,
   handleSearch: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   onOpenImportModal: PropTypes.func.isRequired,
   handleOpenFilterDialog: PropTypes.func.isRequired,
-  //isSelected: PropTypes.array.isRequired,
 };
 
 const CustomersTableList = () => {
   const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
+  console.log(selected,"selected")
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -307,8 +287,7 @@ const CustomersTableList = () => {
   const [allRows, setAllRows] = useState([]);
   const [search, setSearch] = useState('');
   const [openImportModal, setOpenImportModal] = useState(false);
-  const [openAddContactModal, setOpenAddContactModal] = useState(false);
-  const [openAdd, setOpenAdd] = useState(false);
+  const [openAddContactModal, setOpenAddContactModal] = useState(false);;
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
@@ -327,31 +306,12 @@ const CustomersTableList = () => {
     operator: 'contains',
     value: '',
   });
+
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
   }, [page, rowsPerPage]);
 
-  // const getApiData = async () => {
-  //   setLoading(true);
-  //   let allData = [];
-  //   try {
-  //     const response = await apiClient.get(
-  //       `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
-  //     );
-  //     console.log('contact response', response?.data?.data?.results);
-
-  //     allData = response?.data?.data?.results;
-  //     setTotalCount(response?.data?.data?.count);
-  //     setTotalPages(response?.data?.data?.total_pages);
-  //     setAllRows(allData);
-  //     setRows(allData);
-  //     setAllDataForEdit(allData);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Error fetching data from API:', error);
-  //   }
-  // };
   const getApiData = async () => {
     setLoading(true);
     try {
@@ -390,18 +350,6 @@ const CustomersTableList = () => {
     setEdit(true);
   }
 
-  // const handleSearch = (event) => {
-  //   setSearch(event.target.value);
-  //   if (event.target.value === '') {
-  //     setRows(allRows);
-  //   } else {
-  //     const filteredRows = allRows.filter((row) =>
-  //       row.name.toLowerCase().includes(event.target.value.toLowerCase()),
-  //     );
-  //     // console.log('=====', filteredRows);
-  //     setRows(filteredRows);
-  //   }
-  // };
   const handleSearch = async (event) => {
     const searchValue = event.target.value;
     setSearch(searchValue);
@@ -439,16 +387,6 @@ const CustomersTableList = () => {
     setOpenDeleteDialog(false);
   };
 
-  // const handleCloseFilterDialog = () => {
-  //   setFilterCriteria({
-  //     column: '',
-  //     operator: 'contains',
-  //     value: '',
-  //   });
-  //   setOpenFilterDialog(false);
-  //   setRows(allRows);
-  //   setSearch('');
-  // };
   const handleClearFilter = async () => {
     setFilterCriteria({
       column: '',
@@ -485,46 +423,25 @@ const CustomersTableList = () => {
     setFilterCriteria((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const applyFilter = () => {
-  //   const { column, value } = filterCriteria;
-
-  //   if (!column || !value) {
-  //     console.error('Column or value is not defined:', column, value);
-  //     return;
-  //   }
-
-  //   const filteredRows = allRows.filter((row) => {
-  //     if (row[column] && typeof row[column] === 'string') {
-  //       return row[column].toLowerCase().includes(value.toLowerCase());
-  //     }
-  //     return false;
-  //   });
-
-  //   // console.log('Filtered Rows:', filteredRows);
-
-  //   setRows(filteredRows);
-  //   setPage(0);
-  //   setOpenFilterDialog(false);
-  // };
-  const applyFilter = () => {
-    const { column, value } = filterCriteria;
-
-    if (!column || !value) {
-      console.error('Column or value is not defined:', column, value);
-      return;
-    }
-
-    const filteredRows = allRows.filter((row) => {
-      if (row[column] && typeof row[column] === 'string') {
-        return row[column].toLowerCase().includes(value.toLowerCase());
-      }
-      return false;
-    });
-
-    setRows(filteredRows);
-    setTotalCount(filteredRows.length);
+  const handleApplyFilter = async (keys,values) => {
+    // Reset to the first page whenever a new search is performed
     setPage(0);
-    setOpenFilterDialog(false);
+      try {
+        //setLoading(true);
+        const response = await apiClient.get(
+          `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}&${keys}=${values}`,
+        );
+        const filteredRows = response?.data?.data?.results;
+
+        setRows(filteredRows);
+        setTotalCount(response?.data?.data?.count);
+        setTotalPages(response?.data?.data?.total_pages);
+        setOpenFilterDialog(false);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+        setLoading(false);
+      }
   };
 
   const handleRequestSort = (event, property) => {
@@ -563,51 +480,13 @@ const CustomersTableList = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    setSelected([])
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  // const handleChangePage = async (event, newPage) => {
-  //   setPage(newPage);
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await apiClient.get(
-  //       `/api/contacts?page=${newPage + 1}&rows_per_page=${rowsPerPage}&name=${search}`,
-  //     );
-  //     const newRows = response?.data?.data?.results;
-
-  //     setRows(newRows);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Error fetching data from API:', error);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleChangeRowsPerPage = async (event) => {
-  //   const newRowsPerPage = parseInt(event.target.value, 10);
-  //   setRowsPerPage(newRowsPerPage);
-  //   setPage(0);
-
-  //   try {
-  //     setLoading(true);
-  //     const response = await apiClient.get(
-  //       `/api/contacts?page=1&rows_per_page=${newRowsPerPage}&name=${search}`,
-  //     );
-  //     const newRows = response?.data?.data?.results;
-
-  //     setRows(newRows);
-  //     setTotalCount(response?.data?.data?.count);
-  //     setTotalPages(response?.data?.data?.total_pages);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Error fetching data from API:', error);
-  //     setLoading(false);
-  //   }
-  // };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -616,23 +495,6 @@ const CustomersTableList = () => {
     getApiData();
   };
 
-  // const handleDelete = async () => {
-  //   try {
-  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
-  //       data: { ids: selected },
-  //     });
-  //     toast.success('Contacts deleted successfully');
-
-  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-  //     setSelected([]);
-  //   } catch (error) {
-  //     console.error('Failed to delete contacts:', error);
-  //     toast.error('Failed to delete contacts');
-  //   } finally {
-  //     handleCloseDeleteDialog(); // Close the dialog after deleting
-  //   }
-  // };
   const handleConfirmDelete = async () => {
     try {
       await apiClient.delete(`api/contacts/bulk_delete/`, {
@@ -642,7 +504,7 @@ const CustomersTableList = () => {
 
       setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
       setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-
+      getApiData()
       setSelected([]);
     } catch (error) {
       console.error('Failed to delete contacts:', error);
@@ -652,7 +514,6 @@ const CustomersTableList = () => {
     }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
     <Box sx={{ width: '100%' }}>
       {loading ? (
@@ -700,14 +561,6 @@ const CustomersTableList = () => {
                       .map((row, index) => {
                         const isItemSelected = isSelected(row.id);
                         const labelId = `enhanced-table-checkbox-${index}`;
-
-                        const formatDate = (date) => {
-                          return date.toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'numeric',
-                            day: 'numeric',
-                          });
-                        };
                         return (
                           <TableRow
                             hover
@@ -771,20 +624,11 @@ const CustomersTableList = () => {
                         );
                       })
                   )}
-                  {/* {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: (dense ? 33 : 53) * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10, 25,50,100]}
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}
@@ -809,7 +653,7 @@ const CustomersTableList = () => {
                     sx={{ paddingTop: '25px !important', paddingLeft: '0px !important' }}
                   >
                     <Select
-                      value={filterCriteria.column}
+                      value={filterCriteria?.column}
                       onChange={handleFilterChange}
                       fullWidth
                       name="column"
@@ -832,7 +676,7 @@ const CustomersTableList = () => {
                       label="Value"
                       variant="outlined"
                       name="value"
-                      value={filterCriteria.value}
+                      value={filterCriteria?.value}
                       onChange={handleFilterChange}
                       style={{
                         width: '265px',
@@ -856,7 +700,8 @@ const CustomersTableList = () => {
                   Clear Filter
                 </Button>
                 <Button
-                  onClick={applyFilter}
+                  onClick={()=>(handleApplyFilter(filterCriteria?.column,filterCriteria?.value, ))}
+                  
                   variant="contained"
                   color="primary"
                   sx={{ marginLeft: '16rem !important' }}
