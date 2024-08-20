@@ -95,7 +95,7 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
           }}
         >
           <Typography variant="h6" component="h2">
-            Create Broadcast from CSV
+          Create Broadcast Title
           </Typography>
           <FormControl sx={{ marginTop: '15px', width: '100%' }}>
             <InputLabel htmlFor="component-outlined">Enter Broadcast Title</InputLabel>
@@ -116,7 +116,7 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
               loading={loading}
               onClick={handleCreate}
               sx={{ mr: 2 }}
-              loadingPosition="start"
+              //loadingPosition="start"
               loadingIndicator={
                 <React.Fragment>
                   <CircularProgress size={18} color="inherit" />

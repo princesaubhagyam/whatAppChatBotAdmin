@@ -18,7 +18,7 @@ const SidebarItems = () => {
   const dispatch = useDispatch();
 
   return (
-    <Box sx={{ px: 3 }}>
+    <Box sx={{ px: 0 }} width={'100px'}>
       <List sx={{ pt: 0 }} className="sidebarNav">
         {Menuitems.map((item, index) => {
           // {/********SubHeader**********/}
@@ -29,15 +29,16 @@ const SidebarItems = () => {
             /* eslint no-else-return: "off" */
           } else if (item.children) {
             return (
-              <NavCollapse
-                menu={item}
-                pathDirect={pathDirect}
-                hideMenu={hideMenu}
-                pathWithoutLastPart={pathWithoutLastPart}
-                level={1}
-                key={item.id}
-                onClick={() => dispatch(toggleMobileSidebar())}
-              />
+              // <NavCollapse
+              //   menu={item}
+              //   pathDirect={pathDirect}
+              //   hideMenu={hideMenu}
+              //   pathWithoutLastPart={pathWithoutLastPart}
+              //   level={1}
+              //   key={item.id}
+              //   onClick={() => dispatch(toggleMobileSidebar())}
+              // />
+              <></>
             );
 
             // {/********If Sub No Menu**********/}

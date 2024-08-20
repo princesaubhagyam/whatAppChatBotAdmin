@@ -4,18 +4,16 @@ import {
   FormControlLabel,
   Grid,
   MenuItem,
-  FormControl,
+  Select,
   Typography,
   FormHelperText,
   CardMedia,
   Radio,
   RadioGroup,
-  Snackbar,
-  Stack,
-  Card,
   InputAdornment,
   IconButton,
   TextField,
+  Autocomplete
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -33,17 +31,12 @@ import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import Undo from '@mui/icons-material/Undo';
-import LaunchIcon from '@mui/icons-material/Launch';
 import Launch from '@mui/icons-material/Launch';
-import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
-import { Replay5Outlined, Reply } from '@mui/icons-material';
+import { Reply } from '@mui/icons-material';
 import toast from 'react-hot-toast';
-import * as Yup from 'yup';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import axios from 'axios';
 import apiClient from 'src/api/axiosClient';
+import countryCodes from '../../utils/Countrycode.json';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 const BCrumb = [
   { to: '/', title: 'Home' },
@@ -54,7 +47,7 @@ const BCrumb = [
 const category = [
   { value: 'MARKETING', label: 'Marketing' },
   { value: 'UTILITY', label: 'Utility' },
-  { value: 'AUTHENTICATION', label: 'Authentication' },
+  // { value: 'AUTHENTICATION', label: 'Authentication' },
 ];
 
 yup.addMethod(yup.string, 'containsUnderscore', function (message) {
@@ -78,52 +71,54 @@ const validationSchema = yup.object({
   category: yup.string().required('Category is Required'),
   language: yup.string().required('Language is Required'),
 });
-const validatioSecondSchema = yup.object().shape({
-  type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
-  format: yup.string().when('type', {
-    is: 'HEADER',
-    then: yup.string().oneOf(['TEXT']).required(),
-    otherwise: yup.string().notRequired(),
-  }),
-  text: yup.string().when('type', {
-    is: 'BODY',
-    then: yup.string().required(),
-    otherwise: yup.string().notRequired(),
-  }),
-  example: yup.object().when('type', {
-    is: 'HEADER',
-    then: yup
-      .object({
-        header_text: yup.array().of(yup.string()).required(),
-      })
-      .required(),
-    is: 'BODY',
-    then: yup
-      .object({
-        body_text: yup.array().of(yup.array().of(yup.string())).required(),
-      })
-      .required(),
-    otherwise: yup.object().notRequired(),
-  }),
-  buttons: yup.array().when('type', {
-    is: 'BUTTONS',
-    then: yup
-      .array()
-      .of(
-        yup
-          .object()
-          .shape({
-            type: yup.string().oneOf(['QUICK_REPLY']).required(),
-            text: yup.string().required('Quick reply button text requied!'),
-          })
-          .required(),
-      )
-      .required(),
-    otherwise: yup.array().notRequired(),
-  }),
-});
+
+// const validatioSecondSchema = yup.object().shape({
+//   type: yup.string().oneOf(['HEADER', 'BODY', 'FOOTER', 'BUTTONS']).required(),
+//   format: yup.string().when('type', {
+//     is: 'HEADER',
+//     then: yup.string().oneOf(['TEXT']).required(),
+//     otherwise: yup.string().notRequired(),
+//   }),
+//   text: yup.string().when('type', {
+//     is: 'BODY',
+//     then: yup.string().required(),
+//     otherwise: yup.string().notRequired(),
+//   }),
+//   example: yup.object().when('type', {
+//     is: 'HEADER',
+//     then: yup
+//       .object({
+//         header_text: yup.array().of(yup.string()).required(),
+//       })
+//       .required(),
+//     is: 'BODY',
+//     then: yup
+//       .object({
+//         body_text: yup.array().of(yup.array().of(yup.string())).required(),
+//       })
+//       .required(),
+//     otherwise: yup.object().notRequired(),
+//   }),
+//   buttons: yup.array().when('type', {
+//     is: 'BUTTONS',
+//     then: yup
+//       .array()
+//       .of(
+//         yup
+//           .object()
+//           .shape({
+//             type: yup.string().oneOf(['QUICK_REPLY']).required(),
+//             text: yup.string().required('Quick reply button text requied!'),
+//           })
+//           .required(),
+//       )
+//       .required(),
+//     otherwise: yup.array().notRequired(),
+//   }),
+// });
 export default function CreateTemplate() {
   const navigate = useNavigate();
+  const [languages,] = useState(() => ([...Languages]))
   const [step, setStep] = useState(0);
   const [HeaderSelect, setHeaderSelect] = useState('TEXT');
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
@@ -136,8 +131,10 @@ export default function CreateTemplate() {
   const [callToActionURL, setCallToActionURL] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
+  const [countryCode, setCountryCode] = useState('+91');
+  // console.log(countryCode, 'countryCode');
   const [mediaRes, setMediaRes] = useState();
-  console.log(mediaRes);
+  //console.log('mediares',mediaRes);
   const CHARACTER_LIMIT = 1000;
   const CHARACTER_LIMIT_TEXT = 30;
   const CHARACTER_LIMIT_FOOTER = 50;
@@ -149,17 +146,23 @@ export default function CreateTemplate() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      // console.log("values", values)
       setStep(1);
       setPreData(values);
     },
   });
+  // console.log("formik", formik)
 
-  const [variables, setVariables] = useState([{ id: 1, value: '' }]);
-  const [variablesTitle, setVariablesTitle] = useState([{ id: 1, value: '' }]);
-
+  const [variables, setVariables] = useState([]);
+  // const [variablesTitle, setVariablesTitle] = useState([]);
+  //console.log(variablesTitle, variables);
   const addVariable = () => {
     setVariables([...variables, { id: variables.length + 1, value: '' }]);
     formikTemplate.values.body = formikTemplate.values.body + `{{${variables.length + 1}}}`;
+  };
+
+  const handleCountryCodeChange = (e) => {
+    setCountryCode(e.target.value);
   };
 
   const removeVariable = (id) => {
@@ -177,39 +180,40 @@ export default function CreateTemplate() {
     });
     setVariables(newVariables);
   };
-  const addVariableTitle = () => {
-    setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
-    formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
-  };
+  // const addVariableTitle = () => {
+  //   setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+  //   formikTemplate.values.text = formikTemplate.values.text + `{{${variablesTitle.length + 1}}}`;
+  // };
 
-  const removeVariableTitle = (id) => {
-    setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
-    const placeholderToRemove = `{{${id}}}`;
-    formikTemplate.values.text = formikTemplate.values.text.replace(placeholderToRemove, '');
-  };
+  // const removeVariableTitle = (id) => {
+  //   setVariablesTitle(variablesTitle.filter((variable) => variable.id !== id));
+  //   const placeholderToRemove = `{{${id}}}`;
+  //   formikTemplate.values.text = formikTemplate.values.text.replace(placeholderToRemove, '');
+  // };
 
-  const handleVariableChangeTitle = (id, event) => {
-    const newVariables = variablesTitle.map((variable) => {
-      if (variable.id === id) {
-        return { ...variable, value: event.target.value };
-      }
-      return variable;
-    });
-    setVariablesTitle(newVariables);
-  };
+  // const handleVariableChangeTitle = (id, event) => {
+  //   const newVariables = variablesTitle.map((variable) => {
+  //     if (variable.id === id) {
+  //       return { ...variable, value: event.target.value };
+  //     }
+  //     return variable;
+  //   });
+  //   setVariablesTitle(newVariables);
+  // };
   const formikTemplate = useFormik({
     initialValues: {
-      body: 'Welcome {{1}}!',
+      body: '',
       buttonText: '',
       footer: '',
-      text: 'Hi {{1}}!',
+      text: '',
     },
+    //validatioSecondSchema: validatioSecondSchema,
     onSubmit: async (values) => {
       setLoading(true);
       try {
         const bodyValues = variables.map((v) => v.value);
         const titleValues = variables.map((v) => v.value);
-
+        const validButton = values.buttonText && values.buttonText.trim().length > 0;
         let reqBody = {
           name: preData.name,
           language: preData.language,
@@ -220,41 +224,73 @@ export default function CreateTemplate() {
               format: HeaderSelect,
               text: HeaderSelect === 'TEXT' ? values.text : '',
               // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
-              example: {
-                header_text: titleValues,
-              },
+              ...(titleValues.length > 0 && {
+                example: {
+                  header_text: titleValues,
+                },
+              }),
             },
             {
               type: 'BODY',
               text: values.body,
-              example: {
-                body_text: [bodyValues],
-              },
+              // example: {
+              //   body_text: [bodyValues],
+              // body_text: bodyValues.length > 0 ? [bodyValues] : [''],
+              //},
+              ...(bodyValues.length > 0 && {
+                example: {
+                  body_text: [bodyValues],
+                },
+              }),
             },
             {
               type: 'FOOTER',
               text: values.footer,
             },
-            {
-              type: 'BUTTONS',
-              buttons: [
-                {
-                  type: 'QUICK_REPLY',
-                  text: values.buttonText,
-                },
-              ],
-            },
+            ...(validButton && [
+              {
+                type: 'BUTTONS',
+                buttons: [
+                  {
+                    type: buttonSelect,
+                    text: values.buttonText,
+
+                    ...(buttonSelect === 'PHONE_NUMBER' && { phone_number: phoneNumber }),
+                    ...(buttonSelect === 'URL' && {
+                      url: callToActionURL,
+                      example: ['summer2023'],
+                    }),
+                  },
+                ],
+              },
+            ]),
           ],
         };
+        reqBody.components.forEach((component) => {
+          if (component.type === 'BUTTONS') {
+            component.buttons.forEach((button) => {
+              delete button.icon;
+            });
+          }
+        });
         if (HeaderSelect === 'MEDIA') {
           reqBody.components[0] = {
             type: 'HEADER',
-            format: mediaType === 'image' ? 'IMAGE' : 'VIDEO',
+            format:
+              mediaType === 'image'
+                ? 'IMAGE'
+                : mediaType === 'video'
+                  ? 'VIDEO'
+                  : mediaType === 'document'
+                    ? 'DOCUMENT'
+                    : '',
+
             example: {
               header_handle: [mediaRes],
             },
           };
         }
+        <div>This is the key point</div>;
         if (phoneNumber) {
           reqBody.components[3] = {
             type: 'BUTTONS',
@@ -262,7 +298,7 @@ export default function CreateTemplate() {
               {
                 type: 'PHONE_NUMBER',
                 text: values.buttonText,
-                phone_number: phoneNumber,
+                phone_number: (countryCode + phoneNumber).replace('+', ''),
               },
             ],
           };
@@ -276,7 +312,7 @@ export default function CreateTemplate() {
                 text: values.buttonText,
                 url: callToActionURL,
                 example: ['summer2023'],
-                icon: buttonIcon,
+                //icon: buttonIcon,
               },
             ],
           };
@@ -299,15 +335,17 @@ export default function CreateTemplate() {
 
           if (response) {
             setLoading(false);
-            toast.success('Template created!', { duration: 2000 });
+            toast.success(
+              'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
+              { duration: 5000 },
+            );
             navigate('/templates');
           }
         }
         setLoading(false);
       } catch (error) {
         setLoading(false);
-
-        toast.error(error.response.data.error.error_user_msg, { duration: 2000 });
+        toast.error(error.response.data.error.error_user_title, { duration: 2000 });
       }
     },
   });
@@ -337,32 +375,70 @@ export default function CreateTemplate() {
 
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
+    setMediaContent(null);
   };
 
-  const handleMediaContentChange = async (event) => {
-    setMediaContent(URL.createObjectURL(event.target.files[0]));
+  // const handleMediaContentChange = async (event) => {
+  //   setMediaContent(URL.createObjectURL(event.target.files[0]));
 
-    const response = await apiClient.post(
-      `/api/create_session_facebook/?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
-    );
-    if (response) {
-      let mediaFile = new FormData();
-      mediaFile.append('data', event.target.files[0]);
-      const finalResponse = await apiClient.post(
-        `/api/upload_file_facebook/${response.data.id}`,
-        mediaFile,
-        {
-          headers: { 'content-type': 'multipart/form-data' },
-        },
+  //   const response = await apiClient.post(
+  //     `/api/create_session_facebook/?file_length=${event.target.files[0].size}&file_type=${event.target.files[0].type}`,
+  //   );
+  //   if (response) {
+  //     let mediaFile = new FormData();
+  //     mediaFile.append('data', event.target.files[0]);
+  //     console.log('abcd',mediaFile);
+  //     const finalResponse = await apiClient.post(
+  //       `/api/upload_file_facebook/${response.data.id}`,
+  //       mediaFile,
+  //       {
+  //         headers: { 'content-type': 'multipart/form-data' },
+  //       },
+  //     );
+
+  //     setMediaRes(finalResponse.data.h);
+  //     console.log(finalResponse.data.h);
+  //   }
+  // };
+  const handleMediaContentChange = async (event) => {
+    try {
+      const file = event.target.files[0];
+      setMediaContent(URL.createObjectURL(file));
+
+      const response = await apiClient.post(
+        `/api/create_session_facebook/?file_length=${file.size}&file_type=${file.type}`,
       );
 
-      setMediaRes(finalResponse.data.h);
-      console.log(finalResponse.data.h);
+      if (response && response.data.id) {
+        let mediaFile = new FormData();
+        mediaFile.append('file', file);
+
+        for (let [key, value] of mediaFile.entries()) {
+          console.log(`${key}:`, value);
+        }
+
+        const finalResponse = await apiClient.post(
+          `/api/upload_file_facebook/${response.data.id}`,
+          mediaFile,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          },
+        );
+        console.log('Upload file response:', finalResponse);
+
+        setMediaRes(finalResponse.data.res.h);
+        console.log('abc image', finalResponse.data.res.h);
+      } else {
+        console.error('Failed to create session.');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error.response ? error.response.data : error.message);
     }
   };
 
   const handleButtonSelectChange = (event) => {
     const value = event.target.value;
+    console.log('Selected Value:', value);
     setButtonSelect(value);
     formikTemplate.setFieldValue('buttonText', '');
     switch (value) {
@@ -382,24 +458,30 @@ export default function CreateTemplate() {
     let num = countPlaceholders(e.target.value);
     if (variables.length < num) {
       setVariables([...variables, { id: variables.length + 1, value: '' }]);
+      console.log('variables<', variables);
     }
     if (variables.length > num) {
-      setVariables(variables.splice(-1));
+      console.log('variables>', variables);
+
+      setVariables(variables.slice(0, -1));
+      console.log('variables>', variables);
     }
     setInputLength(e.target.value.length);
+    console.log('e', e.target.value);
+
     formikTemplate.handleChange(e);
   };
-  const handleFieldChangeTitle = (e) => {
-    let num = countPlaceholders(e.target.value);
-    if (variablesTitle.length < num) {
-      setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
-    }
-    if (variablesTitle.length > num) {
-      setVariables(variablesTitle.splice(-1));
-    }
-    setInputLength(e.target.value.length);
-    formikTemplate.handleChange(e);
-  };
+  // const handleFieldChangeTitle = (e) => {
+  //   let num = countPlaceholders(e.target.value);
+  //   if (variablesTitle.length < num) {
+  //     setVariablesTitle([...variablesTitle, { id: variablesTitle.length + 1, value: '' }]);
+  //   }
+  //   if (variablesTitle.length > num) {
+  //     setVariables(variablesTitle.splice(-1));
+  //   }
+  //   setInputLength(e.target.value.length);
+  //   formikTemplate.handleChange(e);
+  // };
   const countPlaceholders = (template) => {
     const matches = template.match(/{{\d+}}/g);
     return matches ? matches.length : 0;
@@ -457,7 +539,21 @@ export default function CreateTemplate() {
                   Choose languages for your message template. You can delete or add more languages
                   later.
                 </Typography>
-                <CustomSelect
+                  <Autocomplete
+                    id="language"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    name="language"
+                    options={languages}
+                    getOptionLabel={(option) => option.flagname}
+                    onChange={(event, value) => formik.setFieldValue("language", value.value)}
+                    value={formik.values.language?.value}
+                    renderInput={(params) => <TextField {...params}
+                     placeholder="Select your language"
+                    />}
+                  />
+                {/* <CustomSelect
                   id="language"
                   fullWidth
                   name="language"
@@ -475,7 +571,7 @@ export default function CreateTemplate() {
                   <FormHelperText error id="language">
                     {formik.errors.language}
                   </FormHelperText>
-                )}
+                )} */}
               </Grid>
               <Grid item lg={12} md={12} sm={12}>
                 <Button variant="contained" color="primary" sx={{ mr: 1 }} type="submit">
@@ -522,7 +618,8 @@ export default function CreateTemplate() {
                             id="text"
                             name="text"
                             value={formikTemplate.values.text}
-                            onChange={handleFieldChangeTitle}
+                            //onChange={handleFieldChangeTitle}
+                            onChange={formikTemplate.handleChange}
                             inputProps={{
                               maxLength: CHARACTER_LIMIT_TEXT,
                             }}
@@ -535,6 +632,7 @@ export default function CreateTemplate() {
                                 </InputAdornment>
                               ),
                             }}
+                            required
                           />
 
                           {formikTemplate.errors.text && (
@@ -542,7 +640,7 @@ export default function CreateTemplate() {
                               {formikTemplate.errors.text}
                             </FormHelperText>
                           )}
-                          {variablesTitle.map((variable, index) => (
+                          {/* {variablesTitle.map((variable, index) => (
                             <Box display="flex" alignItems="center" mt={2} key={variable.id}>
                               <TextField
                                 fullWidth
@@ -559,8 +657,8 @@ export default function CreateTemplate() {
                                 <DeleteIcon />
                               </IconButton>
                             </Box>
-                          ))}
-                          <Box mt={2}>
+                          ))} */}
+                          {/* <Box mt={2}>
                             <Button
                               variant="outlined"
                               color="primary"
@@ -569,9 +667,10 @@ export default function CreateTemplate() {
                             >
                               Add Variable
                             </Button>
-                          </Box>
+                          </Box> */}
                         </>
                       )}
+
                       {HeaderSelect === 'MEDIA' && (
                         <>
                           <RadioGroup
@@ -600,8 +699,10 @@ export default function CreateTemplate() {
                                   mediaType === 'image'
                                     ? 'image/*'
                                     : mediaType === 'video'
-                                    ? 'video/*'
-                                    : 'application/pdf'
+                                      ? 'video/*'
+                                      : mediaType === 'document'
+                                        ? 'application/pdf'
+                                        : ''
                                 }
                                 onChange={handleMediaContentChange}
                               />
@@ -617,7 +718,9 @@ export default function CreateTemplate() {
                   </Typography>
                   <CustomTextField
                     fullWidth
-                    // id="body"
+                    id="body"
+                    value={formikTemplate.values.body}
+                    onChange={handleFieldChange}
                     name="body"
                     multiline
                     rows={4}
@@ -631,7 +734,7 @@ export default function CreateTemplate() {
                         },
                       },
                     }}
-                    id="outlined-error-helper-text"
+                    //id="outlined-error-helper-text"
                     helperText={inputLength >= CHARACTER_LIMIT && <ErrorText />}
                     InputProps={{
                       endAdornment: (
@@ -642,25 +745,25 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
-                    value={formikTemplate.values.body}
-                    onChange={handleFieldChange}
-                    // dangerouslySetInnerHTML={{ __html: previewHtml }}
+                    required
+                  // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
-                  {variables.map((variable, index) => (
-                    <Box display="flex" alignItems="center" mt={2} key={variable.id}>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        label={`{{${index + 1}}}`}
-                        value={variable.value}
-                        onChange={(event) => handleVariableChange(variable.id, event)}
-                        variant="outlined"
-                      />
-                      <IconButton aria-label="delete" onClick={() => removeVariable(variable.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
+                  {variables &&
+                    variables?.map((variable, index) => (
+                      <Box display="flex" alignItems="center" mt={2} key={variable.id}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label={`{{${index + 1}}}`}
+                          value={variable.value}
+                          onChange={(event) => handleVariableChange(variable.id, event)}
+                          variant="outlined"
+                        />
+                        <IconButton aria-label="delete" onClick={() => removeVariable(variable.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    ))}
                   <Box mt={2}>
                     <Button variant="outlined" color="primary" size="small" onClick={addVariable}>
                       Add Variable
@@ -689,6 +792,7 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
+                    required
                   />
                   {formikTemplate.errors.footer && (
                     <FormHelperText error id="footer">
@@ -738,6 +842,7 @@ export default function CreateTemplate() {
                             name="callToActionURL"
                             value={callToActionURL}
                             onChange={(e) => setCallToActionURL(e.target.value)}
+                            required
                           />
                           {formikTemplate.errors.callToActionURL && (
                             <FormHelperText error id="callToActionURL">
@@ -751,19 +856,44 @@ export default function CreateTemplate() {
                         <>
                           <Grid>
                             <CustomFormLabel htmlFor="phoneNumber">Phone Number</CustomFormLabel>
-
-                            <CustomTextField
-                              fullWidth
-                              id="phoneNumber"
-                              name="phoneNumber"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                            />
-                            {formikTemplate.errors.phoneNumber && (
-                              <FormHelperText error id="phoneNumber">
-                                {formikTemplate.errors.phoneNumber}
-                              </FormHelperText>
-                            )}
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                              }}
+                            >
+                              <Select
+                                value={countryCode}
+                                onChange={handleCountryCodeChange}
+                                sx={{
+                                  width: 'auto',
+                                  padding: '0px',
+                                  height: '35px',
+                                  lineHeight: '35px',
+                                }}
+                              >
+                                {countryCodes.map((code) => (
+                                  <MenuItem key={code.dial_code} value={code.dial_code}>
+                                    {code.code} {code.dial_code}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                              <CustomTextField
+                                fullWidth
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                required
+                              />
+                              {formikTemplate.errors.phoneNumber && (
+                                <FormHelperText error id="phoneNumber">
+                                  {formikTemplate.errors.phoneNumber}
+                                </FormHelperText>
+                              )}
+                            </Box>
                           </Grid>
                         </>
                       )}
@@ -828,19 +958,31 @@ export default function CreateTemplate() {
                             </Typography>
                           </Box>
                         )} */}
+
                         {HeaderSelect === 'TEXT' ? (
                           <Typography variant="h6" component="div">
                             {formikTemplate.values.text}
                           </Typography>
                         ) : mediaContent ? (
-                          <CardMedia
-                            component={mediaType === 'image' ? 'img' : mediaType}
-                            src={mediaContent}
-                            controls={mediaType === 'video'}
-                            controlsList={mediaType === 'video' && []}
-                            title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
-                            sx={{ height: 140, mb: 2 }}
-                          />
+                          mediaType === 'document' ? (
+                            <Box sx={{ mb: 2 }}>
+                              <iframe
+                                src={mediaContent}
+                                width="100%"
+                                height="50%"
+                                title="Document Preview"
+                              ></iframe>
+                            </Box>
+                          ) : (
+                            <CardMedia
+                              component={mediaType === 'image' ? 'img' : mediaType}
+                              src={mediaContent}
+                              controls={mediaType === 'video'}
+                              controlsList={mediaType === 'video' && []}
+                              title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
+                              sx={{ mb: 2 }}
+                            />
+                          )
                         ) : null}
                         {formikTemplate.values.body && (
                           <Box sx={{ mb: 1 }}>
@@ -883,9 +1025,9 @@ export default function CreateTemplate() {
                                 display: 'flex',
                                 justifyContent: 'center',
                               }}
-                              // variant="contained"
-                              // color="primary"
-                              // size="small"
+                            // variant="contained"
+                            // color="primary"
+                            // size="small"
                             >
                               {/* <Undo size={24} style={{ marginRight: 2 }} /> */}
                               {buttonIcon}
@@ -908,10 +1050,10 @@ export default function CreateTemplate() {
                     sx={{ mr: 1 }}
                     type="submit"
                   >
-                    Save
+                    Create
                   </LoadingButton>
-                  <Button variant="contained" color="error" onClick={() => navigate('/templates')}>
-                    Cancel
+                  <Button variant="contained" color="error" onClick={() => setStep(0)}>
+                    Back
                   </Button>
                 </Grid>
               </Grid>

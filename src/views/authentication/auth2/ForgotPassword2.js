@@ -1,50 +1,71 @@
 import React from 'react';
-import { Grid, Box, Card, Typography } from '@mui/material';
-
-import Logo from 'src/layouts/full/shared/logo/Logo';
+import { Grid, Box, Card, Typography, Stack } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
-
+import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthForgotPassword from '../authForms/AuthForgotPassword';
+import img from 'src/assets/images/backgrounds/baner.jpg';
 
 const ForgotPassword2 = () => (
   <PageContainer title="Forgot Password" description="this is Forgot Password page">
     <Box
       sx={{
         position: 'relative',
-        '&:before': {
-          content: '""',
-          background: 'radial-gradient(#d2f1df, #d3d7fa, #bad8f4)',
-          backgroundSize: '400% 400%',
-          animation: 'gradient 15s ease infinite',
-          position: 'absolute',
-          height: '100%',
-          width: '100%',
-          opacity: '0.3',
-        },
+        height: '100vh',
       }}
     >
-      <Grid container spacing={0} justifyContent="center" sx={{ height: '100vh' }}>
+      <Grid container spacing={0} sx={{ height: '100%' }}>
+        {/* Image Section */}
+        <Grid
+          item
+          xs={6}
+          md={5}
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            backgroundImage: `url(${img})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        ></Grid>
+
+        {/* Forgot Password Form Section */}
         <Grid
           item
           xs={12}
-          sm={12}
-          lg={4}
-          xl={3}
+          md={7}
           display="flex"
           justifyContent="center"
           alignItems="center"
+          sx={{ backgroundColor: 'white' }}
         >
-          <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <Logo />
+          <Card
+            elevation={9}
+            sx={{
+              p: 4,
+              zIndex: 1,
+              width: '100%',
+              maxWidth: '460px',
+              boxShadow: 'none !important',
+              borderRadius: '0px !important',
+              padding: '0px !important',
+            }}
+          >
+            <Box display="flex" flexDirection="column">
+              {/* <Typography variant="h6" fontWeight={'400'} lineHeight={'2.2rem'}>
+                RESET PASSWORD
+              </Typography> */}
+
+              <Typography variant="h3" color={'primary.main'} fontWeight={700}>
+                Forgot your password?
+              </Typography>
             </Box>
             <Typography
               color="textSecondary"
-              textAlign="center"
+              textAlign="left"
               variant="subtitle2"
               fontWeight="400"
+              mt={2}
             >
-              Please enter the email address associated with your account and We will email you a
+              Please enter the email address associated with your account, and we will email you a
               link to reset your password.
             </Typography>
             <AuthForgotPassword />

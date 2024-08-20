@@ -3,21 +3,18 @@ import { IconButton, Box, AppBar, useMediaQuery, Toolbar, styled, Stack } from '
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleSidebar, toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
-import { IconMenu2 } from '@tabler/icons';
+
 
 // components
-import Notifications from './Notifications';
+
 import Profile from './Profile';
-import Cart from './Cart';
-import Search from './Search';
-import Language from './Language';
-import Navigation from './Navigation';
+
 import MobileRightSidebar from './MobileRightSidebar';
 
 const Header = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
-
+  const mdDown = useMediaQuery((theme) => theme.breakpoints.down('md'));
   // drawer
   const customizer = useSelector((state) => state.customizer);
   const dispatch = useDispatch();
@@ -34,6 +31,7 @@ const Header = () => {
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     width: '100%',
     color: theme.palette.text.secondary,
+    justifyContent: 'space-between',
   }));
 
   return (
@@ -56,7 +54,7 @@ const Header = () => {
         {lgUp ? <>{/* <Navigation /> */}</> : null}
 
         <Box flexGrow={1} />
-        <Stack spacing={1} direction="row" alignItems="center">
+        <Stack spacing={mdDown ? 1 : (lgDown ? 2 : 8)} direction="row" alignItems="center">
           {/* <Search /> */}
           {/* <Language /> */}
           {/* ------------------------------------------- */}

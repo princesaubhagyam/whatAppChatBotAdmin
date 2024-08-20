@@ -9,6 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { UserProvider } from 'src/store/apps/UserContext';
 
 import './App.css';
+import { EventProvider } from './BroadcastContext';
 
 function App() {
   const routing = useRoutes(Router);
@@ -16,39 +17,43 @@ function App() {
   const customizer = useSelector((state) => state.customizer);
 
   return (
-    <ThemeProvider theme={theme}>
-      <UserProvider> {/* Wrap the application with UserProvider */}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            success: {
-              iconTheme: {
-                primary: 'green',
+    <EventProvider>
+      <ThemeProvider theme={theme}>
+        <UserProvider>
+          {' '}
+          {/* Wrap the application with UserProvider */}
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              success: {
+                iconTheme: {
+                  primary: 'green',
+                },
+                style: {
+                  background: 'green',
+                  color: 'white',
+                  fontSize: '16px',
+                },
               },
-              style: {
-                background: 'green',
-                color: 'white',
-                fontSize: '16px',
+              error: {
+                iconTheme: {
+                  primary: 'red',
+                },
+                style: {
+                  background: 'red',
+                  color: 'white',
+                  fontSize: '16px',
+                },
               },
-            },
-            error: {
-              iconTheme: {
-                primary: 'red',
-              },
-              style: {
-                background: 'red',
-                color: 'white',
-                fontSize: '16px',
-              },
-            },
-          }}
-        />
-        <RTL direction={customizer.activeDir}>
-          <CssBaseline />
-          <ScrollToTop>{routing}</ScrollToTop>
-        </RTL>
-      </UserProvider>
-    </ThemeProvider>
+            }}
+          />
+          <RTL direction={customizer.activeDir}>
+            <CssBaseline />
+            <ScrollToTop>{routing}</ScrollToTop>
+          </RTL>
+        </UserProvider>
+      </ThemeProvider>
+    </EventProvider>
   );
 }
 

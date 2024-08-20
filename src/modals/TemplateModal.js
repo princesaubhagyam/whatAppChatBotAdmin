@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Button,
@@ -24,6 +24,7 @@ import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
+import EventContext from 'src/BroadcastContext';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -37,23 +38,59 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const HeaderComponent = ({ componentData, updateHeaderImageLink }) => {
-  if (componentData.format === 'IMAGE') {
-    return (
-      <>
-        <label>Link to image</label>
-        <Input
-          type="url"
-          placeholder="Add link to image here"
-          onChange={updateHeaderImageLink}
-          variant="outlined"
-          fullWidth
-          required
-        ></Input>
-      </>
-    );
+const HeaderComponent = ({ componentData, updateHeaderLink }) => {
+  switch (componentData.format) {
+    case 'IMAGE':
+      return (
+        <>
+          <label>Link to image</label>
+          <Input
+            type="url"
+            placeholder="Add link to image here"
+            onChange={(e) => updateHeaderLink(e, 'IMAGE')}
+            variant="outlined"
+            //value={currentLink}
+            //value={componentData.parameters?.[0]?.image?.link || ''}
+            fullWidth
+            required
+          />
+        </>
+      );
+    case 'VIDEO':
+      return (
+        <>
+          <label>Link to video</label>
+          <Input
+            type="url"
+            placeholder="Add link to video here"
+            onChange={(e) => updateHeaderLink(e, 'VIDEO')}
+            //value={componentData.parameters?.[0]?.video?.link || ''}
+            variant="outlined"
+            fullWidth
+            //value={currentLink}
+            required
+          />
+        </>
+      );
+    case 'DOCUMENT':
+      return (
+        <>
+          <label>Link to document</label>
+          <Input
+            type="url"
+            placeholder="Add link to document here"
+            onChange={(e) => updateHeaderLink(e, 'DOCUMENT')}
+            variant="outlined"
+            fullWidth
+            //value={componentData.link}
+            //value={componentData.parameters?.[0]?.document?.link || ''}
+            required
+          />
+        </>
+      );
+    default:
+      return <></>;
   }
-  return <></>;
 };
 
 const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
@@ -80,14 +117,17 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
   return <></>;
 };
 
-const TemplateModal = ({ open, handleClose, broadcastId }) => {
+const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }) => {
   const [loading, setLoading] = useState(false);
   const [templates, setTemplates] = useState([]);
+  const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
+  const { toggleOnOff } = useContext(EventContext);
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
   });
   const [templateDetails, setTemplateDetails] = useState();
+  const [previewLink, setPreviewLink] = useState(null);
 
   const fetchTemplates = async () => {
     try {
@@ -124,7 +164,17 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
         const metaInstance = createMetaAxiosInstance({ addBAId: false });
         const res = await metaInstance.get(broadcastDetails.template);
         if (res.status === 200) {
-          setTemplateDetails(() => addBodyVariableEmptyArray(res.data));
+          const updatedData = addBodyVariableEmptyArray(res.data);
+          setTemplateDetails(updatedData);
+
+          // Store default values
+          const defaultValues = {};
+          updatedData.components.forEach((component) => {
+            if (component.type === 'HEADER') {
+              defaultValues[component.format] = component.example?.header_handle?.[0];
+            }
+          });
+          setDefaultHeaderHandles(defaultValues);
         }
       }
     } catch (err) {
@@ -160,6 +210,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       toast.error('Please select template!');
       return;
     }
+    console.log(templateDetails);
     try {
       const res = await apiClient.post('/api/send_template/', {
         broadcast: broadcastDetails.broadcast,
@@ -167,6 +218,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
       });
       if (res.status === 200 || res.status === 201) {
         toast.success('Broadcast scheduled successfully!');
+        toggleOnOff(); // Trigger history check
         handleClose();
       }
     } catch (err) {
@@ -177,19 +229,23 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     }
   };
 
-  const updateHeaderImageLink = (e) => {
+  const updateHeaderLink = (e, format) => {
+    const newLink = e.target.value;
+    setPreviewLink(newLink);
+
     const newHeaderComponent = {
       type: 'HEADER',
-      format: 'IMAGE',
+      format,
       parameters: [
         {
-          type: 'image',
-          image: {
-            link: e.target.value,
+          type: format.toLowerCase(),
+          [format.toLowerCase()]: {
+            link: newLink || defaultHeaderHandles[format],
           },
         },
       ],
     };
+
     setTemplateDetails((prevDetails) => ({
       ...prevDetails,
       components: prevDetails.components.map((component) =>
@@ -220,11 +276,21 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
     });
     setTemplateDetails(tmpTemplateDetails);
   };
-
+  const resetTemplateSelection = () => {
+    setBroadcastDetails({
+      ...broadcastDetails,
+      template: null,
+    });
+    setTemplateDetails(null);
+    handleClose();
+  };
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        //handleClose();
+        resetTemplateSelection();
+      }}
       closeAfterTransition
       maxWidth={'md'}
       sx={{ height: '90%' }}
@@ -239,6 +305,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
               p: 4,
               width: '100%',
               minWidth: '500px',
+              minHeight: '500px',
             }}
           >
             <Typography variant="h6" component="h2" mb={2}>
@@ -262,14 +329,14 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                 ))}
               </Select>
             </FormControl>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} minWidth={'650px'} maxWidth={'750px'}>
               <Grid item xs={12} sm={6}>
                 <Stack gap={2}>
                   {broadcastDetails?.template &&
                     (templateDetails?.components?.[0]?.type === 'HEADER' ? (
                       <HeaderComponent
                         componentData={templateDetails?.components?.[0]}
-                        updateHeaderImageLink={updateHeaderImageLink}
+                        updateHeaderLink={updateHeaderLink}
                       />
                     ) : (
                       <></>
@@ -285,7 +352,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                     ))}
                 </Stack>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} lg={6}>
                 <Box>
                   {templateDetails ? (
                     <CardMedia
@@ -308,49 +375,72 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                           borderBottom: '1px solid #80808078',
                         }}
                       >
+                        {/* Preview section for template */}
                         {templateDetails?.components.map((component) => {
                           switch (component.type) {
-                            case 'HEADER':
-                              {
-                                const headerHandle = component.example?.header_handle?.[0];
-                                const headerText = component.example?.header_text?.[0];
-                                if (headerHandle) {
-                                  const isVideo = component.format === 'VIDEO';
-                                  return isVideo ? (
+                            case 'HEADER': {
+                              //const headerHandle = component.example?.header_handle?.[0] || component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
+                              const headerLink =
+                                component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
+                              const headerHandle =
+                                headerLink || component.example?.header_handle?.[0];
+
+                              const headerText = component.example?.header_text?.[0];
+
+                              if (headerHandle) {
+                                const isVideo = component.format === 'VIDEO';
+                                const isDocument = component.format === 'DOCUMENT';
+
+                                if (isVideo) {
+                                  return (
                                     <CardMedia
                                       key={component.type}
                                       component="video"
                                       image={headerHandle}
                                       controls
                                       title={component.type}
-                                      sx={{ height: 200 }}
+                                      //sx={{ height: 200 }}
                                       autoPlay
                                     />
-                                  ) : (
+                                  );
+                                } else if (isDocument) {
+                                  return (
+                                    <Box sx={{ mb: 2, overflow: 'hidden', height: '200px' }}>
+                                      <iframe
+                                        src={headerHandle}
+                                        width="100%"
+                                        height="400px"
+                                        title="Document Preview"
+                                        style={{ border: 'none', overflow: 'hidden' }}
+                                      ></iframe>
+                                    </Box>
+                                  );
+                                } else {
+                                  return (
                                     <CardMedia
                                       key={component.type}
                                       component="img"
                                       image={headerHandle}
                                       title={component.type}
-                                      sx={{ height: 200 }}
+                                      //sx={{ height: 200 }}
                                     />
                                   );
                                 }
-
-                                if (headerText) {
-                                  return (
-                                    <Typography key={'1'} variant="body1">
-                                      <span key={'1'}>
-                                        {headerText}
-                                        <br />
-                                      </span>
-                                    </Typography>
-                                  );
-                                }
-
-                                return null;
                               }
-                              
+
+                              if (headerText) {
+                                return (
+                                  <Typography key={'1'} variant="body1">
+                                    <span key={'1'}>
+                                      {headerText}
+                                      <br />
+                                    </span>
+                                  </Typography>
+                                );
+                              }
+
+                              return null;
+                            }
 
                             case 'BODY':
                               return (
@@ -427,7 +517,7 @@ const TemplateModal = ({ open, handleClose, broadcastId }) => {
                 >
                   Send broadcast
                 </LoadingButton>
-                <Button variant="contained" color="error" onClick={handleClose}>
+                <Button variant="contained" color="error" onClick={resetTemplateSelection}>
                   Cancel
                 </Button>
               </Stack>

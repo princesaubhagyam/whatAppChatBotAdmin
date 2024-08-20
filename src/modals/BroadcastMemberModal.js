@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -32,8 +32,9 @@ import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { selectBroadcast } from 'src/store/apps/chat/ChatSlice';
+import { selectBroadcast, setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import EventContext from 'src/BroadcastContext';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -65,10 +66,14 @@ const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'tag', numeric: false, disablePadding: false, label: 'Tag' },
 ];
 
 const EnhancedTableHead = (props) => {
-  const { order, orderBy, onRequestSort } = props;
+  const { order, orderBy, onRequestSort, numSelected, onSelectAllClick, rowCount, selected } =
+    props;
+  // const isAllSelected = rowCount === numSelected && selected.length === rowCount;
+  // const isSomeSelected = numSelected > 0 && numSelected < rowCount;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -76,8 +81,21 @@ const EnhancedTableHead = (props) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" sx={{ padding: '4.5px' }} />
-
+        <TableCell padding="checkbox">
+          <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            color="primary"
+            inputProps={{
+              'aria-label': 'select all',
+            }}
+            // indeterminate={isSomeSelected}
+            // checked={isAllSelected}
+            // onChange={onSelectAllClick}
+            // color="primary"
+          />
+        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -111,6 +129,7 @@ const BroadcastMemberModal = ({
   activeBroadcastId,
   activeBroadcast,
   getBroadcastList = () => {},
+  onUpdateMembers,
 }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -120,8 +139,12 @@ const BroadcastMemberModal = ({
   const [loading, setLoading] = useState(true);
   const [broadcastContacts, setBroadcastContacts] = useState([]);
   const [memberIds, setMemberIds] = useState([]);
-  const [allContacts, setAllContacts] = useState([]); // New state to keep original data
+  const [allContacts, setAllContacts] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [selected, setSelected] = useState([]);
+  //console.log('....', memberIds);
+  //const { toggleOnOff } = useContext(EventContext);
+  const [numSelected, setNumSelected] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
     operator: 'contains',
@@ -135,7 +158,7 @@ const BroadcastMemberModal = ({
       const res = await apiClient.get(`update_broadcast_members/${activeBroadcastId}`);
       if (res.status === 200) {
         setBroadcastContacts(res.data.data.all_contacts);
-        setAllContacts(res.data.data.all_contacts); // Store the original data
+        setAllContacts(res.data.data.all_contacts);
         setMemberIds(
           res.data.data.all_contacts
             .filter((contact) => contact.is_member)
@@ -157,6 +180,18 @@ const BroadcastMemberModal = ({
     }
   }, [open]);
 
+  useEffect(() => {
+    // Update selected state based on memberIds
+    setSelected(
+      broadcastContacts.filter((contact) => contact.is_member).map((contact) => contact.id),
+    );
+  }, [broadcastContacts]);
+
+  useEffect(() => {
+    // Update memberIds based on selected
+    setMemberIds(selected);
+  }, [selected]);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -171,15 +206,28 @@ const BroadcastMemberModal = ({
     setOpenFilterDialog(true);
   };
 
-  const handleCloseFilterDialog = () => {
+  // const handleCloseFilterDialog = () => {
+  //   setFilterCriteria({
+  //     column: '',
+  //     operator: 'contains',
+  //     value: '',
+  //   });
+  //   setBroadcastContacts(allContacts);
+  //   setOpenFilterDialog(false);
+  //   setSearch('');
+  // };
+  const handleClearFilter = () => {
     setFilterCriteria({
       column: '',
       operator: 'contains',
       value: '',
     });
-    setBroadcastContacts(allContacts); // Reset to original data
-    setOpenFilterDialog(false);
+    setBroadcastContacts(allContacts);
     setSearch('');
+  };
+
+  const handleCloseFilterDialog = () => {
+    setOpenFilterDialog(false);
   };
 
   const handleFilterChange = (event) => {
@@ -206,6 +254,35 @@ const BroadcastMemberModal = ({
     setOpenFilterDialog(false);
   };
 
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = broadcastContacts.map((n) => n.id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -215,29 +292,56 @@ const BroadcastMemberModal = ({
     setPage(0);
   };
 
-  const handleSelectedMemberStateUpdate = (memberId) => {
-    const tmpMembers = [...memberIds];
-    const idx = tmpMembers.indexOf(memberId);
-    if (idx === -1) {
-      tmpMembers.push(memberId);
+  const handleSelectedMemberStateUpdate = (id) => {
+    // Toggle selection
+    if (selected.includes(id)) {
+      setSelected(selected.filter((item) => item !== id));
     } else {
-      tmpMembers.splice(idx, 1);
+      setSelected([...selected, id]);
     }
-    setMemberIds(tmpMembers);
   };
 
+  // const updateBroadcastMembers = async () => {
+  //   try {
+  //     const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
+  //       contacts: memberIds,
+  //     });
+
+  //     if (res.status === 200) {
+  //       toast.success('Broadcast members updated successfully!');
+
+  //       //dispatch(updateBroadcastMembers(res.data.data.contacts));
+  //       handleClose();
+  //       getBroadcastList();
+  //       onUpdateMembers(res.data.data.contacts);
+  //       dispatch(
+  //         selectBroadcast({
+  //           contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
+  //           ...activeBroadcast,
+  //         }),
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.warn(error);
+  //     toast.error(error?.response?.data?.message ?? 'There was an error!');
+  //   }
+  // };
   const updateBroadcastMembers = async () => {
     try {
       const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
         contacts: memberIds,
       });
+
       if (res.status === 200) {
         toast.success('Broadcast members updated successfully!');
+
+        dispatch(setBroadcastList(res.data.data.contacts));
         handleClose();
-        getBroadcastList();
+        getBroadcastList(); // Refresh the broadcast list
+        onUpdateMembers(res.data.data.contacts); // Update members in the modal
         dispatch(
           selectBroadcast({
-            contacts: activeBroadcast.contacts.filter((data) => data.id !== memberIds),
+            contacts: res.data.data.contacts, // Make sure to use updated contacts
             ...activeBroadcast,
           }),
         );
@@ -311,7 +415,7 @@ const BroadcastMemberModal = ({
                     Update
                   </Button>
                   <Button color="error" variant="contained" onClick={handleClose}>
-                    Close
+                    Cancel
                   </Button>
                 </Stack>
               </Toolbar>
@@ -324,20 +428,31 @@ const BroadcastMemberModal = ({
                       order={order}
                       orderBy={orderBy}
                       onRequestSort={handleRequestSort}
+                      numSelected={selected.length}
+                      onSelectAllClick={handleSelectAllClick}
+                      rowCount={paginatedContacts.length}
                     />
                     <TableBody>
                       {paginatedContacts.map((row, idx) => {
-                        const labelId = `enhanced-table-checkbox-${idx}`;
+                        const isItemSelected = selected.indexOf(row.id) !== -1;
+
                         return (
-                          <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id}
+                            onClick={(event) => handleClick(event, row.id)}
+                            selected={isItemSelected}
+                          >
                             <TableCell padding="checkbox">
                               <Checkbox
-                                color="primary"
-                                checked={memberIds.includes(row.id)}
-                                onChange={() => handleSelectedMemberStateUpdate(row.id)}
+                                checked={isItemSelected}
+                                onChange={(event) => handleClick(event, row.id)}
                                 inputProps={{
-                                  'aria-labelledby': labelId,
+                                  'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
                                 }}
+                                color="primary"
                               />
                             </TableCell>
                             <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
@@ -357,7 +472,7 @@ const BroadcastMemberModal = ({
                                 fontSize="14px !important"
                                 padding="13px 4px !important"
                               >
-                                {row.contact}
+                                {row.full_mobile}
                               </Typography>
                             </TableCell>
                             <TableCell align="left" sx={{ padding: '0px' }}>
@@ -368,6 +483,16 @@ const BroadcastMemberModal = ({
                                 padding="13px 4px !important"
                               >
                                 {row.city ? row.city : '-'}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="left" sx={{ padding: '0px' }}>
+                              <Typography
+                                fontWeight="400 !important"
+                                variant="h6"
+                                fontSize="14px !important"
+                                padding="13px 4px !important"
+                              >
+                                {row.tag ? row.tag : '-'}
                               </Typography>
                             </TableCell>
                           </TableRow>
@@ -432,8 +557,7 @@ const BroadcastMemberModal = ({
                   name="value"
                   value={filterCriteria.value}
                   onChange={handleFilterChange}
-                  sx={{ width: '265px'}}
-                  
+                  sx={{ width: '265px' }}
                 />
               </Grid>
             </Grid>
@@ -441,7 +565,7 @@ const BroadcastMemberModal = ({
           <DialogActions sx={{ justifyContent: 'space-between', padding: '0px' }}>
             <Button
               variant="contained"
-              onClick={handleCloseFilterDialog}
+              onClick={handleClearFilter}
               sx={{
                 backgroundColor: '#b4b4b4',
                 '&:hover': {

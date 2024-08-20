@@ -8,11 +8,11 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Toolbar,
+  // Toolbar,
   IconButton,
   Tooltip,
   Typography,
-  Avatar,
+  // Avatar,
   TextField,
   InputAdornment,
   Paper,
@@ -28,16 +28,27 @@ import {
   Select,
   Stack,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../spinner/Spinner';
 import { visuallyHidden } from '@mui/utils';
 import PropTypes from 'prop-types';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { IconSearch, IconFilter, IconTrash, IconFileImport, IconPlus } from '@tabler/icons';
-
+import {
+  IconSearch,
+  //  IconFilter, IconTrash,
+  IconFileImport,
+  IconPlus,
+} from '@tabler/icons';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
 import ImportContactModal from '../../modals/ImportContactModal';
 import AddContactModal from '../../modals/AddContactModal';
+import EditContactModal from '../../modals/EditContactModel';
+import DeleteDialog from 'src/modals/DeleteDialog';
+import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
+import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -138,142 +149,149 @@ const EnhancedTableToolbar = (props) => {
     setOpenAddContactModal,
     showButtons,
     handleOpenFilterDialog,
+    // isSelected,
+    // isItemSelected,
+    handleDelete,
+    handleEdit,
+    setOpenDeleteDialog,
   } = props;
   const handleOpenAddContactModal = () => {
     setOpenAddContactModal(true);
   };
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+  // const handleDelete = async () => {
+  //   try {
+  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
+  //       data: { ids: selected },
+  //     });
+  //     toast.success('Contacts deleted successfully');
+  //     // Remove the deleted contacts from the local state
+  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setSelected([]);
+  //   } catch (error) {
+  //     console.error('Failed to delete contacts:', error);
+  //     toast.error('Failed to delete contacts');
+  //   }
+  // };
+
   return (
     <>
-      {/* <Grid container spacing={2} alignItems="center" sx={{ mx: 2, mt: 1, mb: 2 }} pl={0}>
-        <Grid paddingLeft={0}> */}
-      {/* <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
+      <Stack
+        sx={{
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          marginBottom: '15px',
+        }}
+      >
+        {numSelected > 0 ? (
+          <Stack
+            sx={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              backgroundColor: '#00720b21',
             }}
-            onClick={handleOpenAddContactModal}
           >
-            <IconPlus size={16} style={{marginRight: '2px'}}/>
-            Add Contact
-          </Button> */}
-      {/* <Box sx={{ flex: '1 1 100%' }} border={0}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch size="1.1rem" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ background: 'white', borderRadius: 4 }}
-              placeholder="Search..."
-              size="small"
-              onChange={handleSearch}
-              value={search}
-              fullWidth
-            />
-          </Box>
-        </Grid>
-        <Grid item ml={'40.5rem'}>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '8rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={handleOpenAddContactModal}
-          >
-            <IconPlus size={16} style={{ marginRight: '2px' }} />
-            Add Contact
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            style={{
-              backgroundColor: '#1A4D2E',
-              color: 'white',
-              width: '9rem',
-              paddingLeft: '0px',
-              paddingRight: '0px',
-            }}
-            onClick={onOpenImportModal}
-          >
-            <IconFileImport size={16} style={{ marginRight: '2px' }} />
-            Import Contact
-          </Button>
-        </Grid>
-      </Grid> */}
-      <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: '15px' }}>
-        <Stack>
-          <Box sx={{ flex: '1 1 100%' }} border={0}>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconSearch size="1.1rem" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ background: 'white', borderRadius: 4 }}
-              placeholder="Search..."
-              size="small"
-              onChange={handleSearch}
-              value={search}
-              fullWidth
-            />
-          </Box>
-        </Stack>
-        {/* <Stack sx={{ flexDirection: 'row', gap: 2 }}> */}
-        {showButtons && (
-          <Stack sx={{ flexDirection: 'row', gap: 2 }}>
-            <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
-              <FilterAltIcon size="1.1rem" />
-            </IconButton>
-            <Button
-              style={{
-                backgroundColor: '#1A4D2E',
-                color: 'white',
-                width: '8rem',
-                paddingLeft: '0px',
-                paddingRight: '0px',
-              }}
-              onClick={handleOpenAddContactModal}
-            >
-              <IconPlus size={16} style={{ marginRight: '2px' }} />
-              Add Contact
-            </Button>
-            <Button
-              style={{
-                backgroundColor: '#1A4D2E',
-                color: 'white',
-                width: '9rem',
-                paddingLeft: '0px',
-                paddingRight: '0px',
-              }}
-              onClick={onOpenImportModal}
-            >
-              <IconFileImport size={16} style={{ marginRight: '2px' }} />
-              Import Contact
-            </Button>
+            <Typography variant="h5" marginLeft={'10px'}>
+              {' '}
+              {numSelected} selected{' '}
+            </Typography>
+            <Box>
+              {numSelected === 1 ? (
+                <Tooltip title="Edit">
+                  <IconButton sx={{ color: '#1A4D2E' }} onClick={handleEdit}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : null}
+              <Tooltip title="Delete">
+                <IconButton sx={{ color: '#1A4D2E' }} onClick={handleOpenDeleteDialog}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Stack>
+        ) : (
+          <>
+            <Stack>
+              <Box sx={{ flex: '1 1 100%' }} border={0}>
+                <TextField
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSearch size="1.1rem" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ background: 'white', borderRadius: 4 }}
+                  placeholder="Search..."
+                  size="small"
+                  onChange={handleSearch}
+                  value={search}
+                  fullWidth
+                />
+              </Box>
+            </Stack>
+            {showButtons && (
+              <Stack
+                sx={{
+                  flexDirection: { xs: 'row', sm: 'row' },
+                  gap: 2,
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  marginTop: { xs: '3px', sm: '3px', lg: '0px' },
+                }}
+              >
+                <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+                  <FilterAltIcon size="1.1rem" />
+                </IconButton>
+                <Button
+                  style={{
+                    backgroundColor: '#1A4D2E',
+                    color: 'white',
+                    width: '8rem',
+                    paddingLeft: '0px',
+                    paddingRight: '0px',
+                  }}
+                  onClick={handleOpenAddContactModal}
+                >
+                  <IconPlus size={16} style={{ marginRight: '2px' }} />
+                  Add Contact
+                </Button>
+                <Button
+                  style={{
+                    backgroundColor: '#1A4D2E',
+                    color: 'white',
+                    width: '9rem',
+                    paddingLeft: '0px',
+                    paddingRight: '0px',
+                  }}
+                  onClick={onOpenImportModal}
+                >
+                  <IconFileImport size={16} style={{ marginRight: '2px' }} />
+                  Import Contact
+                </Button>
+              </Stack>
+            )}
+          </>
         )}
-        {/* </Stack> */}
       </Stack>
     </>
   );
 };
 
 EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
+  //numSelected: PropTypes.number.isRequired,
+  numSelected: PropTypes.arrayOf(PropTypes.number).isRequired,
   handleSearch: PropTypes.func.isRequired,
   search: PropTypes.string.isRequired,
   onOpenImportModal: PropTypes.func.isRequired,
   handleOpenFilterDialog: PropTypes.func.isRequired,
+  //isSelected: PropTypes.array.isRequired,
 };
 
 const CustomersTableList = () => {
@@ -283,6 +301,8 @@ const CustomersTableList = () => {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPage, setTotalPages] = useState(0);
   const [rows, setRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
   const [search, setSearch] = useState('');
@@ -291,6 +311,16 @@ const CustomersTableList = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [edit, setEdit] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [editData, setEditData] = useState({
+    city: '',
+    contact: ' ',
+    name: '',
+    tag: '',
+    cc: '',
+  });
+  const [allDataForEdit, setAllDataForEdit] = useState([]);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
@@ -300,41 +330,104 @@ const CustomersTableList = () => {
   const navigate = useNavigate();
   useEffect(() => {
     getApiData();
-  }, []);
+  }, [page, rowsPerPage]);
 
+  // const getApiData = async () => {
+  //   setLoading(true);
+  //   let allData = [];
+  //   try {
+  //     const response = await apiClient.get(
+  //       `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
+  //     );
+  //     console.log('contact response', response?.data?.data?.results);
+
+  //     allData = response?.data?.data?.results;
+  //     setTotalCount(response?.data?.data?.count);
+  //     setTotalPages(response?.data?.data?.total_pages);
+  //     setAllRows(allData);
+  //     setRows(allData);
+  //     setAllDataForEdit(allData);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //   }
+  // };
   const getApiData = async () => {
     setLoading(true);
-    let allData = [];
-    let pageNum = 1;
-    let hasNextPage = true;
-    while (hasNextPage) {
-      try {
-        const response = await apiClient.get(
-          `/api/contacts/?page=${pageNum}&rows_per_page=${rowsPerPage}`,
-        );
-        allData = allData.concat(response.data.data.results || []);
-        hasNextPage = response.data.next !== null;
-        pageNum += 1;
-      } catch (error) {
-        console.error('Error fetching data from API:', error);
-        hasNextPage = false;
-      }
+    try {
+      const response = await apiClient.get(
+        `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}`,
+      );
+      const allData = response?.data?.data?.results;
+
+      setTotalCount(response?.data?.data?.count);
+      setTotalPages(response?.data?.data?.total_pages);
+      setRows(allData);
+      setAllRows(allData);
+      setAllDataForEdit(allData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+      setLoading(false);
     }
-    setAllRows(allData);
-    setRows(allData);
-    setLoading(false);
   };
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-    if (event.target.value === '') {
-      setRows(allRows);
+  function handleEdit() {
+    allDataForEdit &&
+      allDataForEdit.length > 0 &&
+      allDataForEdit.find(function (item) {
+        if (item.id === selected[0]) {
+          setEditData({
+            city: item.city,
+            contact: item.contact,
+            name: item.name,
+            tag: item.tag,
+            cc: `+${item.cc}`,
+          });
+        }
+        return;
+      });
+    setEdit(true);
+  }
+
+  // const handleSearch = (event) => {
+  //   setSearch(event.target.value);
+  //   if (event.target.value === '') {
+  //     setRows(allRows);
+  //   } else {
+  //     const filteredRows = allRows.filter((row) =>
+  //       row.name.toLowerCase().includes(event.target.value.toLowerCase()),
+  //     );
+  //     // console.log('=====', filteredRows);
+  //     setRows(filteredRows);
+  //   }
+  // };
+  const handleSearch = async (event) => {
+    const searchValue = event.target.value;
+    setSearch(searchValue);
+
+    // Reset to the first page whenever a new search is performed
+    setPage(0);
+
+    if (searchValue === '') {
+      // If search input is cleared, fetch data for the initial page without any filters
+      getApiData();
     } else {
-      const filteredRows = allRows.filter((row) =>
-        row.name.toLowerCase().includes(event.target.value.toLowerCase()),
-      );
-      // console.log('=====', filteredRows);
-      setRows(filteredRows);
+      try {
+        //setLoading(true);
+        const response = await apiClient.get(
+          `/api/contacts/?name=${searchValue}&page=${page + 1}&rows_per_page=${rowsPerPage}`,
+        );
+        const filteredRows = response?.data?.data?.results;
+
+        setRows(filteredRows);
+        setTotalCount(response?.data?.data?.count);
+        setTotalPages(response?.data?.data?.total_pages);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+        setLoading(false);
+      }
     }
   };
 
@@ -342,15 +435,49 @@ const CustomersTableList = () => {
     setOpenFilterDialog(true);
   };
 
-  const handleCloseFilterDialog = () => {
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  // const handleCloseFilterDialog = () => {
+  //   setFilterCriteria({
+  //     column: '',
+  //     operator: 'contains',
+  //     value: '',
+  //   });
+  //   setOpenFilterDialog(false);
+  //   setRows(allRows);
+  //   setSearch('');
+  // };
+  const handleClearFilter = async () => {
     setFilterCriteria({
       column: '',
       operator: 'contains',
       value: '',
     });
-    setOpenFilterDialog(false);
-    setRows(allRows);
+
     setSearch('');
+
+    setPage(0);
+
+    try {
+      //setLoading(true);
+      const response = await apiClient.get(`/api/contacts/?page=1&rows_per_page=${rowsPerPage}`);
+      const allData = response?.data?.data?.results;
+
+      setRows(allData);
+      setAllRows(allData);
+      setTotalCount(response?.data?.data?.count);
+      setTotalPages(response?.data?.data?.total_pages);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+      //setLoading(false);
+    }
+  };
+
+  const handleCloseFilterDialog = () => {
+    setOpenFilterDialog(false);
   };
 
   const handleFilterChange = (event) => {
@@ -358,6 +485,27 @@ const CustomersTableList = () => {
     setFilterCriteria((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const applyFilter = () => {
+  //   const { column, value } = filterCriteria;
+
+  //   if (!column || !value) {
+  //     console.error('Column or value is not defined:', column, value);
+  //     return;
+  //   }
+
+  //   const filteredRows = allRows.filter((row) => {
+  //     if (row[column] && typeof row[column] === 'string') {
+  //       return row[column].toLowerCase().includes(value.toLowerCase());
+  //     }
+  //     return false;
+  //   });
+
+  //   // console.log('Filtered Rows:', filteredRows);
+
+  //   setRows(filteredRows);
+  //   setPage(0);
+  //   setOpenFilterDialog(false);
+  // };
   const applyFilter = () => {
     const { column, value } = filterCriteria;
 
@@ -373,9 +521,9 @@ const CustomersTableList = () => {
       return false;
     });
 
-    console.log('Filtered Rows:', filteredRows);
-
     setRows(filteredRows);
+    setTotalCount(filteredRows.length);
+    setPage(0);
     setOpenFilterDialog(false);
   };
 
@@ -421,6 +569,45 @@ const CustomersTableList = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  // const handleChangePage = async (event, newPage) => {
+  //   setPage(newPage);
+
+  //   try {
+  //     setLoading(true);
+  //     const response = await apiClient.get(
+  //       `/api/contacts?page=${newPage + 1}&rows_per_page=${rowsPerPage}&name=${search}`,
+  //     );
+  //     const newRows = response?.data?.data?.results;
+
+  //     setRows(newRows);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const handleChangeRowsPerPage = async (event) => {
+  //   const newRowsPerPage = parseInt(event.target.value, 10);
+  //   setRowsPerPage(newRowsPerPage);
+  //   setPage(0);
+
+  //   try {
+  //     setLoading(true);
+  //     const response = await apiClient.get(
+  //       `/api/contacts?page=1&rows_per_page=${newRowsPerPage}&name=${search}`,
+  //     );
+  //     const newRows = response?.data?.data?.results;
+
+  //     setRows(newRows);
+  //     setTotalCount(response?.data?.data?.count);
+  //     setTotalPages(response?.data?.data?.total_pages);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.error('Error fetching data from API:', error);
+  //     setLoading(false);
+  //   }
+  // };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
@@ -429,11 +616,47 @@ const CustomersTableList = () => {
     getApiData();
   };
 
+  // const handleDelete = async () => {
+  //   try {
+  //     await apiClient.delete(`api/contacts/bulk_delete/`, {
+  //       data: { ids: selected },
+  //     });
+  //     toast.success('Contacts deleted successfully');
+
+  //     setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+  //     setSelected([]);
+  //   } catch (error) {
+  //     console.error('Failed to delete contacts:', error);
+  //     toast.error('Failed to delete contacts');
+  //   } finally {
+  //     handleCloseDeleteDialog(); // Close the dialog after deleting
+  //   }
+  // };
+  const handleConfirmDelete = async () => {
+    try {
+      await apiClient.delete(`api/contacts/bulk_delete/`, {
+        data: { ids: selected },
+      });
+      toast.success('Contacts deleted successfully');
+
+      setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+      setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
+
+      setSelected([]);
+    } catch (error) {
+      console.error('Failed to delete contacts:', error);
+      toast.error('Failed to delete contacts');
+    } finally {
+      handleCloseDeleteDialog();
+    }
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   return (
     <Box sx={{ width: '100%' }}>
       {loading ? (
-        <Spinner /> // Display spinner while loading is true
+        <Spinner />
       ) : (
         <>
           <EnhancedTableToolbar
@@ -444,9 +667,13 @@ const CustomersTableList = () => {
             setOpenAddContactModal={setOpenAddContactModal}
             showButtons={true}
             handleOpenFilterDialog={handleOpenFilterDialog}
+            isItemSelected={selected}
+            //handleDelete={handleDelete}
+            setOpenDeleteDialog={setOpenDeleteDialog}
+            handleEdit={handleEdit}
           />
           <Paper sx={{ width: '100%', mb: 2, mx: 'auto' }}>
-            <TableContainer >
+            <TableContainer>
               <Table
                 sx={{ minWidth: 750 }}
                 aria-labelledby="tableTitle"
@@ -461,103 +688,90 @@ const CustomersTableList = () => {
                   rowCount={rows.length}
                 />
                 <TableBody>
-                  {stableSort(rows, getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, index) => {
-                      const isItemSelected = isSelected(row.id);
-                      const labelId = `enhanced-table-checkbox-${index}`;
-                      const createdAtDate = new Date(row.created_at);
-                      const updatedAtDate = new Date(row.updated_at);
-                      const formatDate = (date) => {
-                        return date.toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'numeric',
-                          day: 'numeric',
-                        });
-                      };
-                      return (
-                        <TableRow
-                          hover
-                          onClick={(event) => handleClick(event, row.id)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.id}
-                          selected={isItemSelected}
-                        >
-                          <TableCell padding="checkbox" >
-                            <Checkbox
-                              color="primary"
-                              checked={isItemSelected}
-                              inputProps={{
-                                'aria-labelledby': labelId,
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.name}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '150px'}}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.contact}
-                            </Typography>{' '}
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px',minWidth: '180px'}}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.city ? row.city : '-'}
-                            </Typography>
-                          </TableCell>
-                          <TableCell sx={{ padding: '0px', minWidth: '180px'}}>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {row.tag ? row.tag : '-'}
-                            </Typography>
-                          </TableCell>
-                          {/* <TableCell>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {formatDate(createdAtDate)}
-                            </Typography>
-                          </TableCell> */}
-                          {/* <TableCell>
-                            <Typography
-                              fontWeight="400"
-                              variant="h6"
-                              fontSize={14}
-                              padding="13px 4px"
-                            >
-                              {formatDate(updatedAtDate)}
-                            </Typography>
-                          </TableCell> */}
-                        </TableRow>
-                      );
-                    })}
-                  {emptyRows > 0 && (
+                  {rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={headCells.length} align="center">
+                        <Nodatainsearch />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    stableSort(rows, getComparator(order, orderBy))
+                      //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row.id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+
+                        const formatDate = (date) => {
+                          return date.toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                          });
+                        };
+                        return (
+                          <TableRow
+                            hover
+                            onClick={(event) => handleClick(event, row.id)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row.id}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                color="primary"
+                                checked={isItemSelected}
+                                inputProps={{
+                                  'aria-labelledby': labelId,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {FirstLetterCapitalOfString(row.name)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '150px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.full_mobile}
+                              </Typography>{' '}
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.city ? FirstLetterCapitalOfString(row.city) : '-'}
+                              </Typography>
+                            </TableCell>
+                            <TableCell sx={{ padding: '0px', minWidth: '180px' }}>
+                              <Typography
+                                fontWeight="400"
+                                variant="h6"
+                                fontSize={14}
+                                padding="13px 4px"
+                              >
+                                {row.tag ? FirstLetterCapitalOfString(row.tag) : '-'}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                  )}
+                  {/* {emptyRows > 0 && (
                     <TableRow
                       style={{
                         height: (dense ? 33 : 53) * emptyRows,
@@ -565,23 +779,28 @@ const CustomersTableList = () => {
                     >
                       <TableCell colSpan={6} />
                     </TableRow>
-                  )}
+                  )} */}
                 </TableBody>
               </Table>
             </TableContainer>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={rows.length}
+              count={totalCount}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
-          <Dialog open={openFilterDialog} onClose={handleCloseFilterDialog} sx={{ height: '70%' }} fullWidth="lg">
-            <Paper sx={{ padding: '25px'}}>
-              <DialogTitle sx={{ padding: 1}}>Filter Contacts</DialogTitle>
+          <Dialog
+            open={openFilterDialog}
+            onClose={handleCloseFilterDialog}
+            sx={{ height: '70%' }}
+            fullWidth="lg"
+          >
+            <Paper sx={{ padding: '25px' }}>
+              <DialogTitle sx={{ padding: 1 }}>Filter Contacts</DialogTitle>
               <DialogContent>
                 <Grid container spacing={2}>
                   <Grid
@@ -623,10 +842,10 @@ const CustomersTableList = () => {
                 </Grid>
               </DialogContent>
 
-              <DialogActions sx={{ justifyContent: 'space-around' , padding: '0px'}}>
+              <DialogActions sx={{ justifyContent: 'space-around', padding: '0px' }}>
                 <Button
                   variant="contained"
-                  onClick={handleCloseFilterDialog}
+                  onClick={handleClearFilter}
                   sx={{
                     backgroundColor: '#b4b4b4',
                     '&:hover': {
@@ -655,11 +874,25 @@ const CustomersTableList = () => {
             handleClose={() => setOpenImportModal(false)}
             getApiData={getApiData}
           />
+          <DeleteDialog
+            open={openDeleteDialog}
+            onClose={handleCloseDeleteDialog}
+            onConfirm={handleConfirmDelete}
+          />
 
           <AddContactModal
             open={openAddContactModal}
             handleClose={() => setOpenAddContactModal(false)}
             onAddContact={handleAddContact}
+          />
+          <EditContactModal
+            open={edit}
+            selected={selected}
+            setEdit={setEdit}
+            editData={editData}
+            setEditData={setEditData}
+            getApiData={getApiData}
+            setSelected={setSelected}
           />
         </>
       )}

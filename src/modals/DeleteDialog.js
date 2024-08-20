@@ -1,32 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  CircularProgress,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
-const DeleteDialog = ({ open, handleClose, handleDelete }) => {
+const DeleteDialog = ({ open, onClose, onConfirm }) => {
+  const [loading, setLoading] = useState(false);
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">Delete Confirmation</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete this item?
-        </DialogContentText>
-      </DialogContent>
+    <Dialog open={open} onClose={onClose} sx={{ height: '40%' }}>
+      <DialogTitle>Confirm Deletion</DialogTitle>
+      <DialogContent>Are you sure you want to delete the selected contact(s)?</DialogContent>
       <DialogActions>
-        <Button color="error" onClick={handleDelete}>
-          Delete
+        <Button onClick={onConfirm} autoFocus color="error" variant="contained" disabled={loading}>
+          {/* Delete */}
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
         </Button>
-        <Button color="primary" onClick={handleClose} autoFocus>
+        <Button onClick={onClose} color="primary" variant="contained">
           Cancel
         </Button>
       </DialogActions>

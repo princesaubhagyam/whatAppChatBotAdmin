@@ -58,7 +58,7 @@ const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
   }, [open]);
 
   const sampleFileUrl =
-    'https://saubhagyam503.pythonanywhere.com/static/import_samples/broadcast.csv';
+    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -160,7 +160,7 @@ const ImportBroadcastMember = ({ open, handleClose, activeBroadcastId }) => {
               loading={loading}
               onClick={handleCreate}
               sx={{ mr: 2 }}
-              loadingPosition="start"
+              //loadingPosition="start"
               loadingIndicator={
                 <React.Fragment>
                   <CircularProgress size={18} color="inherit" />

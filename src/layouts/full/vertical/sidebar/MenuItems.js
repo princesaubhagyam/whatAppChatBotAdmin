@@ -1,78 +1,18 @@
-import {
-  IconAward,
-  IconBoxMultiple,
-  IconPoint,
-  IconAlertCircle,
-  IconNotes,
-  IconCalendar,
-  IconMail,
-  IconTicket,
-  IconEdit,
-  IconGitMerge,
-  IconCurrencyDollar,
-  IconApps,
-  IconFileDescription,
-  IconFileDots,
-  IconFiles,
-  IconBan,
-  IconStar,
-  IconMoodSmile,
-  IconBorderAll,
-  IconBorderHorizontal,
-  IconBorderInner,
-  IconBorderVertical,
-  IconBorderTop,
-  IconUserCircle,
-  IconPackage,
-  IconMessage2,
-  IconBasket,
-  IconChartLine,
-  IconChartArcs,
-  IconChartCandle,
-  IconChartArea,
-  IconChartDots,
-  IconChartDonut3,
-  IconChartRadar,
-  IconLogin,
-  IconUserPlus,
-  IconRotate,
-  IconBox,
-  IconAperture,
-  IconShoppingCart,
-  IconHelp,
-  IconBoxAlignBottom,
-  IconBoxAlignLeft,
-  IconLayout,
-  IconZoomCode,
-  IconSettings,
-  IconBorderStyle2,
-  IconAppWindow,
-  IconLockAccess,
-  IconHome,
-  IconBroadcast,
-  IconTemplate,
-  IconTimeline,
-  IconMan,
-  IconFileAnalytics,
-  IconInfinity,
-  IconUsers,
-  IconLoader,
-  IconLoaderQuarter,
-  IconPhoto,
-} from '@tabler/icons';
-
+import { IconHome, IconBroadcast, IconTemplate, IconMan, IconLayoutDashboard } from '@tabler/icons';
+import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import { uniqueId } from 'lodash';
+import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
 const Menuitems = [
   {
     id: uniqueId(),
-    title: 'Home',
-    icon: IconHome,
+    title: 'Dashboard',
+    icon: IconLayoutDashboard,
     href: '/home',
   },
   {
     id: uniqueId(),
     title: 'Contacts',
-    icon: IconMan,
+    icon: ContactsOutlined,
     href: '/contacts',
   },
   {
@@ -81,6 +21,12 @@ const Menuitems = [
     icon: IconBroadcast,
     href: '/broadcasts',
   },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Media',
+  //   icon: IconPhoto,
+  //    href: '/media',
+  // },
   {
     id: uniqueId(),
     title: 'Templates',
@@ -99,7 +45,7 @@ const Menuitems = [
   //   icon: IconTimeline,
   //   href: '/scheduled-broadcasts',
   // },
-  
+
   // {
   //   id: uniqueId(),
   //   title: 'Analytics',
@@ -136,12 +82,12 @@ const Menuitems = [
   //   icon: IconAlertCircle,
   //   href: '/pending-requests',
   // },
-  {
-    id: uniqueId(),
-    title: 'Settings',
-    icon: IconSettings,
-    href: '/settings',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Settings',
+  //   icon: IconSettings,
+  //   href: '/settings',
+  // },
 ];
 
 // const Menuitems = [

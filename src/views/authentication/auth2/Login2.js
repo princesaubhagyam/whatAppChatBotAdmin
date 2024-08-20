@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Box, Card, Stack, Typography } from '@mui/material';
-
-// components
+import { Grid, Box, Card, Stack, Typography, Divider } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
 import toast, { Toaster } from 'react-hot-toast';
-
+import img from 'src/assets/images/backgrounds/baner.jpg';
 const Login2 = () => {
   return (
     <>
@@ -15,32 +13,58 @@ const Login2 = () => {
         <Box
           sx={{
             position: 'relative',
-            '&:before': {
-              content: '""',
-              background: 'radial-gradient(#d2f1df, #d3d7fa, #bad8f4)',
-              backgroundSize: '400% 400%',
-              animation: 'gradient 15s ease infinite',
-              position: 'absolute',
-              height: '100%',
-              width: '100%',
-              opacity: '0.3',
-            },
+            height: '100vh',
           }}
         >
-          <Grid container spacing={0} justifyContent="center" sx={{ height: '100vh' }}>
+          <Grid container spacing={0} sx={{ height: '100%' }}>
+            {/* Image Section */}
+            <Grid
+              item
+              xs={6}
+              md={5}
+              sx={{
+                display: { xs: 'none', md: 'block' },
+                backgroundImage: `url(${img})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            ></Grid>
+
+            {/* Login Form Section */}
             <Grid
               item
               xs={12}
-              sm={12}
-              lg={5}
-              xl={4}
+              md={7}
               display="flex"
               justifyContent="center"
               alignItems="center"
+              sx={{ backgroundColor: 'white' }}
             >
-              <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '450px' }}>
-                <Box display="flex" alignItems="center" justifyContent="center">
-                  <Logo />
+              <Card
+                elevation={9}
+                sx={{
+                  p: 4,
+                  zIndex: 1,
+                  width: '100%',
+                  maxWidth: '460px',
+                  boxShadow: 'none !important',
+                  borderRadius: '0px !important',
+                  padding: '12px !important',
+                }}
+              >
+                <Box display="flex" flexDirection="column">
+                  <Typography variant="h6" fontWeight={'400'} lineHeight={'2.2rem'}>
+                    WELCOME BACK
+                  </Typography>
+
+                  <Typography
+                    variant="h3"
+                    color={'primary.main'}
+                    fontWeight={700}
+                    lineHeight={'2.75rem'}
+                  >
+                    Login to Saubhagyam
+                  </Typography>
                 </Box>
                 <AuthLogin
                   subtitle={
@@ -56,7 +80,6 @@ const Login2 = () => {
                           textDecoration: 'none',
                           color: 'primary.main',
                         }}
-                        _hover={{ color: 'yellow' }}
                       >
                         Create an account
                       </Typography>

@@ -3,9 +3,10 @@ import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import AuthWrapper from 'src/utils/AuthWrapper';
-import { element } from 'prop-types';
+// import { element } from 'prop-types';
 import AuthGuard from './AuthGuard';
 import ChangePassword from 'src/views/apps/ChangePassword';
+import AuthReset from 'src/views/authentication/authForms/AuthReset';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -17,6 +18,7 @@ const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')
 
 /* ****Apps***** */
 const Broadcasts = Loadable(lazy(() => import('../views/apps/chat/Chat')));
+const BroadcastsDetail = Loadable(lazy(() => import('../views/media/BroadcastsDetail')));
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
 const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
@@ -102,7 +104,7 @@ const MuiTypography = Loadable(lazy(() => import('../views/ui-components/MuiTypo
 
 // authentication
 // const Login = Loadable(lazy(() => import('../views/authentication/auth1/Login')));
-const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login2')));
+// const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login2')));
 // const Register = Loadable(lazy(() => import('../views/authentication/auth1/Register')));
 const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register2')));
 // const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')));
@@ -110,15 +112,15 @@ const ForgotPassword2 = Loadable(
   lazy(() => import('../views/authentication/auth2/ForgotPassword2')),
 );
 const TwoSteps = Loadable(lazy(() => import('../views/authentication/auth1/TwoSteps')));
-const TwoSteps2 = Loadable(lazy(() => import('../views/authentication/auth2/TwoSteps2')));
+// const TwoSteps2 = Loadable(lazy(() => import('../views/authentication/auth2/TwoSteps2')));
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Maintenance = Loadable(lazy(() => import('../views/authentication/Maintenance')));
 
 // landingpage
-const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landingpage')));
+// const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landingpage')));
 
 //Admin Page
-const HomePage = Loadable(lazy(() => import('../views/dashboard/Home')));
+// const HomePage = Loadable(lazy(() => import('../views/dashboard/Home')));
 const Customers = Loadable(lazy(() => import('../views/customers/Customers')));
 const Templates = Loadable(lazy(() => import('../views/template/templates')));
 const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemplate')));
@@ -146,7 +148,7 @@ const Router = [
       { path: '/team', element: <Templates /> },
       { path: '/pending-requests', element: <Templates /> },
       { path: '/settings', element: <Maintenance /> },
-
+      { path: '/broadcast/:id', element: <BroadcastsDetail /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },
@@ -165,7 +167,7 @@ const Router = [
       { path: '/apps/friends', element: <Friends /> },
       { path: '/apps/gallery', element: <Gallery /> },
       { path: '/user-profile', element: <UserProfile /> },
-      {path: '/change-password', element: <ChangePassword/>}, 
+      { path: '/change-password', element: <ChangePassword /> },
       { path: '/pages/casl', element: <RollbaseCASL /> },
       { path: '/pages/treeview', element: <Treeview /> },
       { path: '/pages/pricing', element: <Pricing /> },
@@ -225,6 +227,7 @@ const Router = [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <AuthGuard /> },
       // { path: '/auth/login2', element: <Login2 /> },
+      { path: '/auth/reset-password/:token', element: <AuthReset /> },
       { path: '/auth/register', element: <Register2 /> },
       // { path: '/auth/register2', element: <Register2 /> },
       { path: '/auth/forgot-password', element: <ForgotPassword2 /> },
