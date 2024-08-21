@@ -52,7 +52,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            //required
+          //required
           />
         </>
       );
@@ -128,7 +128,8 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   });
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
-  console.log(previewLink, 'previewLink');
+  const [updateLinkByUser,setUpdateLinkByUser] = useState(false)
+  console.log(updateLinkByUser,"updateLinkByUser")
 
   const fetchTemplates = async () => {
     try {
@@ -141,7 +142,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
         setTemplates(approvedTemplates);
       }
     } catch (err) {
-      console.warn(err, '++++++++++++++++++');
+      console.warn(err);
     }
   };
 
@@ -203,30 +204,62 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       [e.target.name]: e.target.value,
     });
   };
-
   const sendBroadcastMsg = async (e) => {
+    console.log(templateDetails,"=====")
+    let newtemplateDetails ={}
+    if (previewLink) {
+      if(!updateLinkByUser){
+        const modifiedComponents = templateDetails.components.map(component => {
+          if (component.type === "HEADER" && component.format === "IMAGE") {
+            return {
+              "type": "HEADER",
+              "format": "IMAGE",
+              "parameters": [
+                {
+                  "type": "image",
+                  "image": {
+                    "link": component.example.header_handle[0]
+                  }
+                }
+              ]
+            };
+          }
+          return component;
+        });
+         newtemplateDetails = { ...templateDetails, components: modifiedComponents };
+      }
+      else {
+        newtemplateDetails = {...templateDetails}
+      }
+    }
+    else{
+      newtemplateDetails = {...templateDetails}
+    }
+  console.log(newtemplateDetails,"newtemplateDetails")
     e.preventDefault();
     setLoading(true);
     if (!broadcastDetails.template) {
       toast.error('Please select template!');
       return;
     }
-    console.log(templateDetails, 'templateDetails =====');
     try {
       const res = await apiClient.post('/api/send_template/', {
         broadcast: broadcastDetails.broadcast,
-        template: templateDetails,
+        template: newtemplateDetails,
       });
       if (res.status === 200 || res.status === 201) {
         toast.success('Broadcast scheduled successfully!');
         toggleOnOff();
         handleClose();
+        setUpdateLinkByUser(false)
       }
+
     } catch (err) {
       console.warn(err);
       toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
     } finally {
       setLoading(false);
+      setUpdateLinkByUser(false)
     }
   };
   // const sendBroadcastMsg = async (e) => {
@@ -287,8 +320,12 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
 
   const updateHeaderLink = (e, format) => {
     const newLink = e.target.value;
-    setPreviewLink(newLink);
-
+    if(newLink){
+      setUpdateLinkByUser(true)
+    }
+    else{
+      setUpdateLinkByUser(false)
+    }
     const newHeaderComponent = {
       type: 'HEADER',
       format,
@@ -478,7 +515,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                                       component="img"
                                       image={headerHandle}
                                       title={component.type}
-                                      //sx={{ height: 200 }}
+                                    //sx={{ height: 200 }}
                                     />
                                   );
                                 }
