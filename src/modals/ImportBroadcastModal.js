@@ -95,7 +95,7 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
           }}
         >
           <Typography variant="h6" component="h2">
-          Create Broadcast Title
+            Create Broadcast Title
           </Typography>
           <FormControl sx={{ marginTop: '15px', width: '100%' }}>
             <InputLabel htmlFor="component-outlined">Enter Broadcast Title</InputLabel>
@@ -110,23 +110,19 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
           {errors.broadcastTitle && <Typography color="error">{errors.broadcastTitle}</Typography>}
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <LoadingButton
+            <Button
               variant="contained"
               color="primary"
               loading={loading}
               onClick={handleCreate}
               sx={{ mr: 2 }}
-              //loadingPosition="start"
-              loadingIndicator={
-                <React.Fragment>
-                  <CircularProgress size={18} color="inherit" />
-                </React.Fragment>
-              }
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
             >
-              Create
-            </LoadingButton>
+              {loading ? 'Creating...' : 'Create'}
+            </Button>
             <Button variant="contained" color="error" onClick={handleClose}>
-              Close
+              Cancel
             </Button>
           </Box>
         </Box>

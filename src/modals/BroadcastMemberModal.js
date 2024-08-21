@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { IconSearch } from '@tabler/icons';
@@ -136,6 +137,7 @@ const BroadcastMemberModal = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [broadcastContacts, setBroadcastContacts] = useState([]);
   const [memberIds, setMemberIds] = useState([]);
   const [allContacts, setAllContacts] = useState([]);
@@ -326,6 +328,7 @@ const BroadcastMemberModal = ({
   //   }
   // };
   const updateBroadcastMembers = async () => {
+    setButtonLoading(true);
     try {
       const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
         contacts: memberIds,
@@ -336,11 +339,11 @@ const BroadcastMemberModal = ({
 
         dispatch(setBroadcastList(res.data.data.contacts));
         handleClose();
-        getBroadcastList(); 
+        getBroadcastList();
         onUpdateMembers(res.data.data.contacts);
         dispatch(
           selectBroadcast({
-            contacts: res.data.data.contacts, 
+            contacts: res.data.data.contacts,
             ...activeBroadcast,
           }),
         );
@@ -348,6 +351,8 @@ const BroadcastMemberModal = ({
     } catch (error) {
       console.warn(error);
       toast.error(error?.response?.data?.message ?? 'There was an error!');
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -410,8 +415,16 @@ const BroadcastMemberModal = ({
                   gap={2}
                   style={{ paddingBlock: '1rem' }}
                 >
-                  <Button variant="contained" color="primary" onClick={updateBroadcastMembers}>
-                    Update
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateBroadcastMembers}
+                    disabled={buttonLoading}
+                    startIcon={
+                      buttonLoading ? <CircularProgress size={20} color="inherit" /> : null
+                    } 
+                  >
+                    {buttonLoading ? 'Updating...' : 'Update'}
                   </Button>
                   <Button color="error" variant="contained" onClick={handleClose}>
                     Cancel

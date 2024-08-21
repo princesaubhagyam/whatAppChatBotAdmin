@@ -14,6 +14,7 @@ import {
   IconButton,
   TextField,
   Autocomplete,
+  CircularProgress,
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
@@ -1041,17 +1042,16 @@ export default function CreateTemplate() {
                 </Grid>
 
                 <Grid item lg={12} md={12} sm={12}>
-                  <LoadingButton
-                    loading={loading}
-                    loadingPosition="center"
-                    startIcon={<></>}
+                  <Button
                     variant="contained"
                     color="primary"
                     sx={{ mr: 1 }}
                     type="submit"
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                   >
-                    Create
-                  </LoadingButton>
+                    {loading ? 'Creating...' : 'Create'}
+                  </Button>
                   <Button variant="contained" color="error" onClick={() => setStep(0)}>
                     Back
                   </Button>

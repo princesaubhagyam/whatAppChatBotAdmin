@@ -50,7 +50,6 @@ import DeleteDialog from 'src/modals/DeleteDialog';
 import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -179,7 +178,7 @@ const EnhancedTableToolbar = (props) => {
             }}
           >
             <Typography variant="h5" marginLeft={'10px'}>
-            {numSelected} selected
+              {numSelected} selected
             </Typography>
             <Box>
               {numSelected === 1 ? (
@@ -227,9 +226,11 @@ const EnhancedTableToolbar = (props) => {
                   marginTop: { xs: '3px', sm: '3px', lg: '0px' },
                 }}
               >
-                <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
-                  <FilterAltIcon size="1.1rem" />
-                </IconButton>
+                <Tooltip title="Filter">
+                  <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+                    <FilterAltIcon size="1.1rem" />
+                  </IconButton>
+                </Tooltip>
                 <Button
                   style={{
                     backgroundColor: '#1A4D2E',
@@ -277,7 +278,7 @@ const CustomersTableList = () => {
   const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
-  console.log(selected,"selected")
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -287,7 +288,7 @@ const CustomersTableList = () => {
   const [allRows, setAllRows] = useState([]);
   const [search, setSearch] = useState('');
   const [openImportModal, setOpenImportModal] = useState(false);
-  const [openAddContactModal, setOpenAddContactModal] = useState(false);;
+  const [openAddContactModal, setOpenAddContactModal] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
@@ -423,25 +424,25 @@ const CustomersTableList = () => {
     setFilterCriteria((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleApplyFilter = async (keys,values) => {
+  const handleApplyFilter = async (keys, values) => {
     // Reset to the first page whenever a new search is performed
     setPage(0);
-      try {
-        //setLoading(true);
-        const response = await apiClient.get(
-          `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}&${keys}=${values}`,
-        );
-        const filteredRows = response?.data?.data?.results;
+    try {
+      //setLoading(true);
+      const response = await apiClient.get(
+        `/api/contacts/?page=${page + 1}&rows_per_page=${rowsPerPage}&${keys}=${values}`,
+      );
+      const filteredRows = response?.data?.data?.results;
 
-        setRows(filteredRows);
-        setTotalCount(response?.data?.data?.count);
-        setTotalPages(response?.data?.data?.total_pages);
-        setOpenFilterDialog(false);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data from API:', error);
-        setLoading(false);
-      }
+      setRows(filteredRows);
+      setTotalCount(response?.data?.data?.count);
+      setTotalPages(response?.data?.data?.total_pages);
+      setOpenFilterDialog(false);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+      setLoading(false);
+    }
   };
 
   const handleRequestSort = (event, property) => {
@@ -480,7 +481,7 @@ const CustomersTableList = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    setSelected([])
+    setSelected([]);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -496,6 +497,7 @@ const CustomersTableList = () => {
   };
 
   const handleConfirmDelete = async () => {
+    setButtonLoading(true);
     try {
       await apiClient.delete(`api/contacts/bulk_delete/`, {
         data: { ids: selected },
@@ -504,13 +506,14 @@ const CustomersTableList = () => {
 
       setRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
       setAllRows((prevRows) => prevRows.filter((row) => !selected.includes(row.id)));
-      getApiData()
+      getApiData();
       setSelected([]);
     } catch (error) {
       console.error('Failed to delete contacts:', error);
       toast.error('Failed to delete contacts');
     } finally {
       handleCloseDeleteDialog();
+      setButtonLoading(false);
     }
   };
 
@@ -628,7 +631,7 @@ const CustomersTableList = () => {
               </Table>
             </TableContainer>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25,50,100]}
+              rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
               count={totalCount}
               rowsPerPage={rowsPerPage}
@@ -700,8 +703,7 @@ const CustomersTableList = () => {
                   Clear Filter
                 </Button>
                 <Button
-                  onClick={()=>(handleApplyFilter(filterCriteria?.column,filterCriteria?.value, ))}
-                  
+                  onClick={() => handleApplyFilter(filterCriteria?.column, filterCriteria?.value)}
                   variant="contained"
                   color="primary"
                   sx={{ marginLeft: '16rem !important' }}
@@ -723,6 +725,7 @@ const CustomersTableList = () => {
             open={openDeleteDialog}
             onClose={handleCloseDeleteDialog}
             onConfirm={handleConfirmDelete}
+            buttonLoading={buttonLoading}
           />
 
           <AddContactModal

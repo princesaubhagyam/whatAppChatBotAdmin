@@ -203,21 +203,15 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
           />
         </Stack>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <LoadingButton
+          <Button
             onClick={handleCreate}
             variant="contained"
             color="primary"
-            loading={loading}
-            loadingPosition="start"
-            loadingIndicator={
-              <React.Fragment>
-                <CircularProgress size={18} color="inherit" />
-                {/* Creating.. */}
-              </React.Fragment>
-            }
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            Create
-          </LoadingButton>
+            {loading ? 'Creating...' : 'Create'}
+          </Button>
           <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
             Cancel
           </Button>

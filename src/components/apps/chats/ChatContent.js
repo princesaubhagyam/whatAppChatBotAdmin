@@ -118,7 +118,12 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
                   backgroundRepeat: 'no-repeat',
                   overflowY: 'hidden',
                   zIndex: '100',
-                  height: { xl: '72vh !important', lg: '70vh !important', md: '85vh !important' },
+                  height: {
+                    sm: '72vh !important',
+                    md: '72vh !important',
+                    xl: '72vh !important',
+                    lg: '70vh !important',
+                  },
                   maxHeight: '500px',
                   borderRadius: '0px !important',
                 }}

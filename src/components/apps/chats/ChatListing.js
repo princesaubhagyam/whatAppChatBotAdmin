@@ -386,8 +386,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
             color="error"
             variant="contained"
             disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
+            {loading ? 'Deleting...' : 'Delete'}
           </Button>
           <Button onClick={handleCloseDeleteDialog} color="primary" variant="contained">
             Cancel
@@ -434,8 +435,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
                 variant="contained"
                 sx={{ mr: 1 }}
                 disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Save'}
+                {loading ? 'Saving...' : 'Save'}
               </Button>
               <Button onClick={handleCloseEditDialog} color="error" variant="contained">
                 Cancel
