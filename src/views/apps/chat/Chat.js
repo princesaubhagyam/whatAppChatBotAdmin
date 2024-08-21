@@ -56,13 +56,13 @@ const Chats = ({ checkBroadcastHistory }) => {
 
   useEffect(() => {
     if (selectedBroadcast) {
-      setSelectedBroadcast({ ...selectedBroadcast }); // Trigger re-render
+      setSelectedBroadcast({ ...selectedBroadcast });
     }
-  }, [broadcasts]); // Re-render when broadcasts change
+  }, [broadcasts]);
 
   const handleBroadcastSelect = (broadcast) => {
     setSelectedBroadcast(broadcast);
-    setIsBroadcastDeleted(false); // Reset this state
+    setIsBroadcastDeleted(false);
   };
 
   if (loading) {

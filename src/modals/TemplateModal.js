@@ -52,7 +52,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            required
+            //required
           />
         </>
       );
@@ -128,6 +128,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   });
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
+  console.log(previewLink, 'previewLink');
 
   const fetchTemplates = async () => {
     try {
@@ -166,7 +167,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
         if (res.status === 200) {
           const updatedData = addBodyVariableEmptyArray(res.data);
           setTemplateDetails(updatedData);
-
+          setPreviewLink(res?.data?.components[0]?.example?.header_handle[0]);
           // Store default values
           const defaultValues = {};
           updatedData.components.forEach((component) => {
@@ -210,7 +211,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       toast.error('Please select template!');
       return;
     }
-    console.log(templateDetails);
+    console.log(templateDetails, 'templateDetails =====');
     try {
       const res = await apiClient.post('/api/send_template/', {
         broadcast: broadcastDetails.broadcast,
@@ -218,7 +219,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       });
       if (res.status === 200 || res.status === 201) {
         toast.success('Broadcast scheduled successfully!');
-        toggleOnOff(); // Trigger history check
+        toggleOnOff();
         handleClose();
       }
     } catch (err) {
@@ -228,6 +229,61 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       setLoading(false);
     }
   };
+  // const sendBroadcastMsg = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   if (!broadcastDetails.template) {
+  //     toast.error('Please select template!');
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   const updatedTemplateDetails = { ...broadcastDetails.template };
+
+  //   console.log('Updated Template Details:=========', updatedTemplateDetails);
+
+  //   if (!Array.isArray(updatedTemplateDetails.components)) {
+  //     console.error('Components property is not an array:', updatedTemplateDetails.components);
+  //     toast.error('Template components are missing or incorrectly formatted.');
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   updatedTemplateDetails.components = updatedTemplateDetails.components.map((component) => {
+  //     if (component.type === 'HEADER') {
+  //       const headerLink = component.example?.header_handle?.[0];
+
+  //       component.parameters = [
+  //         {
+  //           type: 'image',
+  //           image: {
+  //             link: previewLink ? previewLink : '',
+  //           },
+  //         },
+  //       ];
+  //     }
+  //     return component;
+  //   });
+
+  //   try {
+  //     const res = await apiClient.post('/api/send_template/', {
+  //       broadcast: broadcastDetails.broadcast,
+  //       template: updatedTemplateDetails,
+  //     });
+
+  //     if (res.status === 200 || res.status === 201) {
+  //       toast.success('Broadcast scheduled successfully!');
+  //       toggleOnOff(); // Trigger history check
+  //       handleClose();
+  //     }
+  //   } catch (err) {
+  //     console.warn(err);
+  //     toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const updateHeaderLink = (e, format) => {
     const newLink = e.target.value;
