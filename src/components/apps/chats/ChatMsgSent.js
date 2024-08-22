@@ -8,28 +8,34 @@ import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import apiClient from 'src/api/axiosClient';
 import EventContext from 'src/BroadcastContext';
 
-const ChatMsgSent = ({ checkBroadcastHistory, memberCount, getBroadcastList, onUpdateMembers }) => {
+const ChatMsgSent = ({
+  checkBroadcastHistory,
+  memberCount,
+  getBroadcastList,
+  onUpdateMembers,
+  isHistory,
+}) => {
   const [msg, setMsg] = useState('');
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false); // State for BroadcastMemberModal
-  const [isHistory, setIsHistory] = useState(false);
-  const { isOn } = useContext(EventContext);
+  // const [isHistory, setIsHistory] = useState(false);
+  // const { isOn } = useContext(EventContext);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const id = useSelector((state) => state.chatReducer.chatId);
 
-  useEffect(() => {
-    if (activeBroadcast) {
-      apiClient
-        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
-        .then((response) => {
-          setIsHistory(response.data.is_history);
-        })
-        .catch((error) => {
-          console.error('Error fetching history status:', error);
-        });
-    }
-  }, [activeBroadcast, isOn]);
+  // useEffect(() => {
+  //   if (activeBroadcast) {
+  //     apiClient
+  //       .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
+  //       .then((response) => {
+  //         setIsHistory(response.data.is_history);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching history status:', error);
+  //       });
+  //   }
+  // }, [activeBroadcast, isOn]);
 
   const handleOpenTemplateModal = () => {
     setOpenModal(true);

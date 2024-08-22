@@ -37,7 +37,13 @@ import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 import { FullStringCapital } from 'src/utils/FullStringCapital';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroadcastSelect }) => {
+const ChatListing = ({
+  broadcasts,
+  getBroadcastsData,
+  onBroadcastDelete,
+  onBroadcastSelect,
+  isHistory,
+}) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
@@ -47,28 +53,28 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { isOn } = useContext(EventContext);
+  //const { isOn } = useContext(EventContext);
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [isHistory, setIsHistory] = useState(undefined);
+  //const [isHistory, setIsHistory] = useState(undefined);
 
   const [nextUrl, setNextUrl] = useState('/api/broadcasts/');
   const [hasMore, setHasMore] = useState(true);
 
   const [newBroadcastName, setNewBroadcastName] = useState('');
-  useEffect(() => {
-    if (selectedBroadcastId) {
-      setIsHistory(undefined);
-      apiClient
-        .get(`/broadcast-history_checker/${selectedBroadcastId}/`)
-        .then((response) => {
-          setIsHistory(response.data.is_history);
-        })
-        .catch((error) => {
-          console.error('Error fetching history status:', error);
-        });
-    }
-  }, [selectedBroadcastId, isOn, broadcastData]);
+  // useEffect(() => {
+  //   if (selectedBroadcastId) {
+  //     setIsHistory(undefined);
+  //     apiClient
+  //       .get(`/broadcast-history_checker/${selectedBroadcastId}/`)
+  //       .then((response) => {
+  //         setIsHistory(response.data.is_history);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching history status:', error);
+  //       });
+  //   }
+  // }, [selectedBroadcastId, isOn, broadcastData]);
 
   const handleOpenImportModal = () => {
     setOpenImportModal(true);
@@ -386,8 +392,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
             color="error"
             variant="contained"
             disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
+            {loading ? 'Deleting...' : 'Delete'}
           </Button>
           <Button onClick={handleCloseDeleteDialog} color="primary" variant="contained">
             Cancel
@@ -434,8 +441,9 @@ const ChatListing = ({ broadcasts, getBroadcastsData, onBroadcastDelete, onBroad
                 variant="contained"
                 sx={{ mr: 1 }}
                 disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Save'}
+                {loading ? 'Saving...' : 'Save'}
               </Button>
               <Button onClick={handleCloseEditDialog} color="error" variant="contained">
                 Cancel

@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Box, Button, Modal, TextField, Grid, Typography, Select, MenuItem, Stack, FormControl } from '@mui/material';
+import {
+  Box,
+  Button,
+  Modal,
+  TextField,
+  Grid,
+  Typography,
+  Select,
+  MenuItem,
+  Stack,
+  FormControl,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
@@ -22,7 +33,7 @@ const EditContactModal = ({
     contact: '',
     city: '',
     tag: '',
-    cc: ''
+    cc: '',
   });
   console.log(editData, 'editData');
   function handleClose() {
@@ -32,18 +43,16 @@ const EditContactModal = ({
       contact: ' ',
       name: '',
       tag: '',
-      cc: ''
+      cc: '',
     });
   }
-
 
   function handleCountryCodeChange(e) {
     setEditData((prevDetails) => ({
       ...prevDetails,
       cc: e.target.value,
-    }))
+    }));
   }
-
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -90,7 +99,7 @@ const EditContactModal = ({
         setLoading(true);
         const contactDataEdit = {
           ...editData,
-          cc: (editData.cc).replace("+", ""),
+          cc: editData.cc.replace('+', ''),
           city: editData.city.trim() || '-',
           tag: editData.tag.trim() || '-',
         };
@@ -201,24 +210,17 @@ const EditContactModal = ({
             helperText={errors.tag}
             placeholder="Enter tag"
           />
-
         </Stack>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <LoadingButton
+          <Button
             onClick={handleEdit}
             variant="contained"
             color="primary"
             disabled={loading}
-            loadingPosition="start"
-            loadingIndicator={
-              <React.Fragment>
-                <CircularProgress size={18} color="inherit" />
-                {/* Creating.. */}
-              </React.Fragment>
-            }
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            Edit
-          </LoadingButton>
+            {loading ? 'Editing...' : 'Edit'}
+          </Button>
           <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
             Cancel
           </Button>

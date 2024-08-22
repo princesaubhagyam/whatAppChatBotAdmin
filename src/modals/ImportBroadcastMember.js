@@ -88,7 +88,7 @@ const ImportBroadcastMember = ({
           handleClose();
 
           getBroadcastList();
-          getMemberListInGroup();
+          // getMemberListInGroup();
         }
       } catch (error) {
         console.log(error, '----');
@@ -153,23 +153,18 @@ const ImportBroadcastMember = ({
           {fileName && <Typography sx={{ mt: 1 }}> Selected file: {fileName}</Typography>}
           {errors.file && <Typography color="error">{errors.file}</Typography>}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <LoadingButton
+            <Button
               variant="contained"
               color="primary"
-              loading={loading}
+              disabled={loading}
               onClick={handleCreate}
               sx={{ mr: 2 }}
-              //loadingPosition="start"
-              loadingIndicator={
-                <React.Fragment>
-                  <CircularProgress size={18} color="inherit" />
-                </React.Fragment>
-              }
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
             >
-              Create
-            </LoadingButton>
+              {loading ? 'Creating...' : 'Create'}
+            </Button>
             <Button variant="contained" color="error" onClick={handleClose}>
-              Close
+              Cancel
             </Button>
           </Box>
         </Box>

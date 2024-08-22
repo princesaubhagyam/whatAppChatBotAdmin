@@ -37,6 +37,7 @@ import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
 import { LoadingButton } from '@mui/lab';
 import CachedIcon from '@mui/icons-material/Cached';
+import toast from 'react-hot-toast';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -335,8 +336,10 @@ const TemplatesTableList = () => {
       });
 
       setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      toast.success('Deleted Successfully');
     } catch (error) {
       console.error('Error deleting template:', error);
+      toast.error('Error deleting template:', error);
     }
   };
   const handleSearch = (event) => {
@@ -517,13 +520,15 @@ const TemplatesTableList = () => {
                                 <IconEye />
                               </IconButton>
                             </Tooltip>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => handleDelete(row.id, row.name)}
-                            >
-                              <DeleteOutline />
-                            </IconButton>
+                            <Tooltip title="Delete">
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => handleDelete(row.id, row.name)}
+                              >
+                                <DeleteOutline />
+                              </IconButton>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                       );
@@ -735,15 +740,16 @@ const TemplatesTableList = () => {
           <DialogContentText>Are you sure you want to delete the template?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <LoadingButton
+          <Button
             onClick={handleConfirmDelete}
             color="error"
             variant="contained"
-            loadingPosition="start"
-            loading={loading}
+            //loadingPosition="start"
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            Delete
-          </LoadingButton>
+            {loading ? 'Deleting...' : 'Delete'}
+          </Button>
           <Button onClick={() => setConfirmDelete(false)} color="primary" variant="contained">
             Cancel
           </Button>

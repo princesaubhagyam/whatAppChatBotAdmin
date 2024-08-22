@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Divider, Box } from '@mui/material';
 
 import PageContainer from '../../../components/container/PageContainer';
@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import Analytics from '../../../components/analytics/Analytics';
+import EventContext from 'src/BroadcastContext';
 
 export const getBroadcastsData = async () => {
   try {
@@ -31,6 +32,28 @@ const Chats = ({ checkBroadcastHistory }) => {
   const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
+  const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  console.log(activeBroadcast, 'activebroadcast---->');
+
+  const [isHistory, setIsHistory] = useState(false);
+
+  // console.log('isHistory', isHistory);
+  const { isOn } = useContext(EventContext);
+
+  useEffect(() => {
+    if (activeBroadcast) {
+      apiClient
+        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
+        .then((response) => {
+          setIsHistory(response.data.is_history);
+        })
+        .catch((error) => {
+          console.error('Error fetching history status:', error);
+        });
+    }
+  }, [activeBroadcast, isOn]);
+
+  //useEffect(() => {}, []);
 
   const getBroadcastList = async () => {
     setLoading(true);
@@ -96,6 +119,7 @@ const Chats = ({ checkBroadcastHistory }) => {
                 sx={{ flex: '0 1 300px', overflowY: 'auto' }}
                 onBroadcastDelete={handleBroadcastDelete}
                 onBroadcastSelect={handleBroadcastSelect}
+                isHistory={isHistory}
               />
               {!isBroadcastDeleted && (
                 <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -104,6 +128,7 @@ const Chats = ({ checkBroadcastHistory }) => {
                     sx={{ flexGrow: 1 }}
                     checkBroadcastHistory={checkBroadcastHistory}
                     setIsAnalytics={setIsAnalytics}
+                    isHistory={isHistory}
                   />
                   <Divider />
 
@@ -111,6 +136,7 @@ const Chats = ({ checkBroadcastHistory }) => {
                     checkBroadcastHistory={checkBroadcastHistory}
                     memberCount={selectedBroadcast?.members || 0}
                     getBroadcastsData={getBroadcastList}
+                    isHistory={isHistory}
                   />
                 </Box>
               )}
@@ -118,6 +144,7 @@ const Chats = ({ checkBroadcastHistory }) => {
                 <ChatSidebarMember
                   sx={{ flex: '0 1 300px', overflowY: 'auto' }}
                   getBroadcastList={getBroadcastList}
+                  isHistory={isHistory}
                 />
               )}
             </>
