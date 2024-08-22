@@ -740,16 +740,16 @@ const TemplatesTableList = () => {
           <DialogContentText>Are you sure you want to delete the template?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <LoadingButton
+          <Button
             onClick={handleConfirmDelete}
             color="error"
             variant="contained"
-            loadingPosition="start"
+            //loadingPosition="start"
             disabled={loading}
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
             {loading ? 'Deleting...' : 'Delete'}
-          </LoadingButton>
+          </Button>
           <Button onClick={() => setConfirmDelete(false)} color="primary" variant="contained">
             Cancel
           </Button>

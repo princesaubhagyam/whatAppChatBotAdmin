@@ -1,11 +1,18 @@
-
 import React from 'react';
 import { Drawer, useMediaQuery } from '@mui/material';
 import ChatListing from './ChatListing';
 
 const drawerWidth = 320;
 
-const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts , getBroadcastsData, onBroadcastDelete, onBroadcastSelect}) => {
+const ChatSidebar = ({
+  isMobileSidebarOpen,
+  onSidebarClose,
+  broadcasts,
+  getBroadcastsData,
+  onBroadcastDelete,
+  onBroadcastSelect,
+  isHistory,
+}) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   return (
@@ -21,7 +28,13 @@ const ChatSidebar = ({ isMobileSidebarOpen, onSidebarClose, broadcasts , getBroa
         height: '100vh',
       }}
     >
-      <ChatListing broadcasts={broadcasts} getBroadcastsData={getBroadcastsData}  onBroadcastDelete={onBroadcastDelete} onBroadcastSelect={onBroadcastSelect}/>
+      <ChatListing
+        broadcasts={broadcasts}
+        getBroadcastsData={getBroadcastsData}
+        onBroadcastDelete={onBroadcastDelete}
+        onBroadcastSelect={onBroadcastSelect}
+        isHistory={isHistory}
+      />
     </Drawer>
   );
 };

@@ -34,7 +34,12 @@ const getInitials = (name) => {
   return initials.toUpperCase();
 };
 
-const ChatListingMember = ({ getBroadcastList, refresh, handleRefreshChatListingMember }) => {
+const ChatListingMember = ({
+  getBroadcastList,
+  refresh,
+  handleRefreshChatListingMember,
+  isHistory,
+}) => {
   const dispatch = useDispatch();
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -42,14 +47,14 @@ const ChatListingMember = ({ getBroadcastList, refresh, handleRefreshChatListing
   const [searchQuery, setSearchQuery] = useState('');
   const [members, setMembers] = useState(activeBroadcast?.contacts || []);
   const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
-  const isHistory = useSelector((state) => state.chatReducer.isHistory);
-  const { isOn } = useContext(EventContext);
+  // const isHistory = useSelector((state) => state.chatReducer.isHistory);
+  // const { isOn } = useContext(EventContext);
 
-  useEffect(() => {
-    if (activeBroadcast) {
-      dispatch(fetchIsHistoryStatus(activeBroadcast.id));
-    }
-  }, [activeBroadcast, isOn]);
+  // useEffect(() => {
+  //   if (activeBroadcast) {
+  //     dispatch(fetchIsHistoryStatus(activeBroadcast.id));
+  //   }
+  // }, [activeBroadcast, isOn]);
 
   useEffect(() => {
     console.log('Active broadcast updated:', activeBroadcast);

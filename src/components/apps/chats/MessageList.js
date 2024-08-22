@@ -30,11 +30,11 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
+const MessageList = ({ id, refreshKey, checkBroadcastHistory, isHistory }) => {
   const [broadcastData, setBroadcastData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isHistory, setIsHistory] = useState(false);
+  //const [isHistory, setIsHistory] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [chartData, setChartData] = useState([
     {
@@ -75,11 +75,10 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory }) => {
     const checkBroadcastHistory = async () => {
       setLoading(true);
       try {
-        const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
-        setIsHistory(historyResponse.data.is_history);
-
-        if (historyResponse.data.is_history) {
-          const response = await apiClient.get(`/broadcast-history/${id}/`);
+        // const historyResponse = await apiClient.get(`/broadcast-history_checker/${id}/`);
+        // setIsHistory(historyResponse.data.is_history);
+        const response = await apiClient.get(`/broadcast-history/${id}/`);
+        if (response.status === 200) {
           setBroadcastData(response.data.data);
         }
       } catch (err) {

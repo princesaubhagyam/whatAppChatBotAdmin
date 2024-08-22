@@ -15,9 +15,12 @@ import {
   TextField,
   Autocomplete,
   CircularProgress,
+  Tooltip,
+ 
+  Slide,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect, useRef } from 'react';
+import EmojiPicker from 'emoji-picker-react';
 import PageContainer from 'src/components/container/PageContainer';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
@@ -28,7 +31,7 @@ import Languages from 'src/utils/Languages.json';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router';
-import { LoadingButton } from '@mui/lab';
+
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -133,6 +136,8 @@ export default function CreateTemplate() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inputLength, setInputLength] = useState(0);
   const [countryCode, setCountryCode] = useState('+91');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  // const [inputLength, setInputLength] = useState(0);
   // console.log(countryCode, 'countryCode');
   const [mediaRes, setMediaRes] = useState();
   //console.log('mediares',mediaRes);
@@ -153,7 +158,7 @@ export default function CreateTemplate() {
     },
   });
   // console.log("formik", formik)
-
+  const emojiPickerRef = useRef(null);
   const [variables, setVariables] = useState([]);
   // const [variablesTitle, setVariablesTitle] = useState([]);
   //console.log(variablesTitle, variables);
@@ -164,6 +169,20 @@ export default function CreateTemplate() {
 
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
+  };
+
+  useEffect(() => {
+    if (showEmojiPicker && emojiPickerRef.current) {
+      const { end } = emojiPickerRef.current.getBoundingClientRect();
+      window.scrollTo({ end: end + window.scrollY, behavior: 'smooth' });
+    }
+  }, [showEmojiPicker]);
+
+  const handleEmojiClick = (event, emojiObject) => {
+    console.log('Emoji Object:', emojiObject);
+    const newValue = formikTemplate.values.body + emojiObject.emoji;
+    formikTemplate.setFieldValue('body', newValue);
+    setInputLength(newValue.length);
   };
 
   const removeVariable = (id) => {
@@ -721,7 +740,10 @@ export default function CreateTemplate() {
                     fullWidth
                     id="body"
                     value={formikTemplate.values.body}
-                    onChange={handleFieldChange}
+                    onChange={(event) => {
+                      handleFieldChange(event);
+                      setInputLength(event.target.value.length);
+                    }}
                     name="body"
                     multiline
                     rows={4}
@@ -735,22 +757,32 @@ export default function CreateTemplate() {
                         },
                       },
                     }}
-                    //id="outlined-error-helper-text"
                     helperText={inputLength >= CHARACTER_LIMIT && <ErrorText />}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end" sx={{ fontSize: '12px !important' }}>
-                          <Typography
-                            sx={{ fontSize: '12px !important' }}
-                          >{`${formikTemplate.values.body.length}/${CHARACTER_LIMIT}`}</Typography>
+                          <Typography sx={{ fontSize: '12px !important' }}>
+                            {`${formikTemplate.values.body.length}/${CHARACTER_LIMIT}`}
+                          </Typography>
+                          <Tooltip title="Add Emoji">
+                            <IconButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                              <span role="img" aria-label="emoji">
+                                😊
+                              </span>
+                            </IconButton>
+                          </Tooltip>
                         </InputAdornment>
                       ),
                     }}
                     required
-                    // dangerouslySetInnerHTML={{ __html: previewHtml }}
                   />
+                  <Slide direction="down" in={showEmojiPicker} mountOnEnter unmountOnExit>
+                    <Box mt={1} ref={emojiPickerRef}>
+                      <EmojiPicker onEmojiClick={handleEmojiClick} />
+                    </Box>
+                  </Slide>
                   {variables &&
-                    variables?.map((variable, index) => (
+                    variables.map((variable, index) => (
                       <Box display="flex" alignItems="center" mt={2} key={variable.id}>
                         <TextField
                           fullWidth
