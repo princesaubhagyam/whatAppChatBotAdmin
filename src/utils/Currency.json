@@ -1,0 +1,12 @@
+[
+  {
+    "code": "inr",
+    "name": "Indian Rupee",
+    "symbol": "₹"
+  },
+  {
+    "code": "usd",
+    "name": "United States Dollar",
+    "symbol": "$"
+  }
+]

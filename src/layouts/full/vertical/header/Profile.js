@@ -10,17 +10,23 @@ import {
   Stack,
   Skeleton,
 } from '@mui/material';
-
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import apiClient from 'src/api/axiosClient';
+import AddMoneyInWallet from "src/modals/AddMoneyInWallet"
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [apiStatus, setApiStatus] = useState(null);
+  const [openAddWalletModal, setOpenAddWalletModal] = useState(false);;
 
   const { user } = useUser();
+
+  function openAddMoneyInWalletModal(){
+    setOpenAddWalletModal(()=>(true))
+  }
 
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -122,6 +128,11 @@ const Profile = () => {
             ₹{walletBalance}
           </Typography>
         )}
+        <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557', cursor : "pointer" }}>
+         <AccountBalanceWalletIcon 
+          onClick={openAddMoneyInWalletModal}
+         />
+        </Typography>
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
@@ -219,6 +230,11 @@ const Profile = () => {
           </Scrollbar>
         </Menu>
       </Box>
+       <AddMoneyInWallet 
+        open = {openAddWalletModal}
+        setOpenAddWalletModal = {setOpenAddWalletModal}
+        walletBalance ={walletBalance}
+      />
     </>
   );
 };

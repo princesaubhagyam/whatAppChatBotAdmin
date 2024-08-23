@@ -30,6 +30,8 @@ const WelcomeCard = ({setIsLoading}) => {
   }, []);
 
   return (
+    <>
+
     <Card elevation={0} sx={{ backgroundColor: (theme) => theme.palette.primary.light, py: 0 }}>
       <CardContent sx={{ py: 2 }}>
         <Grid container spacing={3} justifyContent="space-between">
@@ -77,6 +79,7 @@ const WelcomeCard = ({setIsLoading}) => {
         </Grid>
       </CardContent>
     </Card>
+    </>
   );
 };
 

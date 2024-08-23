@@ -9,7 +9,6 @@ import WelcomeCard from 'src/components/dashboards/ecommerce/WelcomeCard';
 // import RevenueUpdates from 'src/components/dashboards/ecommerce/RevenueUpdates';
 // import SalesOverview from 'src/components/dashboards/ecommerce/SalesOverview';
 // import TotalEarning from 'src/components/dashboards/ecommerce/TotalEarning';
-
 // import MonthlyEarnings from 'src/components/dashboards/ecommerce/MonthlyEarnings';
 // import ProductPerformances from 'src/components/dashboards/ecommerce/ProductPerformances';
 // import RecentTransactions from 'src/components/dashboards/ecommerce/RecentTransactions';
