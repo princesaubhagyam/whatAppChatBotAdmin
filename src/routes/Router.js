@@ -7,6 +7,7 @@ import AuthWrapper from 'src/utils/AuthWrapper';
 import AuthGuard from './AuthGuard';
 import ChangePassword from 'src/views/apps/ChangePassword';
 import AuthReset from 'src/views/authentication/authForms/AuthReset';
+import { element } from 'prop-types';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -19,6 +20,7 @@ const EcommerceDash = Loadable(lazy(() => import('../views/dashboard/Ecommerce')
 /* ****Apps***** */
 const Broadcasts = Loadable(lazy(() => import('../views/apps/chat/Chat')));
 const BroadcastsDetail = Loadable(lazy(() => import('../views/media/BroadcastsDetail')));
+const TemplateInsights = Loadable(lazy(() => import('../views/template/TemplateInsights')));
 const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Calendar = Loadable(lazy(() => import('../views/apps/calendar/BigCalendar')));
 const Email = Loadable(lazy(() => import('../views/apps/email/Email')));
@@ -149,6 +151,7 @@ const Router = [
       { path: '/pending-requests', element: <Templates /> },
       { path: '/settings', element: <Maintenance /> },
       { path: '/broadcast/:id', element: <BroadcastsDetail /> },
+      { path: '/templates/:id', element: <TemplateInsights /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },

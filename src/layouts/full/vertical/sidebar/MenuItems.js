@@ -1,4 +1,12 @@
-import { IconHome, IconBroadcast, IconTemplate, IconMan, IconLayoutDashboard } from '@tabler/icons';
+import {
+  IconHome,
+  IconBroadcast,
+  IconTemplate,
+  IconMan,
+  IconLayoutDashboard,
+  IconFileAnalytics,
+  IconPhoto,
+} from '@tabler/icons';
 import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
@@ -33,12 +41,12 @@ const Menuitems = [
     icon: IconTemplate,
     href: '/templates',
   },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Media',
-  //   icon: IconPhoto,
-  //   href: '/media',
-  // },
+  {
+    id: uniqueId(),
+    title: 'Media',
+    icon: IconPhoto,
+    href: '/media',
+  },
   // {
   //   id: uniqueId(),
   //   title: 'Scheduled Broadcasts',
