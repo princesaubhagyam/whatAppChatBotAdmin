@@ -22,6 +22,7 @@ const NewCheckoutPage = () => {
     clientSecret: clientSecret,
     //theme: 'stripe',
     // mode: 'payment',
+    
     // amount: 10000, // 100 INR in paise
     // currency: 'inr',
     // description: 'Payment for digital services', // Add this line

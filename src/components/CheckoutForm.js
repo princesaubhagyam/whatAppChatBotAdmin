@@ -41,8 +41,8 @@ const CheckoutForm = ({ isHandleClose }) => {
         setLoading(false);
       } else if (result.paymentIntent.status === 'succeeded') {
         console.log('Payment successful');
-
-        navigate('/payment-success');
+        // Navigate to the success page
+        navigate('/payment-success', { state: { payment_status: result.paymentIntent.status } });
       } else {
         console.log('Payment not completed');
         setLoading(false);

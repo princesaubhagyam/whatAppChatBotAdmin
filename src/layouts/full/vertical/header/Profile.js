@@ -239,6 +239,7 @@ const Profile = () => {
         </Menu>
       </Box>
       <PaymentAddMoney
+      
         open={openAddWalletModal}
         setOpenAddWalletModal={setOpenAddWalletModal}
         walletBalance={walletBalance}
