@@ -2,13 +2,12 @@ import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import { Button, Card, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from 'src/api/axiosClient';
 
-const CheckoutForm = ({ isHandleClose, clientSecret, amount }) => {
+const CheckoutForm = ({ isHandleClose }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize the useNavigate hook
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,7 +19,15 @@ const CheckoutForm = ({ isHandleClose, clientSecret, amount }) => {
     setLoading(true);
 
     try {
-      // Confirm the payment with Stripe
+      const { error: submitError } = await elements.submit();
+
+      if (submitError) {
+        console.log(submitError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Confirm the payment
       const result = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -32,33 +39,16 @@ const CheckoutForm = ({ isHandleClose, clientSecret, amount }) => {
       if (result.error) {
         console.log(result.error.message);
         setLoading(false);
-        return;
-      }
-
-      if (result.paymentIntent.status === 'succeeded') {
+      } else if (result.paymentIntent.status === 'succeeded') {
         console.log('Payment successful');
-        const stripeTransactionId = result.paymentIntent.id;
-
-        
-        try {
-          const response = await apiClient.post('/add_money_wallet/', {
-            amount: amount,
-            stripe_transaction_id: stripeTransactionId,
-          });
-
-          console.log('Wallet updated successfully', response.data);
-
-          navigate('/payment-success');
-        } catch (apiError) {
-          console.log('Failed to update wallet', apiError);
-          
-        }
+        // Navigate to the success page
+        navigate('/payment-success');
       } else {
         console.log('Payment not completed');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error during payment processing:', error);
-    } finally {
       setLoading(false);
     }
   };
