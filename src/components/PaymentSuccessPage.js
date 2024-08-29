@@ -1,14 +1,22 @@
 import React from 'react';
 import { Typography, Box, Button } from '@mui/material';
 import img from 'src/assets/images/backgrounds/success_payment.png';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 
 function PaymentSuccessPage() {
+  const location = useLocation();
   const navigate = useNavigate();
+  const { payment_status} = location.state || {};
+
+  React.useEffect(() => {
+    if (!payment_status) {   
+      navigate('/home');
+    }
+  }, [payment_status, navigate]);
   const handleGoHome = () => {
     navigate('/');
   };
-
+ if(payment_status){
   return (
     <Box
       sx={{
@@ -37,6 +45,8 @@ function PaymentSuccessPage() {
       </Button>
     </Box>
   );
+ }
+ return null; 
 }
 
 export default PaymentSuccessPage;
