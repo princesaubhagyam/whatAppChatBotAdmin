@@ -41,12 +41,12 @@ const Menuitems = [
     icon: IconTemplate,
     href: '/templates',
   },
-  {
-    id: uniqueId(),
-    title: 'Media',
-    icon: IconPhoto,
-    href: '/media',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Media',
+  //   icon: IconPhoto,
+  //   href: '/media',
+  // },
   // {
   //   id: uniqueId(),
   //   title: 'Scheduled Broadcasts',

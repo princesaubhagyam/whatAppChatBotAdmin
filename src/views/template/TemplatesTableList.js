@@ -493,7 +493,9 @@ const TemplatesTableList = () => {
               />
             </TableCell> */}
                           <TableCell>
-                            <BarChartIcon />
+                            <Tooltip title="Template Insights">
+                              <BarChartIcon />
+                            </Tooltip>
                           </TableCell>
                           <TableCell>
                             <Typography fontWeight="500" variant="h6" fontSize={14}>
@@ -785,7 +787,6 @@ const TemplatesTableList = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      
     </Box>
   );
 };
