@@ -10,17 +10,23 @@ import {
   Stack,
   Skeleton,
 } from '@mui/material';
-
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import apiClient from 'src/api/axiosClient';
+import PaymentAddMoney from 'src/modals/PaymentAddMoney';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [walletBalance, setWalletBalance] = useState(null);
   const [apiStatus, setApiStatus] = useState(null);
+  const [openAddWalletModal, setOpenAddWalletModal] = useState(false);
 
   const { user } = useUser();
+
+  function openAddMoneyInWalletModal() {
+    setOpenAddWalletModal(() => true);
+  }
 
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -122,6 +128,19 @@ const Profile = () => {
             ₹{walletBalance}
           </Typography>
         )}
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 500,
+            color: '#545557',
+            cursor: 'pointer',
+            '&:hover': {
+              color: '#1A4D2E',
+            },
+          }}
+        >
+          <AccountBalanceWalletIcon onClick={openAddMoneyInWalletModal} />
+        </Typography>
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
@@ -144,7 +163,7 @@ const Profile = () => {
               backgroundColor: 'primary.main',
             }}
           >
-            {user && user.full_name ? (user.full_name.charAt(0)).toUpperCase() : ''}
+            {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''}
           </Avatar>
         </IconButton>
         <Menu
@@ -219,6 +238,11 @@ const Profile = () => {
           </Scrollbar>
         </Menu>
       </Box>
+      <PaymentAddMoney
+        open={openAddWalletModal}
+        setOpenAddWalletModal={setOpenAddWalletModal}
+        walletBalance={walletBalance}
+      />
     </>
   );
 };

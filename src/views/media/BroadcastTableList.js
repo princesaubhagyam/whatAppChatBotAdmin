@@ -18,13 +18,6 @@ import {
   InputAdornment,
   Paper,
   Typography,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { IconSearch, IconTrash } from '@tabler/icons';
@@ -166,7 +159,6 @@ EnhancedTableToolbar.propTypes = {
   search: PropTypes.string.isRequired,
 };
 
-
 const BroadcastTableList = ({ broadcasts }) => {
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('name');
@@ -200,7 +192,7 @@ const BroadcastTableList = ({ broadcasts }) => {
   };
 
   const filteredRows = broadcasts.filter((broadcast) =>
-    broadcast.title.toLowerCase().includes(search.toLowerCase())
+    broadcast.title.toLowerCase().includes(search.toLowerCase()),
   );
 
   const paginatedRows = filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -224,7 +216,12 @@ const BroadcastTableList = ({ broadcasts }) => {
             />
             <TableBody>
               {paginatedRows.map((row) => (
-                <TableRow key={row.id} hover onClick={() => handleRowClick(row.id)} style={{ cursor: 'pointer' }}>
+                <TableRow
+                  key={row.id}
+                  hover
+                  onClick={() => handleRowClick(row.id)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <TableCell>
                     <BarChartIcon />
                   </TableCell>
@@ -264,4 +261,3 @@ BroadcastTableList.propTypes = {
 };
 
 export default BroadcastTableList;
-
