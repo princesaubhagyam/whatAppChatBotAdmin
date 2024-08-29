@@ -52,7 +52,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            //required
+            required
           />
         </>
       );
@@ -128,7 +128,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   });
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
-  console.log(previewLink, 'previewLink');
+  // console.log(previewLink, 'previewLink');
 
   const fetchTemplates = async () => {
     try {

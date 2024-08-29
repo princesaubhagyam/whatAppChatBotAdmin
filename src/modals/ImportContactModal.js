@@ -126,21 +126,14 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
               color="primary"
               sx={{ mr: 2 }}
               onClick={handleSubmit}
-              loading={loading}
-              disabled={loading} 
-              loadingPosition="start"
-              loadingIndicator={
-                <React.Fragment>
-                  <CircularProgress size={18} color="inherit" />
-                  {/* Creating.. */}
-                </React.Fragment>
-              }
+              //loading={loading}
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
             >
-               {loading ? <>Loading...</> :<>Import</> }
-             
+              {loading ? 'Importing...' : 'Import'}
             </Button>
             <Button variant="contained" color="error" onClick={handleClose}>
-              Close
+              Cancel
             </Button>
           </Box>
         </Box>

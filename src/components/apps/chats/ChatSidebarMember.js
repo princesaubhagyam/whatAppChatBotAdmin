@@ -5,7 +5,13 @@ import ChatListingMember from './ChatListingMember';
 
 const drawerWidth = 320;
 
-const ChatSidebarMember = ({ isMobileSidebarOpen, onSidebarClose, contacts, getBroadcastList }) => {
+const ChatSidebarMember = ({
+  isMobileSidebarOpen,
+  onSidebarClose,
+  contacts,
+  getBroadcastList,
+  isHistory,
+}) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   return (
@@ -22,7 +28,7 @@ const ChatSidebarMember = ({ isMobileSidebarOpen, onSidebarClose, contacts, getB
       }}
     >
       {/* <ChatListingMember contacts={contacts} /> */}
-      <ChatListingMember getBroadcastList={getBroadcastList} />
+      <ChatListingMember getBroadcastList={getBroadcastList} isHistory={isHistory} />
     </Drawer>
   );
 };

@@ -10,6 +10,7 @@ import {
   Stack,
   useMediaQuery,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 import { IconMenu2 } from '@tabler/icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,14 +21,12 @@ import { useState } from 'react';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 // import { fetchChatHistoryByPhoneNo } from '../../../store/apps/chat/ChatSlice';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
-import MessageList from './MessageList'; // Import the new component
+import MessageList from './MessageList';
 import Spinner from 'src/views/spinner/Spinner';
-import { useEffect, useContext } from 'react';
-import apiClient from 'src/api/axiosClient';
-import EventContext from 'src/BroadcastContext';
+
 import InfoIcon from '@mui/icons-material/Info';
 
-const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
+const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory }) => {
   // const [open, setOpen] = React.useState(false);
   const [Graph, setGraph] = React.useState([]);
   // console.log('Graph', Graph);
@@ -37,24 +36,7 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
   const [loading, setLoading] = useState(false);
   const chatDetails = useSelector((state) => state.chatReducer.chatHistory);
   const [refreshKey, setRefreshKey] = useState(0);
-  // console.log('chatDetails', activeBroadcast);
-  const [isHistory, setIsHistory] = useState(false);
-  // console.log('isHistory', isHistory);
-  const { isOn } = useContext(EventContext);
 
-  useEffect(() => {
-    if (activeBroadcast) {
-      apiClient
-        .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
-        .then((response) => {
-          setIsHistory(response.data.is_history);
-          setGraph(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching history status:', error);
-        });
-    }
-  }, [activeBroadcast, isOn]);
   const refreshChatHistory = async () => {
     setLoading(true);
     setRefreshKey((prevKey) => prevKey + 1);
@@ -85,24 +67,28 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
                     style={{ padding: '0px' }}
                     primary={<Typography variant="h5">{activeBroadcast.title}</Typography>}
                   />
-                  <IconButton sx={{ cursor: 'pointer' }}>
-                    {isHistory && (
-                      <InfoIcon
-                        fontSize="medium"
-                        sx={{ marginRight: '2px' }}
-                        onClick={analyticsHistroy}
-                      />
-                    )}
-                  </IconButton>
-                  <IconButton sx={{ cursor: 'pointer' }}>
-                    {isHistory && (
-                      <CachedIcon
-                        fontSize="medium"
-                        sx={{ marginRight: '2px' }}
-                        onClick={refreshChatHistory}
-                      />
-                    )}
-                  </IconButton>
+                  <Tooltip title="Analytics">
+                    <IconButton sx={{ cursor: 'pointer' }}>
+                      {isHistory && (
+                        <InfoIcon
+                          fontSize="medium"
+                          sx={{ marginRight: '2px' }}
+                          onClick={analyticsHistroy}
+                        />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Refresh">
+                    <IconButton sx={{ cursor: 'pointer' }}>
+                      {isHistory && (
+                        <CachedIcon
+                          fontSize="medium"
+                          sx={{ marginRight: '2px' }}
+                          onClick={refreshChatHistory}
+                        />
+                      )}
+                    </IconButton>
+                  </Tooltip>
                 </ListItem>
                 <Stack direction={'row'}></Stack>
               </Box>
@@ -118,7 +104,12 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
                   backgroundRepeat: 'no-repeat',
                   overflowY: 'hidden',
                   zIndex: '100',
-                  height: { xl: '72vh !important', lg: '70vh !important', md: '85vh !important' },
+                  height: {
+                    sm: '72vh !important',
+                    md: '72vh !important',
+                    xl: '72vh !important',
+                    lg: '70vh !important',
+                  },
                   maxHeight: '500px',
                   borderRadius: '0px !important',
                 }}
@@ -135,7 +126,11 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics }) => {
                       <Spinner />
                     ) : (
                       <>
-                        <MessageList id={activeBroadcast?.id} refreshKey={refreshKey} />
+                        <MessageList
+                          id={activeBroadcast?.id}
+                          refreshKey={refreshKey}
+                          isHistory={isHistory}
+                        />
                         {chatDetails?.map((chat) => (
                           <Box key={chat.id + chat.msg}>
                             <Box display="flex">

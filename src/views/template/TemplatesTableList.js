@@ -33,10 +33,13 @@ import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import { DeleteOutline } from '@mui/icons-material';
 import { useState } from 'react';
 import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons';
-
+import BarChartIcon from '@mui/icons-material/BarChart';
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
 import { LoadingButton } from '@mui/lab';
 import CachedIcon from '@mui/icons-material/Cached';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
+import TemplateInsights from './TemplateInsights';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -65,6 +68,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
+  {
+    id: 'icon',
+    numeric: false,
+    disablePadding: false,
+    label: '',
+  },
   {
     id: 'name',
     numeric: false,
@@ -130,18 +139,22 @@ function EnhancedTableHead(props) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.id === 'icon' ? (
+              <BarChartIcon />
+            ) : (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -247,6 +260,7 @@ const TemplatesTableList = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const navigate = useNavigate();
   const handleClickOpen = (row, index) => {
     console.log('Row clicked:', row);
     setOpen(true);
@@ -255,6 +269,9 @@ const TemplatesTableList = () => {
     setDialogTitle(row.name);
   };
 
+  const handleRowClick = (id) => {
+    navigate(`/templates/${id}`);
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -335,8 +352,10 @@ const TemplatesTableList = () => {
       });
 
       setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      toast.success('Deleted Successfully');
     } catch (error) {
       console.error('Error deleting template:', error);
+      toast.error('Error deleting template:', error);
     }
   };
   const handleSearch = (event) => {
@@ -460,6 +479,8 @@ const TemplatesTableList = () => {
                           // aria-checked={isItemSelected}
                           tabIndex={-1}
                           key={row.name}
+                          onClick={() => handleRowClick(row.id)}
+                          style={{ cursor: 'pointer' }}
                           // selected={isItemSelected}
                         >
                           {/* <TableCell padding="checkbox">
@@ -471,6 +492,11 @@ const TemplatesTableList = () => {
                 }}
               />
             </TableCell> */}
+                          <TableCell>
+                            <Tooltip title="Template Insights">
+                              <BarChartIcon />
+                            </Tooltip>
+                          </TableCell>
                           <TableCell>
                             <Typography fontWeight="500" variant="h6" fontSize={14}>
                               {row.name}
@@ -513,17 +539,28 @@ const TemplatesTableList = () => {
                           </TableCell>
                           <TableCell>
                             <Tooltip title="View">
-                              <IconButton size="small" onClick={() => handleClickOpen(row, index)}>
+                              <IconButton
+                                size="small"
+                                onClick={(event) => {
+                                  event.stopPropagation(); // Prevent the row click from firing
+                                  handleClickOpen(row, index);
+                                }}
+                              >
                                 <IconEye />
                               </IconButton>
                             </Tooltip>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={() => handleDelete(row.id, row.name)}
-                            >
-                              <DeleteOutline />
-                            </IconButton>
+                            <Tooltip title="Delete">
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleDelete(row.id, row.name);
+                                }}
+                              >
+                                <DeleteOutline />
+                              </IconButton>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                       );
@@ -735,15 +772,16 @@ const TemplatesTableList = () => {
           <DialogContentText>Are you sure you want to delete the template?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <LoadingButton
+          <Button
             onClick={handleConfirmDelete}
             color="error"
             variant="contained"
-            loadingPosition="start"
-            loading={loading}
+            //loadingPosition="start"
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            Delete
-          </LoadingButton>
+            {loading ? 'Deleting...' : 'Delete'}
+          </Button>
           <Button onClick={() => setConfirmDelete(false)} color="primary" variant="contained">
             Cancel
           </Button>
