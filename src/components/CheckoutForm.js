@@ -1,8 +1,9 @@
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Button, Card, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
+import apiClient from 'src/api/axiosClient';
 
-const CheckoutForm = ({ isHandleClose, clientSecret }) => {
+const CheckoutForm = ({ isHandleClose, clientSecret, amount }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -26,21 +27,41 @@ const CheckoutForm = ({ isHandleClose, clientSecret }) => {
     }
 
     // Now, confirm the payment
-    console.log('elements', elements);
     const result = await stripe.confirmPayment({
       elements,
-      //clientSecret,
       confirmParams: {
-        return_url: 'https://chatbot.saubhagyam.net/home', // Change this to your return URL
+        // Use this to confirm the payment without redirecting immediately
+        return_url: window.location.origin, // Temporary URL or null
       },
+      redirect: 'if_required', // Prevent automatic redirection
+      // confirmParams: {
+      //   return_url: 'https://chatbot.saubhagyam.net/payment-success',
+      // },
     });
 
     if (result.error) {
       console.log(result.error.message);
       setLoading(false);
-    } else {
+    } else if (result.paymentIntent.status === 'succeeded') {
       console.log('Payment successful');
-      // Handle the successful payment scenario here
+      const stripeTransactionId = result.paymentIntent.id;
+
+      try {
+        const response = await apiClient.post('/add_money_wallet/', {
+          amount: amount,
+          stripe_transaction_id: stripeTransactionId,
+        });
+
+        console.log('Wallet updated successfully', response.data);
+      } catch (apiError) {
+        console.log('Failed to update wallet', apiError);
+        // Handle the failed wallet update scenario here
+      }
+
+      setLoading(false);
+    } else {
+      console.log('Payment not completed');
+      setLoading(false);
     }
   };
 
@@ -81,7 +102,7 @@ const CheckoutForm = ({ isHandleClose, clientSecret }) => {
             >
               {loading ? 'Processing...' : 'Pay'}
             </Button>
-            <Button onClick={isHandleClose} variant="contained" color="error" sx={{ ml: 2 }} >
+            <Button onClick={isHandleClose} variant="contained" color="error" sx={{ ml: 2 }}>
               Cancel
             </Button>
           </Typography>
