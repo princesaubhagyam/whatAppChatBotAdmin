@@ -60,7 +60,7 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
         setLoading(false);
 
         // Navigate to the payment page with the client_secret
-        navigate('/payment', { state: { clientSecret: client_secret } });
+        navigate('/payment', { state: { clientSecret: client_secret, amount } });
       }
     } catch (error) {
       console.error('Error creating payment request:', error);

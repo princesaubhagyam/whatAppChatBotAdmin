@@ -9,6 +9,7 @@ import ChangePassword from 'src/views/apps/ChangePassword';
 import AuthReset from 'src/views/authentication/authForms/AuthReset';
 import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
+import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -154,6 +155,7 @@ const Router = [
       { path: '/broadcast/:id', element: <BroadcastsDetail /> },
       { path: '/templates/:id', element: <TemplateInsights /> },
       { path: '/payment', element: <NewCheckoutPage /> },
+
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },
@@ -231,6 +233,7 @@ const Router = [
     children: [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <AuthGuard /> },
+      { path: '/payment-success', element: <PaymentSuccessPage /> },
       // { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/reset-password/:token', element: <AuthReset /> },
       { path: '/auth/register', element: <Register2 /> },

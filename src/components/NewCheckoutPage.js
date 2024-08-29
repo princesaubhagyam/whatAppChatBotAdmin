@@ -8,7 +8,7 @@ const stripePromise = loadStripe('pk_test_vsltnsvTfY0zaOzlwBNaV3Vg00LJzi7UtL');
 
 const NewCheckoutPage = () => {
   const location = useLocation();
-  const { clientSecret } = location.state || {};
+  const { clientSecret, amount } = location.state || {};
 
   const options = {
     clientSecret: clientSecret,
@@ -22,7 +22,7 @@ const NewCheckoutPage = () => {
 
   return (
     <Elements stripe={stripePromise} options={options}>
-      <CheckoutForm clientSecret={clientSecret} />
+      <CheckoutForm clientSecret={clientSecret} amount={amount} />
     </Elements>
   );
 };

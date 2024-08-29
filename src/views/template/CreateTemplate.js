@@ -16,7 +16,6 @@ import {
   Autocomplete,
   CircularProgress,
   Tooltip,
- 
   Slide,
 } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
@@ -244,11 +243,11 @@ export default function CreateTemplate() {
               format: HeaderSelect,
               text: HeaderSelect === 'TEXT' ? values.text : '',
               // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
-              ...(titleValues.length > 0 && {
-                example: {
-                  header_text: titleValues,
-                },
-              }),
+              // ...(titleValues.length > 0 && {
+              //   example: {
+              //     header_text: titleValues,
+              //   },
+              // }),
             },
             {
               type: 'BODY',
