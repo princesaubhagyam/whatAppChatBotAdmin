@@ -155,7 +155,6 @@ const Router = [
       { path: '/broadcast/:id', element: <BroadcastsDetail /> },
       { path: '/templates/:id', element: <TemplateInsights /> },
       { path: '/payment', element: <NewCheckoutPage /> },
-
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/apps/chats', element: <Broadcasts /> },
