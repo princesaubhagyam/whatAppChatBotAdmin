@@ -200,7 +200,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   }, [broadcastDetails?.template]);
 
   const handleFieldChange = (e) => {
-    if(activeBroadcast.members)
+    if(activeBroadcast.members == )
     setBroadcastDetails({
       ...broadcastDetails,
       broadcast: broadcastId,
