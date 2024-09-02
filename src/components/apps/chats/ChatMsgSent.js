@@ -22,7 +22,23 @@ const ChatMsgSent = ({
   // const [isHistory, setIsHistory] = useState(false);
   // const { isOn } = useContext(EventContext);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  const [walletBalance, setWalletBalance] = useState(null);
+
   const id = useSelector((state) => state.chatReducer.chatId);
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await apiClient.get('/wallet/');
+      if (response.status === 200) {
+        setWalletBalance(response.data.data.balance);
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, []);
 
   // useEffect(() => {
   //   if (activeBroadcast) {
@@ -108,7 +124,7 @@ const ChatMsgSent = ({
               )}
             </div>
           )} */}
-          {!isHistory && (
+          {!isHistory && walletBalance > 0 && (
             <Button
               style={{ backgroundColor: '#1A4D2E', color: 'white' }}
               onClick={handleOpenTemplateModal}

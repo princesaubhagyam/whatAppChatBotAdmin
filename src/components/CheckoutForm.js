@@ -31,13 +31,14 @@ const CheckoutForm = ({ isHandleClose }) => {
       const result = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.origin, // Temporary URL or null
+          return_url: window.location.origin,
         },
         redirect: 'if_required',
       });
 
       if (result.error) {
         console.log(result.error.message);
+        navigate('/payment-error', { state: { payment_error: result.error } });
         setLoading(false);
       } else if (result.paymentIntent.status === 'succeeded') {
         console.log('Payment successful');
@@ -45,11 +46,13 @@ const CheckoutForm = ({ isHandleClose }) => {
         navigate('/payment-success', { state: { payment_status: result.paymentIntent.status } });
       } else {
         console.log('Payment not completed');
+        navigate('/payment-error', { state: { payment_error: result.error } });
         setLoading(false);
       }
     } catch (error) {
       console.error('Error during payment processing:', error);
       setLoading(false);
+      navigate('/payment-error', { state: { payment_error: error } });
     }
   };
 
@@ -59,7 +62,7 @@ const CheckoutForm = ({ isHandleClose }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%', // Full viewport height
+        height: '100%', 
         padding: '16px',
         boxSizing: 'border-box',
       }}
@@ -90,7 +93,13 @@ const CheckoutForm = ({ isHandleClose }) => {
             >
               {loading ? 'Processing...' : 'Pay'}
             </Button>
-            <Button onClick={isHandleClose} variant="contained" color="error" sx={{ ml: 2 }}>
+            <Button
+              //onClick={isHandleClose}
+              variant="contained"
+              color="error"
+              sx={{ ml: 2 }}
+              onClick={() => navigate('/home')}
+            >
               Cancel
             </Button>
           </Typography>

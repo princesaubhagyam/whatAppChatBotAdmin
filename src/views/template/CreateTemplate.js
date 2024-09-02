@@ -127,6 +127,8 @@ export default function CreateTemplate() {
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
   const [buttonIcon, setButtonIcon] = useState(<Reply />);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
@@ -228,7 +230,7 @@ export default function CreateTemplate() {
     },
     //validatioSecondSchema: validatioSecondSchema,
     onSubmit: async (values) => {
-      setLoading(true);
+      setButtonLoading(true);
       try {
         const bodyValues = variables.map((v) => v.value);
         const titleValues = variables.map((v) => v.value);
@@ -353,7 +355,7 @@ export default function CreateTemplate() {
           const response = await metaClient.post('/message_templates', reqBody);
 
           if (response) {
-            setLoading(false);
+            //setButtonLoading(false);
             toast.success(
               'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
               { duration: 5000, position: 'top-center' },
@@ -361,10 +363,12 @@ export default function CreateTemplate() {
             navigate('/templates');
           }
         }
-        setLoading(false);
+        //setButtonLoading(false);
       } catch (error) {
-        setLoading(false);
+        //setButtonLoading(false);
         toast.error(error.response.data.error.error_user_title, { duration: 2000 });
+      } finally {
+        setButtonLoading(false);
       }
     },
   });
@@ -421,6 +425,8 @@ export default function CreateTemplate() {
   // };
   const handleMediaContentChange = async (event) => {
     try {
+      setLoading(true);
+      setButtonLoading(true);
       const file = event.target.files[0];
       setMediaContent(URL.createObjectURL(file));
 
@@ -452,6 +458,9 @@ export default function CreateTemplate() {
       }
     } catch (error) {
       console.error('Error uploading file:', error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false);
+      setButtonLoading(false);
     }
   };
 
@@ -803,8 +812,8 @@ export default function CreateTemplate() {
                   </Box>
                   <CustomFormLabel htmlFor="footer">Footer</CustomFormLabel>
                   <Typography variant="subtitle1">
-                    Add optional footer text. You can add a short, supporting message at the bottom
-                    of your template.
+                    Add footer text. You can add a short, supporting message at the bottom of your
+                    template.
                   </Typography>
                   <CustomTextField
                     fullWidth
@@ -995,6 +1004,17 @@ export default function CreateTemplate() {
                           <Typography variant="h6" component="div">
                             {formikTemplate.values.text}
                           </Typography>
+                        ) : loading ? ( // Show loading spinner while uploading
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '200px',
+                            }}
+                          >
+                            <CircularProgress />
+                          </Box>
                         ) : mediaContent ? (
                           mediaType === 'document' ? (
                             <Box sx={{ mb: 2 }}>
@@ -1078,10 +1098,16 @@ export default function CreateTemplate() {
                     color="primary"
                     sx={{ mr: 1 }}
                     type="submit"
-                    disabled={loading}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                    disabled={loading || buttonLoading}
+                    startIcon={
+                      loading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : buttonLoading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
                   >
-                    {loading ? 'Creating...' : 'Create'}
+                    {loading ? 'Uploading...' : buttonLoading ? 'Creating...' : 'Create'}
                   </Button>
                   <Button variant="contained" color="error" onClick={() => setStep(0)}>
                     Back

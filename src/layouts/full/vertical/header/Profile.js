@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Box,
   Menu,
@@ -21,7 +21,7 @@ const Profile = () => {
   const [walletBalance, setWalletBalance] = useState(null);
   const [apiStatus, setApiStatus] = useState(null);
   const [openAddWalletModal, setOpenAddWalletModal] = useState(false);
-
+  const location = useLocation();
   const { user } = useUser();
 
   function openAddMoneyInWalletModal() {
@@ -44,16 +44,23 @@ const Profile = () => {
       try {
         const phoneId = localStorage.getItem('phone_id');
         const token = localStorage.getItem('access_meta');
-        const response = await apiClient.get(`/auth/api_status/?phone_id=${phoneId}`, {
-          headers: {
-            'Access-Token': token,
-          },
-        });
-        if (response.status === 200) {
-          setApiStatus(response.data.api_status);
+        if (phoneId) {
+          const response = await apiClient.get(`/auth/api_status/?phone_id=${phoneId}`, {
+            headers: {
+              'Access-Token': token,
+            },
+          });
+          if (response.status === 200) {
+            setApiStatus(response.data.api_status || '-');
+          } else {
+            setApiStatus('-');
+          }
+        } else {
+          setApiStatus('-');
         }
       } catch (error) {
         console.error('Error fetching API status:', error);
+        setApiStatus('-');
       }
     };
 
@@ -92,8 +99,8 @@ const Profile = () => {
         >
           WABA Status:
         </Typography>
-        {/* {apiStatus === null ? (
-          <Skeleton variant="text" width={50} height={30} animation={'wave'}/>
+        {apiStatus === null ? (
+          <Skeleton variant="text" width={50} height={30} animation={'wave'} />
         ) : (
           <Typography
             variant="h6"
@@ -102,18 +109,7 @@ const Profile = () => {
               color: '#1A4D2E',
             }}
           >
-            {apiStatus || ''} 
-          </Typography>
-        )} */}
-        {apiStatus !== null && (
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 500,
-              color: '#1A4D2E',
-            }}
-          >
-            {apiStatus}
+            {apiStatus || '-'}
           </Typography>
         )}
       </Stack>
@@ -139,7 +135,14 @@ const Profile = () => {
             },
           }}
         >
-          <AccountBalanceWalletIcon onClick={openAddMoneyInWalletModal} />
+          <AccountBalanceWalletIcon
+            onClick={openAddMoneyInWalletModal}
+            disabled={location.pathname === '/payment'}
+            sx={{
+              color: location.pathname === '/payment' ? 'gray' : 'inherit',
+              pointerEvents: location.pathname === '/payment' ? 'none' : 'auto',
+            }}
+          />
         </Typography>
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -239,7 +242,6 @@ const Profile = () => {
         </Menu>
       </Box>
       <PaymentAddMoney
-      
         open={openAddWalletModal}
         setOpenAddWalletModal={setOpenAddWalletModal}
         walletBalance={walletBalance}

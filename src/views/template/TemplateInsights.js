@@ -1,15 +1,12 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { Grid, Card, Typography, Box, CircularProgress } from '@mui/material';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import moment from 'moment';
-import 'antd/dist/reset.css'; // Make sure to import Ant Design styles
+import 'antd/dist/reset.css'; // Import Ant Design styles
 import { Line } from 'react-chartjs-2';
 import apiClient from 'src/api/axiosClient';
 import { useParams } from 'react-router';
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,6 +20,7 @@ import {
 import PageContainer from 'src/components/container/PageContainer';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import Notfound from 'src/assets/images/backgrounds/Notfoundsearch.png';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 const { RangePicker } = DatePicker;
@@ -59,7 +57,8 @@ const rangePresets = [
 const TemplateInsights = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState([moment('2024-08-15'), moment('2024-08-22')]);
+  const [dateRange, setDateRange] = useState([dayjs().subtract(7, 'day'), dayjs()]);
+  const [dateEnd, setDateEnd] = useState(false);
   const [templateName, setTemplateName] = useState(null);
   const [templateLanguage, setTemplateLanguage] = useState(null);
   const { id } = useParams();
@@ -80,6 +79,7 @@ const TemplateInsights = () => {
         setData(response.data);
         setTemplateLanguage(response?.data?.language);
         setTemplateName(response?.data?.name);
+        //setDateEnd(false);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -99,20 +99,40 @@ const TemplateInsights = () => {
       </PageContainer>
     );
   }
-  const dateFormat = 'YYYY/MM/DD';
+
   const handleDateRangeChange = (dates, dateStrings) => {
     if (dates && dates.length === 2) {
+      // const [startDate, endDate] = dates;
+      // const isLast90Days =
+      //   dayjs().subtract(90, 'day').isSame(startDate, 'day') && dayjs().isSame(endDate, 'day');
+      // const isLast30Days =
+      //   dayjs().subtract(30, 'day').isSame(startDate, 'day') && dayjs().isSame(endDate, 'day');
+      // const isLast14Days =
+      //   dayjs().subtract(14, 'day').isSame(startDate, 'day') && dayjs().isSame(endDate, 'day');
+      // const isLast7Days =
+      //   dayjs().subtract(7, 'day').isSame(startDate, 'day') && dayjs().isSame(endDate, 'day');
+      // if (isLast90Days || isLast30Days || isLast14Days || isLast7Days) {
+      //   setDateEnd(true);
+
+      // }
       setDateRange(dates);
+      console.log(dates, 'date ');
     } else {
       console.log('Clear');
+      //setDateEnd(false);
     }
   };
 
   const totals = data?.totals || {};
   const graphData = data?.graph_data || [];
 
+  const isGraphDataAvailable = graphData.some(
+    (item) => item.sent !== 0 || item.delivered !== 0 || item.read !== 0,
+  );
+
   const chartData = {
     labels: graphData.map((item) => `${format(new Date(item.start), 'dd MMM')}`),
+
     datasets: [
       {
         label: 'Messages Sent',
@@ -120,7 +140,7 @@ const TemplateInsights = () => {
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         fill: true,
-        pointRadius: 3,
+        pointRadius: 2,
       },
       {
         label: 'Messages Delivered',
@@ -130,7 +150,7 @@ const TemplateInsights = () => {
         fill: true,
         borderWidth: 2,
         pointStyle: 'circle',
-        pointRadius: 4,
+        pointRadius: 2,
       },
       {
         label: 'Messages Read',
@@ -138,9 +158,24 @@ const TemplateInsights = () => {
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         fill: true,
-        pointRadius: 3,
+        pointRadius: 2,
       },
     ],
+  };
+
+  const calculateStepSize = () => {
+    const daysDifference = dateRange[1].diff(dateRange[0], 'day');
+    let stepSize = 1;
+
+    if (daysDifference >= 90) {
+      stepSize = 10;
+    } else if (daysDifference >= 60) {
+      stepSize = 5;
+    } else if (daysDifference >= 30) {
+      stepSize = 5;
+    }
+
+    return stepSize;
   };
 
   const chartOptions = {
@@ -156,6 +191,13 @@ const TemplateInsights = () => {
             weight: 'bold',
           },
         },
+        ticks: {
+          autoSkip: true,
+          // maxTicksLimit: 30,
+          stepSize: calculateStepSize(),
+          maxTicksLimit: 15,
+        },
+        offset: true,
       },
       y: {
         min: 0,
@@ -172,6 +214,9 @@ const TemplateInsights = () => {
     },
   };
 
+  const maxDate = dayjs().endOf('day');
+  const minDate = dayjs().subtract(90, 'day').startOf('day');
+
   return (
     <PageContainer title="Templates" description="this is Search Table page">
       <Breadcrumb title="Templates Insight" items={BCrumb} />
@@ -181,7 +226,7 @@ const TemplateInsights = () => {
         alignItems="center"
         justifyContent="space-between"
         sx={{ marginBottom: 2, marginTop: 2 }}
-        lg={12}
+        //lg={12}
       >
         <Grid item sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Grid>
@@ -198,13 +243,14 @@ const TemplateInsights = () => {
         </Grid>
         <Grid item>
           <RangePicker
-            // value={dateRange}
-            defaultValue={[dayjs('2024-08-15', dateFormat), dayjs('2024-08-22', dateFormat)]}
+            value={dateRange}
             onChange={handleDateRangeChange}
             format="YYYY-MM-DD"
             style={{ width: '250px' }}
             presets={rangePresets}
             size="large"
+            //disabledDate={(current) => current && current > dayjs().endOf('day')}
+            disabledDate={(current) => current && (current < minDate || current > maxDate)}
           />
         </Grid>
       </Grid>
@@ -213,31 +259,49 @@ const TemplateInsights = () => {
         <Grid item xs={12} md={4}>
           <Card variant="outlined" sx={{ padding: 2 }}>
             <Typography variant="h6">Amount Spent</Typography>
-            <Typography variant="h5">₹{totals.cost.amount_spent.toFixed(2)}</Typography>
+            <Typography variant="h5">₹{totals?.cost?.amount_spent.toFixed(2)}</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
           <Card variant="outlined" sx={{ padding: 2 }}>
             <Typography variant="h6">Cost per message delivered</Typography>
-            <Typography variant="h5">₹{totals.cost.cost_per_delivered.toFixed(2)}</Typography>
+            <Typography variant="h5">₹{totals?.cost?.cost_per_delivered.toFixed(2)}</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
           <Card variant="outlined" sx={{ padding: 2 }}>
             <Typography variant="h6">Cost per website button click</Typography>
             <Typography variant="h5">
-              ₹{totals.cost.cost_per_url_button_click.toFixed(2)}
+              ₹{totals?.cost?.cost_per_url_button_click.toFixed(2)}
             </Typography>
           </Card>
         </Grid>
       </Grid>
       <Grid container spacing={2} alignItems={'center'}>
         <Grid item xs={12} md={8}>
-          <Card variant="outlined" sx={{ padding: 2 }}>
+          <Card variant="outlined" sx={{ padding: 2, minHeight: '400px' }}>
             <Typography variant="h4" gutterBottom>
               Performance
             </Typography>
-            <Line data={chartData} options={chartOptions} />
+            {isGraphDataAvailable ? (
+              <Line data={chartData} options={chartOptions} />
+            ) : (
+              <>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                  textAlign="center"
+                >
+                  <img src={Notfound} alt="No Data" style={{ width: '240px', height: '200px' }} />
+                  <Typography variant="h5" align="center" color="red" mt={2}>
+                    No graph data available for the selected date range.
+                  </Typography>
+                </Box>
+              </>
+            )}
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -245,21 +309,22 @@ const TemplateInsights = () => {
             <Grid item xs={12}>
               <Card variant="outlined" sx={{ padding: 2 }}>
                 <Typography variant="h6">Messages Sent</Typography>
-                <Typography variant="h5">{totals.sent}</Typography>
+                <Typography variant="h5">{totals?.sent}</Typography>
               </Card>
             </Grid>
             <Grid item xs={12}>
               <Card variant="outlined" sx={{ padding: 2 }}>
                 <Typography variant="h6">Messages Delivered</Typography>
-                <Typography variant="h5">{totals.delivered}</Typography>
+                <Typography variant="h5">{totals?.delivered}</Typography>
               </Card>
             </Grid>
             <Grid item xs={12}>
               <Card variant="outlined" sx={{ padding: 2 }}>
                 <Typography variant="h6">Messages Read</Typography>
                 <Typography variant="h5">
-                  {totals.read} (
-                  {totals.sent > 0 ? `${((totals.read / totals.sent) * 100).toFixed(2)}%` : '0%'})
+                  {totals?.read} (
+                  {totals?.sent > 0 ? `${((totals?.read / totals?.sent) * 100).toFixed(2)}%` : '0%'}
+                  )
                 </Typography>
               </Card>
             </Grid>

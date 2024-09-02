@@ -1,13 +1,4 @@
-import {
-  IconHome,
-  IconBroadcast,
-  IconTemplate,
-  IconMan,
-  IconLayoutDashboard,
-  IconFileAnalytics,
-  IconPhoto,
-} from '@tabler/icons';
-import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
+import { IconBroadcast, IconTemplate, IconLayoutDashboard } from '@tabler/icons';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
 const Menuitems = [

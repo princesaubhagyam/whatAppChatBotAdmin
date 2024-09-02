@@ -10,6 +10,7 @@ import AuthReset from 'src/views/authentication/authForms/AuthReset';
 import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
 import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
+import PaymentErrorPage from 'src/components/PaymentErrorPage';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -233,6 +234,7 @@ const Router = [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <AuthGuard /> },
       { path: '/payment-success', element: <PaymentSuccessPage /> },
+      { path: '/payment-error', element: <PaymentErrorPage /> },
       // { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/reset-password/:token', element: <AuthReset /> },
       { path: '/auth/register', element: <Register2 /> },

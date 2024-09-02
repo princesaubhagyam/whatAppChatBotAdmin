@@ -1,22 +1,22 @@
 import React from 'react';
 import { Typography, Box, Button } from '@mui/material';
-import img from 'src/assets/images/backgrounds/success_payment.png';
+import img from 'src/assets/images/backgrounds/failed.jpg';
 import { useNavigate, useLocation } from 'react-router';
 
-function PaymentSuccessPage() {
+function PaymentErrorPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { payment_status } = location.state || {};
+  const { payment_error } = location.state || {};
 
   React.useEffect(() => {
-    if (!payment_status) {
+    if (!payment_error) {
       navigate('/home');
     }
-  }, [payment_status, navigate]);
+  }, [payment_error, navigate]);
   const handleGoHome = () => {
     navigate('/home');
   };
-  if (payment_status) {
+  if (payment_error) {
     return (
       <Box
         sx={{
@@ -39,7 +39,18 @@ function PaymentSuccessPage() {
             marginBottom: '16px', // Space between image and text
           }}
         />
-        <Typography variant="h3">Payment Done Successfully</Typography>
+        <Typography variant="h3">Payment was Unsuccessful</Typography>
+        {payment_error.message && (
+          <Typography
+            variant="body1"
+            color="error"
+            sx={{ marginTop: '16px' }}
+            fontWeight={500}
+            fontSize={'medium'}
+          >
+            {payment_error.message}
+          </Typography>
+        )}
         <Button
           variant="contained"
           color="primary"
@@ -54,4 +65,4 @@ function PaymentSuccessPage() {
   return null;
 }
 
-export default PaymentSuccessPage;
+export default PaymentErrorPage;
