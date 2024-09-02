@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -118,6 +119,8 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
 };
 
 const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }) => {
+  const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  console.log(activeBroadcast?.members, "hello")
   const [loading, setLoading] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
@@ -197,6 +200,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   }, [broadcastDetails?.template]);
 
   const handleFieldChange = (e) => {
+    if(activeBroadcast.members)
     setBroadcastDetails({
       ...broadcastDetails,
       broadcast: broadcastId,

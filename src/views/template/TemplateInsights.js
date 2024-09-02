@@ -213,7 +213,7 @@ const TemplateInsights = () => {
         <Grid item xs={12} md={4}>
           <Card variant="outlined" sx={{ padding: 2 }}>
             <Typography variant="h6">Amount Spent</Typography>
-            <Typography variant="h5">₹{totals.cost.amount_spent.toFixed(2)}</Typography>
+            <Typography variant="h5">₹{totals.cost?.amount_spent.toFixed(2)}</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>

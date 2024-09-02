@@ -133,7 +133,7 @@ const Media = Loadable(lazy(() => import('../views/media/Media')));
 const Router = [
   {
     path: '/',
-    element: (
+    element: ( 
       <AuthWrapper>
         <FullLayout />
       </AuthWrapper>
