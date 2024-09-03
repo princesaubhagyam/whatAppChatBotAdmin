@@ -10,11 +10,11 @@ function PaymentErrorPage() {
 
   React.useEffect(() => {
     if (!payment_error) {
-      navigate('/home');
+      navigate('/home',{replace :true});
     }
   }, [payment_error, navigate]);
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/home',{replace :true});
   };
   if (payment_error) {
     return (

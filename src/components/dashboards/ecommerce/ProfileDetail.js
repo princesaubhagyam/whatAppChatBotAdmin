@@ -52,7 +52,7 @@ const ProfileDetail = () => {
   }, []);
 
   return (
-    <Card sx={{ padding: '5px', height: '120px' }}>
+    <Card sx={{ padding: '5px', height: '100px' }}>
       <CardContent sx={{ padding: '8px' }}>
         {loading ? (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -79,8 +79,8 @@ const ProfileDetail = () => {
               src={profilePictureURL}
               alt="Profile"
               sx={{
-                width: 100,
-                height: 100,
+                width: 80,
+                height: 80,
                 backgroundColor: '#b6dbc5',
                 border: '3px solid #cfd5d5',
               }}

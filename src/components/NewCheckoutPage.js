@@ -15,7 +15,7 @@ const NewCheckoutPage = () => {
 
   useEffect(() => {
     if (!clientSecret) {   
-      navigate('/home');
+      navigate('/home', { replace: true });
     }
   }, [clientSecret, navigate]);
   const options = {

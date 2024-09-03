@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Stack,
+  Tooltip
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
@@ -17,6 +18,8 @@ import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
 import currencycodejson from 'src/utils/Currency.json';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
   const [loading, setLoading] = useState(false);
@@ -42,11 +45,17 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
     setCountryCode('inr');
   }
 
+  function hideMoneyDetails() {
+    setAmount('');
+    setAddAmonut(() => false);
+  }
+
   const handleCurrencyCodeChange = (event) => {
     setCountryCode(event.target.value);
   };
 
-  async function createPaymentRequest() {
+  async function createPaymentRequest(e) {
+    e.preventDefault()
     setLoading(true);
     const reqBody = {
       amount: amount,
@@ -80,107 +89,191 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
           outline: 'none',
           bgcolor: 'background.paper',
           boxShadow: 24,
-          p: '20px',
-          width: '28%',
+          padding: '30px',
+          width: '60%',
+          height: "60%",
           margin: 'auto',
           mt: 10,
         }}
       >
-        <Typography variant="h4" component="h1" color="#1A4D2E">
-          My Wallet
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <Typography variant="h1" component="h1" color="#1A4D2E">
+            <b>My Wallet</b>
+          </Typography>
+          <Box>
+            <Tooltip title="Close wallet">
+              <CancelIcon
+                sx={{
+                  cursor: "pointer"
+                }}
+                onClick={handleClose}
+              />
+            </Tooltip>
+
+          </Box>
+        </Box>
+
         <Typography
-          variant="h6"
+          variant="h2"
           component="h2"
           gutterBottom
-          sx={{ marginTop: '20px', marginBottom: '20px' }}
+          sx={{ marginTop: '70px', marginBottom: '20px', display: "flex", justifyContent: "space-between" }}
         >
-          Wallet Balance : ₹{walletBalance}
-        </Typography>
-        <Typography variant="h6" component="h2" gutterBottom sx={{ marginTop: '20px' }}>
-          Add Balance In Wallet
-          {addAmount ? null : (
-            <Button variant="contained" sx={{ marginLeft: '15px' }} onClick={handlAddToggle}>
-              Add
-            </Button>
-          )}
+          <Box>Current Balance</Box>
+          <Box>:</Box>
+          <Box> ₹{walletBalance}</Box>
+          {addAmount ? <Tooltip title="Close Add Money Box">
+            <CancelIcon
+              color='error'
+              sx={{
+                fontSize: "40px",
+                cursor: "pointer"
+              }}
+              onClick={hideMoneyDetails}
+            />
+          </Tooltip> : <Tooltip title="Add Money">
+            <AddCircleIcon
+              color='primary'
+              sx={{
+                fontSize: "40px",
+                cursor: "pointer"
+              }}
+              onClick={handlAddToggle}
+            />
+          </Tooltip>}
+
         </Typography>
         {addAmount ? (
           <>
-            <Stack container spacing={2}>
-              <FormControl fullWidth>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item xs={12} md={6} lg={6}>
-                    <TextField
-                      fullWidth
-                      label="Amount"
-                      name="amount"
-                      value={amount}
-                      onChange={handleChange}
-                      placeholder="Enter The Amount"
-                      type="number"
-                      InputProps={{
-                        inputProps: { min: 0 },
-                        sx: {
-                          '& input[type=number]': {
-                            '-moz-appearance': 'textfield',
-                            '-webkit-appearance': 'none',
-                            appearance: 'textfield',
-                          },
-                          '& input[type=number]::-webkit-outer-spin-button': {
-                            '-webkit-appearance': 'none',
-                            margin: 0,
-                          },
-                          '& input[type=number]::-webkit-inner-spin-button': {
-                            '-webkit-appearance': 'none',
-                            margin: 0,
-                          },
-                        },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item md={6} lg={6} xs={12}>
-                    <Select
-                      value={currencyCode}
-                      onChange={handleCurrencyCodeChange}
-                      sx={{ width: 'auto', minWidth: '165px' }}
-                    >
-                      {currencycodejson.map((code) => (
-                        <MenuItem key={code.symbol} value={code.code}>
-                          {code.code} ({code.symbol})
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Description"
-                      name="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Enter Description"
-                      multiline
-                      rows={2}
-                    />
-                  </Grid>
-                </Grid>
-              </FormControl>
-            </Stack>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <LoadingButton
-                onClick={createPaymentRequest}
-                variant="contained"
-                color="primary"
-                disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            <form onSubmit={createPaymentRequest}>
+              <Stack container spacing={2}
+                sx={{
+                  marginTop: "40px"
+                }}
               >
-                {loading ? 'Checkout...' : 'Checkout'}
-              </LoadingButton>
-              <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
+                <FormControl fullWidth>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={12} md={6} lg={6}>
+                      <TextField
+                        fullWidth
+                        label="Amount"
+                        name="amount"
+                        value={amount}
+                        onChange={handleChange}
+                        placeholder="Enter The Amount"
+                        type="number"
+                        variant="outlined"
+                        required
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: 'primary.main', // Set the border color
+                              borderWidth: '1px', // Set the border width
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'primary.main', // Keep the same color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'primary.main', // Optional: Keep the same color on focus
+                            },
+                          },
+                        }}
+                        InputProps={{
+                          inputProps: { min: 0 },
+                          sx: {
+                            '& input[type=number]': {
+                              '-moz-appearance': 'textfield',
+                              '-webkit-appearance': 'none',
+                              appearance: 'textfield',
+                            },
+                            '& input[type=number]::-webkit-outer-spin-button': {
+                              '-webkit-appearance': 'none',
+                              margin: 0,
+                            },
+                            '& input[type=number]::-webkit-inner-spin-button': {
+                              '-webkit-appearance': 'none',
+                              margin: 0,
+                            },
+                          },
+                        }}
+                      />
+                    </Grid>
+                    <Grid item md={6} lg={6} xs={12}>
+                      <Select
+                        value={currencyCode}
+                        onChange={handleCurrencyCodeChange}
+                        variant="outlined"
+                        sx={{
+                          width: '100%',
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'primary.main',
+                            borderWidth: '1px',
+                          },
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'primary.main',
+                          },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'primary.main',
+                          },
+                        }}
+                      >
+                        {currencycodejson.map((code) => (
+                          <MenuItem key={code.symbol} value={code.code}>
+                            {code.lable} ({code.symbol})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        label="Description"
+                        name="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Enter Description"
+                        variant="outlined"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: 'primary.main', // Set the border color
+                              borderWidth: '1px', // Set the border width
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'primary.main', // Keep the same color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'primary.main', // Optional: Keep the same color on focus
+                            },
+                          },
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </FormControl>
+              </Stack>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <LoadingButton
+                  // onClick={createPaymentRequest}
+                  variant="contained"
+                  type='submit'
+                  color="primary"
+                  disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {loading ? 'Checkout...' : 'Checkout'}
+                </LoadingButton>
+                {/* <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
                 Cancel
-              </Button>
-            </Box>
+              </Button> */}
+              </Box>
+            </form>
           </>
         ) : null}
       </Box>

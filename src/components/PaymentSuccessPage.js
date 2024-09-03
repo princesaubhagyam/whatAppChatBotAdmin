@@ -10,11 +10,11 @@ function PaymentSuccessPage() {
 
   React.useEffect(() => {
     if (!payment_status) {
-      navigate('/home');
+      navigate('/home',{replace :true});
     }
   }, [payment_status, navigate]);
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/home',{replace :true});
   };
   if (payment_status) {
     return (

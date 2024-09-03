@@ -38,21 +38,21 @@ const CheckoutForm = ({ isHandleClose }) => {
 
       if (result.error) {
         console.log(result.error.message);
-        navigate('/payment-error', { state: { payment_error: result.error } });
+        navigate('/payment-error', { state: { payment_error: result.error }, replace: true  });
         setLoading(false);
       } else if (result.paymentIntent.status === 'succeeded') {
         console.log('Payment successful');
         // Navigate to the success page
-        navigate('/payment-success', { state: { payment_status: result.paymentIntent.status } });
+        navigate('/payment-success', { state: { payment_status: result.paymentIntent.status } ,replace: true  });
       } else {
         console.log('Payment not completed');
-        navigate('/payment-error', { state: { payment_error: result.error } });
+        navigate('/payment-error', { state: { payment_error: result.error },replace: true  });
         setLoading(false);
       }
     } catch (error) {
       console.error('Error during payment processing:', error);
       setLoading(false);
-      navigate('/payment-error', { state: { payment_error: error } });
+      navigate('/payment-error', { state: { payment_error: error },replace: true });
     }
   };
 
