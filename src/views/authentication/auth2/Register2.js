@@ -3,7 +3,7 @@ import { Grid, Box, Card, Typography, Stack } from '@mui/material';
 import { Link } from 'react-router-dom';
 import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
-import img from 'src/assets/images/backgrounds/baner.jpg';
+import img from 'src/assets/images/backgrounds/banner_one.jpg';
 import AuthRegister from '../authForms/AuthRegister';
 
 const Register2 = () => (
@@ -20,7 +20,7 @@ const Register2 = () => (
           <Grid
             item
             xs={6}
-            md={5}
+            md={6}
             sx={{
               display: { xs: 'none', md: 'block' },
               backgroundImage: `url(${img})`,
@@ -32,7 +32,7 @@ const Register2 = () => (
           <Grid
             item
             xs={12}
-            md={7}
+            md={6}
             display="flex"
             justifyContent="center"
             alignItems="center"

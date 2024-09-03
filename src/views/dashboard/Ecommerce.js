@@ -121,7 +121,7 @@ const Ecommerce = () => {
             />
           ) : null}
         </Grid> */}
-        <Grid item xs={12} lg={14}>
+        {/* <Grid item xs={12} lg={14}>
           {loading ? (
             <Skeleton
               variant="rounded"
@@ -135,7 +135,7 @@ const Ecommerce = () => {
               <ViewProfileCard />
             </>
           ) : null}
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
