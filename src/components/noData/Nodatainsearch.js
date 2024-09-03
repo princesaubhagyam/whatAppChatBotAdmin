@@ -6,7 +6,7 @@ function Nodatainsearch() {
   return (
     <>
       <Box my={4} display="flex" alignItems="center" justifyContent="center" gap={4}>
-        <Box component="img" src={Notfound} alt="Do data Found" sx={{ width: '40%' }} />
+        <Box component="img" src={Notfound} alt="Do data Found" sx={{ width: '30%' }} />
       </Box>
       <Box
         display="flex"

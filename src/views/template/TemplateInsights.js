@@ -139,7 +139,7 @@ const TemplateInsights = () => {
         data: graphData.map((item) => item.sent),
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        fill: true,
+
         pointRadius: 2,
       },
       {
@@ -147,7 +147,7 @@ const TemplateInsights = () => {
         data: graphData.map((item) => item.delivered),
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        fill: true,
+
         borderWidth: 2,
         pointStyle: 'circle',
         pointRadius: 2,
@@ -157,7 +157,7 @@ const TemplateInsights = () => {
         data: graphData.map((item) => item.read),
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
+
         pointRadius: 2,
       },
     ],
@@ -201,6 +201,7 @@ const TemplateInsights = () => {
       },
       y: {
         min: 0,
+
         title: {
           display: true,
           text: 'Count of Messages',
@@ -219,13 +220,13 @@ const TemplateInsights = () => {
 
   return (
     <PageContainer title="Templates" description="this is Search Table page">
-      <Breadcrumb title="Templates Insight" items={BCrumb} />
+      <Breadcrumb items={BCrumb} />
 
       <Grid
         container
         alignItems="center"
         justifyContent="space-between"
-        sx={{ marginBottom: 2, marginTop: 2 }}
+        sx={{ marginBottom: '10px', marginTop: '2px' }}
         //lg={12}
       >
         <Grid item sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -277,7 +278,7 @@ const TemplateInsights = () => {
           </Card>
         </Grid>
       </Grid>
-      <Grid container spacing={2} alignItems={'center'}>
+      <Grid container spacing={2} alignItems={'baseline'}>
         <Grid item xs={12} md={8}>
           <Card variant="outlined" sx={{ padding: 2, minHeight: '400px' }}>
             <Typography variant="h4" gutterBottom>

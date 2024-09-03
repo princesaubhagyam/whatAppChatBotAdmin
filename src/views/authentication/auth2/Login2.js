@@ -68,18 +68,25 @@ const Login2 = () => {
                 </Box>
                 <AuthLogin
                   subtitle={
-                    <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      justifyContent="center"
+                      mt={3}
+                      alignItems="baseline"
+                    >
                       <Typography color="textSecondary" variant="h6" fontWeight="500">
                         New to Saubhagyam?
                       </Typography>
                       <Typography
                         component={Link}
                         to="/auth/register"
-                        fontWeight="500"
+                        fontWeight="600"
                         sx={{
                           textDecoration: 'none',
                           color: 'primary.main',
                         }}
+                        fontSize="0.95rem"
                       >
                         Create an account
                       </Typography>

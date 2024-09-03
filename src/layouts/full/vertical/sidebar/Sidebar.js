@@ -4,6 +4,7 @@ import Logo from '../../shared/logo/Logo';
 import { useSelector, useDispatch } from 'react-redux';
 import { hoverSidebar, toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
 import LogoImg from 'src/assets/images/logos/home_logo.png';
+import { useNavigate } from 'react-router';
 
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
@@ -14,7 +15,7 @@ const Sidebar = () => {
     customizer.isCollapse && !customizer.isSidebarHover
       ? customizer.MiniSidebarWidth
       : customizer.SidebarWidth;
-
+  const navigate = useNavigate();
   const onHoverEnter = () => {
     if (customizer.isCollapse) {
       dispatch(hoverSidebar(true));
@@ -69,15 +70,21 @@ const Sidebar = () => {
                   : customizer.activeSidebarBg,
               color: customizer.activeSidebarBg === '#ffffff' ? '' : 'white',
               height: '100%',
-              
             }}
           >
             {/* ------------------------------------------- */}
             {/* Logo */}
             {/* ------------------------------------------- */}
-            <Box p={2} textAlign={'center'}>
+            <Box
+              p="5px"
+              textAlign={'center'}
+              onClick={() => {
+                navigate('/home');
+              }}
+              sx={{ cursor: 'pointer' }}
+            >
               {/* <Logo/> */}
-              <img src={LogoImg} alt='img' height={'60px'} width={'60px'}></img>
+              <img src={LogoImg} alt="img" height={'60px'} width={'60px'}></img>
             </Box>
             {/* <Scrollbar sx={{ height: 'calc(100% - 190px)' }}> */}
             {/* ------------------------------------------- */}

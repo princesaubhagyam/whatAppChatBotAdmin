@@ -62,14 +62,21 @@ const Register2 = () => (
               </Box>
               <AuthRegister
                 subtitle={
-                  <Stack direction="row" spacing={1} mt={3}>
-                    <Typography color="textSecondary" variant="h6" fontWeight="400">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    mt={3}
+                    justifyContent="center"
+                    alignItems="baseline"
+                  >
+                    <Typography color="textSecondary" variant="h6" fontWeight="500">
                       Already have an Account?
                     </Typography>
                     <Typography
                       component={Link}
                       to="/auth/login"
-                      fontWeight="500"
+                      fontWeight="600"
+                      fontSize="0.95rem"
                       sx={{
                         textDecoration: 'none',
                         color: 'primary.main',
