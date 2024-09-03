@@ -16,9 +16,10 @@ import {
   InputLabel,
   OutlinedInput,
   FormControl,
+  IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { IconMessage2Share } from '@tabler/icons';
+import { IconMessage2Share, IconUpload } from '@tabler/icons';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
@@ -52,7 +53,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            required
+            // required
           />
         </>
       );
@@ -68,7 +69,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             variant="outlined"
             fullWidth
             //value={currentLink}
-            required
+            //required
           />
         </>
       );
@@ -84,7 +85,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             fullWidth
             //value={componentData.link}
             //value={componentData.parameters?.[0]?.document?.link || ''}
-            required
+            //required
           />
         </>
       );
@@ -122,6 +123,9 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   const [templates, setTemplates] = useState([]);
   const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
   const { toggleOnOff } = useContext(EventContext);
+  const [mediaId, setMediaId] = useState(null);
+  const [mediaPreview, setMediaPreview] = useState(null);
+  const [mediaType, setMediaType] = useState(null);
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
@@ -129,6 +133,35 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
   // console.log(previewLink, 'previewLink');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      uploadMedia(file);
+    }
+  };
+
+  const uploadMedia = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await apiClient.post('/api/upload_media/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (res.status === 200) {
+        const mediaData = res.data;
+        setMediaId(mediaData.id);
+        setMediaPreview(mediaData.url);
+        setMediaType(mediaData.type); // type should be 'image', 'video', or 'document'
+      }
+    } catch (err) {
+      toast.error('Failed to upload media!');
+    }
+  };
 
   const fetchTemplates = async () => {
     try {
@@ -145,6 +178,12 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
     }
   };
 
+  // const fetchTemplates = async () => {
+  //   try{
+  //      const res = await apiClient.get(`api/get_template_detail`)
+  //   }
+  // }
+
   const addBodyVariableEmptyArray = (resData) => {
     const updatedData = { ...resData };
     updatedData.components = updatedData.components.map((component) => {
@@ -159,15 +198,45 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
     return updatedData;
   };
 
+  // const fetchTemplateById = async () => {
+  //   try {
+  //     if (broadcastDetails?.template) {
+  //       const metaInstance = createMetaAxiosInstance({ addBAId: false });
+  //       const res = await metaInstance.get(broadcastDetails.template);
+  //       if (res.status === 200) {
+  //         const updatedData = addBodyVariableEmptyArray(res.data);
+  //         setTemplateDetails(updatedData);
+  //         setPreviewLink(res?.data?.components[0]?.example?.header_handle[0]);
+  //         // Store default values
+  //         const defaultValues = {};
+  //         updatedData.components.forEach((component) => {
+  //           if (component.type === 'HEADER') {
+  //             defaultValues[component.format] = component.example?.header_handle?.[0];
+  //           }
+  //         });
+  //         setDefaultHeaderHandles(defaultValues);
+  //         console.log('called');
+
+  //       }
+  //     }
+  //   } catch (err) {
+  //     toast.error('There was an error fetching the template details!');
+  //   }
+  // };
   const fetchTemplateById = async () => {
     try {
       if (broadcastDetails?.template) {
-        const metaInstance = createMetaAxiosInstance({ addBAId: false });
-        const res = await metaInstance.get(broadcastDetails.template);
+        setLoading(true); // Start loading
+        const phoneId = localStorage.getItem('phone_id');
+        const res = await apiClient.get(
+          `/api/get_template_detail/${broadcastDetails.template}/?phone_id=${phoneId}`,
+        );
+
         if (res.status === 200) {
           const updatedData = addBodyVariableEmptyArray(res.data);
           setTemplateDetails(updatedData);
           setPreviewLink(res?.data?.components[0]?.example?.header_handle[0]);
+
           // Store default values
           const defaultValues = {};
           updatedData.components.forEach((component) => {
@@ -176,10 +245,17 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
             }
           });
           setDefaultHeaderHandles(defaultValues);
+
+          setMediaId(res.data.media_id);
+          console.log('Media ID:', mediaId);
+
+          console.log('called');
         }
       }
     } catch (err) {
       toast.error('There was an error fetching the template details!');
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -204,19 +280,69 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
     });
   };
 
+  // const sendBroadcastMsg = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   if (!broadcastDetails.template) {
+  //     toast.error('Please select template!');
+  //     return;
+  //   }
+  //   console.log(templateDetails, 'templateDetails =====');
+  //   try {
+  //     const res = await apiClient.post('/api/send_template/', {
+  //       broadcast: broadcastDetails.broadcast,
+  //       template: templateDetails,
+  //     });
+  //     if (res.status === 200 || res.status === 201) {
+  //       toast.success('Broadcast scheduled successfully!');
+  //       toggleOnOff();
+  //       handleClose();
+  //     }
+  //   } catch (err) {
+  //     console.warn(err);
+  //     toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const sendBroadcastMsg = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     if (!broadcastDetails.template) {
-      toast.error('Please select template!');
+      toast.error('Please select a template!');
+      setLoading(false);
       return;
     }
-    console.log(templateDetails, 'templateDetails =====');
+
+    const updatedTemplateDetails = {
+      ...templateDetails,
+      components: templateDetails.components.map((component) => {
+        if (component.type === 'HEADER') {
+          const format = component.format || 'IMAGE';
+          return {
+            type: 'HEADER',
+            format,
+            parameters: [
+              {
+                type: format.toLowerCase(),
+                [format.toLowerCase()]: {
+                  id: mediaId,
+                },
+              },
+            ],
+          };
+        }
+        return component;
+      }),
+    };
+
     try {
       const res = await apiClient.post('/api/send_template/', {
         broadcast: broadcastDetails.broadcast,
-        template: templateDetails,
+        template: updatedTemplateDetails,
       });
+
       if (res.status === 200 || res.status === 201) {
         toast.success('Broadcast scheduled successfully!');
         toggleOnOff();
@@ -229,61 +355,6 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
       setLoading(false);
     }
   };
-  // const sendBroadcastMsg = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   if (!broadcastDetails.template) {
-  //     toast.error('Please select template!');
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   const updatedTemplateDetails = { ...broadcastDetails.template };
-
-  //   console.log('Updated Template Details:=========', updatedTemplateDetails);
-
-  //   if (!Array.isArray(updatedTemplateDetails.components)) {
-  //     console.error('Components property is not an array:', updatedTemplateDetails.components);
-  //     toast.error('Template components are missing or incorrectly formatted.');
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   updatedTemplateDetails.components = updatedTemplateDetails.components.map((component) => {
-  //     if (component.type === 'HEADER') {
-  //       const headerLink = component.example?.header_handle?.[0];
-
-  //       component.parameters = [
-  //         {
-  //           type: 'image',
-  //           image: {
-  //             link: previewLink ? previewLink : '',
-  //           },
-  //         },
-  //       ];
-  //     }
-  //     return component;
-  //   });
-
-  //   try {
-  //     const res = await apiClient.post('/api/send_template/', {
-  //       broadcast: broadcastDetails.broadcast,
-  //       template: updatedTemplateDetails,
-  //     });
-
-  //     if (res.status === 200 || res.status === 201) {
-  //       toast.success('Broadcast scheduled successfully!');
-  //       toggleOnOff(); // Trigger history check
-  //       handleClose();
-  //     }
-  //   } catch (err) {
-  //     console.warn(err);
-  //     toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const updateHeaderLink = (e, format) => {
     const newLink = e.target.value;
@@ -390,10 +461,25 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory }
                 <Stack gap={2}>
                   {broadcastDetails?.template &&
                     (templateDetails?.components?.[0]?.type === 'HEADER' ? (
-                      <HeaderComponent
-                        componentData={templateDetails?.components?.[0]}
-                        updateHeaderLink={updateHeaderLink}
-                      />
+                      <>
+                        {' '}
+                        <HeaderComponent
+                          componentData={templateDetails?.components?.[0]}
+                          updateHeaderLink={updateHeaderLink}
+                        />
+                        {/* <VisuallyHiddenInput
+                          type="file"
+                          accept="image/*,video/*,.pdf"
+                          onChange={handleFileChange}
+                          id="media-upload"
+                        />
+                        <label htmlFor="media-upload">
+                          <IconButton color="primary" component="span">
+                            <IconUpload />
+                          </IconButton>
+                          <Typography variant="body2">Upload Media</Typography>
+                        </label> */}
+                      </>
                     ) : (
                       <></>
                     ))}
