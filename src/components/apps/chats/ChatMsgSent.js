@@ -141,6 +141,7 @@ const ChatMsgSent = ({
         handleClose={handleCloseTemplateModal}
         broadcastId={activeBroadcast?.id}
         checkBroadcastHistory={checkBroadcastHistory}
+        walletBalance = {walletBalance}
       />
       <BroadcastMemberModal
         open={isMemberModalOpen}
