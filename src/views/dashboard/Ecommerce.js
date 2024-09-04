@@ -23,6 +23,7 @@ const Ecommerce = () => {
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
+      console.log(res, "res")
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         if (!phoneId || phoneId.trim() === '') {
@@ -82,12 +83,22 @@ const Ecommerce = () => {
               {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
-                <CurrentPlan />
+                <SetUpProfileCard
+                  freeTierUsedCount={freeTierUsedCount}
+                  freeTierConversation={freeTierConversation}
+                  totalCost={totalCost}
+                  loading={loading}
+                />
               ) : null}
+              {/* {loading ? (
+                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+              ) : showCard ? (
+                <CurrentPlan />
+              ) : null} */}
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} lg={8}>
+        <Grid item xs={12} lg={12}>
           <Grid container spacing={3}>
             <Grid item xs={12} paddingTop={'10px !important'}>
               {loading ? (
@@ -98,7 +109,7 @@ const Ecommerce = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={6} lg={4}>
+        {/* <Grid item xs={12} sm={6} lg={4}>
           {loading ? (
             <Skeleton variant="rounded" width={705} height={113} animation="wave" />
           ) : showCard ? (
@@ -109,8 +120,8 @@ const Ecommerce = () => {
               loading={loading}
             />
           ) : null}
-        </Grid>
-        <Grid item xs={12} lg={14}>
+        </Grid> */}
+        {/* <Grid item xs={12} lg={14}>
           {loading ? (
             <Skeleton
               variant="rounded"
@@ -124,7 +135,7 @@ const Ecommerce = () => {
               <ViewProfileCard />
             </>
           ) : null}
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );

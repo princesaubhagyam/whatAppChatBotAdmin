@@ -15,6 +15,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Card,
+  Tooltip,
 } from '@mui/material';
 import { Edit, Cancel, Delete } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -24,8 +26,9 @@ import Spinner from 'src/views/spinner/Spinner';
 import { IconEdit } from '@tabler/icons';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
-import { LoadingButton } from '@mui/lab';
+
 import defaultProfilePic from 'src/assets/images/backgrounds/download.png';
+// import defaultProfilePic from 'src/assets/images/backgrounds/default_image.png';
 
 const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) => {
   return (
@@ -35,7 +38,7 @@ const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) 
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       // sx={{ position: 'absolute', top: '-400px'}}
-      sx={{ height: '30%' }} 
+      sx={{ height: '30%' }}
     >
       <DialogTitle id="alert-dialog-title">Delete Confirmation</DialogTitle>
       <DialogContent>
@@ -44,11 +47,15 @@ const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) 
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        
-        <Button onClick={handleDelete} color="error" disabled={deleteDialogLoading} variant='contained'>
+        <Button
+          onClick={handleDelete}
+          color="error"
+          disabled={deleteDialogLoading}
+          variant="contained"
+        >
           {deleteDialogLoading ? <CircularProgress size={24} /> : 'Delete'}
         </Button>
-        <Button onClick={handleClose} color="primary" variant='contained'>
+        <Button onClick={handleClose} color="primary" variant="contained">
           Cancel
         </Button>
       </DialogActions>
@@ -65,6 +72,7 @@ const UserProfile = () => {
     full_name: '',
   });
   const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editPicMode, setEditPicMode] = useState(false);
@@ -116,6 +124,7 @@ const UserProfile = () => {
     formData.append('full_name', userData.full_name);
 
     try {
+      setButtonLoading(true);
       const response = await apiClient.patch('/auth/user_profile/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -130,6 +139,8 @@ const UserProfile = () => {
     } catch (error) {
       console.error('There was an error updating the user data!', error);
       setError('Failed to update user data');
+    } finally {
+      setButtonLoading(false);
     }
   };
 
@@ -152,6 +163,7 @@ const UserProfile = () => {
           profile_pic: URL.createObjectURL(file),
         }));
         setEditPicMode(false);
+        toast.success('Profile picture updated successfully');
       }
     } catch (error) {
       toast.error('Failed to update profile picture');
@@ -171,7 +183,6 @@ const UserProfile = () => {
 
   const handleRemovePicture = () => {
     setDeleteDialogOpen(true);
-    
   };
 
   const handleCloseDeleteDialog = () => {
@@ -209,162 +220,250 @@ const UserProfile = () => {
 
   return (
     <PageContainer title="User Profile" description="This is User Profile page">
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '80vh',
-        }}
-      >
-        <Grid container spacing={7} sx={{ width: '60%', alignItems: 'center' }}>
-          <Grid item xs={12} md={3} sx={{ position: 'relative' }}>
-            <div style={{ display: 'flex', justifyContent: 'end' }}>
-              <Avatar
-                src={userData.profile_pic || defaultProfilePic}
-                sx={{
-                  width: 150,
-                  height: 150,
-                  backgroundColor: 'primary.main',
-                  marginBottom: 2,
-                  border: '3px solid #cfd5d5',
-                }}
-              >
-                {!userData.profile_pic &&
-                  (userData?.full_name ? userData?.full_name.charAt(0) : '')}
-              </Avatar>
-              {editPicMode ? (
-                <>
-                  <IconButton
-                    color="primary"
-                    component="label"
-                    sx={{ position: 'absolute', top: '43px', right: 0 }}
-                  >
-                    <input type="file" id="profile_pic" hidden onChange={handleProfilePicChange} />
-                    <AddPhotoAlternateIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    sx={{ position: 'absolute', bottom: 0, right: 0 }}
-                    onClick={handleCancelProfilePicChange}
-                  >
-                    <Cancel />
-                  </IconButton>
-                </>
-              ) : (
-                <>
-                  {userData.profile_pic !== defaultProfilePic && (
-                    <IconButton
-                      color="error"
-                      sx={{ position: 'absolute', top: '43px', right: '0' }}
-                      onClick={handleRemovePicture}
-                    >
-                      <Delete />
-                    </IconButton>
-                  )}
-                  <IconButton
-                    color="primary"
-                    sx={{ position: 'absolute', bottom: 0, right: 0 }}
-                    onClick={() => setEditPicMode(true)}
-                  >
-                    <IconEdit />
-                  </IconButton>
-                </>
-              )}
-              {uploadingImage && (
-                <CircularProgress
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    marginTop: '-12px',
-                    marginLeft: '-12px',
-                  }}
-                />
-              )}
-            </div>
-          </Grid>
+      <div style={{ justifyContent: 'center', display: 'flex' }}>
+        <Card
+          sx={{
+            maxWidth: 650,
+            margin: 'auto',
+            mt: 1,
+            paddingBottom: '6px !important',
+            padding: 4,
+            boxShadow: 3,
+            paddingTop: '6px',
+          }}
+        >
+          <Typography variant="h4" color="primary">
+            Your Profile{' '}
+          </Typography>
 
-          <Grid item xs={12} md={9}>
-            <Stack sx={{ flexDirection: 'column' }}>
-              <FormControl sx={{ mt: 2 }}>
-                <Typography>Display Name</Typography>
+          <Grid container spacing={4} direction="column" alignItems="center">
+            <Grid item>
+              <Box position="relative">
+                <Avatar
+                  src={userData.profile_pic || defaultProfilePic}
+                  sx={{
+                    width: 135,
+                    height: 135,
+                    bgcolor: 'primary.main',
+                    border: '3px solid rgb(207, 213, 213)',
+                  }}
+                >
+                  {!userData.profile_pic && userData?.full_name?.charAt(0)}
+                </Avatar>
+                {uploadingImage && (
+                  <CircularProgress
+                    size={50}
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      mt: '-25px',
+                      ml: '-25px',
+                      zIndex: 1,
+                    }}
+                  />
+                )}
+                {editPicMode ? (
+                  <>
+                    <Tooltip title="Add Photo">
+                      <IconButton
+                        component="label"
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          right: 0,
+                          bgcolor: '#1A4D2E',
+                          padding: '5px',
+                          color: 'white !important',
+                          '&:hover': {
+                            bgcolor: '#1A4D2E',
+                            color: 'white',
+                          },
+                        }}
+                      >
+                        <input type="file" hidden onChange={handleProfilePicChange} />
+                        <AddPhotoAlternateIcon sx={{ width: '20px', height: '20px' }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Close">
+                      <IconButton
+                        color="error"
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          bgcolor: '#de3838',
+                          padding: '5px',
+                          color: 'white !important',
+                          '&:hover': {
+                            bgcolor: '#de3838',
+                            color: 'white',
+                          },
+                        }}
+                        onClick={handleCancelProfilePicChange}
+                      >
+                        <Cancel sx={{ width: '20px', height: '20px' }} />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>
+                    <Tooltip title="Edit Photo">
+                      <IconButton
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          right: 0,
+                          bgcolor: '#1A4D2E',
+                          padding: '5px',
+                          color: 'white !important',
+                          '&:hover': {
+                            bgcolor: '#1A4D2E',
+                            color: 'white',
+                          },
+                        }}
+                        onClick={() => setEditPicMode(true)}
+                      >
+                        <Edit sx={{ width: '20px', height: '20px' }} />
+                      </IconButton>
+                    </Tooltip>
+                    {userData.profile_pic !== defaultProfilePic && (
+                      <Tooltip title="Delete Photo">
+                        <IconButton
+                          sx={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            bgcolor: '#de3838',
+                            padding: '5px',
+                            color: 'white !important',
+                            '&:hover': {
+                              bgcolor: '#de3838',
+                              color: 'white',
+                            },
+                          }}
+                          onClick={handleRemovePicture}
+                        >
+                          <Delete sx={{ width: '20px', height: '20px' }} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+              </Box>
+            </Grid>
+
+            <Grid item width="100%" paddingTop="0px !important">
+              <FormControl fullWidth margin="normal" sx={{ marginTop: '6px' }}>
+                <Typography variant="h6" gutterBottom fontWeight={500}>
+                  Display Name
+                </Typography>
                 <OutlinedInput
                   id="display_name"
                   value={userData.display_name}
-                  fullWidth
+                  onChange={handleChange}
                   readOnly={!editMode}
                   sx={{
                     backgroundColor: editMode ? '#ffffffad' : 'none',
+                    // padding: '10.5px 14px',
+                    boxShadow: editMode ? ' ' : '0px 1px 3px rgba(0, 0, 0, 0.1)',
+                    '& .MuiInputBase-input': {
+                      padding: '10.5px 14px',
+                    },
                   }}
-                  autoFocus={editMode ? 'true' : 'false'}
-                  onChange={handleChange}
+                  autoFocus={editMode}
+                  placeholder="Enter display name"
                 />
               </FormControl>
-              <FormControl sx={{ mt: 2 }}>
-                <Typography>Full Name</Typography>
+
+              <FormControl fullWidth margin="normal" sx={{ marginTop: '4px' }}>
+                <Typography variant="h6" gutterBottom fontWeight={500}>
+                  Full Name
+                </Typography>
                 <OutlinedInput
                   id="full_name"
                   value={userData.full_name}
-                  fullWidth
+                  onChange={handleChange}
                   readOnly={!editMode}
+                  placeholder="Enter full name"
                   sx={{
+                    boxShadow: editMode ? ' ' : '0px 1px 3px rgba(0, 0, 0, 0.1)',
                     backgroundColor: editMode ? '#ffffffad' : 'none',
                     border: editMode ? '1px solid #1A4D2E' : 'none',
+                    '& .MuiInputBase-input': {
+                      padding: '10.5px 14px',
+                    },
                   }}
-                  onChange={handleChange}
                 />
               </FormControl>
-              <FormControl sx={{ mt: 2 }}>
-                <Typography>Email</Typography>
+
+              <FormControl fullWidth margin="normal" sx={{ marginTop: '4px' }}>
+                <Typography variant="h6" gutterBottom fontWeight={500}>
+                  Email
+                </Typography>
                 <OutlinedInput
                   id="user_email"
                   value={userData.user_email}
-                  fullWidth
-                  readOnly
-                  onChange={handleChange}
+                  disabled={editMode}
+                  readOnly={!editMode}
+                  placeholder="Enter email"
+                  sx={{
+                    boxShadow: editMode ? ' ' : '0px 1px 3px rgba(0, 0, 0, 0.1)',
+                    '& .MuiInputBase-input': {
+                      padding: '10.5px 14px',
+                    },
+                  }}
                 />
               </FormControl>
-              <FormControl sx={{ mt: 2 }}>
-                <Typography>Whatsapp Number</Typography>
+
+              <FormControl fullWidth margin="normal" sx={{ marginTop: '4px' }}>
+                <Typography variant="h6" gutterBottom fontWeight={500}>
+                  WhatsApp Number
+                </Typography>
                 <OutlinedInput
                   id="whatsApp_number"
                   value={userData.whatsApp_number || ''}
-                  fullWidth
-                  readOnly
-                  onChange={handleChange}
+                  // onChange={handleChange}
+                  disabled={editMode}
+                  readOnly={!editMode}
+                  placeholder="Enter WhatsApp number"
+                  sx={{
+                    boxShadow: editMode ? ' ' : '0px 1px 3px rgba(0, 0, 0, 0.1)',
+                    '& .MuiInputBase-input': {
+                      padding: '10.5px 14px',
+                    },
+                  }}
                 />
               </FormControl>
-              {!editMode && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2, width: '30%' }}
-                  onClick={handleEditClick}
-                >
-                  Update Profile
-                </Button>
-              )}
-              {editMode && (
-                <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                  <LoadingButton
+
+              {editMode ? (
+                <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
+                  <Button
                     variant="contained"
                     color="primary"
                     onClick={handleSaveClick}
-                    loadingPosition="start"
-                    loading={loading}
+                    disabled={buttonLoading}
+                    startIcon={
+                      buttonLoading ? <CircularProgress size={20} color="inherit" /> : null
+                    }
                   >
-                    Update
-                  </LoadingButton>
+                    {buttonLoading ? 'Saving...' : 'Save Changes'}
+                  </Button>
                   <Button variant="contained" color="error" onClick={handleCancelClick}>
                     Cancel
                   </Button>
                 </Stack>
+              ) : (
+                <Stack direction="row" justifyContent="center" mt={2}>
+                  <Button variant="contained" color="primary" onClick={handleEditClick}>
+                    Edit Profile
+                  </Button>
+                </Stack>
               )}
-            </Stack>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Card>
+      </div>
       <DeleteDialog
         open={deleteDialogOpen}
         handleClose={handleCloseDeleteDialog}

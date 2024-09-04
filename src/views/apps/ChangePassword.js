@@ -12,6 +12,7 @@ import {
   OutlinedInput,
   IconButton,
   FormHelperText,
+  CircularProgress,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -122,9 +123,7 @@ const ChangePassword = () => {
                 }
                 label="Old Password"
               />
-              {errors.oldPassword && (
-                <FormHelperText>{errors.oldPassword}</FormHelperText>
-              )}
+              {errors.oldPassword && <FormHelperText>{errors.oldPassword}</FormHelperText>}
             </FormControl>
 
             <FormControl fullWidth margin="normal" error={!!errors.newPassword}>
@@ -148,9 +147,7 @@ const ChangePassword = () => {
                 }
                 label="New Password"
               />
-              {errors.newPassword && (
-                <FormHelperText>{errors.newPassword}</FormHelperText>
-              )}
+              {errors.newPassword && <FormHelperText>{errors.newPassword}</FormHelperText>}
             </FormControl>
 
             <FormControl fullWidth margin="normal" error={!!errors.confirmPassword}>
@@ -174,20 +171,18 @@ const ChangePassword = () => {
                 }
                 label="Confirm New Password"
               />
-              {errors.confirmPassword && (
-                <FormHelperText>{errors.confirmPassword}</FormHelperText>
-              )}
+              {errors.confirmPassword && <FormHelperText>{errors.confirmPassword}</FormHelperText>}
             </FormControl>
 
             <Button
               variant="contained"
               color="primary"
               sx={{ mt: 3, width: '100%' }}
-              type='submit'
-              loading={loading}
-              loadingPosition="start"
+              type="submit"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
             >
-              Change Password
+              {loading ? 'Changing Password...' : 'Change Password'}
             </Button>
             {message && (
               <Typography variant="body1" color="error" sx={{ mt: 2 }}>

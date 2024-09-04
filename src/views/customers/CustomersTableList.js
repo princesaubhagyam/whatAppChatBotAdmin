@@ -554,7 +554,7 @@ const CustomersTableList = () => {
                 <TableBody>
                   {rows.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={headCells.length} align="center">
+                      <TableCell colSpan={5} align="center">
                         <Nodatainsearch />
                       </TableCell>
                     </TableRow>

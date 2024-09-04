@@ -1,13 +1,10 @@
 import {
-  IconHome,
   IconBroadcast,
   IconTemplate,
-  IconMan,
   IconLayoutDashboard,
-  IconFileAnalytics,
-  IconPhoto,
+  IconUser,
+  IconCreditCard,
 } from '@tabler/icons';
-import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
 const Menuitems = [
@@ -16,6 +13,13 @@ const Menuitems = [
     title: 'Dashboard',
     icon: IconLayoutDashboard,
     href: '/home',
+  },
+  {
+    id: uniqueId(),
+    title: 'Business',
+    subtitle : "Profile",
+    icon: IconUser,
+    href: '/business-profile',
   },
   {
     id: uniqueId(),
@@ -40,6 +44,13 @@ const Menuitems = [
     title: 'Templates',
     icon: IconTemplate,
     href: '/templates',
+  },
+  {
+    id: uniqueId(),
+    title: 'Payment',
+    subtitle: 'History',
+    icon: IconCreditCard,
+    href: '/payment-history',
   },
   // {
   //   id: uniqueId(),

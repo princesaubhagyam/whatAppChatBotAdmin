@@ -5,7 +5,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
 import toast, { Toaster } from 'react-hot-toast';
-import img from 'src/assets/images/backgrounds/baner.jpg';
+import img from 'src/assets/images/backgrounds/banner_one.jpg';
 const Login2 = () => {
   return (
     <>
@@ -21,7 +21,7 @@ const Login2 = () => {
             <Grid
               item
               xs={6}
-              md={5}
+              md={6}
               sx={{
                 display: { xs: 'none', md: 'block' },
                 backgroundImage: `url(${img})`,
@@ -34,7 +34,7 @@ const Login2 = () => {
             <Grid
               item
               xs={12}
-              md={7}
+              md={6}
               display="flex"
               justifyContent="center"
               alignItems="center"
@@ -68,18 +68,25 @@ const Login2 = () => {
                 </Box>
                 <AuthLogin
                   subtitle={
-                    <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      justifyContent="center"
+                      mt={3}
+                      alignItems="baseline"
+                    >
                       <Typography color="textSecondary" variant="h6" fontWeight="500">
                         New to Saubhagyam?
                       </Typography>
                       <Typography
                         component={Link}
                         to="/auth/register"
-                        fontWeight="500"
+                        fontWeight="600"
                         sx={{
                           textDecoration: 'none',
                           color: 'primary.main',
                         }}
+                        fontSize="0.95rem"
                       >
                         Create an account
                       </Typography>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, InputBase, Box, Button } from '@mui/material';
+import { IconButton, InputBase, Box, Button, Tooltip } from '@mui/material';
 import { IconSend, IconUserPlus } from '@tabler/icons';
 import { sendMsg, updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 import TemplateModal from 'src/modals/TemplateModal';
@@ -22,7 +22,23 @@ const ChatMsgSent = ({
   // const [isHistory, setIsHistory] = useState(false);
   // const { isOn } = useContext(EventContext);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+  const [walletBalance, setWalletBalance] = useState(null);
+
   const id = useSelector((state) => state.chatReducer.chatId);
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await apiClient.get('/wallet/');
+      if (response.status === 200) {
+        setWalletBalance(response.data.data.balance);
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, []);
 
   // useEffect(() => {
   //   if (activeBroadcast) {
@@ -108,15 +124,27 @@ const ChatMsgSent = ({
               )}
             </div>
           )} */}
-          {!isHistory && (
-            <Button
-              style={{ backgroundColor: '#1A4D2E', color: 'white' }}
-              onClick={handleOpenTemplateModal}
-              sx={{ height: '30px' }}
+          {!isHistory && walletBalance > 0 && (
+            <Tooltip
+              title={
+                memberCount === 0
+                  ? "You can't send template because there are no members added"
+                  : ''
+              }
+              arrow
             >
-              <IconSend size={16} />
-              Send Template
-            </Button>
+              <span>
+                <Button
+                  style={{ backgroundColor: '#1A4D2E', color: 'white' }}
+                  onClick={handleOpenTemplateModal}
+                  sx={{ height: '30px' }}
+                  disabled={memberCount === 0}
+                >
+                  <IconSend size={16} />
+                  Send Template
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </form>
       )}
@@ -125,6 +153,7 @@ const ChatMsgSent = ({
         handleClose={handleCloseTemplateModal}
         broadcastId={activeBroadcast?.id}
         checkBroadcastHistory={checkBroadcastHistory}
+        walletBalance={walletBalance}
       />
       <BroadcastMemberModal
         open={isMemberModalOpen}

@@ -9,6 +9,9 @@ import ChangePassword from 'src/views/apps/ChangePassword';
 import AuthReset from 'src/views/authentication/authForms/AuthReset';
 import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
+import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
+import PaymentErrorPage from 'src/components/PaymentErrorPage';
+import PaymentHistory from 'src/views/PaymentHistory';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -39,6 +42,7 @@ const UserProfile = Loadable(lazy(() => import('../views/apps/user-profile/UserP
 const Followers = Loadable(lazy(() => import('../views/apps/user-profile/Followers')));
 const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')));
 const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
+const BusinessProfile = Loadable(lazy(() => import('../views/apps/business-profile/BusinessProfile')));
 
 // Pages
 const RollbaseCASL = Loadable(lazy(() => import('../views/pages/rollbaseCASL/RollbaseCASL')));
@@ -143,9 +147,11 @@ const Router = [
       { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
+      { path: '/payment-history', element: <PaymentHistory/>},
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
+      { path: '/business-profile', element: <BusinessProfile /> },
       { path: '/analytics', element: <Templates /> },
       { path: '/integrations', element: <Templates /> },
       { path: '/team', element: <Templates /> },
@@ -231,6 +237,8 @@ const Router = [
     children: [
       { path: '/auth/404', element: <Error /> },
       { path: '/auth/login', element: <AuthGuard /> },
+      { path: '/payment-success', element: <PaymentSuccessPage /> },
+      { path: '/payment-error', element: <PaymentErrorPage /> },
       // { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/reset-password/:token', element: <AuthReset /> },
       { path: '/auth/register', element: <Register2 /> },

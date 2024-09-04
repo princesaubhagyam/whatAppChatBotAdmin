@@ -16,7 +16,6 @@ import {
   Autocomplete,
   CircularProgress,
   Tooltip,
- 
   Slide,
 } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
@@ -128,6 +127,8 @@ export default function CreateTemplate() {
   const [buttonSelect, setButtonSelect] = useState('QUICK_REPLY');
   const [buttonIcon, setButtonIcon] = useState(<Reply />);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
@@ -137,6 +138,7 @@ export default function CreateTemplate() {
   const [inputLength, setInputLength] = useState(0);
   const [countryCode, setCountryCode] = useState('+91');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [session, setSession] = useState();
   // const [inputLength, setInputLength] = useState(0);
   // console.log(countryCode, 'countryCode');
   const [mediaRes, setMediaRes] = useState();
@@ -228,12 +230,155 @@ export default function CreateTemplate() {
       text: '',
     },
     //validatioSecondSchema: validatioSecondSchema,
+    // onSubmit: async (values) => {
+    //   setButtonLoading(true);
+    //   try {
+    //     const bodyValues = variables.map((v) => v.value);
+    //     const titleValues = variables.map((v) => v.value);
+    //     const validButton = values.buttonText && values.buttonText.trim().length > 0;
+    //     let reqBody = {
+    //       name: preData.name,
+    //       language: preData.language,
+    //       category: preData.category,
+    //       components: [
+    //         {
+    //           type: 'HEADER',
+    //           format: HeaderSelect,
+    //           text: HeaderSelect === 'TEXT' ? values.text : '',
+    //           // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
+    //           // ...(titleValues.length > 0 && {
+    //           //   example: {
+    //           //     header_text: titleValues,
+    //           //   },
+    //           // }),
+    //         },
+    //         {
+    //           type: 'BODY',
+    //           text: values.body,
+    //           // example: {
+    //           //   body_text: [bodyValues],
+    //           // body_text: bodyValues.length > 0 ? [bodyValues] : [''],
+    //           //},
+    //           ...(bodyValues.length > 0 && {
+    //             example: {
+    //               body_text: [bodyValues],
+    //             },
+    //           }),
+    //         },
+    //         {
+    //           type: 'FOOTER',
+    //           text: values.footer,
+    //         },
+    //         ...(validButton && [
+    //           {
+    //             type: 'BUTTONS',
+    //             buttons: [
+    //               {
+    //                 type: buttonSelect,
+    //                 text: values.buttonText,
+
+    //                 ...(buttonSelect === 'PHONE_NUMBER' && { phone_number: phoneNumber }),
+    //                 ...(buttonSelect === 'URL' && {
+    //                   url: callToActionURL,
+    //                   example: ['summer2023'],
+    //                 }),
+    //               },
+    //             ],
+    //           },
+    //         ]),
+    //       ],
+    //     };
+    //     reqBody.components.forEach((component) => {
+    //       if (component.type === 'BUTTONS') {
+    //         component.buttons.forEach((button) => {
+    //           delete button.icon;
+    //         });
+    //       }
+    //     });
+    //     if (HeaderSelect === 'MEDIA') {
+    //       reqBody.components[0] = {
+    //         type: 'HEADER',
+    //         format:
+    //           mediaType === 'image'
+    //             ? 'IMAGE'
+    //             : mediaType === 'video'
+    //             ? 'VIDEO'
+    //             : mediaType === 'document'
+    //             ? 'DOCUMENT'
+    //             : '',
+
+    //         example: {
+    //           header_handle: [mediaRes],
+    //         },
+    //       };
+    //     }
+    //     <div>This is the key point</div>;
+    //     if (phoneNumber) {
+    //       reqBody.components[3] = {
+    //         type: 'BUTTONS',
+    //         buttons: [
+    //           {
+    //             type: 'PHONE_NUMBER',
+    //             text: values.buttonText,
+    //             phone_number: (countryCode + phoneNumber).replace('+', ''),
+    //           },
+    //         ],
+    //       };
+    //     }
+    //     if (callToActionURL) {
+    //       reqBody.components[3] = {
+    //         type: 'BUTTONS',
+    //         buttons: [
+    //           {
+    //             type: 'URL',
+    //             text: values.buttonText,
+    //             url: callToActionURL,
+    //             example: ['summer2023'],
+    //             //icon: buttonIcon,
+    //           },
+    //         ],
+    //       };
+    //     }
+    //     let isFormIsValid = true;
+    //     // reqBody.components.forEach((data, index) => {
+    //     //   validatioSecondSchema
+    //     //     .validate(data)
+    //     //     .then(() => (isFormIsValid = true))
+    //     //     .catch((err) => {
+    //     //       isFormIsValid = false;
+
+    //     //       toast.error(`${err.errors}`, { duration: 2000 });
+    //     //     });
+    //     // });
+
+    //     if (isFormIsValid) {
+    //       const metaClient = createMetaAxiosInstance();
+    //       const response = await metaClient.post('/message_templates', reqBody);
+
+    //       if (response) {
+    //         //setButtonLoading(false);
+    //         toast.success(
+    //           'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
+    //           { duration: 5000, position: 'top-center' },
+    //         );
+    //         navigate('/templates');
+    //       }
+    //     }
+    //     //setButtonLoading(false);
+    //   } catch (error) {
+    //     //setButtonLoading(false);
+    //     toast.error(error.response.data.error.error_user_title, { duration: 2000 });
+    //   } finally {
+    //     setButtonLoading(false);
+    //   }
+    // },
     onSubmit: async (values) => {
-      setLoading(true);
+      setButtonLoading(true);
       try {
         const bodyValues = variables.map((v) => v.value);
         const titleValues = variables.map((v) => v.value);
         const validButton = values.buttonText && values.buttonText.trim().length > 0;
+
         let reqBody = {
           name: preData.name,
           language: preData.language,
@@ -243,20 +388,10 @@ export default function CreateTemplate() {
               type: 'HEADER',
               format: HeaderSelect,
               text: HeaderSelect === 'TEXT' ? values.text : '',
-              // media: HeaderSelect === 'MEDIA' ? mediaContent : null,
-              ...(titleValues.length > 0 && {
-                example: {
-                  header_text: titleValues,
-                },
-              }),
             },
             {
               type: 'BODY',
               text: values.body,
-              // example: {
-              //   body_text: [bodyValues],
-              // body_text: bodyValues.length > 0 ? [bodyValues] : [''],
-              //},
               ...(bodyValues.length > 0 && {
                 example: {
                   body_text: [bodyValues],
@@ -274,7 +409,6 @@ export default function CreateTemplate() {
                   {
                     type: buttonSelect,
                     text: values.buttonText,
-
                     ...(buttonSelect === 'PHONE_NUMBER' && { phone_number: phoneNumber }),
                     ...(buttonSelect === 'URL' && {
                       url: callToActionURL,
@@ -286,6 +420,7 @@ export default function CreateTemplate() {
             ]),
           ],
         };
+
         reqBody.components.forEach((component) => {
           if (component.type === 'BUTTONS') {
             component.buttons.forEach((button) => {
@@ -293,6 +428,7 @@ export default function CreateTemplate() {
             });
           }
         });
+
         if (HeaderSelect === 'MEDIA') {
           reqBody.components[0] = {
             type: 'HEADER',
@@ -304,68 +440,49 @@ export default function CreateTemplate() {
                 : mediaType === 'document'
                 ? 'DOCUMENT'
                 : '',
-
             example: {
               header_handle: [mediaRes],
             },
           };
         }
-        <div>This is the key point</div>;
-        if (phoneNumber) {
-          reqBody.components[3] = {
-            type: 'BUTTONS',
-            buttons: [
-              {
-                type: 'PHONE_NUMBER',
-                text: values.buttonText,
-                phone_number: (countryCode + phoneNumber).replace('+', ''),
-              },
-            ],
-          };
-        }
-        if (callToActionURL) {
-          reqBody.components[3] = {
-            type: 'BUTTONS',
-            buttons: [
-              {
-                type: 'URL',
-                text: values.buttonText,
-                url: callToActionURL,
-                example: ['summer2023'],
-                //icon: buttonIcon,
-              },
-            ],
-          };
-        }
-        let isFormIsValid = true;
-        // reqBody.components.forEach((data, index) => {
-        //   validatioSecondSchema
-        //     .validate(data)
-        //     .then(() => (isFormIsValid = true))
-        //     .catch((err) => {
-        //       isFormIsValid = false;
 
-        //       toast.error(`${err.errors}`, { duration: 2000 });
-        //     });
-        // });
+        const isFormIsValid = true;
 
         if (isFormIsValid) {
           const metaClient = createMetaAxiosInstance();
           const response = await metaClient.post('/message_templates', reqBody);
 
-          if (response) {
-            setLoading(false);
+          if (response && response.data.id) {
+            const templateId = response.data.id;
+            navigate('/templates');
+
             toast.success(
               'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
               { duration: 5000, position: 'top-center' },
             );
-            navigate('/templates');
+            const updatePayload = {
+              session_id: session,
+              template_id: templateId,
+            };
+
+            try {
+              const updateResponse = await apiClient.post(
+                '/api/update_template_id/',
+                updatePayload,
+              );
+
+              if (updateResponse) {
+                console.success('Template updated successfully');
+              }
+            } catch (updateError) {
+              console.error('Error updating template:', updateError.message);
+            }
           }
         }
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
         toast.error(error.response.data.error.error_user_title, { duration: 2000 });
+      } finally {
+        setButtonLoading(false);
       }
     },
   });
@@ -420,19 +537,63 @@ export default function CreateTemplate() {
   //     console.log(finalResponse.data.h);
   //   }
   // };
+  // const handleMediaContentChange = async (event) => {
+  //   try {
+  //     setLoading(true);
+  //     setButtonLoading(true);
+  //     const file = event.target.files[0];
+  //     setMediaContent(URL.createObjectURL(file));
+
+  //     const response = await apiClient.post(
+  //       `/api/create_session_facebook/?file_length=${file.size}&file_type=${file.type}`,
+  //     );
+
+  //     if (response && response.data.id) {
+  //       let mediaFile = new FormData();
+  //       mediaFile.append('file', file);
+
+  //       for (let [key, value] of mediaFile.entries()) {
+  //         console.log(`${key}:`, value);
+  //       }
+
+  //       const finalResponse = await apiClient.post(
+  //         `/api/upload_file_facebook/${response.data.id}`,
+  //         mediaFile,
+  //         {
+  //           headers: { 'Content-Type': 'multipart/form-data' },
+  //         },
+  //       );
+  //       console.log('Upload file response:', finalResponse);
+
+  //       setMediaRes(finalResponse.data.res.h);
+  //       console.log('abc image', finalResponse.data.res.h);
+  //     } else {
+  //       console.error('Failed to create session.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error uploading file:', error.response ? error.response.data : error.message);
+  //   } finally {
+  //     setLoading(false);
+  //     setButtonLoading(false);
+  //   }
+  // };
   const handleMediaContentChange = async (event) => {
     try {
+      setLoading(true);
+      setButtonLoading(true);
       const file = event.target.files[0];
       setMediaContent(URL.createObjectURL(file));
 
       const response = await apiClient.post(
         `/api/create_session_facebook/?file_length=${file.size}&file_type=${file.type}`,
       );
-
+      console.log('upload api response', response.data.id);
+      setSession(response.data.id);
       if (response && response.data.id) {
         let mediaFile = new FormData();
         mediaFile.append('file', file);
-
+        const phoneId = localStorage.getItem('phone_id');
+        mediaFile.append('phone_id', phoneId);
         for (let [key, value] of mediaFile.entries()) {
           console.log(`${key}:`, value);
         }
@@ -446,13 +607,16 @@ export default function CreateTemplate() {
         );
         console.log('Upload file response:', finalResponse);
 
-        setMediaRes(finalResponse.data.res.h);
+        setMediaRes(finalResponse.data.res.h); // Save the session_id
         console.log('abc image', finalResponse.data.res.h);
       } else {
         console.error('Failed to create session.');
       }
     } catch (error) {
       console.error('Error uploading file:', error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false);
+      setButtonLoading(false);
     }
   };
 
@@ -804,8 +968,8 @@ export default function CreateTemplate() {
                   </Box>
                   <CustomFormLabel htmlFor="footer">Footer</CustomFormLabel>
                   <Typography variant="subtitle1">
-                    Add optional footer text. You can add a short, supporting message at the bottom
-                    of your template.
+                    Add footer text. You can add a short, supporting message at the bottom of your
+                    template.
                   </Typography>
                   <CustomTextField
                     fullWidth
@@ -996,6 +1160,17 @@ export default function CreateTemplate() {
                           <Typography variant="h6" component="div">
                             {formikTemplate.values.text}
                           </Typography>
+                        ) : loading ? ( // Show loading spinner while uploading
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              height: '200px',
+                            }}
+                          >
+                            <CircularProgress />
+                          </Box>
                         ) : mediaContent ? (
                           mediaType === 'document' ? (
                             <Box sx={{ mb: 2 }}>
@@ -1079,10 +1254,16 @@ export default function CreateTemplate() {
                     color="primary"
                     sx={{ mr: 1 }}
                     type="submit"
-                    disabled={loading}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                    disabled={loading || buttonLoading}
+                    startIcon={
+                      loading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : buttonLoading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : null
+                    }
                   >
-                    {loading ? 'Creating...' : 'Create'}
+                    {loading ? 'Uploading...' : buttonLoading ? 'Creating...' : 'Create'}
                   </Button>
                   <Button variant="contained" color="error" onClick={() => setStep(0)}>
                     Back

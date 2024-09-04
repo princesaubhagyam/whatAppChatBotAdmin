@@ -1,11 +1,13 @@
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { Button, Card, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const CheckoutForm = ({ isHandleClose, clientSecret }) => {
+const CheckoutForm = ({ isHandleClose }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize the useNavigate hook
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,31 +18,41 @@ const CheckoutForm = ({ isHandleClose, clientSecret }) => {
 
     setLoading(true);
 
-    // First, submit the payment form
-    const { error: submitError } = await elements.submit();
+    try {
+      const { error: submitError } = await elements.submit();
 
-    if (submitError) {
-      console.log(submitError.message);
+      if (submitError) {
+        console.log(submitError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Confirm the payment
+      const result = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin,
+        },
+        redirect: 'if_required',
+      });
+
+      if (result.error) {
+        console.log(result.error.message);
+        navigate('/payment-error', { state: { payment_error: result.error }, replace: true  });
+        setLoading(false);
+      } else if (result.paymentIntent.status === 'succeeded') {
+        console.log('Payment successful');
+        // Navigate to the success page
+        navigate('/payment-success', { state: { payment_status: result.paymentIntent.status } ,replace: true  });
+      } else {
+        console.log('Payment not completed');
+        navigate('/payment-error', { state: { payment_error: result.error },replace: true  });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error during payment processing:', error);
       setLoading(false);
-      return;
-    }
-
-    // Now, confirm the payment
-    console.log('elements', elements);
-    const result = await stripe.confirmPayment({
-      elements,
-      //clientSecret,
-      confirmParams: {
-        return_url: 'https://chatbot.saubhagyam.net/home', // Change this to your return URL
-      },
-    });
-
-    if (result.error) {
-      console.log(result.error.message);
-      setLoading(false);
-    } else {
-      console.log('Payment successful');
-      // Handle the successful payment scenario here
+      navigate('/payment-error', { state: { payment_error: error },replace: true });
     }
   };
 
@@ -50,7 +62,7 @@ const CheckoutForm = ({ isHandleClose, clientSecret }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%', // Full viewport height
+        height: '100%', 
         padding: '16px',
         boxSizing: 'border-box',
       }}
@@ -81,7 +93,13 @@ const CheckoutForm = ({ isHandleClose, clientSecret }) => {
             >
               {loading ? 'Processing...' : 'Pay'}
             </Button>
-            <Button onClick={isHandleClose} variant="contained" color="error" sx={{ ml: 2 }} >
+            <Button
+              //onClick={isHandleClose}
+              variant="contained"
+              color="error"
+              sx={{ ml: 2 }}
+              onClick={() => navigate('/home')}
+            >
               Cancel
             </Button>
           </Typography>
