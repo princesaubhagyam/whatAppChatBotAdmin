@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid, Box, Card, Typography, Stack } from '@mui/material';
+import { Grid, Box, Card, Typography } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
-import Logo from 'src/layouts/full/shared/logo/Logo';
+
 import AuthForgotPassword from '../authForms/AuthForgotPassword';
 import img from 'src/assets/images/backgrounds/banner_one.jpg';
 
