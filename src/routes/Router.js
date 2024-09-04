@@ -41,6 +41,7 @@ const UserProfile = Loadable(lazy(() => import('../views/apps/user-profile/UserP
 const Followers = Loadable(lazy(() => import('../views/apps/user-profile/Followers')));
 const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')));
 const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
+const BusinessProfile = Loadable(lazy(() => import('../views/apps/business-profile/BusinessProfile')));
 
 // Pages
 const RollbaseCASL = Loadable(lazy(() => import('../views/pages/rollbaseCASL/RollbaseCASL')));
@@ -148,6 +149,7 @@ const Router = [
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
+      { path: '/business-profile', element: <BusinessProfile /> },
       { path: '/analytics', element: <Templates /> },
       { path: '/integrations', element: <Templates /> },
       { path: '/team', element: <Templates /> },

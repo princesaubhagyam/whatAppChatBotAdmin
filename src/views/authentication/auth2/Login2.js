@@ -5,7 +5,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
 import toast, { Toaster } from 'react-hot-toast';
-import img from 'src/assets/images/backgrounds/baner.jpg';
+import img from 'src/assets/images/backgrounds/banner_two.jpg';
 const Login2 = () => {
   return (
     <>
@@ -21,7 +21,7 @@ const Login2 = () => {
             <Grid
               item
               xs={6}
-              md={5}
+              md={6}
               sx={{
                 display: { xs: 'none', md: 'block' },
                 backgroundImage: `url(${img})`,
@@ -34,7 +34,7 @@ const Login2 = () => {
             <Grid
               item
               xs={12}
-              md={7}
+              md={6}
               display="flex"
               justifyContent="center"
               alignItems="center"
