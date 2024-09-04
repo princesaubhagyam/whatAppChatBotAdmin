@@ -14,13 +14,13 @@ const Menuitems = [
     icon: IconLayoutDashboard,
     href: '/home',
   },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Business',
-  //   subtitle : "Profile",
-  //   icon: IconUser,
-  //   href: '/business-profile',
-  // },
+  {
+    id: uniqueId(),
+    title: 'Business',
+    subtitle : "Profile",
+    icon: IconUser,
+    href: '/business-profile',
+  },
   {
     id: uniqueId(),
     title: 'Contacts',

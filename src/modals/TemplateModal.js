@@ -28,6 +28,7 @@ import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import EventContext from 'src/BroadcastContext';
+import EstimatedCost from "src/components/analytics/EstimatedCost"
 import Spinner from 'src/views/spinner/Spinner';
 
 const VisuallyHiddenInput = styled('input')({
@@ -56,7 +57,7 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            // required
+          // required
           />
         </>
       );
@@ -71,8 +72,8 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={componentData.parameters?.[0]?.video?.link || ''}
             variant="outlined"
             fullWidth
-            //value={currentLink}
-            //required
+          //value={currentLink}
+          //required
           />
         </>
       );
@@ -86,9 +87,9 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             onChange={(e) => updateHeaderLink(e, 'DOCUMENT')}
             variant="outlined"
             fullWidth
-            //value={componentData.link}
-            //value={componentData.parameters?.[0]?.document?.link || ''}
-            //required
+          //value={componentData.link}
+          //value={componentData.parameters?.[0]?.document?.link || ''}
+          //required
           />
         </>
       );
@@ -121,13 +122,7 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
   return <></>;
 };
 
-const TemplateModal = ({
-  open,
-  handleClose,
-  broadcastId,
-  checkBroadcastHistory,
-  walletBalance,
-}) => {
+const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, walletBalance }) => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
@@ -143,7 +138,7 @@ const TemplateModal = ({
   });
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
-  const [sendBtn, setSendBtn] = useState(false);
+  const [sendBtn, setSendBtn] = useState(false)
   // console.log(previewLink, 'previewLink');
 
   const handleFileChange = (e) => {
@@ -287,8 +282,8 @@ const TemplateModal = ({
 
   const handleFieldChange = (e) => {
     if (parseInt(walletBalance) >= parseInt(activeBroadcast?.members)) {
-      console.log('I am working');
-      setSendBtn(true);
+      console.log("I am working")
+      setSendBtn(true)
     }
     setBroadcastDetails({
       ...broadcastDetails,
@@ -368,13 +363,14 @@ const TemplateModal = ({
         toast.success('Broadcast scheduled successfully!');
         toggleOnOff();
         handleClose();
+        setSendBtn(false)
+        setTemplateDetails(null)
       }
     } catch (err) {
       console.warn(err);
       toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
     } finally {
       setButtonLoading(false);
-      setSendBtn(false);
     }
   };
 
@@ -477,34 +473,6 @@ const TemplateModal = ({
                   </MenuItem>
                 ))}
               </Select>
-
-              {templateDetails ? (
-                sendBtn ? (
-                  <Typography
-                    variant="p"
-                    component="div"
-                    sx={{
-                      margin: '-30px 0px 20px 10px',
-                      color: 'green',
-                    }}
-                  >
-                    Your estimated amount for sending this template is Rs {activeBroadcast?.members}
-                  </Typography>
-                ) : (
-                  <Typography
-                    variant="p"
-                    component="div"
-                    sx={{
-                      margin: '-30px 0px 20px 10px',
-                      color: 'red',
-                    }}
-                  >
-                    "Your wallet balance is insufficient to send this template. Please add money to
-                    your wallet or reduce the number of members in the group up to{' '}
-                    {parseInt(walletBalance)}. Current wallet balance: Rs{walletBalance}."
-                  </Typography>
-                )
-              ) : null}
             </FormControl>
             {loading ? (
               <Box
@@ -598,7 +566,6 @@ const TemplateModal = ({
                                   if (headerHandle) {
                                     const isVideo = component.format === 'VIDEO';
                                     const isDocument = component.format === 'DOCUMENT';
-
                                     if (isVideo) {
                                       return (
                                         <CardMedia
@@ -735,6 +702,12 @@ const TemplateModal = ({
                 )}
               </>
             )}
+            {
+              templateDetails ?   <EstimatedCost
+              members = {activeBroadcast?.members}
+              walletBalance = {walletBalance}
+              /> : null
+            }
           </Box>
         </form>
       </Fade>

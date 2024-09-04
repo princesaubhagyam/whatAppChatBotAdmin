@@ -87,7 +87,9 @@ const Chats = ({ checkBroadcastHistory }) => {
     setSelectedBroadcast(broadcast);
     setIsBroadcastDeleted(false);
   };
-
+  useEffect(() => {
+    setIsBroadcastDeleted(true);
+  }, [window.location.pathname]);
   if (loading) {
     return <Spinner />;
   }
