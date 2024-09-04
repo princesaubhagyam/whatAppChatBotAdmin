@@ -209,7 +209,7 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory, isHistory }) => {
     >
       {broadcastData && (
         <>
-          {broadcastData.broadcast_histories.map((history, index) => (
+          {broadcastData.broadcast_histories && broadcastData.broadcast_histories.length > 0 &&broadcastData.broadcast_histories.map((history, index) => (
             <List
               key={index}
               sx={{ paddingTop: '0px', paddingBottom: '0px', borderRadius: '5rem !important' }}

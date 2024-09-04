@@ -364,6 +364,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
         toggleOnOff();
         handleClose();
         setSendBtn(false)
+        setTemplateDetails(null)
       }
     } catch (err) {
       console.warn(err);
