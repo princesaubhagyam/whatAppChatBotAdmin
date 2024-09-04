@@ -5,7 +5,7 @@ import PageContainer from 'src/components/container/PageContainer';
 import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthLogin from '../authForms/AuthLogin';
 import toast, { Toaster } from 'react-hot-toast';
-import img from 'src/assets/images/backgrounds/banner_two.jpg';
+import img from 'src/assets/images/backgrounds/banner_one.jpg';
 const Login2 = () => {
   return (
     <>

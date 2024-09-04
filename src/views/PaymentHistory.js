@@ -170,11 +170,13 @@ const PaymentHistory = () => {
     <PageContainer title="Payment History" description="This is the Payment History page">
       <Breadcrumb title="Payments" items={BCrumb} />
       <Box sx={{ width: '100%' }}>
-        <Stack direction="row" justifyContent="space-between" mb={2}>
+        {/* <Stack direction="row" justifyContent="space-between" mb={2}>
           <TextField
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">{/* <SearchIcon /> */}</InputAdornment>
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
               ),
             }}
             placeholder="Search..."
@@ -182,7 +184,7 @@ const PaymentHistory = () => {
             onChange={handleSearch}
             value={search}
           />
-        </Stack>
+        </Stack> */}
         <Paper sx={{ width: '100%', mb: 2 }}>
           <TableContainer>
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
@@ -195,7 +197,15 @@ const PaymentHistory = () => {
                 {loading ? (
                   <TableRow>
                     <TableCell colSpan={headCells.length} align="top">
-                      <Spinner />
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="flex-start"
+                        justifyContent="flex-start"
+                        textAlign="start"
+                      >
+                        <Spinner />
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ) : rows.length === 0 ? (

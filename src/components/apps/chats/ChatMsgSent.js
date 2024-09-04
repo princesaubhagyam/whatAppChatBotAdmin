@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, InputBase, Box, Button } from '@mui/material';
+import { IconButton, InputBase, Box, Button, Tooltip } from '@mui/material';
 import { IconSend, IconUserPlus } from '@tabler/icons';
 import { sendMsg, updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 import TemplateModal from 'src/modals/TemplateModal';
@@ -125,14 +125,26 @@ const ChatMsgSent = ({
             </div>
           )} */}
           {!isHistory && walletBalance > 0 && (
-            <Button
-              style={{ backgroundColor: '#1A4D2E', color: 'white' }}
-              onClick={handleOpenTemplateModal}
-              sx={{ height: '30px' }}
+            <Tooltip
+              title={
+                memberCount === 0
+                  ? "You can't send template because there are no members added"
+                  : ''
+              }
+              arrow
             >
-              <IconSend size={16} />
-              Send Template
-            </Button>
+              <span>
+                <Button
+                  style={{ backgroundColor: '#1A4D2E', color: 'white' }}
+                  onClick={handleOpenTemplateModal}
+                  sx={{ height: '30px' }}
+                  disabled={memberCount === 0}
+                >
+                  <IconSend size={16} />
+                  Send Template
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </form>
       )}
@@ -141,7 +153,7 @@ const ChatMsgSent = ({
         handleClose={handleCloseTemplateModal}
         broadcastId={activeBroadcast?.id}
         checkBroadcastHistory={checkBroadcastHistory}
-        walletBalance = {walletBalance}
+        walletBalance={walletBalance}
       />
       <BroadcastMemberModal
         open={isMemberModalOpen}

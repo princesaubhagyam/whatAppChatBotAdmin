@@ -485,8 +485,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
                 justifyContent="center"
                 textAlign="center"
               >
-                <Typography variant="h6">Hello</Typography>
-                <Spinner/>
+                <Spinner />
               </Box>
             ) : (
               <>
