@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Skeleton } from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+import {Link} from "react-router-dom"
 
 const ProfileDetail = () => {
   const [contactName, setContactName] = useState('');
@@ -52,6 +53,7 @@ const ProfileDetail = () => {
   }, []);
 
   return (
+    <Link to = "/business-profile">
     <Card sx={{ padding: '5px', height: '100px' }}>
       <CardContent sx={{ padding: '8px' }}>
         {loading ? (
@@ -89,6 +91,7 @@ const ProfileDetail = () => {
         )}
       </CardContent>
     </Card>
+    </Link>
   );
 };
 

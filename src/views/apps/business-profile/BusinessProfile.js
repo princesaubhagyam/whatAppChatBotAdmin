@@ -327,20 +327,20 @@ function BusinessProfile() {
                       }}
                     />
 
-{isEditing && (
-              <Box sx={{ mt: 2, display : "flex" , justifyContent : "flex-end" }}>
-                <LoadingButton
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  startIcon={<SaveIcon />}
-                  loadingPosition="start"
-                  type="submit"
-                  loading={loading}
-                >
-                  Save
-                </LoadingButton>
-              </Box>)}
+                    {isEditing && (
+                      <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+                        <LoadingButton
+                          variant="contained"
+                          color="primary"
+                          onClick={handleSave}
+                          startIcon={<SaveIcon />}
+                          loadingPosition="start"
+                          type="submit"
+                          loading={loading}
+                        >
+                          Save
+                        </LoadingButton>
+                      </Box>)}
                   </> :
                     <>
                       {profileDetails?.messaging_product && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
@@ -365,7 +365,7 @@ function BusinessProfile() {
                           <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Websites:</Typography>
                           <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                             {profileDetails?.websites && profileDetails?.websites.length > 0 && profileDetails?.websites.map(function (website, index) {
-                              return <Typography variant="subtitle1" color="textSecondary">{index + 1}. {website}</Typography>
+                              return <div key={index}><Typography variant="subtitle1" color="textSecondary">{index + 1}. {website}</Typography></div>
                             })}
                           </Box>
                         </Box>
