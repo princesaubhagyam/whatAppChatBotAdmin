@@ -1,4 +1,10 @@
-import { IconBroadcast, IconTemplate, IconLayoutDashboard, IconUser } from '@tabler/icons';
+import {
+  IconBroadcast,
+  IconTemplate,
+  IconLayoutDashboard,
+  IconUser,
+  IconCreditCard,
+} from '@tabler/icons';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
 const Menuitems = [
@@ -38,6 +44,13 @@ const Menuitems = [
     title: 'Templates',
     icon: IconTemplate,
     href: '/templates',
+  },
+  {
+    id: uniqueId(),
+    title: 'Payment',
+    subtitle: 'History',
+    icon: IconCreditCard,
+    href: '/payment-history',
   },
   // {
   //   id: uniqueId(),
