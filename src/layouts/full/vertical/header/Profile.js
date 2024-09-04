@@ -9,6 +9,7 @@ import {
   MenuItem,
   Stack,
   Skeleton,
+  Tooltip,
 } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { useUser } from 'src/store/apps/UserContext';
@@ -108,24 +109,18 @@ const Profile = () => {
               fontWeight: 500,
               color: '#1A4D2E',
             }}
+            marginLeft="0.70rem"
           >
             {apiStatus || '-'}
           </Typography>
         )}
       </Stack>
-      <Stack direction={'row'} spacing={2} alignItems="center">
-        <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
+      <Stack direction={'row'} spacing={2} alignItems="flex-start" marginLeft="100px !important">
+        {/* <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
           Wallet
-        </Typography>
-        {walletBalance === null ? (
-          <Skeleton variant="text" width={50} height={30} animation={'wave'} />
-        ) : (
-          <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
-            ₹{walletBalance}
-          </Typography>
-        )}
+        </Typography> */}
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             fontWeight: 500,
             color: '#545557',
@@ -135,15 +130,27 @@ const Profile = () => {
             },
           }}
         >
-          <AccountBalanceWalletIcon
-            onClick={openAddMoneyInWalletModal}
-            disabled={location.pathname === '/payment'}
-            sx={{
-              color: location.pathname === '/payment' ? 'gray' : 'inherit',
-              pointerEvents: location.pathname === '/payment' ? 'none' : 'auto',
-            }}
-          />
+          <Tooltip title="Wallet">
+            <AccountBalanceWalletIcon
+              onClick={openAddMoneyInWalletModal}
+              disabled={location.pathname === '/payment'}
+              sx={{
+                color: location.pathname === '/payment' ? 'gray' : 'inherit',
+                pointerEvents: location.pathname === '/payment' ? 'none' : 'auto',
+              }}
+            />
+          </Tooltip>
         </Typography>
+        {walletBalance === null ? (
+          <Skeleton variant="text" width={50} height={30} animation={'wave'} />
+        ) : (
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 500, color: '#545557', marginLeft: '10px !important' }}
+          >
+            ₹{walletBalance}
+          </Typography>
+        )}
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <IconButton

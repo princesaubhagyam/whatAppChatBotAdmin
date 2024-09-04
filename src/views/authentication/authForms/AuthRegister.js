@@ -40,8 +40,8 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   // ];
 
   const signUpAPICall = async (creds) => {
-    try { 
-      const temp = {...creds, mobile : (countryCode + creds.mobile).replace("+","")}
+    try {
+      const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', '') };
       const res = await apiClient.post('/auth/signup/', { ...temp });
       if (res.status === 201) {
         navigate('/auth/login');
@@ -139,7 +139,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
           handleSignUp();
         }}
       >
-        <Stack spacing={2} gap={'0.80rem'}>
+        <Stack spacing={2}>
           <FormControl fullWidth error={!!errors.full_name}>
             <OutlinedInput
               startAdornment={
