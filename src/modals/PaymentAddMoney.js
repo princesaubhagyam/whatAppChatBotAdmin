@@ -10,7 +10,12 @@ import {
   Select,
   MenuItem,
   Stack,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
@@ -27,22 +32,38 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
   const [currencyCode, setCountryCode] = useState('inr');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [amountError, setAmountError] = useState(null);
+  const [descriptionError, setDescriptionError] = useState(null);
 
   const navigate = useNavigate(); // Use useNavigate to handle navigation
 
+  // const handleChange = (event) => {
+  //   setAmount(() => event.target.value);
+  // };
   const handleChange = (event) => {
     setAmount(() => event.target.value);
+    if (event.target.value !== '') {
+      setAmountError(null);
+    }
   };
 
   function handlAddToggle() {
     setAddAmonut(() => true);
   }
 
+  // function handleClose() {
+  //   setOpenAddWalletModal(() => false);
+  //   setAddAmonut(() => false);
+  //   setAmount('');
+  //   setCountryCode('inr');
+  // }
   function handleClose() {
     setOpenAddWalletModal(() => false);
     setAddAmonut(() => false);
     setAmount('');
     setCountryCode('inr');
+    setAmountError(null);
+    setDescriptionError(null);
   }
 
   function hideMoneyDetails() {
@@ -55,7 +76,21 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
   };
 
   async function createPaymentRequest(e) {
-    e.preventDefault()
+    e.preventDefault();
+    setAmountError(null);
+    // setDescriptionError(null);
+
+    // Validate amount and description fields
+    if (amount === '') {
+      setAmountError('Amount is required');
+    }
+    // if (description === '') {
+    //   setDescriptionError('Description is required');
+    // }
+
+    if (amount === '') {
+      return;
+    }
     setLoading(true);
     const reqBody = {
       amount: amount,
@@ -78,84 +113,74 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
   }
 
   return (
-    <Modal
+    <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="add-contact-modal"
       aria-describedby="add-contact-form"
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        sx: {
+          height: '400px', // Set the fixed height
+          width: '600px', // Optionally set a fixed width
+        },
+      }}
     >
-      <Box
+      <DialogTitle
         sx={{
-          outline: 'none',
+          display: 'flex',
+          justifyContent: 'space-between',
           bgcolor: 'background.paper',
-          boxShadow: 24,
-          padding: '30px',
-          width: '60%',
-          height: "60%",
-          margin: 'auto',
-          mt: 10,
+          alignItems: 'baseline',
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between"
-          }}
-        >
-          <Typography variant="h1" component="h1" color="#1A4D2E">
-            <b>My Wallet</b>
-          </Typography>
-          <Box>
-            <Tooltip title="Close wallet">
-              <CancelIcon
-                sx={{
-                  cursor: "pointer"
-                }}
-                onClick={handleClose}
-              />
-            </Tooltip>
+        <Typography variant="h3" component="h3" color="#1A4D2E">
+          My Wallet
+        </Typography>
+        <IconButton onClick={handleClose} edge="end" aria-label="close">
+          <CancelIcon sx={{ cursor: 'pointer' }} color="error" />
+        </IconButton>
+      </DialogTitle>
 
-          </Box>
-        </Box>
-
+      <DialogContent dividers>
         <Typography
-          variant="h2"
-          component="h2"
+          variant="h3"
+          component="h3"
           gutterBottom
-          sx={{ marginTop: '70px', marginBottom: '20px', display: "flex", justifyContent: "space-between" }}
+          sx={{
+            marginTop: '30px',
+            marginBottom: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
         >
           <Box>Current Balance</Box>
           <Box>:</Box>
-          <Box> ₹{walletBalance}</Box>
-          {addAmount ? <Tooltip title="Close Add Money Box">
-            <CancelIcon
-              color='error'
-              sx={{
-                fontSize: "40px",
-                cursor: "pointer"
-              }}
-              onClick={hideMoneyDetails}
-            />
-          </Tooltip> : <Tooltip title="Add Money">
-            <AddCircleIcon
-              color='primary'
-              sx={{
-                fontSize: "40px",
-                cursor: "pointer"
-              }}
-              onClick={handlAddToggle}
-            />
-          </Tooltip>}
-
+          <Box>₹{walletBalance}</Box>
+          {addAmount ? (
+            <Tooltip title="Close Add Money Box">
+              <CancelIcon
+                color="error"
+                sx={{ fontSize: '40px', cursor: 'pointer' }}
+                onClick={hideMoneyDetails}
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Add Money">
+              <AddCircleIcon
+                color="primary"
+                sx={{ fontSize: '40px', cursor: 'pointer' }}
+                onClick={handlAddToggle}
+              />
+            </Tooltip>
+          )}
         </Typography>
+
         {addAmount ? (
           <>
             <form onSubmit={createPaymentRequest}>
-              <Stack container spacing={2}
-                sx={{
-                  marginTop: "40px"
-                }}
-              >
+              <Stack container spacing={2} sx={{ marginTop: '40px' }}>
                 <FormControl fullWidth>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs={12} md={6} lg={6}>
@@ -168,18 +193,19 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
                         placeholder="Enter The Amount"
                         type="number"
                         variant="outlined"
-                        required
+                        error={Boolean(amountError)}
+                        helperText={amountError}
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                              borderColor: 'primary.main', // Set the border color
-                              borderWidth: '1px', // Set the border width
+                              borderColor: 'primary.main',
+                              borderWidth: '1px',
                             },
                             '&:hover fieldset': {
-                              borderColor: 'primary.main', // Keep the same color on hover
+                              borderColor: 'primary.main',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main', // Optional: Keep the same color on focus
+                              borderColor: 'primary.main',
                             },
                           },
                         }}
@@ -231,25 +257,33 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
-                        required
+                        //required
+                        // error={Boolean(descriptionError)}
+                        // helperText={descriptionError}
+                        onChange={(e) => {
+                          setDescription(e.target.value);
+                          // if (e.target.value !== '') {
+                          //   setDescriptionError(null);
+                          // }
+                        }}
                         fullWidth
                         label="Description"
                         name="description"
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        //onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter Description"
                         variant="outlined"
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                              borderColor: 'primary.main', // Set the border color
-                              borderWidth: '1px', // Set the border width
+                              borderColor: 'primary.main',
+                              borderWidth: '1px',
                             },
                             '&:hover fieldset': {
-                              borderColor: 'primary.main', // Keep the same color on hover
+                              borderColor: 'primary.main',
                             },
                             '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main', // Optional: Keep the same color on focus
+                              borderColor: 'primary.main',
                             },
                           },
                         }}
@@ -258,26 +292,22 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
                   </Grid>
                 </FormControl>
               </Stack>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <DialogActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <LoadingButton
-                  // onClick={createPaymentRequest}
                   variant="contained"
-                  type='submit'
+                  type="submit"
                   color="primary"
                   disabled={loading}
                   startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
                   {loading ? 'Checkout...' : 'Checkout'}
                 </LoadingButton>
-                {/* <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
-                Cancel
-              </Button> */}
-              </Box>
+              </DialogActions>
             </form>
           </>
         ) : null}
-      </Box>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -1,4 +1,4 @@
-import { IconBroadcast, IconTemplate, IconLayoutDashboard,IconUser  } from '@tabler/icons';
+import { IconBroadcast, IconTemplate, IconLayoutDashboard, IconUser } from '@tabler/icons';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
 const Menuitems = [
@@ -8,12 +8,12 @@ const Menuitems = [
     icon: IconLayoutDashboard,
     href: '/home',
   },
-  {
-    id: uniqueId(),
-    title: 'Business Profile',
-    icon: IconUser,
-    href: '',
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Business Profile',
+  //   icon: IconUser,
+  //   href: '',
+  // },
   {
     id: uniqueId(),
     title: 'Contacts',

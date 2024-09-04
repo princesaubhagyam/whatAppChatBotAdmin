@@ -21,7 +21,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { IconMessage2Share, IconUpload } from '@tabler/icons';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
@@ -119,7 +119,13 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
   return <></>;
 };
 
-const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,walletBalance }) => {
+const TemplateModal = ({
+  open,
+  handleClose,
+  broadcastId,
+  checkBroadcastHistory,
+  walletBalance,
+}) => {
   const [loading, setLoading] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [templates, setTemplates] = useState([]);
@@ -134,7 +140,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
   });
   const [templateDetails, setTemplateDetails] = useState();
   const [previewLink, setPreviewLink] = useState(null);
-  const [sendBtn,setSendBtn] = useState(false)
+  const [sendBtn, setSendBtn] = useState(false);
   // console.log(previewLink, 'previewLink');
 
   const handleFileChange = (e) => {
@@ -276,9 +282,9 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
   }, [broadcastDetails?.template]);
 
   const handleFieldChange = (e) => {
-    if( parseInt(walletBalance) >= parseInt(activeBroadcast?.members)){
-      console.log("I am working")
-      setSendBtn(true)
+    if (parseInt(walletBalance) >= parseInt(activeBroadcast?.members)) {
+      console.log('I am working');
+      setSendBtn(true);
     }
     setBroadcastDetails({
       ...broadcastDetails,
@@ -360,7 +366,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
       toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
     } finally {
       setLoading(false);
-      setSendBtn(false)
+      setSendBtn(false);
     }
   };
 
@@ -418,7 +424,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
     });
     setTemplateDetails(null);
     handleClose();
-    setSendBtn(false)
+    setSendBtn(false);
   };
   return (
     <Dialog
@@ -429,7 +435,6 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
       }}
       closeAfterTransition
       maxWidth={'md'}
-      sx={{ height: '90%' }}
     >
       <Fade in={open}>
         <form onSubmit={sendBroadcastMsg}>
@@ -465,22 +470,33 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory ,
                 ))}
               </Select>
 
-              {templateDetails ?  sendBtn ? <Typography variant="p" component="div"
-               sx= {{
-                margin: "-30px 0px 20px 10px",
-                color : "green"
-               }}
-              >
-              Your estimated amount for sending this template is Rs {activeBroadcast?.members}
-            </Typography>: <Typography variant="p" component="div"
-               sx= {{
-                margin: "-30px 0px 20px 10px",
-                color : "red"
-               }}
-              >
-              "Your wallet balance is insufficient to send this template. Please add money to your wallet or reduce the number of members in the group up to {parseInt(walletBalance)}. Current wallet balance: Rs{walletBalance}."
-            </Typography> : null}
-             
+              {templateDetails ? (
+                sendBtn ? (
+                  <Typography
+                    variant="p"
+                    component="div"
+                    sx={{
+                      margin: '-30px 0px 20px 10px',
+                      color: 'green',
+                    }}
+                  >
+                    Your estimated amount for sending this template is Rs {activeBroadcast?.members}
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="p"
+                    component="div"
+                    sx={{
+                      margin: '-30px 0px 20px 10px',
+                      color: 'red',
+                    }}
+                  >
+                    "Your wallet balance is insufficient to send this template. Please add money to
+                    your wallet or reduce the number of members in the group up to{' '}
+                    {parseInt(walletBalance)}. Current wallet balance: Rs{walletBalance}."
+                  </Typography>
+                )
+              ) : null}
             </FormControl>
             <Grid container spacing={2} minWidth={'650px'} maxWidth={'750px'}>
               <Grid item xs={12} sm={6}>
