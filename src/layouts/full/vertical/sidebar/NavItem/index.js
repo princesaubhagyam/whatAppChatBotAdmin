@@ -28,7 +28,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
     marginBottom: '2px',
     padding: '8px 10px',
     // borderRadius: `${customizer.borderRadius}px`,
-    
+
     backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
     color:
       level > 1 && isActive
@@ -79,7 +79,9 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
             {hideMenu ? '' : <>{t(`${item.title}`)}</>}
             <br />
             {item.subtitle ? (
-              <Typography variant="caption">{hideMenu ? '' : item.subtitle}</Typography>
+              <Typography variant="caption" fontSize="0.875rem" lineHeight="0">
+                {hideMenu ? '' : item.subtitle}
+              </Typography>
             ) : (
               ''
             )}

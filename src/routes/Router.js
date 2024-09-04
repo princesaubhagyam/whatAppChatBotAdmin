@@ -11,6 +11,7 @@ import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
 import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
 import PaymentErrorPage from 'src/components/PaymentErrorPage';
+import PaymentHistory from 'src/views/PaymentHistory';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -146,6 +147,7 @@ const Router = [
       { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
+      { path: '/payment-history', element: <PaymentHistory/>},
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
