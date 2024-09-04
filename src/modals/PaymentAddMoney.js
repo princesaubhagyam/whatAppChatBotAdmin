@@ -122,8 +122,7 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
       fullWidth
       PaperProps={{
         sx: {
-          height: '400px', // Set the fixed height
-          width: '600px', // Optionally set a fixed width
+          height: '400px', 
         },
       }}
     >
@@ -138,9 +137,11 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
         <Typography variant="h3" component="h3" color="#1A4D2E">
           My Wallet
         </Typography>
-        <IconButton onClick={handleClose} edge="end" aria-label="close">
-          <CancelIcon sx={{ cursor: 'pointer' }} color="error" />
-        </IconButton>
+        <Tooltip title="Close">
+          <IconButton onClick={handleClose} edge="end" aria-label="close">
+            <CancelIcon sx={{ cursor: 'pointer' }} color="error" />
+          </IconButton>
+        </Tooltip>
       </DialogTitle>
 
       <DialogContent dividers>
@@ -229,7 +230,7 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
                         }}
                       />
                     </Grid>
-                    <Grid item md={6} lg={6} xs={12}>
+                    <Grid item md={6} lg={6} xs={12} mb={amountError && 3}>
                       <Select
                         value={currencyCode}
                         onChange={handleCurrencyCodeChange}

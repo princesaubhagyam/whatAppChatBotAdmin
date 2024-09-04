@@ -456,10 +456,10 @@ export default function CreateTemplate() {
             const templateId = response.data.id;
             navigate('/templates');
 
-            toast.success('Template created successfully', {
-              duration: 5000,
-              position: 'top-center',
-            });
+            toast.success(
+              'Template created please wait until your template being verified by Meta this process may take 2-5 minutes',
+              { duration: 5000, position: 'top-center' },
+            );
             const updatePayload = {
               session_id: session,
               template_id: templateId,
