@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
   Box,
   Button,
-  Modal,
   Fade,
   Select,
   MenuItem,
-  FormLabel,
   Typography,
   Stack,
   Input,
@@ -14,7 +12,6 @@ import {
   Dialog,
   Grid,
   InputLabel,
-  OutlinedInput,
   FormControl,
   IconButton,
   CircularProgress,
@@ -28,8 +25,9 @@ import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import EventContext from 'src/BroadcastContext';
-import EstimatedCost from "src/components/analytics/EstimatedCost"
+import EstimatedCost from 'src/components/analytics/EstimatedCost';
 import Spinner from 'src/views/spinner/Spinner';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -43,7 +41,14 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const HeaderComponent = ({ componentData, updateHeaderLink }) => {
+const HeaderComponent = ({
+  componentData,
+  updateHeaderLink,
+  handleFileUpload,
+  handleFileChange,
+  previewLink,
+  isLoading,
+}) => {
   switch (componentData.format) {
     case 'IMAGE':
       return (
@@ -54,11 +59,19 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             placeholder="Add link to image here"
             onChange={(e) => updateHeaderLink(e, 'IMAGE')}
             variant="outlined"
-            //value={currentLink}
+            // value={currentLink}
             //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-          // required
+            value={previewLink}
+            // required
           />
+          <Typography variant="h6" textAlign={'center'}>
+            OR
+          </Typography>
+          <input type="file" onChange={handleFileChange} accept="image/*" />
+          <Button onClick={handleFileUpload} disabled={isLoading}>
+            {isLoading ? <CircularProgress size={24} /> : 'Upload Image'}
+          </Button>
         </>
       );
     case 'VIDEO':
@@ -72,9 +85,13 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             //value={componentData.parameters?.[0]?.video?.link || ''}
             variant="outlined"
             fullWidth
-          //value={currentLink}
-          //required
+            //value={currentLink}
+            //required
           />
+          <input type="file" onChange={handleFileChange} accept="video/*" />
+          <Button onClick={handleFileUpload} disabled={isLoading}>
+            {isLoading ? <CircularProgress size={24} /> : 'Upload Video'}
+          </Button>
         </>
       );
     case 'DOCUMENT':
@@ -87,10 +104,15 @@ const HeaderComponent = ({ componentData, updateHeaderLink }) => {
             onChange={(e) => updateHeaderLink(e, 'DOCUMENT')}
             variant="outlined"
             fullWidth
-          //value={componentData.link}
-          //value={componentData.parameters?.[0]?.document?.link || ''}
-          //required
+
+            //value={componentData.parameters?.[0]?.document?.link || ''}
+            //required
           />
+          <Typography variant="h4">OR</Typography>
+          <input type="file" onChange={handleFileChange} accept="application/pdf" />
+          <Button onClick={handleFileUpload} disabled={isLoading}>
+            {isLoading ? <CircularProgress size={24} /> : 'Upload Document'}
+          </Button>
         </>
       );
     default:
@@ -122,7 +144,13 @@ const BodyVariableComponent = ({ bodyData, updateBodyVariable }) => {
   return <></>;
 };
 
-const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, walletBalance }) => {
+const TemplateModal = ({
+  open,
+  handleClose,
+  broadcastId,
+  checkBroadcastHistory,
+  walletBalance,
+}) => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
@@ -130,43 +158,47 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
   const [defaultHeaderHandles, setDefaultHeaderHandles] = useState({});
   const { toggleOnOff } = useContext(EventContext);
   const [mediaId, setMediaId] = useState(null);
-  const [mediaPreview, setMediaPreview] = useState(null);
-  const [mediaType, setMediaType] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
   });
   const [templateDetails, setTemplateDetails] = useState();
-  const [previewLink, setPreviewLink] = useState(null);
-  const [sendBtn, setSendBtn] = useState(false)
+  //const [previewLink, setPreviewLink] = useState(null);
+  const [sendBtn, setSendBtn] = useState(false);
   // console.log(previewLink, 'previewLink');
-
+  const [file, setFile] = useState(null);
+  const [previewLink, setPreviewLink] = useState('');
+  const [mediaLink, setMediaLink] = useState('');
+  const phone_id = localStorage.getItem('phone_id');
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      uploadMedia(file);
-    }
+    setFile(e.target.files[0]);
   };
 
-  const uploadMedia = async (file) => {
+  const handleFileUpload = async () => {
+    if (!file) return;
+    setIsLoading(true);
     const formData = new FormData();
+    formData.append('phone_id', phone_id);
     formData.append('file', file);
 
     try {
-      const res = await apiClient.post('/api/upload_media/', formData, {
+      const response = await apiClient.post('/api/upload_media/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      if (res.status === 200) {
-        const mediaData = res.data;
-        setMediaId(mediaData.id);
-        setMediaPreview(mediaData.url);
-        setMediaType(mediaData.type); // type should be 'image', 'video', or 'document'
-      }
-    } catch (err) {
-      toast.error('Failed to upload media!');
+      const { id, preview_url } = response.data;
+      setPreviewLink(process.env.REACT_APP_API_BASE_URL + preview_url);
+      console.log('--preview', preview_url);
+
+      setMediaId(id);
+      toast.success('File Uploaded Successfully');
+    } catch (error) {
+      console.error('File upload failed:', error);
+    } finally {
+      setIsLoading(false); // End loading state
     }
   };
 
@@ -256,8 +288,6 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
 
           setMediaId(res.data.media_id);
           console.log('Media ID:', mediaId);
-
-          console.log('called');
         }
       }
     } catch (err) {
@@ -282,8 +312,8 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
 
   const handleFieldChange = (e) => {
     if (parseInt(walletBalance) >= parseInt(activeBroadcast?.members)) {
-      console.log("I am working")
-      setSendBtn(true)
+      console.log('I am working');
+      setSendBtn(true);
     }
     setBroadcastDetails({
       ...broadcastDetails,
@@ -363,8 +393,8 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
         toast.success('Broadcast scheduled successfully!');
         toggleOnOff();
         handleClose();
-        setSendBtn(false)
-        setTemplateDetails(null)
+        setSendBtn(false);
+        setTemplateDetails(null);
       }
     } catch (err) {
       console.warn(err);
@@ -499,19 +529,11 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
                             <HeaderComponent
                               componentData={templateDetails?.components?.[0]}
                               updateHeaderLink={updateHeaderLink}
+                              handleFileChange={handleFileChange}
+                              handleFileUpload={handleFileUpload}
+                              isLoading={isLoading}
                             />
-                            {/* <VisuallyHiddenInput
-                          type="file"
-                          accept="image/*,video/*,.pdf"
-                          onChange={handleFileChange}
-                          id="media-upload"
-                        />
-                        <label htmlFor="media-upload">
-                          <IconButton color="primary" component="span">
-                            <IconUpload />
-                          </IconButton>
-                          <Typography variant="body2">Upload Media</Typography>
-                        </label> */}
+                            {/* <PreviewSection previewLink={previewLink} /> */}
                           </>
                         ) : (
                           <></>
@@ -557,7 +579,9 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
                                   //const headerHandle = component.example?.header_handle?.[0] || component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
                                   const headerLink =
                                     component.parameters?.[0]?.[component.format.toLowerCase()]
-                                      ?.link;
+                                      ?.link || previewLink;
+                                  console.log('preview____', previewLink);
+
                                   const headerHandle =
                                     headerLink || component.example?.header_handle?.[0];
 
@@ -691,7 +715,8 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
                       loading={buttonLoading}
                       disabled={!sendBtn}
                     >
-                      Send broadcast
+                      {/* Send broadcast */}
+                      {buttonLoading ? 'Sending' : 'Send Broadcast'}
                     </LoadingButton>
                     <Button variant="contained" color="error" onClick={resetTemplateSelection}>
                       Cancel
@@ -700,14 +725,11 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
                 ) : (
                   <></>
                 )}
+                {templateDetails ? (
+                  <EstimatedCost members={activeBroadcast?.members} walletBalance={walletBalance} />
+                ) : null}
               </>
             )}
-            {
-              templateDetails ?   <EstimatedCost
-              members = {activeBroadcast?.members}
-              walletBalance = {walletBalance}
-              /> : null
-            }
           </Box>
         </form>
       </Fade>
