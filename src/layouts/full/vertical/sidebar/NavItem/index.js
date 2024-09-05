@@ -51,7 +51,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
   }));
 
   return (
-    <List component="li" disablePadding key={item.id}>
+    <List component="li" disablePadding key={item.id} sx={{padding: "0px"}}>
       <ListItemStyled
         button
         component={item.external ? 'a' : NavLink}
@@ -61,25 +61,31 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
         selected={isActive}
         target={item.external ? '_blank' : ''}
         onClick={onClick}
-        sx={{ justifyContent: 'space-evenly', textAlign: 'center' }}
+        sx={{ justifyContent: 'space-evenly', textAlign: 'center', padding:"5px 0px 0px 0px"}}
       >
         <div>
           <ListItemIcon
             sx={{
               //minWidth: '36px',
               minWidth: '0px !important',
-              p: '3px 0',
+              // p: '3px 0',
               color: level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
             }}
           >
             {itemIcon}
           </ListItemIcon>
           <br />
-          <ListItemText>
-            {hideMenu ? '' : <>{t(`${item.title}`)}</>}
+          <ListItemText
+             sx ={{marginTop : "-4px", fontWeight:"bold"}}
+          >
+            <Typography variant="caption" fontSize="11px" lineHeight="0" >
+              <b> {hideMenu ? '' : <>{t(`${item.title}`)}</>}</b>
+              </Typography>
             <br />
             {item.subtitle ? (
-              <Typography variant="caption" fontSize="0.875rem" lineHeight="0">
+              <Typography variant="caption" fontSize="12px" lineHeight="0"
+             sx ={{marginTop : "-4px"}}
+              >
                 {hideMenu ? '' : item.subtitle}
               </Typography>
             ) : (

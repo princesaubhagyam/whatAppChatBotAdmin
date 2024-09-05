@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { IconMenu2 } from '@tabler/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { formatDistanceToNowStrict } from 'date-fns';
 import CachedIcon from '@mui/icons-material/Cached';
@@ -36,12 +37,19 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory }) => {
   const [loading, setLoading] = useState(false);
   const chatDetails = useSelector((state) => state.chatReducer.chatHistory);
   const [refreshKey, setRefreshKey] = useState(0);
+  const location = useLocation(); // Get current location
+  const navigate = useNavigate();
+
+  const handleClickSamePage = () => {
+    navigate(location.pathname);
+  };
 
   const refreshChatHistory = async () => {
     setLoading(true);
     setRefreshKey((prevKey) => prevKey + 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
+    handleClickSamePage()
   };
 
   function analyticsHistroy() {

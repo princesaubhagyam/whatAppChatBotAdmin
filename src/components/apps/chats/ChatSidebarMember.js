@@ -28,7 +28,7 @@ const ChatSidebarMember = ({
       }}
     >
       {/* <ChatListingMember contacts={contacts} /> */}
-      <ChatListingMember getBroadcastList={getBroadcastList} isHistory={isHistory} />
+      <ChatListingMember getBroadcastList={getBroadcastList} isHistory={isHistory}/>
     </Drawer>
   );
 };

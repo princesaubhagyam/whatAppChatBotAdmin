@@ -49,7 +49,9 @@ const ChatListing = ({
   const [openImportModal, setOpenImportModal] = useState(false);
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
+  console.log(broadcastData,"broadcastData")
   const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
+  console.log(selectedBroadcastId,"selectedBroadcastId")
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -86,15 +88,24 @@ const ChatListing = ({
 
   const handleBroadcastClick = (chat) => {
     dispatch(selectBroadcast(chat)); // Dispatch action to select the broadcast
-    setSelectedBroadcastId(chat.id); // Update selected broadcast ID
+    // sessionStorage.setItem('id', chat.id);
+    setSelectedBroadcastId(parseInt(chat.id)); // Update selected broadcast ID
     setSelectedBroadcast(chat); // Update selected broadcast object
     setIsBroadcastDeleted(false); // Ensure this is the correct state update
     onBroadcastSelect(chat); // Notify parent component
   };
 
   useEffect(() => {
-    console.log('Broadcast data updated:', broadcasts);
+    console.log('Broadcast data updated:');
   }, [broadcasts]);
+
+  // useEffect(() => {
+  //   let chatId = window.sessionStorage.getItem('id')
+  //   if(chatId){
+  //     setSelectedBroadcastId(parseInt(chatId)); 
+  //   }
+  // }, [selectedBroadcastId]);
+
 
   const getBroadcastsDataApi = async () => {
     if (nextUrl) {
@@ -141,8 +152,6 @@ const ChatListing = ({
       // If title hasn't changed, close the dialog without making any API calls
       setOpenEditDialog(false);
       //toast.success('No changes detected in the title.');
-      console.log('no changes in your title');
-
       return;
     }
     if (selectedBroadcastId && newBroadcastName !== selectedBroadcast?.title) {
@@ -232,13 +241,14 @@ const ChatListing = ({
             }
           >
             {broadcastData && broadcastData.length
-              ? broadcastData.map((chat) => (
+              ? broadcastData.map((chat) =>{
+                return (
                   <Box
                     sx={{
                       borderBottom: '3px solid #e5eaef',
                       borderRadius: 0,
                       backgroundColor:
-                        selectedBroadcastId === chat.id ? '#bdbcbc9e' : 'transparent',
+                        selectedBroadcastId === parseInt(chat.id) ? '#bdbcbc9e' : 'transparent',
                       '&:hover': { backgroundColor: '#bdbcbc9e !important' },
                       display: 'flex',
                       alignItems: 'center',
@@ -354,7 +364,7 @@ const ChatListing = ({
                       </>
                     )}
                   </Box>
-                ))
+                )})
               : !hasMore && (
                   <Box m={2}>
                     {/* <Alert severity="error" variant="filled" sx={{ color: 'white' }}>

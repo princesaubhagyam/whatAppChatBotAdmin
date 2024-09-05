@@ -17,6 +17,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IconMessage2Share, IconUpload } from '@tabler/icons';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import { useSelector } from 'react-redux';
@@ -171,6 +172,13 @@ const TemplateModal = ({
   const [previewLink, setPreviewLink] = useState('');
   const [mediaLink, setMediaLink] = useState('');
   const phone_id = localStorage.getItem('phone_id');
+  const location = useLocation(); // Get current location
+  const navigate = useNavigate();
+
+  const handleClickSamePage = () => {
+    navigate(location.pathname);
+  };
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -395,6 +403,7 @@ const TemplateModal = ({
         handleClose();
         setSendBtn(false);
         setTemplateDetails(null);
+        handleClickSamePage();
       }
     } catch (err) {
       console.warn(err);
