@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Avatar, Box, Skeleton } from '@mui/material';
+import { Card, CardContent, Typography, Avatar, Box, Skeleton, Tooltip } from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const ProfileDetail = () => {
   const [contactName, setContactName] = useState('');
@@ -53,44 +53,46 @@ const ProfileDetail = () => {
   }, []);
 
   return (
-    <Link to = "/business-profile">
-    <Card sx={{ padding: '5px', height: '100px' }}>
-      <CardContent sx={{ padding: '8px' }}>
-        {loading ? (
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ ml: 2, flex: 1 }}>
-              <Skeleton variant="text" width="60%" height={40} sx={{ mb: 1 }} />
-              <Skeleton variant="text" width="40%" height={30} />
-            </Box>
-            <Skeleton
-              variant="circular"
-              width={100}
-              height={100}
-              sx={{ backgroundColor: '#e0e0e0', borderRadius: '50%' }}
-            />
-          </Box>
-        ) : (
-          <Box
-            sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}
-          >
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="h5">{contactName}</Typography>
-              <Typography>{phoneNumber}</Typography>
-            </Box>
-            <Avatar
-              src={profilePictureURL}
-              alt="Profile"
-              sx={{
-                width: 80,
-                height: 80,
-                backgroundColor: '#b6dbc5',
-                border: '3px solid #cfd5d5',
-              }}
-            />
-          </Box>
-        )}
-      </CardContent>
-    </Card>
+    <Link to="/business-profile">
+      <Tooltip title="Business Profile">
+        <Card sx={{ padding: '5px', height: '100px' }}>
+          <CardContent sx={{ padding: '8px' }}>
+            {loading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ ml: 2, flex: 1 }}>
+                  <Skeleton variant="text" width="60%" height={30} sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width="40%" height={20} />
+                </Box>
+                <Skeleton
+                  variant="circular"
+                  width={80}
+                  height={80}
+                  sx={{ backgroundColor: '#e0e0e0', borderRadius: '50%' }}
+                />
+              </Box>
+            ) : (
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}
+              >
+                <Box sx={{ ml: 2 }}>
+                  <Typography variant="h5">{contactName}</Typography>
+                  <Typography>{phoneNumber}</Typography>
+                </Box>
+                <Avatar
+                  src={profilePictureURL}
+                  alt="Profile"
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    backgroundColor: '#b6dbc5',
+                    border: '3px solid #cfd5d5',
+                  }}
+                />
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Tooltip>
     </Link>
   );
 };

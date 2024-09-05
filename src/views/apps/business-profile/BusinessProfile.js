@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Grid, Card, Typography, Avatar, Button, IconButton, Box, Skeleton, Input,
+  Grid, Card, Typography, Avatar, IconButton, Box, Skeleton, Input,
   CircularProgress, TextField
 } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
-import PhoneIcon from '@mui/icons-material/Phone';
-import MailIcon from '@mui/icons-material/Mail';
-import HomeIcon from '@mui/icons-material/Home';
 import { IconEdit } from '@tabler/icons';
 import { Cancel, CameraAlt } from '@mui/icons-material';
-import { Edit, Search } from '@mui/icons-material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import SaveIcon from '@mui/icons-material/Save';
 import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
+import PageContainer from 'src/components/container/PageContainer';
 
 function BusinessProfile() {
   const [contactName, setContactName] = useState('');
@@ -165,17 +161,112 @@ function BusinessProfile() {
   };
 
   return (
-    <>
-
+    <PageContainer title="Business Profile" description="This is the User Business Profile" >
       {loading ? (
         <Box>
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            height={300}
-            sx={{ mt: 2 }}
-            animation="wave"
-          />
+          <Box sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            padding: "64px"
+          }}>
+            <Box sx={{
+              width: "30%"
+            }}>
+              <Skeleton
+                variant="circular"
+                width={300}
+                height={300}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                padding: " 0px 0px 0px 45px",
+                margin: "-30px 0px 0px 0px"
+              }}
+            >
+              <Skeleton
+                variant="rectangular"
+                width={200}
+                height={40}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={200}
+                height={15}
+                sx={{ mt: 1 }}
+                animation="wave"
+              />
+
+              <Skeleton
+                variant="rectangular"
+                width={400}
+                height={20}
+                sx={{ mt: 4 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={400}
+                height={20}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={400}
+                height={20}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={500}
+                height={40}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={600}
+                height={40}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={400}
+                height={20}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+              <Skeleton
+                variant="rectangular"
+                width={400}
+                height={20}
+                sx={{ mt: 2 }}
+                animation="wave"
+              />
+            </Box>
+            {/* <Box 
+             sx= {{
+              display : "flex",
+              justifyContent : "flex-end"
+             }}
+            >
+            <Skeleton
+                variant="rectangular"
+                width={20}
+                height={20}
+                animation="wave"
+              />
+            </Box> */}
+          </Box>
         </Box>) :
         <>
           <Card sx={{ margin: 'auto', padding: 6 }}>
@@ -393,16 +484,16 @@ function BusinessProfile() {
 
                 }
               </Grid>
-              <Grid item xs={12} sm={1}>
-                <IconButton onClick={handleEditToggle}>
-                  {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
-                </IconButton>
-              </Grid>
+             <Grid item xs={12} sm={1}>
+                  <IconButton onClick={handleEditToggle}>
+                    {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
+                  </IconButton>
+                </Grid>
             </Grid>
           </Card>
         </>
       }
-    </>
+   </PageContainer>
   )
 }
 

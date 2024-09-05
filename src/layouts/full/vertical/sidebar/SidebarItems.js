@@ -18,7 +18,11 @@ const SidebarItems = () => {
   const dispatch = useDispatch();
 
   return (
-    <Box sx={{ px: 0 }} width={'100px'}>
+    <Box sx={{ px: 0,
+      marginTop : "70px"
+    }} width={'70px'}
+    
+    >
       <List sx={{ pt: 0 }} className="sidebarNav">
         {Menuitems.map((item, index) => {
           // {/********SubHeader**********/}

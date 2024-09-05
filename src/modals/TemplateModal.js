@@ -20,6 +20,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IconMessage2Share, IconUpload } from '@tabler/icons';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
 import { useSelector } from 'react-redux';
@@ -140,12 +141,18 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
   const [previewLink, setPreviewLink] = useState(null);
   const [sendBtn, setSendBtn] = useState(false)
   // console.log(previewLink, 'previewLink');
+  const location = useLocation(); // Get current location
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       uploadMedia(file);
     }
+  };
+
+  const handleClickSamePage = () => {
+    navigate(location.pathname);
   };
 
   const uploadMedia = async (file) => {
@@ -365,6 +372,7 @@ const TemplateModal = ({ open, handleClose, broadcastId, checkBroadcastHistory, 
         handleClose();
         setSendBtn(false)
         setTemplateDetails(null)
+        handleClickSamePage()
       }
     } catch (err) {
       console.warn(err);

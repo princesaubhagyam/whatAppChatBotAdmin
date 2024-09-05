@@ -16,8 +16,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Business',
-    subtitle : "Profile",
+    title: 'B-Profile',
     icon: IconUser,
     href: '/business-profile',
   },
@@ -47,8 +46,8 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Payment',
-    subtitle: 'History',
+    title: 'Pay History',
+    // subtitle: 'History',
     icon: IconCreditCard,
     href: '/payment-history',
   },

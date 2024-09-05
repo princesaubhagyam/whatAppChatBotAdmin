@@ -41,6 +41,11 @@ const Chats = ({ checkBroadcastHistory }) => {
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {
+    historyChecker()
+  }, [activeBroadcast, isOn]);
+
+
+  function historyChecker(){
     if (activeBroadcast) {
       apiClient
         .get(`/broadcast-history_checker/${activeBroadcast.id}/`)
@@ -51,7 +56,7 @@ const Chats = ({ checkBroadcastHistory }) => {
           console.error('Error fetching history status:', error);
         });
     }
-  }, [activeBroadcast, isOn]);
+  }
 
   //useEffect(() => {}, []);
 

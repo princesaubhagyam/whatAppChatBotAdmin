@@ -142,7 +142,7 @@ const Router = [
       </AuthWrapper>
     ),
     children: [
-      { path: '/', element: <EcommerceDash /> },
+      { path: '/', element: <Navigate to="/home" />  },
       { path: '/home', element: <EcommerceDash /> },
       { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },

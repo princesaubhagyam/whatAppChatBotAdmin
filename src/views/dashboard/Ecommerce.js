@@ -3,11 +3,12 @@ import { Box, Grid, Skeleton } from '@mui/material';
 import WelcomeCard from 'src/components/dashboards/ecommerce/WelcomeCard';
 import QualityRatingCard from 'src/components/dashboards/ecommerce/QualityRatingCard';
 import SetUpProfileCard from 'src/components/dashboards/ecommerce/SetupProfileCard';
-import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
+// import ViewProfileCard from 'src/components/dashboards/ecommerce/ViewProfileCard';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
 import ProfileDetail from 'src/components/dashboards/ecommerce/ProfileDetail';
-import CurrentPlan from 'src/components/dashboards/ecommerce/CurrentPlan';
+import PageContainer from 'src/components/container/PageContainer';
+// import CurrentPlan from 'src/components/dashboards/ecommerce/CurrentPlan';
 
 const Ecommerce = () => {
   const [showCard, setShowCard] = useState(false);
@@ -65,51 +66,52 @@ const Ecommerce = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <Box mt={3}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} lg={8}>
-          <WelcomeCard />
-        </Grid>
-        <Grid item xs={12} lg={4}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} lg={12}>
-              {loading ? (
-                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
-              ) : showCard ? (
-                <ProfileDetail />
-              ) : null}
-            </Grid>
-            <Grid item xs={12} sm={6} lg={12}>
-              {loading ? (
-                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
-              ) : showCard ? (
-                <SetUpProfileCard
-                  freeTierUsedCount={freeTierUsedCount}
-                  freeTierConversation={freeTierConversation}
-                  totalCost={totalCost}
-                  loading={loading}
-                />
-              ) : null}
-              {/* {loading ? (
+    <PageContainer title="Dashboard" description="This is the User Dashborad" >
+      <Box mt={3}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} lg={8}>
+            <WelcomeCard />
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} lg={12}>
+                {loading ? (
+                  <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+                ) : showCard ? (
+                  <ProfileDetail />
+                ) : null}
+              </Grid>
+              <Grid item xs={12} sm={6} lg={12}>
+                {loading ? (
+                  <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+                ) : showCard ? (
+                  <SetUpProfileCard
+                    freeTierUsedCount={freeTierUsedCount}
+                    freeTierConversation={freeTierConversation}
+                    totalCost={totalCost}
+                    loading={loading}
+                  />
+                ) : null}
+                {/* {loading ? (
                 <Skeleton variant="rounded" width={705} height={113} animation="wave" />
               ) : showCard ? (
                 <CurrentPlan />
               ) : null} */}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12} lg={12}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} paddingTop={'10px !important'}>
-              {loading ? (
-                <Skeleton variant="rounded" width={705} height={113} animation="wave" />
-              ) : showCard ? (
-                <QualityRatingCard remainingQuota={remainingQuota} loading={loading} />
-              ) : null}
+          <Grid item xs={12} lg={12}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} paddingTop={'10px !important'}>
+                {loading ? (
+                  <Skeleton variant="rounded" width={705} height={113} animation="wave" />
+                ) : showCard ? (
+                  <QualityRatingCard remainingQuota={remainingQuota} loading={loading} />
+                ) : null}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        {/* <Grid item xs={12} sm={6} lg={4}>
+          {/* <Grid item xs={12} sm={6} lg={4}>
           {loading ? (
             <Skeleton variant="rounded" width={705} height={113} animation="wave" />
           ) : showCard ? (
@@ -121,7 +123,7 @@ const Ecommerce = () => {
             />
           ) : null}
         </Grid> */}
-        {/* <Grid item xs={12} lg={14}>
+          {/* <Grid item xs={12} lg={14}>
           {loading ? (
             <Skeleton
               variant="rounded"
@@ -136,8 +138,10 @@ const Ecommerce = () => {
             </>
           ) : null}
         </Grid> */}
-      </Grid>
-    </Box>
+        </Grid>
+      </Box>
+    </PageContainer>
+
   );
 };
 
