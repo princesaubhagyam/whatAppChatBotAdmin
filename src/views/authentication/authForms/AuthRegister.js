@@ -11,7 +11,8 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
+import { IconLock, IconMail, IconPhone, IconUser} from '@tabler/icons';
+import  {IconHomeLink,IconBuildingSkyscraper,IconBuildingEstate,IconBuildingCottage,IconMapPinCode  }  from '@tabler/icons-react';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
@@ -24,6 +25,11 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     mobile: '',
     password: '',
     confirm_password: '',
+    address : '',
+    city : '',
+    state : '',
+    country: '',
+    zip_code : ''
   };
   const navigate = useNavigate();
 
@@ -120,6 +126,30 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       isValid = false;
     }
 
+    if (!credentials.address) {
+      errors.password = 'Please enter your address';
+      isValid = false;
+    }
+    if (!credentials.city) {
+      errors.password = 'Please enter your city name';
+      isValid = false;
+    }
+    
+    if (!credentials.state) {
+      errors.password = 'Please enter your state name';
+      isValid = false;
+    }
+    if (!credentials.country) {
+      errors.password = 'Please enter your state name';
+      isValid = false;
+    }
+    
+    if (!credentials.zip_code) {
+      errors.password = 'Please enter your state name';
+      isValid = false;
+    }
+    
+    
     setErrors(errors);
     return isValid;
   };
@@ -232,6 +262,117 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               <FormHelperText error>{errors.confirm_password}</FormHelperText>
             )}
           </FormControl>
+          <FormControl fullWidth error={!!errors.address}
+          >
+            <OutlinedInput
+              type="text"
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconHomeLink width={20} color="dimgray" />
+                </InputAdornment>
+              }
+              placeholder="Enter Your Address"
+              fullWidth
+              name="address"
+              onChange={handleFieldChange}
+            />
+            {errors.address && (
+              <FormHelperText error>{errors.address}</FormHelperText>
+            )}
+          </FormControl>
+          <Box sx={{
+            display : "flex"
+          }}>
+            <FormControl fullWidth error={!!errors.city}
+             sx={{
+              marginRight : "5px"
+            }}
+            >
+              <OutlinedInput
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconBuildingSkyscraper width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter Your city"
+                fullWidth
+                name="city"
+                onChange={handleFieldChange}
+              />
+              {errors.city && (
+                <FormHelperText error>{errors.city}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth error={!!errors.state} 
+            sx={{
+              marginLeft :"5px"
+            }}
+            >
+              <OutlinedInput
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconBuildingEstate width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter You state"
+                fullWidth
+                name="state"
+                onChange={handleFieldChange}
+              />
+              {errors.state && (
+                <FormHelperText error>{errors.state}</FormHelperText>
+              )}
+            </FormControl>
+          </Box>
+          <Box  sx={{
+            display : "flex",
+            justifyContent : "space-between"
+          }}>
+            <FormControl fullWidth error={!!errors.country}
+            sx={{
+              marginRight : "5px"
+            }}
+            >
+              <OutlinedInput
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconBuildingCottage  width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter Your Country Name"
+                fullWidth
+                name="country"
+                onChange={handleFieldChange}
+              />
+              {errors.country && (
+                <FormHelperText error>{errors.country}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth error={!!errors.zip_code}
+            sx={{
+              marginLeft :"5px"
+            }}
+            >
+              <OutlinedInput
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconMapPinCode  width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter Your Zid Code"
+                fullWidth
+                name="zip_code"
+                onChange={handleFieldChange}
+              />
+              {errors.zip_code && (
+                <FormHelperText error>{errors.zip_code}</FormHelperText>
+              )}
+            </FormControl>
+          </Box>
         </Stack>
 
         <Box mt={2}>
