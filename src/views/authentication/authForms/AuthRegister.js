@@ -11,12 +11,18 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IconLock, IconMail, IconPhone, IconUser} from '@tabler/icons';
-import  {IconHomeLink,IconBuildingSkyscraper,IconBuildingEstate,IconBuildingCottage,IconMapPinCode  }  from '@tabler/icons-react';
+import { IconBuilding, IconHome, IconLock, IconMail, IconMapPin, IconPhone, IconUser } from '@tabler/icons';
+import {
+  IconBuildingSkyscraper,
+  IconBuildingEstate,
+  IconBuildingCottage,
+  IconMapPinCode,
+} from '@tabler/icons';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
 import countryCodes from 'src/utils/Countrycode.json';
+import { IconHomeLink } from '@tabler/icons-react';
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -25,11 +31,11 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     mobile: '',
     password: '',
     confirm_password: '',
-    address : '',
-    city : '',
-    state : '',
+    address: '',
+    city: '',
+    state: '',
     country: '',
-    zip_code : ''
+    zip_code: '',
   };
   const navigate = useNavigate();
 
@@ -134,7 +140,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       errors.password = 'Please enter your city name';
       isValid = false;
     }
-    
+
     if (!credentials.state) {
       errors.password = 'Please enter your state name';
       isValid = false;
@@ -143,13 +149,12 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       errors.password = 'Please enter your state name';
       isValid = false;
     }
-    
+
     if (!credentials.zip_code) {
       errors.password = 'Please enter your state name';
       isValid = false;
     }
-    
-    
+
     setErrors(errors);
     return isValid;
   };
@@ -262,13 +267,12 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               <FormHelperText error>{errors.confirm_password}</FormHelperText>
             )}
           </FormControl>
-          <FormControl fullWidth error={!!errors.address}
-          >
+          <FormControl fullWidth error={!!errors.address}>
             <OutlinedInput
               type="text"
               startAdornment={
                 <InputAdornment position="start">
-                  <IconHomeLink width={20} color="dimgray" />
+                  <IconHome width={20} color="dimgray" />
                 </InputAdornment>
               }
               placeholder="Enter Your Address"
@@ -276,17 +280,19 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               name="address"
               onChange={handleFieldChange}
             />
-            {errors.address && (
-              <FormHelperText error>{errors.address}</FormHelperText>
-            )}
+            {errors.address && <FormHelperText error>{errors.address}</FormHelperText>}
           </FormControl>
-          <Box sx={{
-            display : "flex"
-          }}>
-            <FormControl fullWidth error={!!errors.city}
-             sx={{
-              marginRight : "5px"
+          <Box
+            sx={{
+              display: 'flex',
             }}
+          >
+            <FormControl
+              fullWidth
+              error={!!errors.city}
+              sx={{
+                marginRight: '5px',
+              }}
             >
               <OutlinedInput
                 type="text"
@@ -300,20 +306,20 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 name="city"
                 onChange={handleFieldChange}
               />
-              {errors.city && (
-                <FormHelperText error>{errors.city}</FormHelperText>
-              )}
+              {errors.city && <FormHelperText error>{errors.city}</FormHelperText>}
             </FormControl>
-            <FormControl fullWidth error={!!errors.state} 
-            sx={{
-              marginLeft :"5px"
-            }}
+            <FormControl
+              fullWidth
+              error={!!errors.state}
+              sx={{
+                marginLeft: '5px',
+              }}
             >
               <OutlinedInput
                 type="text"
                 startAdornment={
                   <InputAdornment position="start">
-                    <IconBuildingEstate width={20} color="dimgray" />
+                    <IconBuilding width={20} color="dimgray" />
                   </InputAdornment>
                 }
                 placeholder="Enter You state"
@@ -321,25 +327,27 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 name="state"
                 onChange={handleFieldChange}
               />
-              {errors.state && (
-                <FormHelperText error>{errors.state}</FormHelperText>
-              )}
+              {errors.state && <FormHelperText error>{errors.state}</FormHelperText>}
             </FormControl>
           </Box>
-          <Box  sx={{
-            display : "flex",
-            justifyContent : "space-between"
-          }}>
-            <FormControl fullWidth error={!!errors.country}
+          <Box
             sx={{
-              marginRight : "5px"
+              display: 'flex',
+              justifyContent: 'space-between',
             }}
+          >
+            <FormControl
+              fullWidth
+              error={!!errors.country}
+              sx={{
+                marginRight: '5px',
+              }}
             >
               <OutlinedInput
                 type="text"
                 startAdornment={
                   <InputAdornment position="start">
-                    <IconBuildingCottage  width={20} color="dimgray" />
+                    <IconBuildingCottage width={20} color="dimgray" />
                   </InputAdornment>
                 }
                 placeholder="Enter Your Country Name"
@@ -347,20 +355,20 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 name="country"
                 onChange={handleFieldChange}
               />
-              {errors.country && (
-                <FormHelperText error>{errors.country}</FormHelperText>
-              )}
+              {errors.country && <FormHelperText error>{errors.country}</FormHelperText>}
             </FormControl>
-            <FormControl fullWidth error={!!errors.zip_code}
-            sx={{
-              marginLeft :"5px"
-            }}
+            <FormControl
+              fullWidth
+              error={!!errors.zip_code}
+              sx={{
+                marginLeft: '5px',
+              }}
             >
               <OutlinedInput
                 type="text"
                 startAdornment={
                   <InputAdornment position="start">
-                    <IconMapPinCode  width={20} color="dimgray" />
+                    <IconMapPin width={20} color="dimgray" />
                   </InputAdornment>
                 }
                 placeholder="Enter Your Zid Code"
@@ -368,9 +376,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 name="zip_code"
                 onChange={handleFieldChange}
               />
-              {errors.zip_code && (
-                <FormHelperText error>{errors.zip_code}</FormHelperText>
-              )}
+              {errors.zip_code && <FormHelperText error>{errors.zip_code}</FormHelperText>}
             </FormControl>
           </Box>
         </Stack>

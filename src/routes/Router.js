@@ -45,10 +45,8 @@ const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')
 const BusinessProfile = Loadable(
   lazy(() => import('../views/apps/business-profile/BusinessProfile')),
 );
-const PrivacyPolicy = Loadable(
-  lazy(() => import('../views/apps/privacy-policy/PrivacyPolicy')),
-);
-
+const PrivacyPolicy = Loadable(lazy(() => import('../views/apps/privacy-policy/PrivacyPolicy')));
+const TermsCondition = Loadable(lazy(() => import('../views/apps/terms-condition/TermsCondition')));
 // Pages
 const RollbaseCASL = Loadable(lazy(() => import('../views/pages/rollbaseCASL/RollbaseCASL')));
 const Treeview = Loadable(lazy(() => import('../views/pages/treeview/Treeview')));
@@ -147,13 +145,14 @@ const Router = [
       </AuthWrapper>
     ),
     children: [
-      { path: '/', element: <Navigate to="/home" />  },
+      { path: '/', element: <Navigate to="/home" /> },
       { path: '/home', element: <EcommerceDash /> },
       { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
       { path: '/payment-history', element: <PaymentHistory /> },
       { path: '/privacy-policy', element: <PrivacyPolicy /> },
+      { path: '/terms-conditions', element: <TermsCondition /> },
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
