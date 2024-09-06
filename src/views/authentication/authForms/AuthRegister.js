@@ -11,12 +11,16 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IconLock, IconMail, IconPhone, IconUser} from '@tabler/icons';
-import  {IconHomeLink,IconBuildingSkyscraper,IconBuildingEstate,IconBuildingCottage,IconMapPinCode  }  from '@tabler/icons-react';
+import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
+// import { IconHomeLink, IconBuildingSkyscraper, IconBuildingEstate, IconBuildingCottage, IconMapPinCode } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
 import countryCodes from 'src/utils/Countrycode.json';
+import indanstate from "src/utils/IndianState.json"
+import countryList from "src/utils/CountryList.json"
+console.log(indanstate, "indanstate")
+console.log(countryList, "indanstate")
 
 const AuthRegister = ({ title, subtitle, subtext }) => {
   const initCredentials = {
@@ -25,18 +29,19 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     mobile: '',
     password: '',
     confirm_password: '',
-    address : '',
-    city : '',
-    state : '',
-    country: '',
-    zip_code : ''
+    // address_line: '',
+    // city: '',
+    // postal_code: ''
   };
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = React.useState(initCredentials);
   const [loading, setLoading] = React.useState(false);
   const [countryCode, setCountryCode] = useState('+91');
+  // const [myCountry, setMyCountry] = useState("India")
+  // const [myState, setMyState] = useState("Gujarat")
   const [errors, setErrors] = React.useState({});
+  console.log(errors, "errors")
 
   // const countryCodes = [
   //   { value: '+91', label: 'India (+91)' },
@@ -47,6 +52,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const signUpAPICall = async (creds) => {
     try {
+      // const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', ''), state: myState, country: myCountry };
       const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', '') };
       const res = await apiClient.post('/auth/signup/', { ...temp });
       if (res.status === 201) {
@@ -86,7 +92,15 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
-  console.log(countryCode);
+
+  // const handleCountryNameChange = (e) => {
+  //   setMyCountry(e.target.value)
+  // }
+
+  // const handleStateNameChange = (e) => {
+  //   setMyState(e.target.value)
+  // }
+
 
   const validateForm = () => {
     let isValid = true;
@@ -126,30 +140,19 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
       isValid = false;
     }
 
-    if (!credentials.address) {
-      errors.password = 'Please enter your address';
-      isValid = false;
-    }
-    if (!credentials.city) {
-      errors.password = 'Please enter your city name';
-      isValid = false;
-    }
-    
-    if (!credentials.state) {
-      errors.password = 'Please enter your state name';
-      isValid = false;
-    }
-    if (!credentials.country) {
-      errors.password = 'Please enter your state name';
-      isValid = false;
-    }
-    
-    if (!credentials.zip_code) {
-      errors.password = 'Please enter your state name';
-      isValid = false;
-    }
-    
-    
+    // if (!credentials.address_line) {
+    //   errors.address_line = 'Please enter your address';
+    //   isValid = false;
+    // }
+    // if (!credentials.city) {
+    //   errors.city = 'Please enter your city name';
+    //   isValid = false;
+    // }
+    // if (!credentials.postal_code) {
+    //   errors.postal_code = 'Please enter your zip code';
+    //   isValid = false;
+    // }
+
     setErrors(errors);
     return isValid;
   };
@@ -262,7 +265,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               <FormHelperText error>{errors.confirm_password}</FormHelperText>
             )}
           </FormControl>
-          <FormControl fullWidth error={!!errors.address}
+          {/* <FormControl fullWidth error={!!errors.address_line}
           >
             <OutlinedInput
               type="text"
@@ -273,20 +276,20 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               }
               placeholder="Enter Your Address"
               fullWidth
-              name="address"
+              name="address_line"
               onChange={handleFieldChange}
             />
-            {errors.address && (
-              <FormHelperText error>{errors.address}</FormHelperText>
+            {errors.address_line && (
+              <FormHelperText error>{errors.address_line}</FormHelperText>
             )}
           </FormControl>
           <Box sx={{
-            display : "flex"
+            display: "flex"
           }}>
             <FormControl fullWidth error={!!errors.city}
-             sx={{
-              marginRight : "5px"
-            }}
+              sx={{
+                marginRight: "5px"
+              }}
             >
               <OutlinedInput
                 type="text"
@@ -304,77 +307,95 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 <FormHelperText error>{errors.city}</FormHelperText>
               )}
             </FormControl>
-            <FormControl fullWidth error={!!errors.state} 
-            sx={{
-              marginLeft :"5px"
-            }}
+            <FormControl fullWidth
+              sx={{
+                marginLeft: "5px"
+              }}
             >
-              <OutlinedInput
-                type="text"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <IconBuildingEstate width={20} color="dimgray" />
-                  </InputAdornment>
-                }
-                placeholder="Enter You state"
-                fullWidth
-                name="state"
-                onChange={handleFieldChange}
-              />
-              {errors.state && (
-                <FormHelperText error>{errors.state}</FormHelperText>
-              )}
-            </FormControl>
-          </Box>
-          <Box  sx={{
-            display : "flex",
-            justifyContent : "space-between"
-          }}>
-            <FormControl fullWidth error={!!errors.country}
-            sx={{
-              marginRight : "5px"
-            }}
-            >
-              <OutlinedInput
-                type="text"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <IconBuildingCottage  width={20} color="dimgray" />
-                  </InputAdornment>
-                }
-                placeholder="Enter Your Country Name"
-                fullWidth
-                name="country"
-                onChange={handleFieldChange}
-              />
-              {errors.country && (
-                <FormHelperText error>{errors.country}</FormHelperText>
-              )}
-            </FormControl>
-            <FormControl fullWidth error={!!errors.zip_code}
-            sx={{
-              marginLeft :"5px"
-            }}
-            >
-              <OutlinedInput
-                type="text"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <IconMapPinCode  width={20} color="dimgray" />
-                  </InputAdornment>
-                }
-                placeholder="Enter Your Zid Code"
-                fullWidth
-                name="zip_code"
-                onChange={handleFieldChange}
-              />
-              {errors.zip_code && (
-                <FormHelperText error>{errors.zip_code}</FormHelperText>
-              )}
-            </FormControl>
-          </Box>
-        </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', width: '100%' }}>
 
+                  <IconBuildingEstate width={20} color="dimgray"
+                    style={{
+                      position: 'absolute',
+                      left: '15px',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <Select
+                    value={myState}
+                    onChange={handleStateNameChange}
+                    sx={{ width: '100%', pl: '32px' }}
+                  >
+                    {indanstate.map((code) => (
+                      <MenuItem key={code.key} value={code.name}>
+                        {code.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </Stack>
+            </FormControl>
+          </Box>
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between"
+          }}>
+            <FormControl fullWidth
+              sx={{
+                marginRight: "5px"
+              }}
+            >
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative', width: '100%' }}>
+                  <IconBuildingCottage width={20} color="dimgray"
+                    style={{
+                      position: 'absolute',
+                      left: '15px',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <Select
+                    value={myCountry}
+                    onChange={handleCountryNameChange}
+                    sx={{
+                      width: '100%',
+                      pl: '32px'
+
+                    }}
+                  >
+                    {countryList.map((code) => (
+                      <MenuItem key={code.code} value={code.name}>
+                        {code.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </Stack>
+            </FormControl>
+            <FormControl fullWidth error={!!errors.postal_code}
+              sx={{
+                marginLeft: "5px"
+              }}
+            >
+              <OutlinedInput
+                type="text"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <IconMapPinCode width={20} color="dimgray" />
+                  </InputAdornment>
+                }
+                placeholder="Enter Your Zip Code"
+                fullWidth
+                name="postal_code"
+                onChange={handleFieldChange}
+              />
+              {errors.postal_code && (
+                <FormHelperText error>{errors.postal_code}</FormHelperText>
+              )}
+            </FormControl>
+          </Box> */}
+        </Stack>
         <Box mt={2}>
           <LoadingButton
             color="primary"
@@ -389,7 +410,6 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
             Sign Up
           </LoadingButton>
         </Box>
-
         {subtitle}
       </form>
     </>

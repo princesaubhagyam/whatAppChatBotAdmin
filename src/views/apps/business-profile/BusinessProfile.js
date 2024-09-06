@@ -16,16 +16,11 @@ function BusinessProfile() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profileDetails, setProfileDetails] = useState({});
   const [editableProfile, setEditableProfile] = useState({});
-  console.log("editableProfile", editableProfile)
   const [newProfilePicture, setNewProfilePicture] = useState(null);
-  console.log("newProfilePicture", newProfilePicture)
   const [newProfilePictureURL, setNewProfilePictureURL] = useState(null);
-  console.log("newProfilePictureURL", newProfilePictureURL)
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  console.log("isEditing", isEditing)
   const [uploadingImage, setUploadingImage] = useState(false);
-  console.log("uploadingImage", uploadingImage)
 
 
   const fetchData = async () => {
@@ -253,19 +248,6 @@ function BusinessProfile() {
                 animation="wave"
               />
             </Box>
-            {/* <Box 
-             sx= {{
-              display : "flex",
-              justifyContent : "flex-end"
-             }}
-            >
-            <Skeleton
-                variant="rectangular"
-                width={20}
-                height={20}
-                animation="wave"
-              />
-            </Box> */}
           </Box>
         </Box>) :
         <>

@@ -24,10 +24,10 @@ import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import MessageList from './MessageList';
 import Spinner from 'src/views/spinner/Spinner';
-
+import { IconReceipt2 } from '@tabler/icons-react';
 import InfoIcon from '@mui/icons-material/Info';
 
-const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory }) => {
+const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcastPayHistroy }) => {
   // const [open, setOpen] = React.useState(false);
   const [Graph, setGraph] = React.useState([]);
   // console.log('Graph', Graph);
@@ -55,6 +55,10 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory }) => {
   function analyticsHistroy() {
     setIsAnalytics(() => true);
   }
+
+   function broadcastTransactionHistory(){
+    setBroadcastPayHistroy(()=>true)
+   }
   return (
     <Box>
       {activeBroadcast ? (
@@ -75,6 +79,15 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory }) => {
                     style={{ padding: '0px' }}
                     primary={<Typography variant="h5">{activeBroadcast.title}</Typography>}
                   />
+                  <Tooltip title="Broadcast Transaction Histroy">
+                    <IconButton sx={{ cursor: 'pointer' }}>
+                      {isHistory && (
+                        <IconReceipt2 stroke={2}
+                          onClick={broadcastTransactionHistory}
+                        />
+                      )}
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title="Analytics">
                     <IconButton sx={{ cursor: 'pointer' }}>
                       {isHistory && (
