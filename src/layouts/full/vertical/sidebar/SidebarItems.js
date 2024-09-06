@@ -18,12 +18,13 @@ const SidebarItems = () => {
   const dispatch = useDispatch();
 
   return (
-    <Box sx={{ px: 0,
-      marginTop : "70px"
-    }} width={'70px'}
-    
+    <Box sx={{
+      px: 0,
+      marginTop: "70px"
+    }} width={'80px'}
+
     >
-      <List sx={{ pt: 0 }} className="sidebarNav">
+      <List sx={{ pt: 0 }} className="sidebarNav" >
         {Menuitems.map((item, index) => {
           // {/********SubHeader**********/}
           if (item.subheader) {
@@ -48,13 +49,16 @@ const SidebarItems = () => {
             // {/********If Sub No Menu**********/}
           } else {
             return (
-              <NavItem
-                item={item}
-                key={item.id}
-                pathDirect={pathDirect}
-                hideMenu={hideMenu}
-                onClick={() => dispatch(toggleMobileSidebar())}
-              />
+              <>
+                <NavItem
+                  item={item}
+                  key={item.id}
+                  pathDirect={pathDirect}
+                  hideMenu={hideMenu}
+                  onClick={() => dispatch(toggleMobileSidebar())}
+                />
+              </>
+
             );
           }
         })}

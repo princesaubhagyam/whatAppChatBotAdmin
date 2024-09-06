@@ -7,12 +7,12 @@ import AuthWrapper from 'src/utils/AuthWrapper';
 import AuthGuard from './AuthGuard';
 import ChangePassword from 'src/views/apps/ChangePassword';
 import AuthReset from 'src/views/authentication/authForms/AuthReset';
-import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
 import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
 import PaymentErrorPage from 'src/components/PaymentErrorPage';
 import PaymentHistory from 'src/views/PaymentHistory';
-
+import CreateTemplate from 'src/views/template/CreateTemplate';
+import Templates from 'src/views/template/templates';
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -42,7 +42,12 @@ const UserProfile = Loadable(lazy(() => import('../views/apps/user-profile/UserP
 const Followers = Loadable(lazy(() => import('../views/apps/user-profile/Followers')));
 const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')));
 const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
-const BusinessProfile = Loadable(lazy(() => import('../views/apps/business-profile/BusinessProfile')));
+const BusinessProfile = Loadable(
+  lazy(() => import('../views/apps/business-profile/BusinessProfile')),
+);
+const PrivacyPolicy = Loadable(
+  lazy(() => import('../views/apps/privacy-policy/PrivacyPolicy')),
+);
 
 // Pages
 const RollbaseCASL = Loadable(lazy(() => import('../views/pages/rollbaseCASL/RollbaseCASL')));
@@ -129,8 +134,8 @@ const Maintenance = Loadable(lazy(() => import('../views/authentication/Maintena
 //Admin Page
 // const HomePage = Loadable(lazy(() => import('../views/dashboard/Home')));
 const Customers = Loadable(lazy(() => import('../views/customers/Customers')));
-const Templates = Loadable(lazy(() => import('../views/template/templates')));
-const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemplate')));
+// const Templates = Loadable(lazy(() => import('../views/template/templates')));
+// const CreateTemplate = Loadable(lazy(() => import('src/views/template/CreateTemplate')));
 const Media = Loadable(lazy(() => import('../views/media/Media')));
 
 const Router = [
@@ -147,7 +152,8 @@ const Router = [
       { path: '/broadcasts', element: <Broadcasts /> },
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
-      { path: '/payment-history', element: <PaymentHistory/>},
+      { path: '/payment-history', element: <PaymentHistory /> },
+      { path: '/privacy-policy', element: <PrivacyPolicy /> },
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
