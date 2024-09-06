@@ -36,7 +36,7 @@ const Sidebar = () => {
           ...(customizer.isCollapse && {
             position: 'absolute',
           }),
-          width: '70px',
+          width: '80px',
         }}
       >
         {/* ------------------------------------------- */}
@@ -53,7 +53,7 @@ const Sidebar = () => {
               transition: theme.transitions.create('width', {
                 duration: theme.transitions.duration.shortest,
               }),
-              width: '70px',
+              width: '80px',
               boxSizing: 'border-box',
               overflowY: 'visible',
             },
@@ -70,7 +70,7 @@ const Sidebar = () => {
                   : customizer.activeSidebarBg,
               color: customizer.activeSidebarBg === '#ffffff' ? '' : 'white',
               height: '100%',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
             }}
           >
             {/* ------------------------------------------- */}
@@ -85,10 +85,10 @@ const Sidebar = () => {
               sx={{
                 cursor: 'pointer',
                 //  padding: "5px 5px 10px 5px",
-                position: "fixed",
-                top: "5px",
-                left: "9px",
-                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important'
+                position: 'fixed',
+                top: '5px',
+                left: '15px',
+                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important',
               }}
             >
               {/* <Logo/> */}
@@ -129,9 +129,7 @@ const Sidebar = () => {
       {/* ------------------------------------------- */}
       {/* Logo */}
       {/* ------------------------------------------- */}
-      <Box px={2}
-        sx={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important' }}
-      >
+      <Box px={2} sx={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important' }}>
         <Logo />
       </Box>
       {/* ------------------------------------------- */}
