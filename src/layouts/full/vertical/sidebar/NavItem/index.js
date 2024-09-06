@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
+  console.log(item,"item")
   const customizer = useSelector((state) => state.customizer);
   const Icon = item.icon;
   const theme = useTheme();
@@ -51,6 +52,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
   }));
 
   return (
+    <>
     <List component="li" disablePadding key={item.id} sx={{padding: "0px"}}>
       <ListItemStyled
         button
@@ -103,6 +105,7 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
         )}
       </ListItemStyled>
     </List>
+    </>
   );
 };
 

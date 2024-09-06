@@ -47,7 +47,6 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Pay History',
-    // subtitle: 'History',
     icon: IconCreditCard,
     href: '/payment-history',
   },

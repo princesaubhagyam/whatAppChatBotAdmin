@@ -5,10 +5,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { hoverSidebar, toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
 import LogoImg from 'src/assets/images/logos/home_logo.png';
 import { useNavigate } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
+import { IconFileAlert } from '@tabler/icons-react';
 
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const customizer = useSelector((state) => state.customizer);
+  const location = useLocation();
   const dispatch = useDispatch();
   const theme = useTheme();
   const toggleWidth =
@@ -71,6 +74,7 @@ const Sidebar = () => {
               color: customizer.activeSidebarBg === '#ffffff' ? '' : 'white',
               height: '100%',
               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+              position: "relative"
             }}
           >
             {/* ------------------------------------------- */}
@@ -101,12 +105,48 @@ const Sidebar = () => {
             <SidebarItems />
             {/* </Scrollbar> */}
             {/* <Profile /> */}
+            <Box sx={{
+              position: "absolute",
+              bottom: "0px",
+              left: "0px",
+              width: "79px",
+            }}>
+              <Link to="/privacy-policy">
+                <Box
+                  sx={{
+                    color: location.pathname === "/privacy-policy" ? "white" : "black",
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: location.pathname === "/privacy-policy" ? "#1A4D2E" : "white",
+                    borderRadius: "unset",
+                    '&:hover': {
+                      backgroundColor:  !(location.pathname === "/privacy-policy") ? "#00720b40" : ""
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: "35%",
+                      margin: "auto",
+                      paddingTop: "8px"
+                    }}
+                  ><IconFileAlert /></Box>
+                  <Box
+                    sx={{
+                      width: "35%",
+                      margin: "-7px auto 0px auto",
+                    }}
+                  ><b>T&C</b></Box>
+                </Box>
+              </Link>
+            </Box>
           </Box>
         </Drawer>
       </Box>
     );
   }
-
   return (
     <Drawer
       anchor="left"

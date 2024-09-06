@@ -7,7 +7,6 @@ import AuthWrapper from 'src/utils/AuthWrapper';
 import AuthGuard from './AuthGuard';
 import ChangePassword from 'src/views/apps/ChangePassword';
 import AuthReset from 'src/views/authentication/authForms/AuthReset';
-import { element } from 'prop-types';
 import NewCheckoutPage from 'src/components/NewCheckoutPage';
 import PaymentSuccessPage from 'src/components/PaymentSuccessPage';
 import PaymentErrorPage from 'src/components/PaymentErrorPage';
@@ -45,6 +44,9 @@ const Friends = Loadable(lazy(() => import('../views/apps/user-profile/Friends')
 const Gallery = Loadable(lazy(() => import('../views/apps/user-profile/Gallery')));
 const BusinessProfile = Loadable(
   lazy(() => import('../views/apps/business-profile/BusinessProfile')),
+);
+const PrivacyPolicy = Loadable(
+  lazy(() => import('../views/apps/privacy-policy/PrivacyPolicy')),
 );
 
 // Pages
@@ -151,6 +153,7 @@ const Router = [
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
       { path: '/payment-history', element: <PaymentHistory /> },
+      { path: '/privacy-policy', element: <PrivacyPolicy /> },
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },

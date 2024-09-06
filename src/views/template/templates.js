@@ -21,7 +21,7 @@ const Templates = () => {
       {/* breadcrumb */}
       <Breadcrumb title="Templates" items={BCrumb} createUrl={'/templates/createtemplate'} />
       {/* end breadcrumb */}
-      <Box sx={{ padding: '0px' }}>
+      <Box>
         <TemplatesTableList />
       </Box>
     </PageContainer>

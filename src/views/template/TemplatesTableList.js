@@ -31,7 +31,7 @@ import {
 import { visuallyHidden } from '@mui/utils';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import { DeleteOutline } from '@mui/icons-material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
@@ -40,9 +40,6 @@ import CachedIcon from '@mui/icons-material/Cached';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import TemplateInsights from './TemplateInsights';
-import apiClient from 'src/api/axiosClient';
-import Spinner from '../spinner/Spinner';
-import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -263,9 +260,6 @@ const TemplatesTableList = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
-  const [totalPage, setTotalPages] = useState(0);
-  const [allRows, setAllRows] = useState([]);
   const navigate = useNavigate();
   const handleClickOpen = (row, index) => {
     console.log('Row clicked:', row);
@@ -281,47 +275,21 @@ const TemplatesTableList = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  useEffect(() => {
+  React.useEffect(() => {
     getApiData();
-  }, [page, rowsPerPage]);
+  }, []);
 
-  // const getApiData = async () => {
-  //   try {
-  //     const metaAxiosClient = createMetaAxiosClient();
-  //     const response = await metaAxiosClient.get('/message_templates');
-  //     setRows(response.data.data);
-  //     return;
-  //   } catch (error) {
-  //     console.error('Error fetching data from API:', error);
-  //   } finally {
-  //     setLoading(false);
-  //     setTableLoading(false);
-  //   }
-  // };
   const getApiData = async () => {
     try {
-      setLoading(true);
-      // setTableLoading(true);
-
-      const waba_id = localStorage.getItem('whatsapp_business_account_id');
-      const response = await apiClient.get(
-        `/api/get_message_templates/?whatsapp_business_account_id=${waba_id}&page=${
-          page + 1
-        }&rows_per_page=${rowsPerPage}`,
-      );
-
-      const allData = response?.data?.data?.results;
-
-      setTotalCount(response?.data?.data?.count);
-      setTotalPages(response?.data?.data?.total_pages);
-      setRows(allData); // Update rows with the fetched data
-      // setAllRows(allData);  // (Uncomment if needed)
+      const metaAxiosClient = createMetaAxiosClient();
+      const response = await metaAxiosClient.get('/message_templates');
+      setRows(response.data.data);
+      return;
     } catch (error) {
       console.error('Error fetching data from API:', error);
     } finally {
       setLoading(false);
-      // setTableLoading(false);
+      setTableLoading(false);
     }
   };
 
@@ -349,9 +317,9 @@ const TemplatesTableList = () => {
   // };
 
   const handleRefreshpage = async () => {
-    setLoading(true);
+    setTableLoading(true);
+    //window.alert('Wait until your template is being verified by Meta');
     await getApiData();
-    setLoading(false);
   };
 
   const handleDelete = (id, templateName) => {
@@ -390,38 +358,14 @@ const TemplatesTableList = () => {
       toast.error('Error deleting template:', error);
     }
   };
-  // const handleSearch = (event) => {
-  //   const filteredRows = rows?.filter((row) => {
-  //     return row.name.toLowerCase().includes(event.target.value);
-  //   });
-  //   setSearch(event.target.value);
-  //   setRows(filteredRows);
-  //   if (!event.target.value) {
-  //     getApiData();
-  //   }
-  // };
-  const handleSearch = async (event) => {
-    const searchValue = event.target.value;
-
-    setSearch(searchValue);
-    const waba_id = localStorage.getItem('whatsapp_business_account_id');
-    if (searchValue) {
-      try {
-        const response = await apiClient.get(
-          `/api/get_message_templates/?whatsapp_business_account_id=${waba_id}&page=${
-            page + 1
-          }&rows_per_page=${rowsPerPage}&name=${searchValue}`,
-        );
-        const allData = response?.data?.data?.results;
-        setTotalCount(response?.data?.data?.count);
-        setTotalPages(response?.data?.data?.total_pages);
-
-        setRows(allData);
-      } catch (error) {
-        console.error('Error fetching search results', error);
-      }
-    } else {
-      getApiData(); // Fetch default data if search input is empty
+  const handleSearch = (event) => {
+    const filteredRows = rows?.filter((row) => {
+      return row.name.toLowerCase().includes(event.target.value);
+    });
+    setSearch(event.target.value);
+    setRows(filteredRows);
+    if (!event.target.value) {
+      getApiData();
     }
   };
 
@@ -463,7 +407,7 @@ const TemplatesTableList = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    // getApiData();
+    getApiData();
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -509,48 +453,37 @@ const TemplatesTableList = () => {
                 onRequestSort={handleRequestSort}
                 rowCount={rows.length}
               />
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={headCells.length} align="top">
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="flex-start"
-                      justifyContent="flex-start"
-                      textAlign="start"
-                    >
-                      <Spinner />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableBody>
-                  {rows.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} align="center">
-                        <Nodatainsearch />
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    stableSort(rows, getComparator(order, orderBy))
-                      // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                      .map((row, index) => {
-                        // const isItemSelected = isSelected(row.id);
-                        // const labelId = `enhanced-table-checkbox-${index}`;
+              <TableBody>
+                {tableLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Typography>
+                        Once you have created your template you can submit it for approval. It can
+                        take up to 24 hours.
+                      </Typography>
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  stableSort(rows, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      // const isItemSelected = isSelected(row.id);
+                      // const labelId = `enhanced-table-checkbox-${index}`;
 
-                        return (
-                          <TableRow
-                            hover
-                            // onClick={(event) => handleClick(event, row.id)}
-                            // role="checkbox"
-                            // aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            key={row.name}
-                            onClick={() => handleRowClick(row.id)}
-                            style={{ cursor: 'pointer' }}
-                            // selected={isItemSelected}
-                          >
-                            {/* <TableCell padding="checkbox">
+                      return (
+                        <TableRow
+                          hover
+                          // onClick={(event) => handleClick(event, row.id)}
+                          // role="checkbox"
+                          // aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          key={row.name}
+                          onClick={() => handleRowClick(row.id)}
+                          style={{ cursor: 'pointer' }}
+                          // selected={isItemSelected}
+                        >
+                          {/* <TableCell padding="checkbox">
               <CustomCheckbox
                 color="primary"
                 checked={isItemSelected}
@@ -559,88 +492,87 @@ const TemplatesTableList = () => {
                 }}
               />
             </TableCell> */}
-                            <TableCell>
-                              <Tooltip title="Template Insights">
-                                <BarChartIcon />
-                              </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                              <Typography fontWeight="500" variant="h6" fontSize={14}>
-                                {row.name}
-                              </Typography>
-                            </TableCell>
+                          <TableCell>
+                            <Tooltip title="Template Insights">
+                              <BarChartIcon />
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.name}
+                            </Typography>
+                          </TableCell>
 
-                            <TableCell>
-                              <Typography fontWeight="500" variant="h6" fontSize={14}>
-                                {row.category}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography fontWeight="500" variant="h6" fontSize={14}>
-                                {row.language}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography fontWeight="500" variant="h6" fontSize={14}>
-                                <Chip
-                                  sx={{
-                                    bgcolor: (theme) =>
-                                      row.status === 'APPROVED'
-                                        ? theme.palette.primary.light
-                                        : row.status === 'REJECTED'
-                                        ? theme.palette.error.light
-                                        : theme.palette.warning.light,
-                                    color: (theme) =>
-                                      row.status === 'APPROVED'
-                                        ? theme.palette.primary.main
-                                        : row.status === 'REJECTED'
-                                        ? theme.palette.error.main
-                                        : theme.palette.warning.main,
-                                    borderRadius: '6px',
-                                    // width: 80,
-                                  }}
-                                  size="small"
-                                  label={row.status}
-                                />
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Tooltip title="View">
-                                <IconButton
-                                  size="small"
-                                  onClick={(event) => {
-                                    event.stopPropagation(); // Prevent the row click from firing
-                                    handleClickOpen(row, index);
-                                  }}
-                                >
-                                  <IconEye />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Delete">
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleDelete(row.id, row.name);
-                                  }}
-                                >
-                                  <DeleteOutline />
-                                </IconButton>
-                              </Tooltip>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                  )}
-                </TableBody>
-              )}
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.category}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              {row.language}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography fontWeight="500" variant="h6" fontSize={14}>
+                              <Chip
+                                sx={{
+                                  bgcolor: (theme) =>
+                                    row.status === 'APPROVED'
+                                      ? theme.palette.primary.light
+                                      : row.status === 'REJECTED'
+                                      ? theme.palette.error.light
+                                      : theme.palette.warning.light,
+                                  color: (theme) =>
+                                    row.status === 'APPROVED'
+                                      ? theme.palette.primary.main
+                                      : row.status === 'REJECTED'
+                                      ? theme.palette.error.main
+                                      : theme.palette.warning.main,
+                                  borderRadius: '6px',
+                                  // width: 80,
+                                }}
+                                size="small"
+                                label={row.status}
+                              />
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Tooltip title="View">
+                              <IconButton
+                                size="small"
+                                onClick={(event) => {
+                                  event.stopPropagation(); // Prevent the row click from firing
+                                  handleClickOpen(row, index);
+                                }}
+                              >
+                                <IconEye />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete">
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleDelete(row.id, row.name);
+                                }}
+                              >
+                                <DeleteOutline />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={totalCount}
+            count={rows.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Button,
+  Modal,
   Fade,
   Select,
   MenuItem,
+  FormLabel,
   Typography,
   Stack,
   Input,
@@ -12,6 +14,7 @@ import {
   Dialog,
   Grid,
   InputLabel,
+  OutlinedInput,
   FormControl,
   IconButton,
   CircularProgress,
@@ -134,7 +137,7 @@ const HeaderComponent = ({
 }) => {
   const [isLinkEntered, setIsLinkEntered] = useState(false);
   const [isFileSelected, setIsFileSelected] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState(''); 
+  const [selectedFileName, setSelectedFileName] = useState('');
 
   const handleLinkChange = (e, format) => {
     const linkValue = e.target.value.trim();
@@ -337,29 +340,26 @@ const TemplateModal = ({
   const location = useLocation(); // Get current location
   const navigate = useNavigate();
 
-  const handleClickSamePage = () => {
-    navigate(location.pathname);
-  };
-
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleFileUpload = async () => {
-    if (!file) return;
-    setIsLoading(true);
+  const handleClickSamePage = () => {
+    navigate(location.pathname);
+  };
+
+  const handleFileUpload = async (file) => {
     const formData = new FormData();
-    formData.append('phone_id', phone_id);
     formData.append('file', file);
 
     try {
-      const response = await apiClient.post('/api/upload_media/', formData, {
+      const res = await apiClient.post('/api/upload_media/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      const { id, preview_url } = response.data;
+      const { id, preview_url } = res.data;
       setPreviewLink(process.env.REACT_APP_API_BASE_URL + preview_url);
       setMediaLink(process.env.REACT_APP_API_BASE_URL + preview_url);
       console.log('--preview', preview_url);
@@ -459,6 +459,8 @@ const TemplateModal = ({
 
           setMediaId(res.data.media_id);
           console.log('Media ID:', mediaId);
+
+          console.log('called');
         }
       }
     } catch (err) {
@@ -707,7 +709,18 @@ const TemplateModal = ({
                               previewLink={previewLink}
                               mediaLink={mediaLink}
                             />
-                            {/* <PreviewSection previewLink={previewLink} /> */}
+                            {/* <VisuallyHiddenInput
+                          type="file"
+                          accept="image/*,video/*,.pdf"
+                          onChange={handleFileChange}
+                          id="media-upload"
+                        />
+                        <label htmlFor="media-upload">
+                          <IconButton color="primary" component="span">
+                            <IconUpload />
+                          </IconButton>
+                          <Typography variant="body2">Upload Media</Typography>
+                        </label> */}
                           </>
                         ) : (
                           <></>
@@ -753,9 +766,7 @@ const TemplateModal = ({
                                   //const headerHandle = component.example?.header_handle?.[0] || component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
                                   const headerLink =
                                     component.parameters?.[0]?.[component.format.toLowerCase()]
-                                      ?.link || previewLink;
-                                  console.log('preview____', previewLink);
-
+                                      ?.link;
                                   const headerHandle =
                                     headerLink || component.example?.header_handle?.[0];
 
@@ -889,8 +900,7 @@ const TemplateModal = ({
                       loading={buttonLoading}
                       disabled={!sendBtn}
                     >
-                      {/* Send broadcast */}
-                      {buttonLoading ? 'Sending' : 'Send Broadcast'}
+                      Send broadcast
                     </LoadingButton>
                     <Button variant="contained" color="error" onClick={resetTemplateSelection}>
                       Cancel
@@ -899,11 +909,11 @@ const TemplateModal = ({
                 ) : (
                   <></>
                 )}
-                {templateDetails ? (
-                  <EstimatedCost members={activeBroadcast?.members} walletBalance={walletBalance} />
-                ) : null}
               </>
             )}
+            {templateDetails ? (
+              <EstimatedCost members={activeBroadcast?.members} walletBalance={walletBalance} />
+            ) : null}
           </Box>
         </form>
       </Fade>
