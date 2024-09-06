@@ -271,7 +271,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               type="text"
               startAdornment={
                 <InputAdornment position="start">
-                  <IconHomeLink width={20} color="dimgray" />
+                  <IconHome width={20} color="dimgray" />
                 </InputAdornment>
               }
               placeholder="Enter Your Address"
@@ -303,9 +303,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 name="city"
                 onChange={handleFieldChange}
               />
-              {errors.city && (
-                <FormHelperText error>{errors.city}</FormHelperText>
-              )}
+              {errors.city && <FormHelperText error>{errors.city}</FormHelperText>}
             </FormControl>
             <FormControl fullWidth
               sx={{

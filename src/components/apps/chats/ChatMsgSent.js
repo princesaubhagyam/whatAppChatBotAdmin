@@ -124,7 +124,7 @@ const ChatMsgSent = ({
               )}
             </div>
           )} */}
-          {!isHistory && walletBalance > 0 && (
+          {/* {!isHistory && walletBalance > 0 && (
             <Tooltip
               title={
                 activeBroadcast.members === 0
@@ -145,6 +145,16 @@ const ChatMsgSent = ({
                 </Button>
               </span>
             </Tooltip>
+          )} */}
+          {!isHistory && (
+            <Button
+              style={{ backgroundColor: '#1A4D2E', color: 'white' }}
+              onClick={handleOpenTemplateModal}
+              sx={{ height: '30px' }}
+            >
+              <IconSend size={16} />
+              Send Template
+            </Button>
           )}
         </form>
       )}

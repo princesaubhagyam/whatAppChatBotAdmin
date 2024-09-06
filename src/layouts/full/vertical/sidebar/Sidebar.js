@@ -6,8 +6,8 @@ import { hoverSidebar, toggleMobileSidebar } from 'src/store/customizer/Customiz
 import LogoImg from 'src/assets/images/logos/home_logo.png';
 import { useNavigate } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
-import { IconFileAlert } from '@tabler/icons-react';
-
+import { IconFileAlert } from '@tabler/icons';
+import PrivacyTipIcon from '@mui/icons-material/PrivacyTip';
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const customizer = useSelector((state) => state.customizer);
@@ -74,7 +74,7 @@ const Sidebar = () => {
               color: customizer.activeSidebarBg === '#ffffff' ? '' : 'white',
               height: '100%',
               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-              position: "relative"
+              position: 'relative',
             }}
           >
             {/* ------------------------------------------- */}
@@ -89,10 +89,10 @@ const Sidebar = () => {
               sx={{
                 cursor: 'pointer',
                 //  padding: "5px 5px 10px 5px",
-                position: "fixed",
-                top: "5px",
-                left: "9px",
-                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important'
+                position: 'fixed',
+                top: '5px',
+                left: '15px',
+                boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important',
               }}
             >
               {/* <Logo/> */}
@@ -105,40 +105,94 @@ const Sidebar = () => {
             <SidebarItems />
             {/* </Scrollbar> */}
             {/* <Profile /> */}
-            <Box sx={{
-              position: "absolute",
-              bottom: "0px",
-              left: "0px",
-              width: "79px",
-            }}>
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: '55px',
+                left: '0px',
+                width: '79px',
+              }}
+            >
               <Link to="/privacy-policy">
                 <Box
                   sx={{
-                    color: location.pathname === "/privacy-policy" ? "white" : "black",
-                    fontSize: "11px",
-                    fontWeight: "700",
-                    display: "flex",
-                    flexDirection: "column",
-                    backgroundColor: location.pathname === "/privacy-policy" ? "#1A4D2E" : "white",
-                    borderRadius: "unset",
+                    color: location.pathname === '/privacy-policy' ? 'white' : 'black',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor: location.pathname === '/privacy-policy' ? '#1A4D2E' : 'white',
+                    borderRadius: 'unset',
                     '&:hover': {
-                      backgroundColor:  !(location.pathname === "/privacy-policy") ? "#00720b40" : ""
+                      backgroundColor: !(location.pathname === '/privacy-policy')
+                        ? '#00720b40'
+                        : '',
                     },
                   }}
                 >
                   <Box
                     sx={{
-                      width: "35%",
-                      margin: "auto",
-                      paddingTop: "8px"
+                      width: '35%',
+                      margin: 'auto',
+                      paddingTop: '8px',
                     }}
-                  ><IconFileAlert /></Box>
+                  >
+                    <PrivacyTipIcon />
+                  </Box>
                   <Box
                     sx={{
-                      width: "35%",
-                      margin: "-7px auto 0px auto",
+                      width: '55%',
+                      margin: '-7px auto 0px auto',
                     }}
-                  ><b>T&C</b></Box>
+                  >
+                    <b>Privacy</b>
+                  </Box>
+                </Box>
+              </Link>
+            </Box>
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: '0px',
+                left: '0px',
+                width: '79px',
+              }}
+            >
+              <Link to="/terms-conditions">
+                <Box
+                  sx={{
+                    color: location.pathname === '/terms-conditions' ? 'white' : 'black',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor:
+                      location.pathname === '/terms-conditions' ? '#1A4D2E' : 'white',
+                    borderRadius: 'unset',
+                    '&:hover': {
+                      backgroundColor: !(location.pathname === '/terms-conditions')
+                        ? '#00720b40'
+                        : '',
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: '35%',
+                      margin: 'auto',
+                      paddingTop: '8px',
+                    }}
+                  >
+                    <IconFileAlert />
+                  </Box>
+                  <Box
+                    sx={{
+                      width: '35%',
+                      margin: '-7px auto 0px auto',
+                    }}
+                  >
+                    <b>T&C</b>
+                  </Box>
                 </Box>
               </Link>
             </Box>
@@ -169,9 +223,7 @@ const Sidebar = () => {
       {/* ------------------------------------------- */}
       {/* Logo */}
       {/* ------------------------------------------- */}
-      <Box px={2}
-        sx={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important' }}
-      >
+      <Box px={2} sx={{ boxShadow: '0px 0px 0px rgba(0, 0, 0, 0) !important' }}>
         <Logo />
       </Box>
       {/* ------------------------------------------- */}

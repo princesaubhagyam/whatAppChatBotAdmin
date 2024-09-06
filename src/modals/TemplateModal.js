@@ -29,6 +29,7 @@ import EventContext from 'src/BroadcastContext';
 import EstimatedCost from 'src/components/analytics/EstimatedCost';
 import Spinner from 'src/views/spinner/Spinner';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { Upload } from '@mui/icons-material';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -42,6 +43,86 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+// const HeaderComponent = ({
+//   componentData,
+//   updateHeaderLink,
+//   handleFileUpload,
+//   handleFileChange,
+//   previewLink,
+//   isLoading,
+//   mediaLink,
+// }) => {
+//   switch (componentData.format) {
+//     case 'IMAGE':
+//       return (
+//         <>
+//           <label>Link to image</label>
+//           <Input
+//             type="url"
+//             placeholder="Add link to image here"
+//             onChange={(e) => updateHeaderLink(e, 'IMAGE')}
+//             variant="outlined"
+//             // value={currentLink}
+//             //value={componentData.parameters?.[0]?.image?.link || ''}
+//             fullWidth
+
+//             // required
+//           />
+//           <Typography variant="h6" textAlign={'center'}>
+//             OR
+//           </Typography>
+//           <input type="file" onChange={handleFileChange} accept="image/*" />
+//           <Button onClick={handleFileUpload} disabled={isLoading}>
+//             {isLoading ? <CircularProgress size={24} /> : 'Upload Image'}
+//           </Button>
+//         </>
+//       );
+//     case 'VIDEO':
+//       return (
+//         <>
+//           <label>Link to video</label>
+//           <Input
+//             type="url"
+//             placeholder="Add link to video here"
+//             onChange={(e) => updateHeaderLink(e, 'VIDEO')}
+//             //value={componentData.parameters?.[0]?.video?.link || ''}
+//             variant="outlined"
+//             fullWidth
+//             //value={currentLink}
+//             //required
+//           />
+//           <input type="file" onChange={handleFileChange} accept="video/*" />
+//           <Button onClick={handleFileUpload} disabled={isLoading}>
+//             {isLoading ? <CircularProgress size={24} /> : 'Upload Video'}
+//           </Button>
+//         </>
+//       );
+//     case 'DOCUMENT':
+//       return (
+//         <>
+//           <label>Link to document</label>
+//           <Input
+//             type="url"
+//             placeholder="Add link to document here"
+//             onChange={(e) => updateHeaderLink(e, 'DOCUMENT')}
+//             variant="outlined"
+//             fullWidth
+
+//             //value={componentData.parameters?.[0]?.document?.link || ''}
+//             //required
+//           />
+//           <Typography variant="h4">OR</Typography>
+//           <input type="file" onChange={handleFileChange} accept="application/pdf" />
+//           <Button onClick={handleFileUpload} disabled={isLoading}>
+//             {isLoading ? <CircularProgress size={24} /> : 'Upload Document'}
+//           </Button>
+//         </>
+//       );
+//     default:
+//       return <></>;
+//   }
+// };
+
 const HeaderComponent = ({
   componentData,
   updateHeaderLink,
@@ -49,7 +130,39 @@ const HeaderComponent = ({
   handleFileChange,
   previewLink,
   isLoading,
+  mediaLink,
 }) => {
+  const [isLinkEntered, setIsLinkEntered] = useState(false);
+  const [isFileSelected, setIsFileSelected] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState('');
+
+  const handleLinkChange = (e, format) => {
+    const linkValue = e.target.value.trim();
+    updateHeaderLink(e, format);
+
+    const linkEntered = linkValue !== '';
+    setIsLinkEntered(linkEntered);
+
+    if (linkEntered) {
+      setIsFileSelected(false);
+      setSelectedFileName(''); // Reset file name when link is entered
+    }
+  };
+
+  const handleFileSelection = (e) => {
+    handleFileChange(e);
+
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFileName(file.name); // Update file name
+      setIsFileSelected(true);
+      setIsLinkEntered(false);
+    } else {
+      setSelectedFileName('');
+      setIsFileSelected(false);
+    }
+  };
+
   switch (componentData.format) {
     case 'IMAGE':
       return (
@@ -58,21 +171,40 @@ const HeaderComponent = ({
           <Input
             type="url"
             placeholder="Add link to image here"
-            onChange={(e) => updateHeaderLink(e, 'IMAGE')}
+            onChange={(e) => handleLinkChange(e, 'IMAGE')}
             variant="outlined"
-            // value={currentLink}
-            //value={componentData.parameters?.[0]?.image?.link || ''}
             fullWidth
-            value={previewLink}
-            // required
+            disabled={isFileSelected}
           />
           <Typography variant="h6" textAlign={'center'}>
             OR
           </Typography>
-          <input type="file" onChange={handleFileChange} accept="image/*" />
-          <Button onClick={handleFileUpload} disabled={isLoading}>
+          <input
+            type="file"
+            onChange={handleFileSelection}
+            accept="image/*"
+            style={{ display: 'none' }} // Hide the file input
+            id="image-upload"
+          />
+          <Button
+            component="label"
+            htmlFor="image-upload"
+            disabled={isLinkEntered}
+            sx={{ backgroundColor: 'white', border: '1px solid #1A4D2E' }}
+          >
+            <Upload /> Choose a File to Upload
+          </Button>
+          <Button
+            onClick={handleFileUpload}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+          >
             {isLoading ? <CircularProgress size={24} /> : 'Upload Image'}
           </Button>
+          {selectedFileName && (
+            <Typography variant="body2" textAlign={'center'}>
+              Selected File: {selectedFileName}
+            </Typography>
+          )}
         </>
       );
     case 'VIDEO':
@@ -82,17 +214,32 @@ const HeaderComponent = ({
           <Input
             type="url"
             placeholder="Add link to video here"
-            onChange={(e) => updateHeaderLink(e, 'VIDEO')}
-            //value={componentData.parameters?.[0]?.video?.link || ''}
+            onChange={(e) => handleLinkChange(e, 'VIDEO')}
             variant="outlined"
             fullWidth
-            //value={currentLink}
-            //required
+            disabled={isFileSelected}
           />
-          <input type="file" onChange={handleFileChange} accept="video/*" />
-          <Button onClick={handleFileUpload} disabled={isLoading}>
+          <input
+            type="file"
+            onChange={handleFileSelection}
+            accept="video/*"
+            style={{ display: 'none' }} // Hide the file input
+            id="video-upload"
+          />
+          <Button component="label" htmlFor="video-upload" disabled={isLinkEntered}>
+            Choose File to Upload
+          </Button>
+          <Button
+            onClick={handleFileUpload}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+          >
             {isLoading ? <CircularProgress size={24} /> : 'Upload Video'}
           </Button>
+          {selectedFileName && (
+            <Typography variant="body2" textAlign={'center'}>
+              Selected File: {selectedFileName}
+            </Typography>
+          )}
         </>
       );
     case 'DOCUMENT':
@@ -102,18 +249,32 @@ const HeaderComponent = ({
           <Input
             type="url"
             placeholder="Add link to document here"
-            onChange={(e) => updateHeaderLink(e, 'DOCUMENT')}
+            onChange={(e) => handleLinkChange(e, 'DOCUMENT')}
             variant="outlined"
             fullWidth
-
-            //value={componentData.parameters?.[0]?.document?.link || ''}
-            //required
+            disabled={isFileSelected}
           />
-          <Typography variant="h4">OR</Typography>
-          <input type="file" onChange={handleFileChange} accept="application/pdf" />
-          <Button onClick={handleFileUpload} disabled={isLoading}>
+          <input
+            type="file"
+            onChange={handleFileSelection}
+            accept="application/pdf"
+            style={{ display: 'none' }} // Hide the file input
+            id="document-upload"
+          />
+          <Button component="label" htmlFor="document-upload" disabled={isLinkEntered}>
+            Choose File to Upload
+          </Button>
+          <Button
+            onClick={handleFileUpload}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+          >
             {isLoading ? <CircularProgress size={24} /> : 'Upload Document'}
           </Button>
+          {selectedFileName && (
+            <Typography variant="body2" textAlign={'center'}>
+              Selected File: {selectedFileName}
+            </Typography>
+          )}
         </>
       );
     default:
@@ -160,6 +321,7 @@ const TemplateModal = ({
   const { toggleOnOff } = useContext(EventContext);
   const [mediaId, setMediaId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [mediaLink, setMediaLink] = useState('');
   const [broadcastDetails, setBroadcastDetails] = useState({
     broadcast: broadcastId,
     template: null,
@@ -167,25 +329,22 @@ const TemplateModal = ({
   const [templateDetails, setTemplateDetails] = useState();
   //const [previewLink, setPreviewLink] = useState(null);
   const [sendBtn, setSendBtn] = useState(false);
-  // console.log(previewLink, 'previewLink');
   const [file, setFile] = useState(null);
   const [previewLink, setPreviewLink] = useState('');
-  const [mediaLink, setMediaLink] = useState('');
+
   const phone_id = localStorage.getItem('phone_id');
   const location = useLocation(); // Get current location
   const navigate = useNavigate();
-
-  const handleClickSamePage = () => {
-    navigate(location.pathname);
-  };
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleFileUpload = async () => {
-    if (!file) return;
-    setIsLoading(true);
+  const handleClickSamePage = () => {
+    navigate(location.pathname);
+  };
+
+  const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append('phone_id', phone_id);
     formData.append('file', file);
@@ -199,6 +358,7 @@ const TemplateModal = ({
 
       const { id, preview_url } = response.data;
       setPreviewLink(process.env.REACT_APP_API_BASE_URL + preview_url);
+      setMediaLink(process.env.REACT_APP_API_BASE_URL + preview_url);
       console.log('--preview', preview_url);
 
       setMediaId(id);
@@ -541,6 +701,8 @@ const TemplateModal = ({
                               handleFileChange={handleFileChange}
                               handleFileUpload={handleFileUpload}
                               isLoading={isLoading}
+                              previewLink={previewLink}
+                              mediaLink={mediaLink}
                             />
                             {/* <PreviewSection previewLink={previewLink} /> */}
                           </>
@@ -739,6 +901,9 @@ const TemplateModal = ({
                 ) : null}
               </>
             )}
+            {templateDetails ? (
+              <EstimatedCost members={activeBroadcast?.members} walletBalance={walletBalance} />
+            ) : null}
           </Box>
         </form>
       </Fade>

@@ -30,6 +30,7 @@ import Languages from 'src/utils/Languages.json';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router';
+import CloseIcon from '@mui/icons-material/Close';
 
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
@@ -513,6 +514,10 @@ export default function CreateTemplate() {
   const handleMediaTypeChange = (event) => {
     setMediaType(event.target.value);
     setMediaContent(null);
+  };
+
+  const handleRemoveMedia = () => {
+    setMediaContent(null); // Clear the media content
   };
 
   // const handleMediaContentChange = async (event) => {
@@ -1122,6 +1127,7 @@ export default function CreateTemplate() {
                         overflow: 'auto',
                         backgroundSize: 'cover',
                         boxShadow: '0px 1px 5px #00000025',
+                        position: 'relative',
                       }}
                     >
                       <Box
@@ -1172,25 +1178,63 @@ export default function CreateTemplate() {
                             <CircularProgress />
                           </Box>
                         ) : mediaContent ? (
-                          mediaType === 'document' ? (
-                            <Box sx={{ mb: 2 }}>
+                          // mediaType === 'document' ? (
+                          //   <Box sx={{ mb: 2 }}>
+                          //     <iframe
+                          //       src={mediaContent}
+                          //       width="100%"
+                          //       height="50%"
+                          //       title="Document Preview"
+                          //     ></iframe>
+                          //   </Box>
+                          // ) : (
+                          //   <CardMedia
+                          //     component={mediaType === 'image' ? 'img' : mediaType}
+                          //     src={mediaContent}
+                          //     controls={mediaType === 'video'}
+                          //     controlsList={mediaType === 'video' && []}
+                          //     title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
+                          //     sx={{ mb: 2 }}
+                          //   />
+                          // )
+                          <Box sx={{ mb: 2, position: 'relative' }}>
+                            {mediaType === 'document' ? (
                               <iframe
                                 src={mediaContent}
                                 width="100%"
                                 height="50%"
                                 title="Document Preview"
                               ></iframe>
-                            </Box>
-                          ) : (
-                            <CardMedia
-                              component={mediaType === 'image' ? 'img' : mediaType}
-                              src={mediaContent}
-                              controls={mediaType === 'video'}
-                              controlsList={mediaType === 'video' && []}
-                              title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
-                              sx={{ mb: 2 }}
-                            />
-                          )
+                            ) : (
+                              <CardMedia
+                                component={mediaType === 'image' ? 'img' : mediaType}
+                                src={mediaContent}
+                                controls={mediaType === 'video'}
+                                controlsList={mediaType === 'video' && []}
+                                title={mediaType.charAt(0).toUpperCase() + mediaType.slice(1)}
+                                sx={{ mb: 2 }}
+                              />
+                            )}
+                            {/* Cross icon to remove media */}
+                            <Tooltip title="Remove">
+                              <IconButton
+                                onClick={handleRemoveMedia}
+                                sx={{
+                                  position: 'absolute',
+                                  top: 1,
+                                  right: 1,
+                                  backgroundColor: '#ef233c',
+                                  color: '#fff',
+                                  '&:hover': {
+                                    backgroundColor: '#ef233c',
+                                  },
+                                  padding: '5px',
+                                }}
+                              >
+                                <CloseIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
                         ) : null}
                         {formikTemplate.values.body && (
                           <Box sx={{ mb: 1 }}>
