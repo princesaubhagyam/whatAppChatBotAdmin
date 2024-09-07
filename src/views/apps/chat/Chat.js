@@ -43,9 +43,8 @@ const Chats = ({ checkBroadcastHistory }) => {
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {
-    historyChecker()
+    historyChecker();
   }, [activeBroadcast, isOn]);
-
 
   function historyChecker() {
     if (activeBroadcast) {

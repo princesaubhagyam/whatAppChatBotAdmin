@@ -7,7 +7,7 @@ import LogoImg from 'src/assets/images/logos/home_logo.png';
 import { useNavigate } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { IconFileAlert } from '@tabler/icons';
-import PrivacyTipIcon from '@mui/icons-material/PrivacyTip';
+import PrivacyTipIcon from '@mui/icons-material/PrivacyTipOutlined';
 const Sidebar = () => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const customizer = useSelector((state) => state.customizer);

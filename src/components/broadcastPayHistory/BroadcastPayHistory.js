@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { Box, Typography, Skeleton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import apiClient from 'src/api/axiosClient';
+import { useSelector } from 'react-redux';
 
 function BroadcastPayHistory({ setBroadcastPayHistroy }) {
     const [loading, setLoading] = useState(true)
+    const [broadcastPayHistoryData, setBroadcastPayHistoryData] = useState({})
+    const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast?.id);
 
- useState(()=>{
-    setTimeout(()=>{
-        setLoading(()=>(false))
-    },1000)
- },[])
+    async function getBroadcastPayHistoryData() {
+        try {
+            const res = await apiClient.get(`api/holdamount-history/${activeBroadcast}`)
+            if (res.data.status) {
+                setBroadcastPayHistoryData(res.data.data,)
+                setLoading(false)
+            }
+        } catch (error) {
+            console.error(error, "error")
+            setLoading(false)
+        }
+    }
+
+    useState(() => {
+        getBroadcastPayHistoryData()
+    }, [])
 
     function closeBroadcastPayHistroy() {
         setBroadcastPayHistroy(false);
@@ -71,6 +86,13 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                             />
                             <Skeleton
                                 variant="rectangular"
+                                width={100}
+                                height={25}
+                                sx={{ margin: "15px 0px" }}
+                                animation="wave"
+                            />
+                            <Skeleton
+                                variant="rectangular"
                                 width={170}
                                 height={25}
                                 sx={{ margin: "15px 0px" }}
@@ -106,6 +128,13 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                             />
                         </Box>
                         <Box>
+                            <Skeleton
+                                variant="rectangular"
+                                width={30}
+                                height={25}
+                                sx={{ margin: "15px 0px" }}
+                                animation="wave"
+                            />
                             <Skeleton
                                 variant="rectangular"
                                 width={30}
@@ -182,7 +211,7 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                             onClick={closeBroadcastPayHistroy}
                         />
                     </Box>
-                    {/* <Box
+                    <Box
                         sx={{
                             display: "flex",
                             justifyContent: "flex-start",
@@ -204,6 +233,11 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                     padding: "15px 0px"
                                 }}
                             >Delivered:</Typography>
+                            <Typography variant="h6" fontWeight="bold"
+                                sx={{
+                                    padding: "15px 0px"
+                                }}
+                            >Failed:</Typography>
                             <Typography variant="h6" fontWeight="bold"
                                 sx={{
                                     padding: "15px 0px"
@@ -236,45 +270,45 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >10</Typography>
+                            >{broadcastPayHistoryData.sent}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >8</Typography>
+                            >{broadcastPayHistoryData.delivered}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >₹10</Typography>
+                            >{broadcastPayHistoryData.failed}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >₹5</Typography>
+                            >{broadcastPayHistoryData.initial_holdamount}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >₹3</Typography>
+                            >{broadcastPayHistoryData.current_holdamount > 0 ? broadcastPayHistoryData.current_holdamount : 0}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >totalcost/delivered</Typography>
+                            >{broadcastPayHistoryData.released_amount}
+                            </Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >₹5</Typography>
+                            >{(broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered) ? (broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered) : 0}</Typography>
+                            <Typography variant="subtitle1" color="textSecondary"
+                                sx={{
+                                    padding: "12px 0px"
+                                }}
+                            >{broadcastPayHistoryData.pay_amount > 0 ? broadcastPayHistoryData.pay_amount : 0}</Typography>
                         </Box>
-                    </Box> */}
-                    
-                    <Typography variant="h1" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Coming soon</Typography>
+                    </Box>
 
                 </>
             }

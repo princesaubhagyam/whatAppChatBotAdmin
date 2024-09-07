@@ -49,9 +49,10 @@ const ChatListing = ({
   const [openImportModal, setOpenImportModal] = useState(false);
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
-  console.log(broadcastData,"broadcastData")
-  const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
-  console.log(selectedBroadcastId,"selectedBroadcastId")
+  console.log(broadcastData, 'broadcastData');
+  const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
+
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -102,10 +103,9 @@ const ChatListing = ({
   // useEffect(() => {
   //   let chatId = window.sessionStorage.getItem('id')
   //   if(chatId){
-  //     setSelectedBroadcastId(parseInt(chatId)); 
+  //     setSelectedBroadcastId(parseInt(chatId));
   //   }
   // }, [selectedBroadcastId]);
-
 
   const getBroadcastsDataApi = async () => {
     if (nextUrl) {
@@ -241,76 +241,76 @@ const ChatListing = ({
             }
           >
             {broadcastData && broadcastData.length
-              ? broadcastData.map((chat) =>{
-                return (
-                  <Box
-                    sx={{
-                      borderBottom: '3px solid #e5eaef',
-                      borderRadius: 0,
-                      backgroundColor:
-                        selectedBroadcastId === parseInt(chat.id) ? '#bdbcbc9e' : 'transparent',
-                      '&:hover': { backgroundColor: '#bdbcbc9e !important' },
-                      display: 'flex',
-                      alignItems: 'center',
-                      paddingRight: '10px',
-                    }}
-                    key={chat.id}
-                  >
-                    <ListItemButton
-                      onClick={() => handleBroadcastClick(chat)}
+              ? broadcastData.map((chat) => {
+                  return (
+                    <Box
                       sx={{
-                        py: 1,
-                        px: 1,
-                        alignItems: 'start',
-                        '&:hover': { backgroundColor: 'transparent !important' },
+                        borderBottom: '3px solid #e5eaef',
+                        borderRadius: 0,
+                        backgroundColor:
+                          selectedBroadcastId === parseInt(chat.id) ? '#bdbcbc9e' : 'transparent',
+                        '&:hover': { backgroundColor: '#bdbcbc9e !important' },
+                        display: 'flex',
+                        alignItems: 'center',
+                        paddingRight: '10px',
                       }}
-                      selected={activeChat === chat.id}
+                      key={chat.id}
                     >
-                      <ListItemAvatar>
-                        <Badge
-                          color={
-                            chat.status === 'online'
-                              ? 'success'
-                              : chat.status === 'busy'
-                              ? 'error'
-                              : chat.status === 'away'
-                              ? 'warning'
-                              : 'secondary'
-                          }
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                          }}
-                          overlap="circular"
-                        >
-                          <Avatar sx={{ width: 42, height: 42 }}>
-                            <IconUsers size={25} />
-                          </Avatar>
-                        </Badge>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={
-                          <Typography
-                            variant="subtitle2"
-                            fontWeight={600}
-                            fontSize={14}
-                            lineHeight={1.3}
-                          >
-                            {FullStringCapital(chat.title)}
-                          </Typography>
-                        }
-                        secondary={
-                          <Typography variant="subtitle1" fontSize={13}>
-                            {chat.members} members
-                          </Typography>
-                        }
-                        secondaryTypographyProps={{
-                          noWrap: true,
+                      <ListItemButton
+                        onClick={() => handleBroadcastClick(chat)}
+                        sx={{
+                          py: 1,
+                          px: 1,
+                          alignItems: 'start',
+                          '&:hover': { backgroundColor: 'transparent !important' },
                         }}
-                        sx={{ my: 0 }}
-                      />
-                    </ListItemButton>
-                    {/* {selectedBroadcastId === chat.id && !isHistory && (
+                        selected={activeChat === chat.id}
+                      >
+                        <ListItemAvatar>
+                          <Badge
+                            color={
+                              chat.status === 'online'
+                                ? 'success'
+                                : chat.status === 'busy'
+                                ? 'error'
+                                : chat.status === 'away'
+                                ? 'warning'
+                                : 'secondary'
+                            }
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right',
+                            }}
+                            overlap="circular"
+                          >
+                            <Avatar sx={{ width: 42, height: 42 }}>
+                              <IconUsers size={25} />
+                            </Avatar>
+                          </Badge>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={
+                            <Typography
+                              variant="subtitle2"
+                              fontWeight={600}
+                              fontSize={14}
+                              lineHeight={1.3}
+                            >
+                              {FullStringCapital(chat.title)}
+                            </Typography>
+                          }
+                          secondary={
+                            <Typography variant="subtitle1" fontSize={13}>
+                              {chat.members} members
+                            </Typography>
+                          }
+                          secondaryTypographyProps={{
+                            noWrap: true,
+                          }}
+                          sx={{ my: 0 }}
+                        />
+                      </ListItemButton>
+                      {/* {selectedBroadcastId === chat.id && !isHistory && (
                   <IconButton size="small" color="error" onClick={handleOpenDeleteDialog}>
                     <DeleteOutline />
                   </IconButton>
@@ -320,51 +320,52 @@ const ChatListing = ({
                     <IconEdit />
                   </IconButton>
                 )} */}
-                    {selectedBroadcastId === chat.id && (
-                      <>
-                        {isHistory === undefined ? (
-                          <>
-                            <Skeleton
-                              variant="circular"
-                              width={30}
-                              height={30}
-                              sx={{ m: 1, bgcolor: 'transparent' }}
-                            />
-                            <Skeleton
-                              variant="circular"
-                              width={30}
-                              height={30}
-                              sx={{ m: 1, bgcolor: 'transparent' }}
-                            />
-                          </>
-                        ) : (
-                          !isHistory && (
+                      {selectedBroadcastId === chat.id && (
+                        <>
+                          {isHistory === undefined ? (
                             <>
-                              <Tooltip title="Delete group">
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={handleOpenDeleteDialog}
-                                >
-                                  <DeleteOutline />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Edit title">
-                                <IconButton
-                                  size="small"
-                                  color="primary"
-                                  onClick={handleOpenEditDialog}
-                                >
-                                  <IconEdit />
-                                </IconButton>
-                              </Tooltip>
+                              <Skeleton
+                                variant="circular"
+                                width={30}
+                                height={30}
+                                sx={{ m: 1, bgcolor: 'transparent' }}
+                              />
+                              <Skeleton
+                                variant="circular"
+                                width={30}
+                                height={30}
+                                sx={{ m: 1, bgcolor: 'transparent' }}
+                              />
                             </>
-                          )
-                        )}
-                      </>
-                    )}
-                  </Box>
-                )})
+                          ) : (
+                            !isHistory && (
+                              <>
+                                <Tooltip title="Delete group">
+                                  <IconButton
+                                    size="small"
+                                    color="error"
+                                    onClick={handleOpenDeleteDialog}
+                                  >
+                                    <DeleteOutline />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Edit title">
+                                  <IconButton
+                                    size="small"
+                                    color="primary"
+                                    onClick={handleOpenEditDialog}
+                                  >
+                                    <IconEdit />
+                                  </IconButton>
+                                </Tooltip>
+                              </>
+                            )
+                          )}
+                        </>
+                      )}
+                    </Box>
+                  );
+                })
               : !hasMore && (
                   <Box m={2}>
                     {/* <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
