@@ -124,10 +124,10 @@ const ChatMsgSent = ({
               )}
             </div>
           )} */}
-          {/* {!isHistory && walletBalance > 0 && (
+          {!isHistory && walletBalance > 0 && (
             <Tooltip
               title={
-                memberCount === 0
+                activeBroadcast.members === 0
                   ? "You can't send template because there are no members added"
                   : ''
               }
@@ -138,15 +138,15 @@ const ChatMsgSent = ({
                   style={{ backgroundColor: '#1A4D2E', color: 'white' }}
                   onClick={handleOpenTemplateModal}
                   sx={{ height: '30px' }}
-                  disabled={memberCount === 0}
+                  disabled={activeBroadcast.members === 0}
                 >
                   <IconSend size={16} />
                   Send Template
                 </Button>
               </span>
             </Tooltip>
-          )} */}
-          {!isHistory && (
+          )}
+          {/* {!isHistory && (
             <Button
               style={{ backgroundColor: '#1A4D2E', color: 'white' }}
               onClick={handleOpenTemplateModal}
@@ -155,7 +155,7 @@ const ChatMsgSent = ({
               <IconSend size={16} />
               Send Template
             </Button>
-          )}
+          )} */}
         </form>
       )}
       <TemplateModal
