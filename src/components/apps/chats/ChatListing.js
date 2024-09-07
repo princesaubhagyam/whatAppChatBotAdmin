@@ -52,7 +52,8 @@ const ChatListing = ({
   console.log(broadcastData, 'broadcastData');
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
 
-  const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
+  // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

@@ -11,8 +11,8 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { IconLock, IconMail, IconPhone, IconUser } from '@tabler/icons';
-// import { IconHomeLink, IconBuildingSkyscraper, IconBuildingEstate, IconBuildingCottage, IconMapPinCode } from '@tabler/icons-react';
+import { IconLock, IconMail, IconPhone, IconUser,IconHome } from '@tabler/icons';
+import { IconHomeLink, IconBuildingSkyscraper, IconBuildingEstate, IconBuildingCottage, IconMapPinCode } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
 import { LoadingButton } from '@mui/lab';
 import apiClient from 'src/api/axiosClient';
@@ -38,8 +38,8 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
   const [credentials, setCredentials] = React.useState(initCredentials);
   const [loading, setLoading] = React.useState(false);
   const [countryCode, setCountryCode] = useState('+91');
-  // const [myCountry, setMyCountry] = useState("India")
-  // const [myState, setMyState] = useState("Gujarat")
+  const [myCountry, setMyCountry] = useState("India")
+  const [myState, setMyState] = useState("Gujarat")
   const [errors, setErrors] = React.useState({});
   console.log(errors, "errors")
 
@@ -52,8 +52,8 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
 
   const signUpAPICall = async (creds) => {
     try {
-      // const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', ''), state: myState, country: myCountry };
-      const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', '') };
+      const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', ''), state: myState, country: myCountry };
+      // const temp = { ...creds, mobile: (countryCode + creds.mobile).replace('+', '') };
       const res = await apiClient.post('/auth/signup/', { ...temp });
       if (res.status === 201) {
         navigate('/auth/login');
@@ -93,13 +93,13 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
     setCountryCode(e.target.value);
   };
 
-  // const handleCountryNameChange = (e) => {
-  //   setMyCountry(e.target.value)
-  // }
+  const handleCountryNameChange = (e) => {
+    setMyCountry(e.target.value)
+  }
 
-  // const handleStateNameChange = (e) => {
-  //   setMyState(e.target.value)
-  // }
+  const handleStateNameChange = (e) => {
+    setMyState(e.target.value)
+  }
 
 
   const validateForm = () => {
@@ -265,7 +265,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
               <FormHelperText error>{errors.confirm_password}</FormHelperText>
             )}
           </FormControl>
-          {/* <FormControl fullWidth error={!!errors.address_line}
+          <FormControl fullWidth error={!!errors.address_line}
           >
             <OutlinedInput
               type="text"
@@ -392,7 +392,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
                 <FormHelperText error>{errors.postal_code}</FormHelperText>
               )}
             </FormControl>
-          </Box> */}
+          </Box>
         </Stack>
         <Box mt={2}>
           <LoadingButton
