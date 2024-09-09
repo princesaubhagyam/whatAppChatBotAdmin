@@ -128,6 +128,8 @@ const Chats = ({ checkBroadcastHistory }) => {
                 onBroadcastDelete={handleBroadcastDelete}
                 onBroadcastSelect={handleBroadcastSelect}
                 isHistory={isHistory}
+                setIsBroadcastDeleted= {setIsBroadcastDeleted}
+                isBroadcastDeleted = {isBroadcastDeleted}
               />
               {!isBroadcastDeleted && (
                 <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>

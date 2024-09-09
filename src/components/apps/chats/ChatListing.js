@@ -43,6 +43,8 @@ const ChatListing = ({
   onBroadcastDelete,
   onBroadcastSelect,
   isHistory,
+  setIsBroadcastDeleted,
+  isBroadcastDeleted
 }) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
@@ -53,12 +55,12 @@ const ChatListing = ({
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
 
   // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
-  const [selectedBroadcastId, setSelectedBroadcastId] = useState(null);
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState(isBroadcastDeleted ? null : activeBroadcast?.id);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   //const { isOn } = useContext(EventContext);
-  const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
+  // const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   //const [isHistory, setIsHistory] = useState(undefined);
 
