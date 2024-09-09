@@ -99,15 +99,7 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-    const originalLog = console.log; // Save original log function
-    console.log = () => {}; // Override console.log to do nothing
-  
-    console.log('Broadcast data updated:'); // This will not be shown in the console
-  
-    // Restore original console.log after useEffect
-    return () => {
-      console.log = originalLog;
-    };
+    console.log('Broadcast data updated:', broadcasts);
   }, [broadcasts]);
 
   const getBroadcastsDataApi = async () => {

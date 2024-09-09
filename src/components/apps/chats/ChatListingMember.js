@@ -42,6 +42,7 @@ const ChatListingMember = ({
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [groupMembers, setGroupMembers] = useState(activeBroadcast.contacts)
   // const [members, setMembers] = useState(activeBroadcast?.contacts || []);
   // const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
   // const isHistory = useSelector((state) => state.chatReducer.isHistory);
@@ -56,10 +57,11 @@ const ChatListingMember = ({
   useEffect(() => {
     console.log('Active broadcast updated:', activeBroadcast);
   }, [activeBroadcast]);
-
+  console.log(activeBroadcast,"activeBroadcast+++++++++++++")
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
+    filterChanged()
   };
 
   // const handleUpdateMembers = (updatedMembers) => {
@@ -86,11 +88,26 @@ const ChatListingMember = ({
     dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
   };
 
-  const filteredMembers = activeBroadcast?.contacts?.filter(
+function deleteMethod(e){
+  console.log(e)
+}
+
+  // const filteredMembers = activeBroadcast?.contacts?.filter(
+  //   (member) =>
+  //     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     member.full_mobile.includes(searchQuery),
+  // );
+   function filterChanged(){
+    if(!searchQuery){ 
+      setGroupMembers( activeBroadcast?.contacts)
+   }
+else{
+  setGroupMembers( activeBroadcast?.contacts?.filter(
     (member) =>
       member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.full_mobile.includes(searchQuery),
-  );
+      member.full_mobile.includes(searchQuery),))
+}
+   }
 
   return (
     <>
@@ -162,8 +179,8 @@ const ChatListingMember = ({
           </Box>
           <List sx={{ px: 0 }}>
             <Scrollbar sx={{ height: { lg: '70vh !important', md: '100vh' }, maxHeight: '550px' }}>
-              {filteredMembers && filteredMembers.length > 0 ? (
-                filteredMembers.map((member) => (
+              {groupMembers && groupMembers.length > 0 ? (
+                groupMembers.map((member) => (
                   <Box borderBottom={'3px solid #e5eaef'} borderRadius={0} key={member.id}>
                     <ListItemButton
                       sx={{
@@ -202,6 +219,7 @@ const ChatListingMember = ({
                             lineHeight={1.3}
                           >
                             {FirstLetterCapitalOfString(member.name)}
+                            <button onClick={()=>(deleteMethod(member))}>delete</button>
                           </Typography>
                         }
                         secondary={
