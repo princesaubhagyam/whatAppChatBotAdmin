@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
-  console.log(item,"item")
+  console.log(item, 'item');
   const customizer = useSelector((state) => state.customizer);
   const Icon = item.icon;
   const theme = useTheme();
@@ -53,20 +53,20 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
 
   return (
     <>
-    <List component="li" disablePadding key={item.id} sx={{padding: "0px"}}>
-      <ListItemStyled
-        button
-        component={item.external ? 'a' : NavLink}
-        to={item.href}
-        href={item.external ? item.href : ''}
-        disabled={item.disabled}
-        selected={isActive}
-        target={item.external ? '_blank' : ''}
-        onClick={onClick}
-        sx={{ justifyContent: 'space-evenly', textAlign: 'center', padding:"5px 0px 0px 0px"}}
-      >
-        <div>
-          <ListItemIcon
+      <List component="li" disablePadding key={item.id} sx={{ padding: '0px' }}>
+        <ListItemStyled
+          button
+          component={item.external ? 'a' : NavLink}
+          to={item.href}
+          href={item.external ? item.href : ''}
+          disabled={item.disabled}
+          selected={isActive}
+          target={item.external ? '_blank' : ''}
+          onClick={onClick}
+          sx={{ justifyContent: 'space-evenly', textAlign: 'center', padding: '5px 0px 0px 0px' }}
+        >
+          <div>
+            {/* <ListItemIcon
             sx={{
               //minWidth: '36px',
               minWidth: '0px !important',
@@ -75,36 +75,37 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
             }}
           >
             {itemIcon}
-          </ListItemIcon>
-          <br />
-          <ListItemText
-             sx ={{marginTop : "-4px", fontWeight:"bold"}}
-          >
-            <Typography variant="caption" fontSize="11px" lineHeight="0" >
-              <b> {hideMenu ? '' : <>{t(`${item.title}`)}</>}</b>
-              </Typography>
+          </ListItemIcon> */}
             <br />
-            {item.subtitle ? (
-              <Typography variant="caption" fontSize="12px" lineHeight="0"
-             sx ={{marginTop : "-4px"}}
-              >
-                {hideMenu ? '' : item.subtitle}
+            <ListItemText sx={{ marginTop: '-4px', fontWeight: 'bold' }}>
+              <Typography variant="caption" fontSize="11px" lineHeight="0">
+                <b> {hideMenu ? '' : <>{t(`${item.title}`)}</>}</b>
               </Typography>
-            ) : (
-              ''
-            )}
-          </ListItemText>
-        </div>
-        {!item.chip || hideMenu ? null : (
-          <Chip
-            color={item.chipColor}
-            variant={item.variant ? item.variant : 'filled'}
-            size="small"
-            label={item.chip}
-          />
-        )}
-      </ListItemStyled>
-    </List>
+              <br />
+              {item.subtitle ? (
+                <Typography
+                  variant="caption"
+                  fontSize="12px"
+                  lineHeight="0"
+                  sx={{ marginTop: '-4px' }}
+                >
+                  {hideMenu ? '' : item.subtitle}
+                </Typography>
+              ) : (
+                ''
+              )}
+            </ListItemText>
+          </div>
+          {!item.chip || hideMenu ? null : (
+            <Chip
+              color={item.chipColor}
+              variant={item.variant ? item.variant : 'filled'}
+              size="small"
+              label={item.chip}
+            />
+          )}
+        </ListItemStyled>
+      </List>
     </>
   );
 };
