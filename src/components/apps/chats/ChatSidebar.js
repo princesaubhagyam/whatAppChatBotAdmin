@@ -13,7 +13,7 @@ const ChatSidebar = ({
   onBroadcastSelect,
   isHistory,
   setIsBroadcastDeleted,
-  isBroadcastDeleted
+  isBroadcastDeleted,
 }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 

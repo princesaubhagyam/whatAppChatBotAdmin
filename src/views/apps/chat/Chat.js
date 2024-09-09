@@ -35,11 +35,9 @@ const Chats = ({ checkBroadcastHistory }) => {
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-  console.log(activeBroadcast, 'activebroadcast---->');
+
 
   const [isHistory, setIsHistory] = useState(false);
-
-  // console.log('isHistory', isHistory);
   const { isOn } = useContext(EventContext);
 
   useEffect(() => {

@@ -200,7 +200,7 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                             sx={{
                                 padding: "25px 0px 0px 30px"
                             }}
-                        >Broadcast Transaction Histroy</Typography>
+                        >Broadcast Transaction History</Typography>
                         <CloseIcon
                             fontSize="medium"
                             sx={{
@@ -252,7 +252,7 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                 sx={{
                                     padding: "15px 0px"
                                 }}
-                            >Realased Money:</Typography>
+                            >Released Money:</Typography>
                             <Typography variant="h6" fontWeight="bold"
                                 sx={{
                                     padding: "15px 0px"

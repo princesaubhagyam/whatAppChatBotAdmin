@@ -22,7 +22,7 @@ const ProfileDetail = () => {
         setPhoneNumber(fetchedPhoneNumber);
 
         const phoneId = localStorage.getItem('phone_id');
-        console.log('Phone ID:', phoneId);
+        // console.log('Phone ID:', phoneId);
         const profileResponse = await metaClient.get(
           `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
           {
@@ -32,10 +32,10 @@ const ProfileDetail = () => {
           },
         );
 
-        console.log('Profile Response:', profileResponse.data);
+        // console.log('Profile Response:', profileResponse.data);
 
         const profileData = profileResponse?.data?.data[0];
-        console.log('Profile Data:', profileData);
+        // console.log('Profile Data:', profileData);
 
         if (profileData && profileData.profile_picture_url) {
           setProfilePictureURL(profileData.profile_picture_url);

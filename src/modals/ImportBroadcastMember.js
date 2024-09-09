@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Modal, Fade, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { IconFileImport, IconDownload } from '@tabler/icons';
-import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import { setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -32,14 +29,13 @@ const ImportBroadcastMember = ({
   open,
   handleClose,
   activeBroadcastId,
-  getMemberListInGroup,
+
   getBroadcastList = () => {},
 }) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
 
   // const getBroadcastList = async () => {
   //   const broadcastsRes = await getBroadcastsData();
@@ -55,7 +51,7 @@ const ImportBroadcastMember = ({
   }, [open]);
 
   const sampleFileUrl =
-    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
+    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts_import.csv';
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);

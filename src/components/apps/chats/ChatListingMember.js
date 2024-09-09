@@ -58,6 +58,7 @@ const ChatListingMember = ({
 
   useEffect(() => {
     console.log('Active broadcast updated:', activeBroadcast);
+    // dispatch(fetchSelectedBroadcasts(activeBroadcast?.id))
   }, [activeBroadcast]);
 
   useEffect(() => {

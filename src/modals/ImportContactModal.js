@@ -27,7 +27,7 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
   }, [open]);
 
   const sampleFileUrl =
-    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts.csv';
+    'https://saubhagyam503.pythonanywhere.com/static/import_samples/contacts_import.csv';
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);

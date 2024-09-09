@@ -901,9 +901,6 @@ const TemplateModal = ({
                 ) : null}
               </>
             )}
-            {templateDetails ? (
-              <EstimatedCost members={activeBroadcast?.members} walletBalance={walletBalance} />
-            ) : null}
           </Box>
         </form>
       </Fade>

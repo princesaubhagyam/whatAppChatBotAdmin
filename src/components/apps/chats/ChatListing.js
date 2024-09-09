@@ -44,14 +44,13 @@ const ChatListing = ({
   onBroadcastSelect,
   isHistory,
   setIsBroadcastDeleted,
-  isBroadcastDeleted
+  isBroadcastDeleted,
 }) => {
   const dispatch = useDispatch();
   const activeChat = useSelector((state) => state.chatReducer.chatId);
   const [openImportModal, setOpenImportModal] = useState(false);
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
-  console.log(broadcastData, 'broadcastData');
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
 
   // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
@@ -100,15 +99,16 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-    console.log('Broadcast data updated:');
+    const originalLog = console.log; // Save original log function
+    console.log = () => {}; // Override console.log to do nothing
+  
+    console.log('Broadcast data updated:'); // This will not be shown in the console
+  
+    // Restore original console.log after useEffect
+    return () => {
+      console.log = originalLog;
+    };
   }, [broadcasts]);
-
-  // useEffect(() => {
-  //   let chatId = window.sessionStorage.getItem('id')
-  //   if(chatId){
-  //     setSelectedBroadcastId(parseInt(chatId));
-  //   }
-  // }, [selectedBroadcastId]);
 
   const getBroadcastsDataApi = async () => {
     if (nextUrl) {
@@ -165,8 +165,7 @@ const ChatListing = ({
           setBroadcastData(
             broadcastData.map((chat) =>
               chat.id === selectedBroadcastId ? { ...chat, title: newBroadcastName } : chat,
-            ),
-          );
+            ));
           setLoading(false);
           setOpenEditDialog(false);
           toast.success('Edited Successfully');
