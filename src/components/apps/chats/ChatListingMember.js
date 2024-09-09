@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import {
   Avatar,
   List,
@@ -19,12 +19,9 @@ import Scrollbar from '../../custom-scroll/Scrollbar';
 import { IconEdit, IconFileImport, IconSearch } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
-import { fetchIsHistoryStatus, fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
+import {  fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
 import { updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
-
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
-
-import EventContext from 'src/BroadcastContext';
 import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
 
 const getInitials = (name) => {
@@ -36,8 +33,8 @@ const getInitials = (name) => {
 
 const ChatListingMember = ({
   getBroadcastList,
-  refresh,
-  handleRefreshChatListingMember,
+  // refresh,
+  // handleRefreshChatListingMember,
   isHistory,
 }) => {
   const dispatch = useDispatch();
@@ -45,8 +42,8 @@ const ChatListingMember = ({
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [members, setMembers] = useState(activeBroadcast?.contacts || []);
-  const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
+  // const [members, setMembers] = useState(activeBroadcast?.contacts || []);
+  // const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
   // const isHistory = useSelector((state) => state.chatReducer.isHistory);
   // const { isOn } = useContext(EventContext);
 
@@ -58,15 +55,8 @@ const ChatListingMember = ({
 
   useEffect(() => {
     console.log('Active broadcast updated:', activeBroadcast);
-    // dispatch(fetchSelectedBroadcasts(activeBroadcast?.id))
   }, [activeBroadcast]);
 
-  useEffect(() => {
-    if (activeBroadcast) {
-      setMembers(activeBroadcast.contacts || []);
-      setMemberCount(activeBroadcast.members || 0);
-    }
-  }, [activeBroadcast, refresh]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -85,9 +75,6 @@ const ChatListingMember = ({
   //   // );
   // };
   const handleUpdateMembers = (updatedMembers) => {
-    setMembers(updatedMembers);
-    setMemberCount(updatedMembers.length);
-
     dispatch(
       updateActiveBroadcast({
         ...activeBroadcast,

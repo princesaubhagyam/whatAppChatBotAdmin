@@ -8,13 +8,12 @@ import {
   ListItemAvatar,
   Box,
   Stack,
-  useMediaQuery,
   IconButton,
   Tooltip,
 } from '@mui/material';
 import { IconMenu2 } from '@tabler/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import { formatDistanceToNowStrict } from 'date-fns';
 import CachedIcon from '@mui/icons-material/Cached';
 import { useState } from 'react';
@@ -29,7 +28,7 @@ import InfoIcon from '@mui/icons-material/Info';
 
 const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcastPayHistroy }) => {
   // const [open, setOpen] = React.useState(false);
-  const [Graph, setGraph] = React.useState([]);
+  // const [Graph, setGraph] = React.useState([]);
   // console.log('Graph', Graph);
 
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
@@ -79,7 +78,7 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcast
                     style={{ padding: '0px' }}
                     primary={<Typography variant="h5">{activeBroadcast.title}</Typography>}
                   />
-                  <Tooltip title="Broadcast Transaction Histroy">
+                  <Tooltip title="Broadcast Transaction History">
                     <IconButton sx={{ cursor: 'pointer' }}>
                       {isHistory && (
                         <IconReceipt2 stroke={2}
