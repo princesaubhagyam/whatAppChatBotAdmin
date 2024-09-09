@@ -270,22 +270,22 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.sent}</Typography>
+                            >{broadcastPayHistoryData.sent ?  broadcastPayHistoryData.sent : 0}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.delivered}</Typography>
+                            >{broadcastPayHistoryData.delivered ? broadcastPayHistoryData.delivered : 0 }</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.failed}</Typography>
+                            >{broadcastPayHistoryData.failed ? broadcastPayHistoryData.failed : 0}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.initial_holdamount}</Typography>
+                            >{broadcastPayHistoryData.initial_holdamount ?broadcastPayHistoryData.initial_holdamount : 0}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
@@ -301,10 +301,10 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{(broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered) ? (broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered) : 0}</Typography>
+                            >{ (broadcastPayHistoryData.delivered) === 0 ? (broadcastPayHistoryData.pay_amount) / 1 : (broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered)}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
-                                    padding: "12px 0px"
+                                    padding: "12px 0px" 
                                 }}
                             >{broadcastPayHistoryData.pay_amount > 0 ? broadcastPayHistoryData.pay_amount : 0}</Typography>
                         </Box>
