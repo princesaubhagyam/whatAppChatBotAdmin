@@ -26,7 +26,7 @@ import Spinner from 'src/views/spinner/Spinner';
 import { IconEdit } from '@tabler/icons';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
-
+import { useUser } from 'src/store/apps/UserContext';
 import defaultProfilePic from 'src/assets/images/backgrounds/download.png';
 // import defaultProfilePic from 'src/assets/images/backgrounds/default_image.png';
 
@@ -79,7 +79,7 @@ const UserProfile = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogLoading, setDeleteDialogLoading] = useState(false);
-
+  const { setUserDetails } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -158,10 +158,17 @@ const UserProfile = () => {
         },
       });
       if (response.status === 200) {
-        setUserData((prevState) => ({
-          ...prevState,
-          profile_pic: URL.createObjectURL(file),
-        }));
+        // setUserData((prevState) => ({
+        //   ...prevState,
+        //   profile_pic: URL.createObjectURL(file),
+        // }));
+        const updatedUserData = {
+          ...userData,
+          profile_pic: URL.createObjectURL(file), // Use the new profile picture
+        };
+        setUserDetails(updatedUserData); // Update user context
+        setUserData(updatedUserData); // Optionally update local state for immediate UI update
+
         setEditPicMode(false);
         toast.success('Profile picture updated successfully');
       }
@@ -189,22 +196,49 @@ const UserProfile = () => {
     setDeleteDialogOpen(false);
   };
 
+  // const handleConfirmDelete = async () => {
+  //   setDeleteDialogLoading(true);
+  //   try {
+  //     // Perform deletion logic here
+  //     await apiClient.patch('/auth/user_profile/', {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //       profile_pic: null,
+  //     });
+  //     setUserData((prevState) => ({
+  //       ...prevState,
+  //       profile_pic: defaultProfilePic,
+  //     }));
+  //     toast.success('Profile picture removed');
+  //     fetchUserProfile();
+  //   } catch (error) {
+  //     console.error('Failed to remove profile picture', error);
+  //     toast.error('Failed to remove profile picture');
+  //   } finally {
+  //     setDeleteDialogLoading(false);
+  //     setDeleteDialogOpen(false);
+  //   }
+  // };
   const handleConfirmDelete = async () => {
     setDeleteDialogLoading(true);
     try {
-      // Perform deletion logic here
-      await apiClient.patch('/auth/user_profile/', {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await apiClient.patch('/auth/user_profile/', {
         profile_pic: null,
       });
-      setUserData((prevState) => ({
-        ...prevState,
-        profile_pic: defaultProfilePic,
-      }));
-      toast.success('Profile picture removed');
-      fetchUserProfile();
+
+      if (response.status === 200) {
+        setUserData((prevState) => ({
+          ...prevState,
+          profile_pic: defaultProfilePic,
+        }));
+        setUserDetails((prevState) => ({
+          ...prevState,
+          profile_pic: defaultProfilePic,
+        }));
+        toast.success('Profile picture removed');
+        fetchUserProfile(); // Optionally refetch user profile
+      }
     } catch (error) {
       console.error('Failed to remove profile picture', error);
       toast.error('Failed to remove profile picture');

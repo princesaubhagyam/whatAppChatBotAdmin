@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
-  Grid, Card, Typography, Avatar, IconButton, Box, Skeleton, Input,
-  CircularProgress, TextField
+  Grid,
+  Card,
+  Typography,
+  Avatar,
+  IconButton,
+  Box,
+  Skeleton,
+  Input,
+  CircularProgress,
+  TextField,
 } from '@mui/material';
 import { IconEdit } from '@tabler/icons';
 import { Cancel, CameraAlt } from '@mui/icons-material';
@@ -16,17 +24,23 @@ function BusinessProfile() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profileDetails, setProfileDetails] = useState({});
   const [editableProfile, setEditableProfile] = useState({});
+  console.log('editableProfile', editableProfile);
   const [newProfilePicture, setNewProfilePicture] = useState(null);
+  console.log('newProfilePicture', newProfilePicture);
   const [newProfilePictureURL, setNewProfilePictureURL] = useState(null);
+  console.log('newProfilePictureURL', newProfilePictureURL);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  console.log('isEditing', isEditing);
   const [uploadingImage, setUploadingImage] = useState(false);
-
+  console.log('uploadingImage', uploadingImage);
 
   const fetchData = async () => {
     try {
-      const metaClient = createMetaAxiosInstance();
-      const phoneResponse = await metaClient.get('phone_numbers');
+      // const metaClient = createMetaAxiosInstance();
+      // const phoneResponse = await metaClient.get('phone_numbers');
+      const waba_id = localStorage.getItem('whatsapp_business_account_id');
+      const phoneResponse = await apiClient.get(`/auth/phone_numbers/${waba_id}`);
       const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
       const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
 
@@ -34,14 +48,13 @@ function BusinessProfile() {
       setPhoneNumber(fetchedPhoneNumber);
 
       const phoneId = localStorage.getItem('phone_id');
-      const profileResponse = await metaClient.get(
-        `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
-        {
-          params: {
-            fields: 'about,address,description,email,profile_picture_url,websites,vertical',
-          },
+      // const profileResponse = await metaClient.get(
+      //   `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
+      const profileResponse = await apiClient.get(`/auth/account_details/${phoneId}`, {
+        params: {
+          fields: 'about,address,description,email,profile_picture_url,websites,vertical',
         },
-      );
+      });
 
       const profileData = profileResponse?.data?.data[0] || {};
       setProfileDetails(profileData);
@@ -56,11 +69,9 @@ function BusinessProfile() {
     fetchData();
   }, []);
 
-
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,7 +128,6 @@ function BusinessProfile() {
     }
   };
 
-
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -134,10 +144,11 @@ function BusinessProfile() {
         profile_picture_handle: profilePictureHandle,
       };
 
-      await metaClient.post(
-        `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
-        dataToUpdate,
-      );
+      // await metaClient.post(
+      //   `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
+      //   dataToUpdate,
+      // );
+      await apiClient.post(`/auth/account_details/${phoneId}`, dataToUpdate);
 
       setProfileDetails((prev) => ({
         ...prev,
@@ -156,17 +167,21 @@ function BusinessProfile() {
   };
 
   return (
-    <PageContainer title="Business Profile" description="This is the User Business Profile" >
+    <PageContainer title="Business Profile" description="This is the User Business Profile">
       {loading ? (
         <Box>
-          <Box sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            padding: "64px"
-          }}>
-            <Box sx={{
-              width: "30%"
-            }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              padding: '64px',
+            }}
+          >
+            <Box
+              sx={{
+                width: '30%',
+              }}
+            >
               <Skeleton
                 variant="circular"
                 width={300}
@@ -177,10 +192,10 @@ function BusinessProfile() {
             </Box>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: " 0px 0px 0px 45px",
-                margin: "-30px 0px 0px 0px"
+                display: 'flex',
+                flexDirection: 'column',
+                padding: ' 0px 0px 0px 45px',
+                margin: '-30px 0px 0px 0px',
               }}
             >
               <Skeleton
@@ -249,12 +264,13 @@ function BusinessProfile() {
               />
             </Box>
           </Box>
-        </Box>) :
+        </Box>
+      ) : (
         <>
           <Card sx={{ margin: 'auto', padding: 6 }}>
             <Grid container spacing={2}>
               {/* Profile Picture */}
-              <Grid item xs={12} sm={4} sx={{ position: 'relative', }}>
+              <Grid item xs={12} sm={4} sx={{ position: 'relative' }}>
                 <Avatar
                   src={newProfilePictureURL || profileDetails?.profile_picture_url}
                   alt="profile"
@@ -265,8 +281,8 @@ function BusinessProfile() {
                     component="label"
                     sx={{
                       position: 'absolute',
-                      top: "10px",
-                      right: "10px",
+                      top: '10px',
+                      right: '10px',
                       bgcolor: '#7ab95d29',
                       borderRadius: '50%',
                     }}
@@ -295,13 +311,17 @@ function BusinessProfile() {
 
               {/* Profile Details */}
               <Grid item xs={12} sm={7}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: "30px" }}>
-                  <Typography variant="h4" fontWeight="bold">{contactName}</Typography>
-                  <Typography variant="subtitle1" color="textSecondary">{phoneNumber}</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '30px' }}>
+                  <Typography variant="h4" fontWeight="bold">
+                    {contactName}
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {phoneNumber}
+                  </Typography>
                 </Box>
-                {
-                  isEditing ? <>
-                    <div style={{ display: 'flex', gap: '22px' }} >
+                {isEditing ? (
+                  <>
+                    <div style={{ display: 'flex', gap: '22px' }}>
                       <TextField
                         name="messaging_product"
                         label="Messaging Product"
@@ -357,8 +377,7 @@ function BusinessProfile() {
                       />
                     </div>
                     <div></div>
-                    <div style={{ display: 'flex', gap: '22px' }}>
-                    </div>
+                    <div style={{ display: 'flex', gap: '22px' }}></div>
                     <TextField
                       name="address"
                       label="Address"
@@ -401,7 +420,7 @@ function BusinessProfile() {
                     />
 
                     {isEditing && (
-                      <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+                      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                         <LoadingButton
                           variant="contained"
                           color="primary"
@@ -413,70 +432,105 @@ function BusinessProfile() {
                         >
                           Save
                         </LoadingButton>
-                      </Box>)}
-                  </> :
-                    <>
-                      {profileDetails?.messaging_product && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Messaging Product :</Typography>
-                        <Typography variant="subtitle1" color="textSecondary">{profileDetails?.messaging_product}</Typography>
                       </Box>
-                      }
-                      {
-                        profileDetails?.vertical && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Business Industry:</Typography>
-                          <Typography variant="subtitle1" color="textSecondary">{profileDetails?.vertical}</Typography>
-                        </Box>
-                      }
-                      {
-                        profileDetails?.email && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Email:</Typography>
-                          <Typography variant="subtitle1" color="textSecondary">{profileDetails?.email}</Typography>
-                        </Box>
-                      }
-                      {
-                        profileDetails?.websites && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Websites:</Typography>
-                          <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                            {profileDetails?.websites && profileDetails?.websites.length > 0 && profileDetails?.websites.map(function (website, index) {
-                              return <div key={index}><Typography variant="subtitle1" color="textSecondary">{index + 1}. {website}</Typography></div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {profileDetails?.messaging_product && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Messaging Product :
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {profileDetails?.messaging_product}
+                        </Typography>
+                      </Box>
+                    )}
+                    {profileDetails?.vertical && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Business Industry:
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {profileDetails?.vertical}
+                        </Typography>
+                      </Box>
+                    )}
+                    {profileDetails?.email && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Email:
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {profileDetails?.email}
+                        </Typography>
+                      </Box>
+                    )}
+                    {profileDetails?.websites && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Websites:
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          {profileDetails?.websites &&
+                            profileDetails?.websites.length > 0 &&
+                            profileDetails?.websites.map(function (website, index) {
+                              return (
+                                <div key={index}>
+                                  <Typography variant="subtitle1" color="textSecondary">
+                                    {index + 1}. {website}
+                                  </Typography>
+                                </div>
+                              );
                             })}
-                          </Box>
                         </Box>
-
-                      }
-                      {
-                        profileDetails?.address && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Address:</Typography>
-                          <Typography variant="subtitle1" color="textSecondary" sx={{ width: "70%" }}>{profileDetails?.address}</Typography>
-                        </Box>
-                      }
-                      {
-                        profileDetails?.description && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>Description:</Typography>
-                          <Typography variant="subtitle1" color="textSecondary">{profileDetails?.description}</Typography>
-                        </Box>
-                      }
-                      {
-                        profileDetails?.about && <Box sx={{ display: 'flex', flexDirection: 'row', margin: "5px 0px" }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ width: "30%" }}>About:</Typography>
-                          <Typography variant="subtitle1" color="textSecondary">{profileDetails?.about}</Typography>
-                        </Box>
-                      }
-                    </>
-
-                }
+                      </Box>
+                    )}
+                    {profileDetails?.address && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Address:
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary" sx={{ width: '70%' }}>
+                          {profileDetails?.address}
+                        </Typography>
+                      </Box>
+                    )}
+                    {profileDetails?.description && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          Description:
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {profileDetails?.description}
+                        </Typography>
+                      </Box>
+                    )}
+                    {profileDetails?.about && (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', margin: '5px 0px' }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ width: '30%' }}>
+                          About:
+                        </Typography>
+                        <Typography variant="subtitle1" color="textSecondary">
+                          {profileDetails?.about}
+                        </Typography>
+                      </Box>
+                    )}
+                  </>
+                )}
               </Grid>
-             <Grid item xs={12} sm={1}>
-                  <IconButton onClick={handleEditToggle}>
-                    {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
-                  </IconButton>
-                </Grid>
+              <Grid item xs={12} sm={1}>
+                <IconButton onClick={handleEditToggle}>
+                  {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
+                </IconButton>
+              </Grid>
             </Grid>
           </Card>
         </>
-      }
-   </PageContainer>
-  )
+      )}
+    </PageContainer>
+  );
 }
 
-export default BusinessProfile
+export default BusinessProfile;

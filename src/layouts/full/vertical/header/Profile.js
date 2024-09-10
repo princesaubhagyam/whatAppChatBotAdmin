@@ -16,6 +16,7 @@ import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import apiClient from 'src/api/axiosClient';
 import PaymentAddMoney from 'src/modals/PaymentAddMoney';
+import defaultProfilePic from 'src/assets/images/backgrounds/download.png';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -85,7 +86,7 @@ const Profile = () => {
           sx={{
             fontWeight: 500,
             color: '#545557',
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'none', sm: 'none', md: 'block' },
           }}
         >
           WhatsApp Business API Status:
@@ -95,7 +96,7 @@ const Profile = () => {
           sx={{
             fontWeight: 500,
             color: '#545557',
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', sm: 'block', md: 'none' },
           }}
         >
           WABA Status:
@@ -115,7 +116,19 @@ const Profile = () => {
           </Typography>
         )}
       </Stack>
-      <Stack direction={'row'} spacing={2} alignItems="flex-start" marginLeft="100px !important">
+      <Stack
+        direction={'row'}
+        spacing={2}
+        alignItems="flex-start"
+        sx={{
+          marginLeft: {
+            lg: '100px',
+            xl: '100px',
+            sm: '0px',
+            md: '50px',
+          },
+        }}
+      >
         {/* <Typography variant="h5" sx={{ fontWeight: 500, color: '#545557' }}>
           Wallet
         </Typography> */}
@@ -176,6 +189,31 @@ const Profile = () => {
             {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''}
           </Avatar>
         </IconButton>
+        {/* <IconButton
+          size="large"
+          aria-label="show user profile"
+          color="inherit"
+          aria-controls="profile-menu"
+          aria-haspopup="true"
+          sx={{
+            ...(typeof anchorEl2 === 'object' && {
+              color: 'primary.main',
+            }),
+          }}
+          onClick={handleClick2}
+        >
+          <Avatar
+            src={user?.profile_pic || defaultProfilePic} // Check if the user has a profile picture
+            sx={{
+              width: 35,
+              height: 35,
+              backgroundColor: 'primary.main',
+            }}
+          >
+            {!user?.profile_pic && (user?.full_name ? user.full_name.charAt(0).toUpperCase() : '')}
+          </Avatar>
+        </IconButton> */}
+
         <Menu
           id="profile-menu"
           anchorEl={anchorEl2}

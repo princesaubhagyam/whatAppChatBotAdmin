@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Skeleton, Tooltip } from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom';
+import apiClient from 'src/api/axiosClient';
 
 const ProfileDetail = () => {
   const [contactName, setContactName] = useState('');
@@ -12,9 +13,11 @@ const ProfileDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const metaClient = createMetaAxiosInstance();
+        // const metaClient = createMetaAxiosInstance();
 
-        const phoneResponse = await metaClient.get('phone_numbers');
+        // const phoneResponse = await metaClient.get('phone_numbers');
+        const waba_id = localStorage.getItem('whatsapp_business_account_id');
+        const phoneResponse = await apiClient.get(`/auth/phone_numbers/${waba_id}`);
         const fetchedContactName = phoneResponse?.data?.data[0]?.verified_name || 'N/A';
         const fetchedPhoneNumber = phoneResponse?.data?.data[0]?.display_phone_number || 'N/A';
 
@@ -22,15 +25,12 @@ const ProfileDetail = () => {
         setPhoneNumber(fetchedPhoneNumber);
 
         const phoneId = localStorage.getItem('phone_id');
-        // console.log('Phone ID:', phoneId);
-        const profileResponse = await metaClient.get(
-          `https://graph.facebook.com/${phoneId}/whatsapp_business_profile`,
-          {
-            params: {
-              fields: 'profile_picture_url',
-            },
+        console.log('Phone ID:', phoneId);
+        const profileResponse = await apiClient.get(`/auth/account_details/${phoneId}`, {
+          params: {
+            fields: 'profile_picture_url',
           },
-        );
+        });
 
         // console.log('Profile Response:', profileResponse.data);
 
@@ -72,7 +72,12 @@ const ProfileDetail = () => {
               </Box>
             ) : (
               <Box
-                sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  mb: 2,
+                  justifyContent: 'space-between',
+                }}
               >
                 <Box sx={{ ml: 2 }}>
                   <Typography variant="h5">{contactName}</Typography>

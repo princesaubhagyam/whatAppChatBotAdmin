@@ -403,25 +403,27 @@ const TemplatesTableList = () => {
   const handleSearch = async (event) => {
     const searchValue = event.target.value;
 
-    setSearch(searchValue);
+    setSearch(searchValue); // Update the search state
     const waba_id = localStorage.getItem('whatsapp_business_account_id');
+
     if (searchValue) {
       try {
         const response = await apiClient.get(
-          `/api/get_message_templates/?whatsapp_business_account_id=${waba_id}&page=${
-            page + 1
-          }&rows_per_page=${rowsPerPage}&name=${searchValue}`,
+          `/api/get_message_templates/?whatsapp_business_account_id=${waba_id}&page=1&rows_per_page=${rowsPerPage}&name=${searchValue}`,
         );
+
         const allData = response?.data?.data?.results;
         setTotalCount(response?.data?.data?.count);
         setTotalPages(response?.data?.data?.total_pages);
 
         setRows(allData);
+        setPage(1);
       } catch (error) {
         console.error('Error fetching search results', error);
       }
     } else {
-      getApiData(); // Fetch default data if search input is empty
+      setPage(1);
+      getApiData();
     }
   };
 

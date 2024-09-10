@@ -134,12 +134,19 @@ export const fetchChatHistoryByPhoneNo = (phoneNo) => async (dispatch) => {
 
 export const fetchQualityRating = () => async (dispatch) => {
   try {
-    const metaClient = createMetaAxiosInstance({ addBAId: false });
+    // const metaClient = createMetaAxiosInstance({ addBAId: false });
+    // const phoneId = localStorage.getItem('phone_id');
+    // if (phoneId !== null) {
+    //   const response = await metaClient.get(`${phoneId}`);
+    //   const fetchedQualityRating = response?.data?.quality_rating;
+    //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
+    //   dispatch(setQualityRating(fetchedQualityRating));
+    // }
     const phoneId = localStorage.getItem('phone_id');
     if (phoneId !== null) {
-      const response = await metaClient.get(`${phoneId}`);
+      const response = await apiClient.get(`/auth/account_details/${phoneId}`);
       const fetchedQualityRating = response?.data?.quality_rating;
-      // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
+      //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
       dispatch(setQualityRating(fetchedQualityRating));
     }
   } catch (error) {
