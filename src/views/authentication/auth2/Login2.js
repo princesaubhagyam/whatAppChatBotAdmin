@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Box, Card, Stack, Typography, Divider } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
-import Logo from 'src/layouts/full/shared/logo/Logo';
+
 import AuthLogin from '../authForms/AuthLogin';
-import toast, { Toaster } from 'react-hot-toast';
+
 import img from 'src/assets/images/backgrounds/banner_one.jpg';
 const Login2 = () => {
   return (
@@ -53,9 +53,9 @@ const Login2 = () => {
                 }}
               >
                 <Box display="flex" flexDirection="column">
-                  <Typography variant="h6" fontWeight={'400'} lineHeight={'2.2rem'}>
+                  {/* <Typography variant="h6" fontWeight={'400'} lineHeight={'2.2rem'}>
                     WELCOME BACK
-                  </Typography>
+                  </Typography> */}
 
                   <Typography
                     variant="h3"

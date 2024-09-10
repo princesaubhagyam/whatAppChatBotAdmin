@@ -49,7 +49,7 @@ const ChatListing = ({
   const [openImportModal, setOpenImportModal] = useState(false);
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
-  console.log(broadcastData, 'broadcastData');
+  // console.log(broadcastData, 'broadcastData');
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
 
   const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);

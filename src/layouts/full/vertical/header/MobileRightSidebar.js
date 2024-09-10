@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import {
-  IconApps,
   IconBroadcast,
-  IconCalendarEvent,
-  IconChevronDown,
-  IconChevronUp,
+  IconCreditCard,
   IconGridDots,
   IconHome,
-  IconMail,
   IconMan,
-  IconMessages,
-  IconSettings,
-  IconSettingsAutomation,
   IconTemplate,
-  
+  IconUser,
 } from '@tabler/icons';
+import LogoImg from 'src/assets/images/logos/home_logo.png';
+
 import {
   Box,
   Typography,
@@ -24,108 +19,158 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Collapse,
+  Stack,
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
-import AppLinks from './AppLinks';
-import QuickLinks from './QuickLinks';
 
 const MobileRightSidebar = () => {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-  const [open, setOpen] = React.useState(true);
-
-  const handleClick = () => {
-    setOpen(!open);
+  const handleListItemClick = (index) => {
+    console.log('Item clicked:', index);
+    setSelectedIndex(index);
+    setShowDrawer(false);
   };
-
   const cartContent = (
-    <Box>
-      {/* ------------------------------------------- */}
-      {/* Apps Content */}
-      {/* ------------------------------------------- */}
-      <Box px={1}>
+    <Box display="flex" flexDirection="column" justifyContent="space-between" height="100vh" px={1}>
+      {/* Top Section - Main Links */}
+      <Box>
         <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           component="nav"
           aria-labelledby="nested-list-subheader"
         >
-          <ListItemButton component={Link} to="/home">
-            <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconHome size="21" stroke="1.5" />
+          <ListItemButton
+            component={Link}
+            to="/home"
+            onClick={() => handleListItemClick(0)}
+            selected={selectedIndex === 0}
+            sx={{
+              backgroundColor: selectedIndex === 0 ? '#BFDCC2 !important' : 'inherit',
+              color: selectedIndex === 0 ? '#2A5A3C !important' : 'inherit',
+              '& .MuiListItemIcon-root': {
+                color: selectedIndex === 0 ? '#2A5A3C !important' : 'inherit',
+              },
+              '&:hover': {
+                backgroundColor: '#BFDCC2',
+                color: '#2A5A3C',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 35, '&:hover': { color: '#2A5A3C' } }}>
+              <IconHome size="23" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
-                Home
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
+                Dashboard
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/contacts">
+          <ListItemButton
+            component={Link}
+            to="/business-profile"
+            sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+          >
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconMan size="21" stroke="1.5" />
+              <IconUser size="23" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
+                B-Profile
+              </Typography>
+            </ListItemText>
+          </ListItemButton>
+          <ListItemButton
+            component={Link}
+            to="/contacts"
+            sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+          >
+            <ListItemIcon sx={{ minWidth: 35 }}>
+              <IconMan size="23" stroke="1.5" />
+            </ListItemIcon>
+            <ListItemText>
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
                 Contacts
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/broadcasts">
+          <ListItemButton
+            component={Link}
+            to="/broadcasts"
+            sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+          >
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconBroadcast size="21" stroke="1.5" />
+              <IconBroadcast size="23" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
                 Broadcasts
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/templates">
+          <ListItemButton
+            component={Link}
+            to="/templates"
+            sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+          >
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconTemplate size="21" stroke="1.5" />
+              <IconTemplate size="23" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
                 Templates
               </Typography>
             </ListItemText>
           </ListItemButton>
-          <ListItemButton component={Link} to="/settings">
+          <ListItemButton
+            component={Link}
+            to="/payment-history"
+            sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+          >
             <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconSettings size="21" stroke="1.5" />
+              <IconCreditCard size="23" stroke="1.5" />
             </ListItemIcon>
             <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
-                Settings
+              <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
+                Pay History
               </Typography>
             </ListItemText>
           </ListItemButton>
-          {/* <ListItemButton onClick={handleClick}>
-            <ListItemIcon sx={{ minWidth: 35 }}>
-              <IconApps size="21" stroke="1.5" />
-            </ListItemIcon>
-            <ListItemText>
-              <Typography variant="subtitle2" fontWeight={600}>
-                Apps
-              </Typography>
-            </ListItemText>
-            {open ? (
-              <IconChevronDown size="21" stroke="1.5" />
-            ) : (
-              <IconChevronUp size="21" stroke="1.5" />
-            )}
-          </ListItemButton> */}
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box px={4} pt={3} overflow="hidden">
-              {/* <AppLinks /> */}
-            </Box>
-          </Collapse>
         </List>
       </Box>
 
-      <Box px={3} mt={3}>
-        {/* <QuickLinks /> */}
+      {/* Bottom Section - Privacy & Terms */}
+      <Box>
+        <ListItemButton
+          component={Link}
+          to="/privacy-policy"
+          sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+        >
+          <ListItemIcon sx={{ minWidth: 35 }}>
+            <IconCreditCard size="23" stroke="1.5" />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
+              Privacy Policy
+            </Typography>
+          </ListItemText>
+        </ListItemButton>
+        <ListItemButton
+          component={Link}
+          to="/terms-conditions"
+          sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
+        >
+          <ListItemIcon sx={{ minWidth: 35 }}>
+            <IconCreditCard size="23" stroke="1.5" />
+          </ListItemIcon>
+          <ListItemText>
+            <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
+              Terms & Conditions
+            </Typography>
+          </ListItemText>
+        </ListItemButton>
       </Box>
     </Box>
   );
@@ -142,7 +187,7 @@ const MobileRightSidebar = () => {
           }),
         }}
       >
-        <IconGridDots size="21" stroke="1.5" />
+        <IconGridDots size="23" stroke="1.5" />
       </IconButton>
       {/* ------------------------------------------- */}
       {/* Cart Sidebar */}
@@ -151,13 +196,24 @@ const MobileRightSidebar = () => {
         anchor="right"
         open={showDrawer}
         onClose={() => setShowDrawer(false)}
-        PaperProps={{ sx: { width: '300px' } }}
+        PaperProps={{ sx: { width: '250px' } }}
       >
-        <Box p={3} pb={0}>
-          <Typography variant="h5" fontWeight={600}>
-            Navigation
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Box
+            component="img"
+            src={LogoImg}
+            alt="Logo"
+            sx={{
+              width: 50,
+              height: 50,
+              margin: '10px !important',
+              borderRadius: '0px !important',
+            }}
+          />
+          <Typography variant="h3" color={'primary.main'} fontWeight={600}>
+            Saubhagyam
           </Typography>
-        </Box>
+        </Stack>
 
         {/* component */}
         {cartContent}

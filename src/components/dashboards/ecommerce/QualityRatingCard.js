@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Stack, Badge, Skeleton, Grid } from '@mui/material';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+import apiClient from 'src/api/axiosClient';
 
 const QualityRatingCard = ({ isLoading, remainingQuota }) => {
   const [apiStatus, setApiStatus] = useState(null);
@@ -13,9 +14,10 @@ const QualityRatingCard = ({ isLoading, remainingQuota }) => {
 
   const fetchData = async () => {
     try {
-      const metaClient = createMetaAxiosInstance({ addBAId: false });
+      //const metaClient = createMetaAxiosInstance({ addBAId: false });
       const phoneId = localStorage.getItem('phone_id');
-      const response = await metaClient.get(`${phoneId}`);
+      //const response = await metaClient.get(`${phoneId}`);
+      const response = await apiClient.get(`/auth/account_details/${phoneId}`);
       const fetchedQualityRating = response?.data?.quality_rating;
       const fetchedApiStatus = response?.data?.throughput?.level;
       setQualityRating(fetchedQualityRating);
@@ -30,9 +32,14 @@ const QualityRatingCard = ({ isLoading, remainingQuota }) => {
   };
   return (
     <>
-      <Grid item xs={12} lg={12} sx= {{
-        marginTop : "15px"
-      }}>
+      <Grid
+        item
+        xs={12}
+        lg={12}
+        sx={{
+          marginTop: '15px',
+        }}
+      >
         <Grid container spacing={2.2}>
           <Grid item xs={12} sm={4} lg={4}>
             <Card>

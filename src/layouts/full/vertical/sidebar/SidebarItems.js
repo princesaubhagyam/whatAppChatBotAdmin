@@ -3,9 +3,9 @@ import Menuitems from './MenuItems';
 import { useLocation } from 'react-router';
 import { Box, List, useMediaQuery } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleMobileSidebar } from 'src/store/customizer/CustomizerSlice';
+
 import NavItem from './NavItem';
-import NavCollapse from './NavCollapse';
+
 import NavGroup from './NavGroup/NavGroup';
 
 const SidebarItems = () => {
@@ -15,7 +15,6 @@ const SidebarItems = () => {
   const customizer = useSelector((state) => state.customizer);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const hideMenu = lgUp ? customizer.isCollapse && !customizer.isSidebarHover : '';
-  const dispatch = useDispatch();
 
   return (
     <Box sx={{ px: 0, marginTop: '70px' }} width={'80px'}>
@@ -49,8 +48,8 @@ const SidebarItems = () => {
                   item={item}
                   key={item.id}
                   pathDirect={pathDirect}
-                  hideMenu={hideMenu}
-                  onClick={() => dispatch(toggleMobileSidebar())}
+                  // hideMenu={hideMenu}
+                  // onClick={() => dispatch(toggleMobileSidebar())}
                 />
               </>
             );

@@ -7,11 +7,33 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
+  // useEffect(() => {
+  //   // Load user data from local storage on initial load
+  //   const storedUser = localStorage.getItem('user');
+  //   console.log('Stored user data:', storedUser); // Debugging log
+  //   if (storedUser) {
+  //     try {
+  //       setUser(JSON.parse(storedUser));
+  //     } catch (error) {
+  //       console.error('Failed to parse user data:', error);
+  //       localStorage.removeItem('user'); // Optionally clear the invalid data
+  //     }
+  //   }
+  // }, []);
+
   useEffect(() => {
-    // Load user data from local storage on initial load
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser.profile_pic) {
+          localStorage.setItem('profile_pic', parsedUser.profile_pic); // Save profile pic separately
+        }
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Failed to parse user data:', error);
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 

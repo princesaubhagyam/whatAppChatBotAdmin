@@ -66,16 +66,17 @@ const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
           sx={{ justifyContent: 'space-evenly', textAlign: 'center', padding: '5px 0px 0px 0px' }}
         >
           <div>
-            {/* <ListItemIcon
-            sx={{
-              //minWidth: '36px',
-              minWidth: '0px !important',
-              // p: '3px 0',
-              color: level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
-            }}
-          >
-            {itemIcon}
-          </ListItemIcon> */}
+            <ListItemIcon
+              sx={{
+                //minWidth: '36px',
+                minWidth: '0px !important',
+                // p: '3px 0',
+                color:
+                  level > 1 && isActive ? `${theme.palette.primary.main}!important` : 'inherit',
+              }}
+            >
+              {itemIcon}
+            </ListItemIcon>
             <br />
             <ListItemText sx={{ marginTop: '-4px', fontWeight: 'bold' }}>
               <Typography variant="caption" fontSize="11px" lineHeight="0">

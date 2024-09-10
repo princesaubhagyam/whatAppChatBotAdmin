@@ -30,8 +30,8 @@ const Navigation = () => {
   return (
     <Drawer
       anchor="left"
-      open={customizer.isMobileSidebar}
-      onClose={() => dispatch(toggleMobileSidebar())}
+      // open={customizer.isMobileSidebar}
+      // onClose={() => dispatch(toggleMobileSidebar())}
       variant="temporary"
       PaperProps={{
         sx: {

@@ -75,11 +75,11 @@ const LpHeader = () => {
               <IconMenu2 size="20" />
             </IconButton>
           ) : null}
-          {lgUp ? (
+          {/* {lgUp ? (
             <Stack spacing={1} direction="row" alignItems="center">
               <Navigations />
             </Stack>
-          ) : null}
+          ) : null} */}
         </ToolbarStyled>
       </Container>
       <Drawer
@@ -89,7 +89,7 @@ const LpHeader = () => {
         onClose={toggleDrawer(false)}
         PaperProps={{
           sx: {
-            width: 270,
+            width: 70,
             border: '0 !important',
             boxShadow: (theme) => theme.shadows[8],
           },

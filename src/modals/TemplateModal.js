@@ -138,6 +138,21 @@ const HeaderComponent = ({
   const [isLinkEntered, setIsLinkEntered] = useState(false);
   const [isFileSelected, setIsFileSelected] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const FILE_SIZE_LIMITS = {
+    image: 5 * 1024 * 1024, // 5MB
+    video: 16 * 1024 * 1024, // 16MB
+    document: 16 * 1024 * 1024, // 16MB
+  };
+
+  const getMediaType = (fileType) => {
+    if (fileType.startsWith('image/')) return 'image';
+    if (fileType.startsWith('video/')) return 'video';
+    if (fileType === 'application/pdf' || fileType.startsWith('application/msword'))
+      return 'document';
+    return null;
+  };
 
   const handleLinkChange = (e, format) => {
     const linkValue = e.target.value.trim();
@@ -149,6 +164,7 @@ const HeaderComponent = ({
     if (linkEntered) {
       setIsFileSelected(false);
       setSelectedFileName(''); // Reset file name when link is entered
+      setSelectedFile(null);
     }
   };
 
@@ -157,12 +173,29 @@ const HeaderComponent = ({
 
     const file = e.target.files[0];
     if (file) {
+      const mediaType = getMediaType(file.type);
+
+      if (!mediaType) {
+        toast.error('Invalid file type. Only images, videos, and documents are allowed.');
+        return;
+      }
+
+      if (file.size > FILE_SIZE_LIMITS[mediaType]) {
+        const maxSizeMB = FILE_SIZE_LIMITS[mediaType] / (1024 * 1024); // Convert to MB
+        toast.error(
+          `File size exceeds the limit. Maximum allowed size for ${mediaType}s is ${maxSizeMB} MB.`,
+        );
+        return;
+      }
+
       setSelectedFileName(file.name); // Update file name
+      setSelectedFile(file);
       setIsFileSelected(true);
       setIsLinkEntered(false);
     } else {
       setSelectedFileName('');
       setIsFileSelected(false);
+      setSelectedFile(null);
     }
   };
 
@@ -193,21 +226,27 @@ const HeaderComponent = ({
             component="label"
             htmlFor="image-upload"
             disabled={isLinkEntered}
-            sx={{ backgroundColor: 'white', border: '1px solid #1A4D2E' }}
+            sx={{
+              backgroundColor: 'white',
+              border: '1px solid #1A4D2E',
+              borderStyle: 'dashed',
+              '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+            }}
           >
             <Upload /> Choose a File to Upload
-          </Button>
-          <Button
-            onClick={handleFileUpload}
-            disabled={isLoading || isLinkEntered || !isFileSelected}
-          >
-            {isLoading ? <CircularProgress size={24} /> : 'Upload Image'}
           </Button>
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>
               Selected File: {selectedFileName}
             </Typography>
           )}
+          <Button
+            onClick={() => handleFileUpload(selectedFile)}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {isLoading ? 'Uploading' : 'Upload Image'}
+          </Button>
         </>
       );
     case 'VIDEO':
@@ -229,20 +268,32 @@ const HeaderComponent = ({
             style={{ display: 'none' }} // Hide the file input
             id="video-upload"
           />
-          <Button component="label" htmlFor="video-upload" disabled={isLinkEntered}>
-            Choose File to Upload
-          </Button>
           <Button
-            onClick={handleFileUpload}
-            disabled={isLoading || isLinkEntered || !isFileSelected}
+            component="label"
+            htmlFor="video-upload"
+            disabled={isLinkEntered}
+            sx={{
+              backgroundColor: 'white',
+              border: '1px solid #1A4D2E',
+              borderStyle: 'dashed',
+              '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+            }}
           >
-            {isLoading ? <CircularProgress size={24} /> : 'Upload Video'}
+            <Upload />
+            Choose File to Upload
           </Button>
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>
               Selected File: {selectedFileName}
             </Typography>
           )}
+          <Button
+            onClick={() => handleFileUpload(selectedFile)}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {isLoading ? 'Uploading' : 'Upload Video'}
+          </Button>
         </>
       );
     case 'DOCUMENT':
@@ -264,20 +315,32 @@ const HeaderComponent = ({
             style={{ display: 'none' }} // Hide the file input
             id="document-upload"
           />
-          <Button component="label" htmlFor="document-upload" disabled={isLinkEntered}>
-            Choose File to Upload
-          </Button>
           <Button
-            onClick={handleFileUpload}
-            disabled={isLoading || isLinkEntered || !isFileSelected}
+            component="label"
+            htmlFor="document-upload"
+            disabled={isLinkEntered}
+            sx={{
+              backgroundColor: 'white',
+              border: '1px solid #1A4D2E',
+              borderStyle: 'dashed',
+              '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+            }}
           >
-            {isLoading ? <CircularProgress size={24} /> : 'Upload Document'}
+            <Upload />
+            Choose File to Upload
           </Button>
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>
               Selected File: {selectedFileName}
             </Typography>
           )}
+          <Button
+            onClick={() => handleFileUpload(selectedFile)}
+            disabled={isLoading || isLinkEntered || !isFileSelected}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {isLoading ? 'Uploading' : 'Upload Document'}
+          </Button>
         </>
       );
     default:
@@ -332,16 +395,17 @@ const TemplateModal = ({
   const [templateDetails, setTemplateDetails] = useState();
   //const [previewLink, setPreviewLink] = useState(null);
   const [sendBtn, setSendBtn] = useState(false);
+  const [isUploadSuccessful, setIsUploadSuccessful] = useState(true);
 
   const [file, setFile] = useState(null);
   const [previewLink, setPreviewLink] = useState('');
 
-  const phone_id = localStorage.getItem('phone_id');
   const location = useLocation(); // Get current location
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
   };
 
   const handleClickSamePage = () => {
@@ -349,9 +413,21 @@ const TemplateModal = ({
   };
 
   const handleFileUpload = async (file) => {
+    if (!file) {
+      toast.error('Please Select The Media!');
+      return;
+    }
+    setIsLoading(true);
+    setIsUploadSuccessful(false);
     const formData = new FormData();
     formData.append('file', file);
-
+    const phoneId = localStorage.getItem('phone_id');
+    if (phoneId) {
+      formData.append('phone_id', phoneId);
+    } else {
+      toast.error('Phone ID not found!');
+      return;
+    }
     try {
       const res = await apiClient.post('/api/upload_media/', formData, {
         headers: {
@@ -361,27 +437,38 @@ const TemplateModal = ({
 
       const { id, preview_url } = res.data;
       setPreviewLink(process.env.REACT_APP_API_BASE_URL + preview_url);
-      setMediaLink(process.env.REACT_APP_API_BASE_URL + preview_url);
-      console.log('--preview', preview_url);
+      // setMediaLink(process.env.REACT_APP_API_BASE_URL + preview_url);
+      // console.log('--preview', preview_url);
 
       setMediaId(id);
       toast.success('File Uploaded Successfully');
+      setIsUploadSuccessful(true);
     } catch (error) {
-      console.error('File upload failed:', error);
+      toast.error('File upload failed:', error);
+      setIsUploadSuccessful(false);
     } finally {
-      setIsLoading(false); // End loading state
+      setIsLoading(false);
     }
   };
 
   const fetchTemplates = async () => {
     try {
-      const metaInstance = createMetaAxiosInstance();
-      const res = await metaInstance.get('message_templates?');
+      // const metaInstance = createMetaAxiosInstance();
+      // const res = await metaInstance.get('message_templates?');
+      const waba_id = localStorage.getItem('whatsapp_business_account_id');
+      const rowsPerPage = 1000;
+      const res = await apiClient.get(
+        `/api/get_message_templates/?whatsapp_business_account_id=${waba_id}&rows_per_page=${rowsPerPage}`,
+      );
+      // console.log('respomse', res);
+
       if (res.status === 200) {
-        const approvedTemplates = res.data.data.filter(
+        // console.log('caled------');
+        const approvedTemplates = res.data.data.results.filter(
           (template) => template.status === 'APPROVED',
         );
         setTemplates(approvedTemplates);
+        // console.log(approvedTemplates, '------');
       }
     } catch (err) {
       console.warn(err, '++++++++++++++++++');
@@ -438,10 +525,11 @@ const TemplateModal = ({
       if (broadcastDetails?.template) {
         setLoading(true); // Start loading
         const phoneId = localStorage.getItem('phone_id');
+
         const res = await apiClient.get(
           `/api/get_template_detail/${broadcastDetails.template}/?phone_id=${phoneId}`,
         );
-        console.log('-----', res);
+        // console.log('-----', res);
 
         if (res.status === 200) {
           const updatedData = addBodyVariableEmptyArray(res.data);
@@ -458,9 +546,9 @@ const TemplateModal = ({
           setDefaultHeaderHandles(defaultValues);
 
           setMediaId(res.data.media_id);
-          console.log('Media ID:', mediaId);
+          // console.log('Media ID:', mediaId);
 
-          console.log('called');
+          // console.log('called');
         }
       }
     } catch (err) {
@@ -485,7 +573,7 @@ const TemplateModal = ({
 
   const handleFieldChange = (e) => {
     if (parseInt(walletBalance) >= parseInt(activeBroadcast?.members)) {
-      console.log('I am working');
+      // console.log('I am working');
       setSendBtn(true);
     }
     setBroadcastDetails({
@@ -524,6 +612,11 @@ const TemplateModal = ({
     e.preventDefault();
     setButtonLoading(true);
 
+    if (!isUploadSuccessful) {
+      toast.error('Please upload the file first!');
+      setButtonLoading(false);
+      return;
+    }
     if (!broadcastDetails.template) {
       toast.error('Please select a template!');
       setButtonLoading(false);
@@ -766,7 +859,7 @@ const TemplateModal = ({
                                   //const headerHandle = component.example?.header_handle?.[0] || component.parameters?.[0]?.[component.format.toLowerCase()]?.link;
                                   const headerLink =
                                     component.parameters?.[0]?.[component.format.toLowerCase()]
-                                      ?.link;
+                                      ?.link || previewLink;
                                   const headerHandle =
                                     headerLink || component.example?.header_handle?.[0];
 
@@ -790,13 +883,15 @@ const TemplateModal = ({
                                     } else if (isDocument) {
                                       return (
                                         <Box sx={{ mb: 2, overflow: 'hidden', height: '200px' }}>
-                                          <iframe
+                                          <embed
                                             src={headerHandle}
-                                            width="100%"
-                                            height="400px"
+                                            // width="100%"
+                                            // height="400px"
+                                            width="500"
+                                            height="300"
                                             title="Document Preview"
                                             style={{ border: 'none', overflow: 'hidden' }}
-                                          ></iframe>
+                                          ></embed>
                                         </Box>
                                       );
                                     } else {
@@ -898,7 +993,7 @@ const TemplateModal = ({
                       type="submit"
                       variant="contained"
                       loading={buttonLoading}
-                      disabled={!sendBtn}
+                      disabled={!sendBtn || !isUploadSuccessful}
                     >
                       Send broadcast
                     </LoadingButton>

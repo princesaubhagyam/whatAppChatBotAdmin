@@ -1,6 +1,7 @@
 import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
-
+import { useState, useEffect } from 'react';
+import isMobile from 'src/utils/isMobile';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import AuthWrapper from 'src/utils/AuthWrapper';
 // import { element } from 'prop-types';
@@ -13,6 +14,7 @@ import PaymentErrorPage from 'src/components/PaymentErrorPage';
 import PaymentHistory from 'src/views/PaymentHistory';
 import CreateTemplate from 'src/views/template/CreateTemplate';
 import Templates from 'src/views/template/templates';
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -137,6 +139,8 @@ const Customers = Loadable(lazy(() => import('../views/customers/Customers')));
 const Media = Loadable(lazy(() => import('../views/media/Media')));
 
 const Router = [
+  // const isMobile = useIsMobile();
+
   {
     path: '/',
     element: (
@@ -144,6 +148,7 @@ const Router = [
         <FullLayout />
       </AuthWrapper>
     ),
+
     children: [
       { path: '/', element: <Navigate to="/home" /> },
       { path: '/home', element: <EcommerceDash /> },
@@ -151,8 +156,9 @@ const Router = [
       { path: '/templates', element: <Templates /> },
       { path: '/media', element: <Media /> },
       { path: '/payment-history', element: <PaymentHistory /> },
-      { path: '/privacy-policy', element: <PrivacyPolicy /> },
-      { path: '/terms-conditions', element: <TermsCondition /> },
+      // { path: '/privacy-policy', element: <PrivacyPolicy /> },
+      // { path: '/terms-conditions', element: <TermsCondition /> },
+
       { path: '/templates/createtemplate', element: <CreateTemplate /> },
       { path: '/scheduled-broadcasts', element: <Templates /> },
       { path: '/contacts', element: <Customers /> },
@@ -238,6 +244,15 @@ const Router = [
   },
   {
     path: '/',
+    element: isMobile() ? <BlankLayout /> : <FullLayout />, // Conditional layout for mobile
+    children: [
+      { path: '/privacy-policy', element: <PrivacyPolicy /> },
+      { path: '/terms-conditions', element: <TermsCondition /> },
+      { path: '*', element: <Navigate to="/auth/404" /> },
+    ],
+  },
+  {
+    path: '/',
     element: <BlankLayout />,
     children: [
       { path: '/auth/404', element: <Error /> },
@@ -255,6 +270,7 @@ const Router = [
       { path: '/auth/maintenance', element: <Maintenance /> },
       // { path: '/landingpage', element: <Landingpage /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
+      // { path: '/privacy-policy', element: <PrivacyPolicy /> },
     ],
   },
 ];

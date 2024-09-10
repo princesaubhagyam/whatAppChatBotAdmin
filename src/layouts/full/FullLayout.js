@@ -64,7 +64,7 @@ const FullLayout = () => {
         )} */}
         {customizer.isHorizontal ? <HorizontalHeader /> : <Header />}
         {/* PageContent */}
-        {customizer.isHorizontal ? <Navigation /> : ''}
+        {/* {customizer.isHorizontal ? <Navigation /> : ''} */}
         <Container
           style={{ padding: 12, paddingTop: 3 }}
           sx={{
