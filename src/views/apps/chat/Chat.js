@@ -32,6 +32,7 @@ const Chats = ({ checkBroadcastHistory }) => {
   const [isAnalytics, setIsAnalytics] = useState(false);
   const [broadcastPayHistroy, setBroadcastPayHistroy] = useState(false);
   const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
+  console.log(broadcasts,"broadcasts")
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);

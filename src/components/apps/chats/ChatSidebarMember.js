@@ -11,6 +11,7 @@ const ChatSidebarMember = ({
   contacts,
   getBroadcastList,
   isHistory,
+  setCallFunctionWhileDeleting
 }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 

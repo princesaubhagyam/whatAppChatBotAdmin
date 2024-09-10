@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import {
   Avatar,
   List,
   ListItemText,
   ListItemAvatar,
   Box,
-  Alert,
   Badge,
   ListItemButton,
   Typography,
@@ -26,11 +25,10 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 
-import { selectBroadcast, fetchIsHistoryStatus } from '../../../store/apps/chat/ChatSlice';
+import { selectBroadcast} from '../../../store/apps/chat/ChatSlice';
 import { IconEdit, IconPlus, IconUsers } from '@tabler/icons';
 import ImportBroadcastModal from 'src/modals/ImportBroadcastModal';
 import { DeleteOutline } from '@mui/icons-material';
-import EventContext from 'src/BroadcastContext';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
@@ -52,7 +50,7 @@ const ChatListing = ({
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-
+  console.log(activeBroadcast,"activeBroadcast")
   // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
   const [selectedBroadcastId, setSelectedBroadcastId] = useState(isBroadcastDeleted ? null : activeBroadcast?.id);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
@@ -99,7 +97,7 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-    console.log('Broadcast data updated:', broadcasts);
+    console.log('Broadcast data updated:');
   }, [broadcasts]);
 
   const getBroadcastsDataApi = async () => {
@@ -108,6 +106,7 @@ const ChatListing = ({
         const response = await apiClient.get(nextUrl);
         const next = response.data.data.next;
         const results = response.data.data.results;
+        console.log(results,"result")
         setBroadcastData((prevData) => [...prevData, ...results]);
         setNextUrl(next);
         setHasMore(!!next);
@@ -118,8 +117,9 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-    getBroadcastsDataApi();
+      getBroadcastsDataApi();
   }, [nextUrl]);
+
   const handleDeleteBroadcast = () => {
     if (selectedBroadcastId) {
       setLoading(true);

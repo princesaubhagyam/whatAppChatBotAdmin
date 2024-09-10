@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   List,
@@ -13,16 +13,25 @@ import {
   InputAdornment,
   TextField,
   Tooltip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  CircularProgress
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
+import { DeleteOutline } from '@mui/icons-material';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 import { IconEdit, IconFileImport, IconSearch } from '@tabler/icons';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import ImportBroadcastMember from 'src/modals/ImportBroadcastMember';
-import {  fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
+import { fetchSelectedBroadcasts } from 'src/store/apps/chat/ChatSlice';
 import { updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 import { FirstLetterCapitalOfString } from 'src/utils/FirstLetterCapitalOfString';
+import apiClient from 'src/api/axiosClient';
 
 const getInitials = (name) => {
   if (!name) return '';
@@ -35,6 +44,7 @@ const ChatListingMember = ({
   getBroadcastList,
   // refresh,
   // handleRefreshChatListingMember,
+  setCallFunctionWhileDeleting,
   isHistory,
 }) => {
   const dispatch = useDispatch();
@@ -43,6 +53,9 @@ const ChatListingMember = ({
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [groupMembers, setGroupMembers] = useState(activeBroadcast.contacts)
+  const [currentIdOfMembers, setCurrentIdOfMembers] = useState(null)
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   // const [members, setMembers] = useState(activeBroadcast?.contacts || []);
   // const [memberCount, setMemberCount] = useState(activeBroadcast?.members || 0);
   // const isHistory = useSelector((state) => state.chatReducer.isHistory);
@@ -55,9 +68,10 @@ const ChatListingMember = ({
   // }, [activeBroadcast, isOn]);
 
   useEffect(() => {
-    console.log('Active broadcast updated:', activeBroadcast);
+    console.log('Active broadcast updated:');
+    setGroupMembers(activeBroadcast?.contacts)
   }, [activeBroadcast]);
-  console.log(activeBroadcast,"activeBroadcast+++++++++++++")
+
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -88,26 +102,46 @@ const ChatListingMember = ({
     dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
   };
 
-function deleteMethod(e){
-  console.log(e)
-}
+  async function deleteMember() {
+    setLoading(true);
+    try {
+      const resp = await apiClient.delete(`api/remove_contact_broadcast/?contact_id=${currentIdOfMembers}&broadcast_id=${activeBroadcast.id}`)
+      if (resp.data.status) {
+        dispatch(fetchSelectedBroadcasts(activeBroadcast.id))
+        setOpenDeleteDialog(false)  
+        setLoading(false);  
+      }
+    } catch (error) {
+      console.error(error)
+      setOpenDeleteDialog(false) 
+      setLoading(false);
+    }
+  }
 
+ function getCurentID(member){
+  setCurrentIdOfMembers(member.id)
+  setOpenDeleteDialog(true)
+ }
+ const handleCloseDeleteDialog = () => {
+  setOpenDeleteDialog(false);
+};
+ 
   // const filteredMembers = activeBroadcast?.contacts?.filter(
   //   (member) =>
   //     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
   //     member.full_mobile.includes(searchQuery),
   // );
-   function filterChanged(){
-    if(!searchQuery){ 
-      setGroupMembers( activeBroadcast?.contacts)
-   }
-else{
-  setGroupMembers( activeBroadcast?.contacts?.filter(
-    (member) =>
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.full_mobile.includes(searchQuery),))
-}
-   }
+  function filterChanged() {
+    if (!searchQuery) {
+      setGroupMembers(activeBroadcast?.contacts)
+    }
+    else {
+      setGroupMembers(activeBroadcast?.contacts?.filter(
+        (member) =>
+          member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          member.full_mobile.includes(searchQuery),))
+    }
+  }
 
   return (
     <>
@@ -196,10 +230,10 @@ else{
                             member.status === 'online'
                               ? 'success'
                               : member.status === 'busy'
-                              ? 'error'
-                              : member.status === 'away'
-                              ? 'warning'
-                              : 'secondary'
+                                ? 'error'
+                                : member.status === 'away'
+                                  ? 'warning'
+                                  : 'secondary'
                           }
                           anchorOrigin={{
                             vertical: 'bottom',
@@ -217,9 +251,22 @@ else{
                             fontWeight={600}
                             fontSize={14}
                             lineHeight={1.3}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between"
+                            }}
                           >
                             {FirstLetterCapitalOfString(member.name)}
-                            <button onClick={()=>(deleteMethod(member))}>delete</button>
+                            {/* {!isHistory && <Tooltip title="Delete Member">
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() => (getCurentID(member))}
+                              >
+                                <DeleteOutline />
+                              </IconButton>
+                            </Tooltip>} */}
+
                           </Typography>
                         }
                         secondary={
@@ -245,6 +292,35 @@ else{
           </List>
         </div>
       )}
+
+<Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="confirm-delete-dialog"
+        sx={{ height: '40%' }}
+      >
+        <DialogTitle id="alert-dialog-title">{'Delete Member'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this Member?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={deleteMember}
+            autoFocus
+            color="error"
+            variant="contained"
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {loading ? 'Deleting...' : 'Delete'}
+          </Button>
+          <Button onClick={handleCloseDeleteDialog} color="primary" variant="contained">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       <BroadcastMemberModal
         open={isMemberModalOpen}
         handleClose={() => setIsMemberModalOpen(false)}

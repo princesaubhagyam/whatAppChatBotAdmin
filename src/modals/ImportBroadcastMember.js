@@ -39,7 +39,7 @@ const ImportBroadcastMember = ({
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  console.log(activeBroadcastId,"activeBroadcastId===")
+  // console.log(activeBroadcastId,"activeBroadcastId===")
 
   // const getBroadcastList = async () => {
   //   const broadcastsRes = await getBroadcastsData();
@@ -82,7 +82,7 @@ const ImportBroadcastMember = ({
             'Content-Type': 'multipart/form-data',
           },
         });
-        console.log(response);
+        // console.log(response);
         if (response.status === 200 || response.status === 201) {
           toast.success('File uploaded successfully');
           handleClose();
@@ -92,7 +92,7 @@ const ImportBroadcastMember = ({
           dispatch(fetchSelectedBroadcasts(activeBroadcastId))
         }
       } catch (error) {
-        console.log(error, '----');
+        console.log(error);
         toast.error(error?.response?.data?.message ?? 'There was an error!');
       } finally {
         setLoading(false);

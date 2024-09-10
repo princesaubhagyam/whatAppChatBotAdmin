@@ -359,7 +359,7 @@ const TemplateModal = ({
       const { id, preview_url } = response.data;
       setPreviewLink(process.env.REACT_APP_API_BASE_URL + preview_url);
       setMediaLink(process.env.REACT_APP_API_BASE_URL + preview_url);
-      console.log('--preview', preview_url);
+      // console.log('--preview', preview_url);
 
       setMediaId(id);
       toast.success('File Uploaded Successfully');
@@ -381,7 +381,7 @@ const TemplateModal = ({
         setTemplates(approvedTemplates);
       }
     } catch (err) {
-      console.warn(err, '++++++++++++++++++');
+      console.error(err,);
     }
   };
 
@@ -438,7 +438,7 @@ const TemplateModal = ({
         const res = await apiClient.get(
           `/api/get_template_detail/${broadcastDetails.template}/?phone_id=${phoneId}`,
         );
-        console.log('-----', res);
+        // console.log('-----', res);
 
         if (res.status === 200) {
           const updatedData = addBodyVariableEmptyArray(res.data);
@@ -455,7 +455,7 @@ const TemplateModal = ({
           setDefaultHeaderHandles(defaultValues);
 
           setMediaId(res.data.media_id);
-          console.log('Media ID:', mediaId);
+          // console.log('Media ID:', mediaId);
         }
       }
     } catch (err) {
@@ -480,7 +480,7 @@ const TemplateModal = ({
 
   const handleFieldChange = (e) => {
     if (parseInt(walletBalance) >= parseInt(activeBroadcast?.members)) {
-      console.log('I am working');
+      // console.log('I am working');
       setSendBtn(true);
     }
     setBroadcastDetails({
@@ -566,7 +566,7 @@ const TemplateModal = ({
         handleClickSamePage();
       }
     } catch (err) {
-      console.warn(err);
+      console.error(err);
       toast.error(err?.response?.data?.message ?? 'There was an error! Please try again!');
     } finally {
       setButtonLoading(false);
@@ -751,7 +751,7 @@ const TemplateModal = ({
                                   const headerLink =
                                     component.parameters?.[0]?.[component.format.toLowerCase()]
                                       ?.link || previewLink;
-                                  console.log('preview____', previewLink);
+                                  // console.log('preview____', previewLink);
 
                                   const headerHandle =
                                     headerLink || component.example?.header_handle?.[0];
