@@ -182,7 +182,7 @@ export default function CreateTemplate() {
   }, [showEmojiPicker]);
 
   const handleEmojiClick = (event, emojiObject) => {
-    console.log('Emoji Object:', emojiObject);
+    // console.log('Emoji Object:', emojiObject);
     const newValue = formikTemplate.values.body + emojiObject.emoji;
     formikTemplate.setFieldValue('body', newValue);
     setInputLength(newValue.length);
@@ -592,7 +592,7 @@ export default function CreateTemplate() {
       const response = await apiClient.post(
         `/api/create_session_facebook/?file_length=${file.size}&file_type=${file.type}`,
       );
-      console.log('upload api response', response.data.id);
+      // console.log('upload api response', response.data.id);
       setSession(response.data.id);
       if (response && response.data.id) {
         let mediaFile = new FormData();
@@ -610,10 +610,10 @@ export default function CreateTemplate() {
             headers: { 'Content-Type': 'multipart/form-data' },
           },
         );
-        console.log('Upload file response:', finalResponse);
+        // console.log('Upload file response:', finalResponse);
 
         setMediaRes(finalResponse.data.res.h); // Save the session_id
-        console.log('abc image', finalResponse.data.res.h);
+        // console.log('abc image', finalResponse.data.res.h);
       } else {
         console.error('Failed to create session.');
       }
@@ -627,7 +627,7 @@ export default function CreateTemplate() {
 
   const handleButtonSelectChange = (event) => {
     const value = event.target.value;
-    console.log('Selected Value:', value);
+    // console.log('Selected Value:', value);
     setButtonSelect(value);
     formikTemplate.setFieldValue('buttonText', '');
     switch (value) {

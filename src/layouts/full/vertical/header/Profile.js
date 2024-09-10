@@ -166,7 +166,7 @@ const Profile = () => {
         )}
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <IconButton
+        <IconButton
           size="large"
           aria-label="show user profile"
           color="inherit"
@@ -188,8 +188,8 @@ const Profile = () => {
           >
             {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''}
           </Avatar>
-        </IconButton> */}
-        <IconButton
+        </IconButton>
+        {/* <IconButton
           size="large"
           aria-label="show user profile"
           color="inherit"
@@ -212,7 +212,7 @@ const Profile = () => {
           >
             {!user?.profile_pic && (user?.full_name ? user.full_name.charAt(0).toUpperCase() : '')}
           </Avatar>
-        </IconButton>
+        </IconButton> */}
 
         <Menu
           id="profile-menu"

@@ -2,11 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Button,
-  Modal,
   Fade,
   Select,
   MenuItem,
-  FormLabel,
   Typography,
   Stack,
   Input,
@@ -14,15 +12,13 @@ import {
   Dialog,
   Grid,
   InputLabel,
-  OutlinedInput,
   FormControl,
-  IconButton,
   CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconMessage2Share, IconUpload } from '@tabler/icons';
-import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+
 import { useSelector } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
@@ -31,7 +27,7 @@ import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import EventContext from 'src/BroadcastContext';
 import EstimatedCost from 'src/components/analytics/EstimatedCost';
 import Spinner from 'src/views/spinner/Spinner';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+
 import { Upload } from '@mui/icons-material';
 
 const VisuallyHiddenInput = styled('input')({
@@ -231,10 +227,22 @@ const HeaderComponent = ({
               border: '1px solid #1A4D2E',
               borderStyle: 'dashed',
               '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: 1,
             }}
           >
-            <Upload /> Choose a File to Upload
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Upload style={{ marginRight: '8px' }} />
+              <span>Choose a File to Upload</span>
+            </div>
+            <span style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
+              Maximum file size allowed: 5MB
+            </span>
           </Button>
+
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>
               Selected File: {selectedFileName}
@@ -268,7 +276,7 @@ const HeaderComponent = ({
             style={{ display: 'none' }} // Hide the file input
             id="video-upload"
           />
-          <Button
+          {/* <Button
             component="label"
             htmlFor="video-upload"
             disabled={isLinkEntered}
@@ -281,6 +289,30 @@ const HeaderComponent = ({
           >
             <Upload />
             Choose File to Upload
+          </Button> */}
+          <Button
+            component="label"
+            htmlFor="image-upload"
+            disabled={isLinkEntered}
+            sx={{
+              backgroundColor: 'white',
+              border: '1px solid #1A4D2E',
+              borderStyle: 'dashed',
+              '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: 1,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Upload style={{ marginRight: '8px' }} />
+              <span>Choose a File to Upload</span>
+            </div>
+            <span style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
+              Maximum file size allowed: 16MB
+            </span>
           </Button>
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>
@@ -317,17 +349,27 @@ const HeaderComponent = ({
           />
           <Button
             component="label"
-            htmlFor="document-upload"
+            htmlFor="image-upload"
             disabled={isLinkEntered}
             sx={{
               backgroundColor: 'white',
               border: '1px solid #1A4D2E',
               borderStyle: 'dashed',
               '&:hover': { backgroundColor: 'white', color: '#1A4D2E' },
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: 1,
             }}
           >
-            <Upload />
-            Choose File to Upload
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Upload style={{ marginRight: '8px' }} />
+              <span>Choose a File to Upload</span>
+            </div>
+            <span style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
+              Maximum file size allowed: 16MB
+            </span>
           </Button>
           {selectedFileName && (
             <Typography variant="body2" textAlign={'center'}>

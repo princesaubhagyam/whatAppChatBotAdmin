@@ -29,7 +29,7 @@ const MobileRightSidebar = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   const handleListItemClick = (index) => {
-    console.log('Item clicked:', index);
+    // console.log('Item clicked:', index);
     setSelectedIndex(index);
     setShowDrawer(false);
   };
