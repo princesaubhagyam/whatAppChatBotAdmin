@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
-  console.log(item, 'item');
+  // console.log(item, 'item');
   const customizer = useSelector((state) => state.customizer);
   const Icon = item.icon;
   const theme = useTheme();

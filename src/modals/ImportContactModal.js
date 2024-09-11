@@ -3,7 +3,7 @@ import { Box, Button, Modal, Fade, Typography, CircularProgress } from '@mui/mat
 import { styled } from '@mui/material/styles';
 import { IconFileImport, IconDownload } from '@tabler/icons';
 import apiClient from 'src/api/axiosClient';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

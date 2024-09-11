@@ -25,6 +25,7 @@ const Profile = () => {
   const [openAddWalletModal, setOpenAddWalletModal] = useState(false);
   const location = useLocation();
   const { user } = useUser();
+  console.log('user', user);
 
   function openAddMoneyInWalletModal() {
     setOpenAddWalletModal(() => true);
@@ -166,7 +167,7 @@ const Profile = () => {
         )}
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton
+        {/* <IconButton
           size="large"
           aria-label="show user profile"
           color="inherit"
@@ -188,8 +189,8 @@ const Profile = () => {
           >
             {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''}
           </Avatar>
-        </IconButton>
-        {/* <IconButton
+        </IconButton> */}
+        <IconButton
           size="large"
           aria-label="show user profile"
           color="inherit"
@@ -203,16 +204,16 @@ const Profile = () => {
           onClick={handleClick2}
         >
           <Avatar
-            src={user?.profile_pic || defaultProfilePic} // Check if the user has a profile picture
+            src={user?.profile_pic} // Check if the user has a profile picture
             sx={{
               width: 35,
               height: 35,
               backgroundColor: 'primary.main',
             }}
           >
-            {!user?.profile_pic && (user?.full_name ? user.full_name.charAt(0).toUpperCase() : '')}
+            {/* {!user?.profile_pic && (user?.full_name ? user.full_name.charAt(0).toUpperCase() : '')} */}
           </Avatar>
-        </IconButton> */}
+        </IconButton>
 
         <Menu
           id="profile-menu"

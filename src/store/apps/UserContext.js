@@ -21,13 +21,28 @@ export const UserProvider = ({ children }) => {
   //   }
   // }, []);
 
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem('user');
+  //   if (storedUser) {
+  //     try {
+  //       const parsedUser = JSON.parse(storedUser);
+  //       if (parsedUser.profile_pic) {
+  //         localStorage.setItem('profile_pic', parsedUser.profile_pic);
+  //       }
+  //       setUser(parsedUser);
+  //     } catch (error) {
+  //       console.error('Failed to parse user data:', error);
+  //       localStorage.removeItem('user');
+  //     }
+  //   }
+  // }, []);
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
         if (parsedUser.profile_pic) {
-          localStorage.setItem('profile_pic', parsedUser.profile_pic); // Save profile pic separately
+          localStorage.setItem('profile_pic', parsedUser.profile_pic);
         }
         setUser(parsedUser);
       } catch (error) {

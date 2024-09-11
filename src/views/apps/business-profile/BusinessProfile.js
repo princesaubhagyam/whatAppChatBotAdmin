@@ -10,6 +10,7 @@ import {
   Input,
   CircularProgress,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import { IconEdit } from '@tabler/icons';
 import { Cancel, CameraAlt } from '@mui/icons-material';
@@ -24,16 +25,16 @@ function BusinessProfile() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [profileDetails, setProfileDetails] = useState({});
   const [editableProfile, setEditableProfile] = useState({});
-  console.log('editableProfile', editableProfile);
+  // console.log('editableProfile', editableProfile);
   const [newProfilePicture, setNewProfilePicture] = useState(null);
-  console.log('newProfilePicture', newProfilePicture);
+  // console.log('newProfilePicture', newProfilePicture);
   const [newProfilePictureURL, setNewProfilePictureURL] = useState(null);
-  console.log('newProfilePictureURL', newProfilePictureURL);
+  // console.log('newProfilePictureURL', newProfilePictureURL);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  console.log('isEditing', isEditing);
+  // console.log('isEditing', isEditing);
   const [uploadingImage, setUploadingImage] = useState(false);
-  console.log('uploadingImage', uploadingImage);
+  // console.log('uploadingImage', uploadingImage);
 
   const fetchData = async () => {
     try {
@@ -534,9 +535,22 @@ function BusinessProfile() {
                 )}
               </Grid>
               <Grid item xs={12} sm={1}>
-                <IconButton onClick={handleEditToggle}>
-                  {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
-                </IconButton>
+                {/* <IconButton onClick={handleEditToggle}>
+                    {isEditing ? (
+                      <Tooltip title="Cancel">
+                        <Cancel color="error" />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Edit">
+                        <IconEdit style={{ color: 'green' }} />
+                      </Tooltip>
+                    )}
+                  </IconButton> */}
+                <Tooltip title={isEditing ? 'Cancel' : 'Edit'}>
+                  <IconButton onClick={handleEditToggle}>
+                    {isEditing ? <Cancel color="error" /> : <IconEdit style={{ color: 'green' }} />}
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
           </Card>

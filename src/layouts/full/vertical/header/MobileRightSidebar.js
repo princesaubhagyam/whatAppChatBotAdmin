@@ -9,7 +9,7 @@ import {
   IconUser,
 } from '@tabler/icons';
 import LogoImg from 'src/assets/images/logos/home_logo.png';
-
+import PrivacyTipIcon from '@mui/icons-material/PrivacyTip';
 import {
   Box,
   Typography,
@@ -21,6 +21,7 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material';
+import { IconFileAlert } from '@tabler/icons';
 
 import { Link } from 'react-router-dom';
 
@@ -149,7 +150,7 @@ const MobileRightSidebar = () => {
           sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
         >
           <ListItemIcon sx={{ minWidth: 35 }}>
-            <IconCreditCard size="23" stroke="1.5" />
+            <PrivacyTipIcon size="23" stroke="1.5" />
           </ListItemIcon>
           <ListItemText>
             <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">
@@ -163,7 +164,7 @@ const MobileRightSidebar = () => {
           sx={{ '&:hover': { backgroundColor: '#BFDCC2', color: '#2A5A3C' } }}
         >
           <ListItemIcon sx={{ minWidth: 35 }}>
-            <IconCreditCard size="23" stroke="1.5" />
+            <IconFileAlert size="23" stroke="1.5" />
           </ListItemIcon>
           <ListItemText>
             <Typography variant="subtitle2" fontWeight={600} fontSize="1rem">

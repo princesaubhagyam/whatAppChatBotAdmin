@@ -23,7 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../../../components/container/PageContainer';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
-import { IconEdit } from '@tabler/icons';
+
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/store/apps/UserContext';
@@ -93,7 +93,7 @@ const UserProfile = () => {
     setLoading(true);
     try {
       const response = await apiClient.get('/auth/user_profile/');
-      console.log('API Response:', response);
+      // console.log('API Response:', response);
       if (response.status === 200) {
         const userProfileData = response.data.data;
         const profilePic = userProfileData.profile_pic || defaultProfilePic;
@@ -164,10 +164,10 @@ const UserProfile = () => {
         // }));
         const updatedUserData = {
           ...userData,
-          profile_pic: URL.createObjectURL(file), // Use the new profile picture
+          profile_pic: URL.createObjectURL(file), 
         };
-        setUserDetails(updatedUserData); // Update user context
-        setUserData(updatedUserData); // Optionally update local state for immediate UI update
+        setUserDetails(updatedUserData); 
+        setUserData(updatedUserData); 
 
         setEditPicMode(false);
         toast.success('Profile picture updated successfully');
@@ -237,7 +237,7 @@ const UserProfile = () => {
           profile_pic: defaultProfilePic,
         }));
         toast.success('Profile picture removed');
-        fetchUserProfile(); // Optionally refetch user profile
+        fetchUserProfile(); 
       }
     } catch (error) {
       console.error('Failed to remove profile picture', error);
@@ -257,12 +257,21 @@ const UserProfile = () => {
       <div style={{ justifyContent: 'center', display: 'flex' }}>
         <Card
           sx={{
+            // maxWidth: 650,
+            // margin: 'auto',
+            // mt: 1,
+            // paddingBottom: '6px !important',
+            // padding: 4,
+            // boxShadow: 3,
+            // paddingTop: '6px',
             maxWidth: 650,
             margin: 'auto',
             mt: 1,
             paddingBottom: '6px !important',
             padding: 4,
-            boxShadow: 3,
+            boxShadow: 6,
+            borderRadius: 3,
+            backgroundColor: 'white',
             paddingTop: '6px',
           }}
         >
