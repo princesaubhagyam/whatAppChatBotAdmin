@@ -23,7 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../../../components/container/PageContainer';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
-import { IconEdit } from '@tabler/icons';
+
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/store/apps/UserContext';

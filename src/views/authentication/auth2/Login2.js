@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Box, Card, Stack, Typography, Divider } from '@mui/material';
+import { Grid, Box, Card, Stack, Typography } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
 
 import AuthLogin from '../authForms/AuthLogin';

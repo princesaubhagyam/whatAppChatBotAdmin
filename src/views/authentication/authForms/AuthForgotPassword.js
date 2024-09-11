@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { Button, Stack, OutlinedInput, InputAdornment, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { IconMail } from '@tabler/icons';
-import axios from 'axios';
+
 import CustomFormLabel from '../../../components/forms/theme-elements/CustomFormLabel';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+
 import { LoadingButton } from '@mui/lab';
 const AuthForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +62,7 @@ const AuthForgotPassword = () => {
         fullWidth
         onClick={handleSubmit}
         loading={loading}
-        loadingPosition='start'
+        loadingPosition="start"
       >
         {loading ? 'Sending...' : 'Send Reset Link'}
       </LoadingButton>

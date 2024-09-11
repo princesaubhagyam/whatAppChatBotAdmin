@@ -129,7 +129,7 @@ export default function CreateTemplate() {
   const [buttonIcon, setButtonIcon] = useState(<Reply />);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [showSpinner, setShowSpinner] = useState(false);
+
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
@@ -377,7 +377,7 @@ export default function CreateTemplate() {
       setButtonLoading(true);
       try {
         const bodyValues = variables.map((v) => v.value);
-        const titleValues = variables.map((v) => v.value);
+        // const titleValues = variables.map((v) => v.value);
         const validButton = values.buttonText && values.buttonText.trim().length > 0;
 
         let reqBody = {

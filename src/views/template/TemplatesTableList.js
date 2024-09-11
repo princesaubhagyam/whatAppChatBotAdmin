@@ -35,11 +35,11 @@ import { useState, useEffect } from 'react';
 import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import createMetaAxiosClient from 'src/api/axiosClientMeta';
-import { LoadingButton } from '@mui/lab';
+
 import CachedIcon from '@mui/icons-material/Cached';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
-import TemplateInsights from './TemplateInsights';
+
 import apiClient from 'src/api/axiosClient';
 import Spinner from '../spinner/Spinner';
 import Nodatainsearch from 'src/components/noData/Nodatainsearch';
@@ -117,7 +117,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -262,10 +262,10 @@ const TemplatesTableList = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tableLoading, setTableLoading] = useState(false);
+
   const [totalCount, setTotalCount] = useState(0);
   const [totalPage, setTotalPages] = useState(0);
-  const [allRows, setAllRows] = useState([]);
+
   const navigate = useNavigate();
   const handleClickOpen = (row, index) => {
     // console.log('Row clicked:', row);
@@ -369,9 +369,9 @@ const TemplatesTableList = () => {
     }
   };
 
-  const handleDeleteClose = () => {
-    setDeleteOpen(false);
-  };
+  // const handleDeleteClose = () => {
+  //   setDeleteOpen(false);
+  // };
 
   const handleDeleteApi = async (id, templateName) => {
     try {
@@ -483,9 +483,9 @@ const TemplatesTableList = () => {
   //   }
   // };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  // const isSelected = (name) => selected.indexOf(name) !== -1;
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   return (
     <Box>

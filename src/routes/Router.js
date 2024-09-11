@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+
 import isMobile from 'src/utils/isMobile';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import AuthWrapper from 'src/utils/AuthWrapper';
