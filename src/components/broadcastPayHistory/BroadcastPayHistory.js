@@ -275,38 +275,38 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.delivered ? broadcastPayHistoryData.delivered : 0 }</Typography>
+                            >{broadcastPayHistoryData.delivered ? (broadcastPayHistoryData.delivered) : 0 }</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.failed ? broadcastPayHistoryData.failed : 0}</Typography>
+                            >{broadcastPayHistoryData.failed ? (broadcastPayHistoryData.failed) : 0}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.initial_holdamount ?broadcastPayHistoryData.initial_holdamount : 0}</Typography>
+                            >{broadcastPayHistoryData.initial_holdamount ? <>₹{broadcastPayHistoryData.initial_holdamount}</> : <>₹0</>}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.current_holdamount > 0 ? broadcastPayHistoryData.current_holdamount : 0}</Typography>
+                            >{broadcastPayHistoryData.current_holdamount > 0 ? <>₹{broadcastPayHistoryData.current_holdamount} </>:<> ₹0</>}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{broadcastPayHistoryData.released_amount}
+                            >₹{broadcastPayHistoryData.released_amount}
                             </Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px"
                                 }}
-                            >{ (broadcastPayHistoryData.delivered) === 0 ? (broadcastPayHistoryData.pay_amount) / 1 : (broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered)}</Typography>
+                            >{ (broadcastPayHistoryData.delivered) === 0 ? <>₹{broadcastPayHistoryData.pay_amount / 1} </>: <>₹{(broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered)}</>}</Typography>
                             <Typography variant="subtitle1" color="textSecondary"
                                 sx={{
                                     padding: "12px 0px" 
                                 }}
-                            >{broadcastPayHistoryData.pay_amount > 0 ? broadcastPayHistoryData.pay_amount : 0}</Typography>
+                            >{broadcastPayHistoryData.pay_amount > 0 ? <>₹{broadcastPayHistoryData.pay_amount}</>: <>₹0</>}</Typography>
                         </Box>
                     </Box>
 
