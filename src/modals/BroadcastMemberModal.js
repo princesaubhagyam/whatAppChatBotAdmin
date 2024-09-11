@@ -70,21 +70,33 @@ const headCells = [
 ];
 
 const EnhancedTableHead = (props) => {
-  const { order, orderBy, onRequestSort, numSelected, onSelectAllClick, rowCount } =
-    props;
+  const {
+    order,
+    orderBy,
+    onRequestSort,
+
+    onSelectAllClick,
+
+    selected,
+    broadcastContacts,
+  } = props;
   // const isAllSelected = rowCount === numSelected && selected.length === rowCount;
   // const isSomeSelected = numSelected > 0 && numSelected < rowCount;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+  // console.log('rowCount:', rowCount);
+  // console.log('numSelected:', numSelected);
+  // console.log('Selected IDs:', selected);
+  // console.log(rowCount > 0 && numSelected === rowCount, '---------');
 
   return (
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
+            indeterminate={selected.length > 0 && selected.length < broadcastContacts.length} // Partially selected
+            checked={broadcastContacts.length > 0 && selected.length === broadcastContacts.length} // All selected
             onChange={onSelectAllClick}
             color="primary"
             inputProps={{
@@ -256,20 +268,14 @@ const BroadcastMemberModal = ({
   };
 
   const handleClick = (event, id) => {
+    event.stopPropagation(); // Prevent row click from firing
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
+      newSelected = newSelected.concat(selected, id); // Add new ID if not selected
+    } else {
+      newSelected = newSelected.filter((selectedId) => selectedId !== id); // Remove if already selected
     }
 
     setSelected(newSelected);
@@ -277,11 +283,11 @@ const BroadcastMemberModal = ({
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = broadcastContacts.map((n) => n.id);
+      const newSelected = broadcastContacts.map((n) => n.id); // Select all IDs
       setSelected(newSelected);
-      return;
+    } else {
+      setSelected([]); // Clear selection if unchecked
     }
-    setSelected([]);
   };
 
   const handlePageChange = (event, newPage) => {
@@ -422,7 +428,7 @@ const BroadcastMemberModal = ({
                     disabled={buttonLoading}
                     startIcon={
                       buttonLoading ? <CircularProgress size={20} color="inherit" /> : null
-                    } 
+                    }
                   >
                     {buttonLoading ? 'Updating...' : 'Update'}
                   </Button>
@@ -443,6 +449,8 @@ const BroadcastMemberModal = ({
                       numSelected={selected.length}
                       onSelectAllClick={handleSelectAllClick}
                       rowCount={paginatedContacts.length}
+                      broadcastContacts={broadcastContacts}
+                      selected={selected}
                     />
                     <TableBody>
                       {paginatedContacts.map((row, idx) => {
@@ -456,10 +464,12 @@ const BroadcastMemberModal = ({
                             key={row.id}
                             onClick={(event) => handleClick(event, row.id)}
                             selected={isItemSelected}
+                            sx={{ cursor: 'pointer' }}
                           >
                             <TableCell padding="checkbox">
                               <Checkbox
-                                checked={isItemSelected}
+                                // checked={isItemSelected}
+                                checked={selected.indexOf(row.id) !== -1}
                                 onChange={(event) => handleClick(event, row.id)}
                                 inputProps={{
                                   'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
@@ -514,7 +524,7 @@ const BroadcastMemberModal = ({
                   </Table>
                 </TableContainer>
                 <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
+                  rowsPerPageOptions={[5, 10, 25, 50, 100]}
                   component="div"
                   count={sortedContacts.length}
                   rowsPerPage={rowsPerPage}

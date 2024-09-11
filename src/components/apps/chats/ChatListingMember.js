@@ -19,7 +19,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { DeleteOutline } from '@mui/icons-material';
@@ -52,8 +52,8 @@ const ChatListingMember = ({
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [groupMembers, setGroupMembers] = useState(activeBroadcast.contacts)
-  const [currentIdOfMembers, setCurrentIdOfMembers] = useState(null)
+  const [groupMembers, setGroupMembers] = useState(activeBroadcast.contacts);
+  const [currentIdOfMembers, setCurrentIdOfMembers] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   // const [members, setMembers] = useState(activeBroadcast?.contacts || []);
@@ -68,14 +68,13 @@ const ChatListingMember = ({
   // }, [activeBroadcast, isOn]);
 
   useEffect(() => {
-    console.log('Active broadcast updated:');
-    setGroupMembers(activeBroadcast?.contacts)
+    // console.log('Active broadcast updated:');
+    setGroupMembers(activeBroadcast?.contacts);
   }, [activeBroadcast]);
-
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    filterChanged()
+    filterChanged();
   };
 
   // const handleUpdateMembers = (updatedMembers) => {
@@ -105,27 +104,29 @@ const ChatListingMember = ({
   async function deleteMember() {
     setLoading(true);
     try {
-      const resp = await apiClient.delete(`api/remove_contact_broadcast/?contact_id=${currentIdOfMembers}&broadcast_id=${activeBroadcast.id}`)
+      const resp = await apiClient.delete(
+        `api/remove_contact_broadcast/?contact_id=${currentIdOfMembers}&broadcast_id=${activeBroadcast.id}`,
+      );
       if (resp.data.status) {
-        dispatch(fetchSelectedBroadcasts(activeBroadcast.id))
-        setOpenDeleteDialog(false)  
-        setLoading(false);  
+        dispatch(fetchSelectedBroadcasts(activeBroadcast.id));
+        setOpenDeleteDialog(false);
+        setLoading(false);
       }
     } catch (error) {
-      console.error(error)
-      setOpenDeleteDialog(false) 
+      console.error(error);
+      setOpenDeleteDialog(false);
       setLoading(false);
     }
   }
 
- function getCurentID(member){
-  setCurrentIdOfMembers(member.id)
-  setOpenDeleteDialog(true)
- }
- const handleCloseDeleteDialog = () => {
-  setOpenDeleteDialog(false);
-};
- 
+  function getCurentID(member) {
+    setCurrentIdOfMembers(member.id);
+    setOpenDeleteDialog(true);
+  }
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
   // const filteredMembers = activeBroadcast?.contacts?.filter(
   //   (member) =>
   //     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -133,13 +134,15 @@ const ChatListingMember = ({
   // );
   function filterChanged() {
     if (!searchQuery) {
-      setGroupMembers(activeBroadcast?.contacts)
-    }
-    else {
-      setGroupMembers(activeBroadcast?.contacts?.filter(
-        (member) =>
-          member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          member.full_mobile.includes(searchQuery),))
+      setGroupMembers(activeBroadcast?.contacts);
+    } else {
+      setGroupMembers(
+        activeBroadcast?.contacts?.filter(
+          (member) =>
+            member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            member.full_mobile.includes(searchQuery),
+        ),
+      );
     }
   }
 
@@ -230,10 +233,10 @@ const ChatListingMember = ({
                             member.status === 'online'
                               ? 'success'
                               : member.status === 'busy'
-                                ? 'error'
-                                : member.status === 'away'
-                                  ? 'warning'
-                                  : 'secondary'
+                              ? 'error'
+                              : member.status === 'away'
+                              ? 'warning'
+                              : 'secondary'
                           }
                           anchorOrigin={{
                             vertical: 'bottom',
@@ -252,20 +255,22 @@ const ChatListingMember = ({
                             fontSize={14}
                             lineHeight={1.3}
                             sx={{
-                              display: "flex",
-                              justifyContent: "space-between"
+                              display: 'flex',
+                              justifyContent: 'space-between',
                             }}
                           >
                             {FirstLetterCapitalOfString(member.name)}
-                            {!isHistory && <Tooltip title="Delete Member">
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => (getCurentID(member))}
-                              >
-                                <DeleteOutline />
-                              </IconButton>
-                            </Tooltip>}
+                            {!isHistory && (
+                              <Tooltip title="Delete Member">
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={() => getCurentID(member)}
+                                >
+                                  <DeleteOutline />
+                                </IconButton>
+                              </Tooltip>
+                            )}
                           </Typography>
                         }
                         secondary={
@@ -292,7 +297,7 @@ const ChatListingMember = ({
         </div>
       )}
 
-<Dialog
+      <Dialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
         aria-labelledby="confirm-delete-dialog"

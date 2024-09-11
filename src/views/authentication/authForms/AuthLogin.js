@@ -31,7 +31,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
   const navigate = useNavigate();
   // const dispatch = useDispatch();
-  const { setUserDetails } = useUser();
+  // const { setUserDetails } = useUser();
 
   const handleAuthStorage = (resData) => {
     localStorage.setItem('ref', resData.token.refresh);
@@ -55,10 +55,10 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       if (res.status === 200) {
         // console.log('login', res);
         handleAuthStorage(res.data.data);
-        setUserDetails({
-          full_name: res.data.data.full_name,
-          email: res.data.data.email,
-        });
+        // setUserDetails({
+        //   full_name: res.data.data.full_name,
+        //   email: res.data.data.email,
+        // });
         //dispatch(setWalletBalance(res.data.data.wallet_balance));
 
         toast.success('Sign in successful!', { duration: 2000 });
@@ -111,7 +111,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           {title} 
         </Typography>
       ) : null} */}
-       
 
       {/* {subtext} */}
       <form onSubmit={handleSignIn}>

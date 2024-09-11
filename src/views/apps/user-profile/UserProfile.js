@@ -23,7 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PageContainer from '../../../components/container/PageContainer';
 import apiClient from 'src/api/axiosClient';
 import Spinner from 'src/views/spinner/Spinner';
-
+import { IconEdit } from '@tabler/icons';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/store/apps/UserContext';
@@ -79,7 +79,8 @@ const UserProfile = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogLoading, setDeleteDialogLoading] = useState(false);
-  const { setUserDetails } = useUser();
+  const { user, setUser } = useUser();
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -88,6 +89,10 @@ const UserProfile = () => {
     setEditMode(queryParams.get('edit') === 'true');
     fetchUserProfile();
   }, [location.search]);
+
+  useEffect(() => {
+    setUserData(user); // Initialize userData with context user
+  }, [user]);
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -98,6 +103,8 @@ const UserProfile = () => {
         const userProfileData = response.data.data;
         const profilePic = userProfileData.profile_pic || defaultProfilePic;
         setUserData({ ...userProfileData, profile_pic: profilePic });
+
+        setUser({ ...userProfileData, profile_pic: profilePic });
       }
     } catch (error) {
       toast.error('Failed to load user data');
@@ -158,17 +165,14 @@ const UserProfile = () => {
         },
       });
       if (response.status === 200) {
-        // setUserData((prevState) => ({
-        //   ...prevState,
-        //   profile_pic: URL.createObjectURL(file),
-        // }));
-        const updatedUserData = {
-          ...userData,
-          profile_pic: URL.createObjectURL(file), 
-        };
-        setUserDetails(updatedUserData); 
-        setUserData(updatedUserData); 
-
+        setUserData((prevState) => ({
+          ...prevState,
+          profile_pic: URL.createObjectURL(file),
+        }));
+        setUser((prevState) => ({
+          ...prevState,
+          profile_pic: URL.createObjectURL(file),
+        }));
         setEditPicMode(false);
         toast.success('Profile picture updated successfully');
       }
@@ -196,49 +200,22 @@ const UserProfile = () => {
     setDeleteDialogOpen(false);
   };
 
-  // const handleConfirmDelete = async () => {
-  //   setDeleteDialogLoading(true);
-  //   try {
-  //     // Perform deletion logic here
-  //     await apiClient.patch('/auth/user_profile/', {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //       profile_pic: null,
-  //     });
-  //     setUserData((prevState) => ({
-  //       ...prevState,
-  //       profile_pic: defaultProfilePic,
-  //     }));
-  //     toast.success('Profile picture removed');
-  //     fetchUserProfile();
-  //   } catch (error) {
-  //     console.error('Failed to remove profile picture', error);
-  //     toast.error('Failed to remove profile picture');
-  //   } finally {
-  //     setDeleteDialogLoading(false);
-  //     setDeleteDialogOpen(false);
-  //   }
-  // };
   const handleConfirmDelete = async () => {
     setDeleteDialogLoading(true);
     try {
-      const response = await apiClient.patch('/auth/user_profile/', {
+      // Perform deletion logic here
+      await apiClient.patch('/auth/user_profile/', {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
         profile_pic: null,
       });
-
-      if (response.status === 200) {
-        setUserData((prevState) => ({
-          ...prevState,
-          profile_pic: defaultProfilePic,
-        }));
-        setUserDetails((prevState) => ({
-          ...prevState,
-          profile_pic: defaultProfilePic,
-        }));
-        toast.success('Profile picture removed');
-        fetchUserProfile(); 
-      }
+      setUserData((prevState) => ({
+        ...prevState,
+        profile_pic: defaultProfilePic,
+      }));
+      toast.success('Profile picture removed');
+      fetchUserProfile();
     } catch (error) {
       console.error('Failed to remove profile picture', error);
       toast.error('Failed to remove profile picture');
@@ -257,21 +234,12 @@ const UserProfile = () => {
       <div style={{ justifyContent: 'center', display: 'flex' }}>
         <Card
           sx={{
-            // maxWidth: 650,
-            // margin: 'auto',
-            // mt: 1,
-            // paddingBottom: '6px !important',
-            // padding: 4,
-            // boxShadow: 3,
-            // paddingTop: '6px',
             maxWidth: 650,
             margin: 'auto',
             mt: 1,
             paddingBottom: '6px !important',
             padding: 4,
-            boxShadow: 6,
-            borderRadius: 3,
-            backgroundColor: 'white',
+            boxShadow: 3,
             paddingTop: '6px',
           }}
         >

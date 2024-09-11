@@ -13,7 +13,7 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import Analytics from '../../../components/analytics/Analytics';
-import BroadcastPayHistory from "../../../components/broadcastPayHistory/BroadcastPayHistory"
+import BroadcastPayHistory from '../../../components/broadcastPayHistory/BroadcastPayHistory';
 import EventContext from 'src/BroadcastContext';
 
 export const getBroadcastsData = async () => {
@@ -32,11 +32,10 @@ const Chats = ({ checkBroadcastHistory }) => {
   const [isAnalytics, setIsAnalytics] = useState(false);
   const [broadcastPayHistroy, setBroadcastPayHistroy] = useState(false);
   const broadcasts = useSelector((state) => state.chatReducer.broadcasts);
-  console.log(broadcasts,"broadcasts")
+  // console.log(broadcasts,"broadcasts")
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [isBroadcastDeleted, setIsBroadcastDeleted] = useState(false);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-
 
   const [isHistory, setIsHistory] = useState(false);
   const { isOn } = useContext(EventContext);
@@ -116,7 +115,12 @@ const Chats = ({ checkBroadcastHistory }) => {
         <AppCard sx={{ display: 'flex', flexGrow: 1, flexDirection: 'row', overflow: 'hidden' }}>
           {isAnalytics ? (
             <Analytics setIsAnalytics={setIsAnalytics} />
-          ) : broadcastPayHistroy ? <> <BroadcastPayHistory setBroadcastPayHistroy = {setBroadcastPayHistroy} /></> : (
+          ) : broadcastPayHistroy ? (
+            <>
+              {' '}
+              <BroadcastPayHistory setBroadcastPayHistroy={setBroadcastPayHistroy} />
+            </>
+          ) : (
             <>
               <ChatSidebar
                 isMobileSidebarOpen={isMobileSidebarOpen}
@@ -127,8 +131,8 @@ const Chats = ({ checkBroadcastHistory }) => {
                 onBroadcastDelete={handleBroadcastDelete}
                 onBroadcastSelect={handleBroadcastSelect}
                 isHistory={isHistory}
-                setIsBroadcastDeleted= {setIsBroadcastDeleted}
-                isBroadcastDeleted = {isBroadcastDeleted}
+                setIsBroadcastDeleted={setIsBroadcastDeleted}
+                isBroadcastDeleted={isBroadcastDeleted}
               />
               {!isBroadcastDeleted && (
                 <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -137,17 +141,18 @@ const Chats = ({ checkBroadcastHistory }) => {
                     sx={{ flexGrow: 1 }}
                     checkBroadcastHistory={checkBroadcastHistory}
                     setIsAnalytics={setIsAnalytics}
-                    setBroadcastPayHistroy ={setBroadcastPayHistroy}
+                    setBroadcastPayHistroy={setBroadcastPayHistroy}
                     isHistory={isHistory}
                   />
                   <Divider />
-                  {broadcasts && <ChatMsgSent
-                    checkBroadcastHistory={checkBroadcastHistory}
-                    memberCount={broadcasts?.members}
-                    getBroadcastsData={getBroadcastList}
-                    isHistory={isHistory}
-                  />}
-
+                  {broadcasts && (
+                    <ChatMsgSent
+                      checkBroadcastHistory={checkBroadcastHistory}
+                      memberCount={broadcasts?.members}
+                      getBroadcastsData={getBroadcastList}
+                      isHistory={isHistory}
+                    />
+                  )}
                 </Box>
               )}
               {!isBroadcastDeleted && (

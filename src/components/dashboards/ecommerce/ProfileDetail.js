@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Avatar, Box, Skeleton, Tooltip } from '@mui/material';
-import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+
 import { Link } from 'react-router-dom';
 import apiClient from 'src/api/axiosClient';
 
@@ -25,7 +25,7 @@ const ProfileDetail = () => {
         setPhoneNumber(fetchedPhoneNumber);
 
         const phoneId = localStorage.getItem('phone_id');
-        console.log('Phone ID:', phoneId);
+        // console.log('Phone ID:', phoneId);
         const profileResponse = await apiClient.get(`/auth/account_details/${phoneId}`, {
           params: {
             fields: 'profile_picture_url',

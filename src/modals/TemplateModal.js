@@ -269,6 +269,9 @@ const HeaderComponent = ({
             fullWidth
             disabled={isFileSelected}
           />
+          <Typography variant="h6" textAlign={'center'}>
+            OR
+          </Typography>
           <input
             type="file"
             onChange={handleFileSelection}
@@ -292,7 +295,7 @@ const HeaderComponent = ({
           </Button> */}
           <Button
             component="label"
-            htmlFor="image-upload"
+            htmlFor="video-upload"
             disabled={isLinkEntered}
             sx={{
               backgroundColor: 'white',
@@ -340,6 +343,9 @@ const HeaderComponent = ({
             fullWidth
             disabled={isFileSelected}
           />
+          <Typography variant="h6" textAlign={'center'}>
+            OR
+          </Typography>
           <input
             type="file"
             onChange={handleFileSelection}
@@ -349,7 +355,7 @@ const HeaderComponent = ({
           />
           <Button
             component="label"
-            htmlFor="image-upload"
+            htmlFor="document-upload"
             disabled={isLinkEntered}
             sx={{
               backgroundColor: 'white',

@@ -268,7 +268,7 @@ const TemplatesTableList = () => {
   const [allRows, setAllRows] = useState([]);
   const navigate = useNavigate();
   const handleClickOpen = (row, index) => {
-    console.log('Row clicked:', row);
+    // console.log('Row clicked:', row);
     setOpen(true);
     //setView(row.components);
     setView(row.components || []);
@@ -685,15 +685,15 @@ const TemplatesTableList = () => {
                 >
                   {view.length > 0 &&
                     view.map((component) => {
-                      console.log('component', component);
+                      // console.log('component', component);
                       switch (component.type) {
                         case 'HEADER': {
                           const headerHandle = component.example?.header_handle?.[0];
                           const headerText = component?.text;
 
-                          console.log('Header Handle:', headerHandle);
-                          //console.log('Header Text Array:', headerTextArray);
-                          console.log('Header Text:', headerText);
+                          // console.log('Header Handle:', headerHandle);
+                          // //console.log('Header Text Array:', headerTextArray);
+                          // console.log('Header Text:', headerText);
 
                           if (headerHandle) {
                             const isVideo = component.format === 'VIDEO';

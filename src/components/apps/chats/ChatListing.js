@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
   List,
@@ -25,7 +25,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Scrollbar from '../../custom-scroll/Scrollbar';
 
-import { selectBroadcast} from '../../../store/apps/chat/ChatSlice';
+import { selectBroadcast } from '../../../store/apps/chat/ChatSlice';
 import { IconEdit, IconPlus, IconUsers } from '@tabler/icons';
 import ImportBroadcastModal from 'src/modals/ImportBroadcastModal';
 import { DeleteOutline } from '@mui/icons-material';
@@ -50,9 +50,11 @@ const ChatListing = ({
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-  console.log(activeBroadcast,"broadcastData")
+  // console.log(activeBroadcast,"broadcastData")
   // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
-  const [selectedBroadcastId, setSelectedBroadcastId] = useState(isBroadcastDeleted ? null : activeBroadcast?.id);
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState(
+    isBroadcastDeleted ? null : activeBroadcast?.id,
+  );
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -97,7 +99,7 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-    console.log('Broadcast data updated:');
+    // console.log('Broadcast data updated:');
   }, [broadcasts]);
 
   const getBroadcastsDataApi = async () => {
@@ -106,7 +108,7 @@ const ChatListing = ({
         const response = await apiClient.get(nextUrl);
         const next = response.data.data.next;
         const results = response.data.data.results;
-        console.log(results,"result")
+        // console.log(results,"result")
         setBroadcastData((prevData) => [...prevData, ...results]);
         setNextUrl(next);
         setHasMore(!!next);
@@ -117,15 +119,14 @@ const ChatListing = ({
   };
 
   useEffect(() => {
-      getBroadcastsDataApi();
+    getBroadcastsDataApi();
   }, [nextUrl]);
 
-
-useEffect(() => {
-  setBroadcastData(prevItems =>
-    prevItems.map(item => (item.id === activeBroadcast?.id ? activeBroadcast : item))
-  );
-}, [activeBroadcast]);
+  useEffect(() => {
+    setBroadcastData((prevItems) =>
+      prevItems.map((item) => (item.id === activeBroadcast?.id ? activeBroadcast : item)),
+    );
+  }, [activeBroadcast]);
 
   const handleDeleteBroadcast = () => {
     if (selectedBroadcastId) {
@@ -164,7 +165,8 @@ useEffect(() => {
           setBroadcastData(
             broadcastData.map((chat) =>
               chat.id === selectedBroadcastId ? { ...chat, title: newBroadcastName } : chat,
-            ));
+            ),
+          );
           setLoading(false);
           setOpenEditDialog(false);
           toast.success('Edited Successfully');
@@ -256,7 +258,7 @@ useEffect(() => {
                         paddingRight: '10px',
                       }}
                       key={chat.id}
-                      onClick = {getBroadcastsDataApi}
+                      onClick={getBroadcastsDataApi}
                     >
                       <ListItemButton
                         onClick={() => handleBroadcastClick(chat)}

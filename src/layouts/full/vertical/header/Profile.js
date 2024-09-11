@@ -24,8 +24,7 @@ const Profile = () => {
   const [apiStatus, setApiStatus] = useState(null);
   const [openAddWalletModal, setOpenAddWalletModal] = useState(false);
   const location = useLocation();
-  const { user } = useUser();
-  console.log('user', user);
+  const { user, setUser } = useUser();
 
   function openAddMoneyInWalletModal() {
     setOpenAddWalletModal(() => true);
@@ -67,9 +66,23 @@ const Profile = () => {
       }
     };
 
+    const fetchUserProfile = async () => {
+      try {
+        const response = await apiClient.get('/auth/user_profile/');
+        if (response.status === 200) {
+          const userProfileData = response.data.data;
+          const profilePic = userProfileData.profile_pic || defaultProfilePic;
+          setUser({ ...userProfileData, profile_pic: profilePic });
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    };
+
     fetchWalletBalance();
     fetchApiStatus();
-  }, []);
+    fetchUserProfile();
+  }, [setUser]);
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -167,29 +180,6 @@ const Profile = () => {
         )}
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <IconButton
-          size="large"
-          aria-label="show user profile"
-          color="inherit"
-          aria-controls="profile-menu"
-          aria-haspopup="true"
-          sx={{
-            ...(typeof anchorEl2 === 'object' && {
-              color: 'primary.main',
-            }),
-          }}
-          onClick={handleClick2}
-        >
-          <Avatar
-            sx={{
-              width: 35,
-              height: 35,
-              backgroundColor: 'primary.main',
-            }}
-          >
-            {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''}
-          </Avatar>
-        </IconButton> */}
         <IconButton
           size="large"
           aria-label="show user profile"
@@ -204,17 +194,16 @@ const Profile = () => {
           onClick={handleClick2}
         >
           <Avatar
-            src={user?.profile_pic} // Check if the user has a profile picture
+            src={user.profile_pic} // Keep this as is
             sx={{
               width: 35,
               height: 35,
               backgroundColor: 'primary.main',
             }}
           >
-            {/* {!user?.profile_pic && (user?.full_name ? user.full_name.charAt(0).toUpperCase() : '')} */}
+            {/* {user && user.full_name ? user.full_name.charAt(0).toUpperCase() : ''} */}
           </Avatar>
         </IconButton>
-
         <Menu
           id="profile-menu"
           anchorEl={anchorEl2}
