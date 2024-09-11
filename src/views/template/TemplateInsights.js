@@ -58,7 +58,7 @@ const TemplateInsights = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState([dayjs().subtract(7, 'day'), dayjs()]);
-  const [dateEnd, setDateEnd] = useState(false);
+  // const [dateEnd, setDateEnd] = useState(false);
   const [templateName, setTemplateName] = useState(null);
   const [templateLanguage, setTemplateLanguage] = useState(null);
   const { id } = useParams();
@@ -74,7 +74,7 @@ const TemplateInsights = () => {
             'yyyy-MM-dd',
           )}&end=${format(dateRange[1].toDate(), 'yyyy-MM-dd')}`,
         );
-        console.log('insight response', response);
+        // console.log('insight response', response);
 
         setData(response.data);
         setTemplateLanguage(response?.data?.language);
@@ -116,7 +116,7 @@ const TemplateInsights = () => {
 
       // }
       setDateRange(dates);
-      console.log(dates, 'date ');
+      // console.log(dates, 'date ');
     } else {
       console.log('Clear');
       //setDateEnd(false);

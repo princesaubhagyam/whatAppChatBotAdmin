@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, Skeleton } from '@mui/material';
+import { Box, Typography, Skeleton, Grid, Card } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import apiClient from 'src/api/axiosClient';
 import { useSelector } from 'react-redux';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 
 function BroadcastPayHistory({ setBroadcastPayHistroy }) {
     const [loading, setLoading] = useState(true)
@@ -30,289 +31,234 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
         setBroadcastPayHistroy(false);
     }
     return (
-        <Box sx={{ width: '100%', typography: 'body1' }}>
-            {
-                loading ? <>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Skeleton
-                            variant="rectangular"
-                            width={320}
-                            height={35}
-                            sx={{ margin: "25px 0px 0px 30px" }}
-                            animation="wave"
-                        />
-                        <Skeleton
-                            variant="circular"
-                            width={25}
-                            height={25}
-                            sx={{
-                                marginRight: '30px',
-                                marginTop: '25px',
-                            }}
-                            animation="wave"
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            width: "100%",
-                            padding: "50px"
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: "40%"
-                            }}
-                        >
-                            <Skeleton
-                                variant="rectangular"
-                                width={50}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={100}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={100}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={170}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={200}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={170}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={200}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={100}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                        </Box>
-                        <Box>
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                            <Skeleton
-                                variant="rectangular"
-                                width={30}
-                                height={25}
-                                sx={{ margin: "15px 0px" }}
-                                animation="wave"
-                            />
-                        </Box>
+        <>
+            <Box sx={{ width: '100%', backgroundColor: "#EBEBEB" }}>
+                {
+                    loading ?
+                        <>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={240}
+                                    height={20}
+                                    sx={{ margin: "25px 0px 0px 30px" }}
+                                    animation="wave"
+                                />
+                                <Skeleton
+                                    variant="circular"
+                                    width={25}
+                                    height={25}
+                                    sx={{
+                                        marginRight: '30px',
+                                        marginTop: '25px',
+                                    }}
+                                    animation="wave"
+                                />
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'normal', }}>
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={320}
+                                    height={35}
+                                    sx={{ margin: "25px 0px 0px 30px" }}
+                                    animation="wave"
+                                />
+                            </Box>
+                            <Box sx={{ padding: "35px 30px 0px 20px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'center'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                            <Box sx={{ padding: "35px 30px 0px 20px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'center'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2, }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                            <Box sx={{ padding: "35px 30px 0px 20px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'normal'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Box variant="outlined" sx={{ padding: 2 }}>
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={380}
+                                                height={70}
+                                                animation="wave"
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </> :
+                        <>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
+                                <Typography variant="h6" color="muted"
+                                    sx={{ padding: "25px 0px 0px 30px" }}>
+                                    Broadcast Transaction History
+                                </Typography>
+                                <CloseIcon fontSize="medium"
+                                    sx={{ marginRight: '30px', marginTop: '25px', cursor: 'pointer', }}
+                                    onClick={closeBroadcastPayHistroy}
+                                />
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'normal', }}>
+                                <Box sx={{
+                                    padding: "25px 0px 0px 30px"
+                                }}>
+                                    <AutoGraphIcon style={{ color: '#089046', fontSize: '30px' }} />
+                                </Box>
+                                <Typography variant="h4" sx={{ padding: "25px 0px 0px 5px" }}>
+                                    {broadcastPayHistoryData.broadcast_name}
+                                </Typography>
+                            </Box>
+                            <Box sx={{ padding: "50px 30px 0px 30px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'center'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Sent</Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.sent ? broadcastPayHistoryData.sent : 0}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Delivered</Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.delivered ? broadcastPayHistoryData.delivered : 0}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Failed</Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.failed ? broadcastPayHistoryData.failed : 0}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                            <Box sx={{ padding: "50px 30px 0px 30px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'center'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Initial Hold Amount </Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.initial_holdamount > 0 ? <>₹{broadcastPayHistoryData.initial_holdamount} </> : <> ₹0</>}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Current Hold Amount</Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.current_holdamount > 0 ? <>₹{broadcastPayHistoryData.current_holdamount} </> : <> ₹0</>}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Released Amount</Typography>
+                                            <Typography variant="h5">
+                                                ₹{broadcastPayHistoryData.released_amount}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                            <Box sx={{ padding: "50px 30px 0px 30px" }}>
+                                <Grid container spacing={2} mb={2} justifyContent={'normal'}>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Cost per message delivered</Typography>
+                                            <Typography variant="h5">
+                                                {(broadcastPayHistoryData.delivered) === 0 ? <>₹{broadcastPayHistoryData.pay_amount / 1} </> : <>₹{(broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered)}</>}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <Card variant="outlined" sx={{ padding: 2 }}>
+                                            <Typography variant="h6">Total Cost</Typography>
+                                            <Typography variant="h5">
+                                                {broadcastPayHistoryData.pay_amount > 0 ? <>₹{broadcastPayHistoryData.pay_amount}</> : <>₹0</>}
+                                            </Typography>
+                                        </Card>
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </>
+                }
+            </Box>
+        </>
 
-                    </Box>
-                </> : <>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Typography variant="h4"
-                            color="primary"
-
-                            sx={{
-                                padding: "25px 0px 0px 30px"
-                            }}
-                        >Broadcast Transaction History</Typography>
-                        <CloseIcon
-                            fontSize="medium"
-                            sx={{
-                                marginRight: '30px',
-                                marginTop: '25px',
-                                cursor: 'pointer',
-                            }}
-                            onClick={closeBroadcastPayHistroy}
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "flex-start",
-                            width: "100%",
-                            padding: "50px"
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: "40%"
-                            }}>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Sent:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Delivered:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Failed:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Initial Hold Money:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Current Hold Money:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Released Money:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Cost per Delivered:</Typography>
-                            <Typography variant="h6" fontWeight="bold"
-                                sx={{
-                                    padding: "15px 0px"
-                                }}
-                            >Total Cost:</Typography>
-
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.sent ?  broadcastPayHistoryData.sent : 0}</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.delivered ? broadcastPayHistoryData.delivered : 0 }</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.failed ? broadcastPayHistoryData.failed : 0}</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.initial_holdamount ?broadcastPayHistoryData.initial_holdamount : 0}</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.current_holdamount > 0 ? broadcastPayHistoryData.current_holdamount : 0}</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{broadcastPayHistoryData.released_amount}
-                            </Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px"
-                                }}
-                            >{ (broadcastPayHistoryData.delivered) === 0 ? (broadcastPayHistoryData.pay_amount) / 1 : (broadcastPayHistoryData.pay_amount) / (broadcastPayHistoryData.delivered)}</Typography>
-                            <Typography variant="subtitle1" color="textSecondary"
-                                sx={{
-                                    padding: "12px 0px" 
-                                }}
-                            >{broadcastPayHistoryData.pay_amount > 0 ? broadcastPayHistoryData.pay_amount : 0}</Typography>
-                        </Box>
-                    </Box>
-
-                </>
-            }
-        </Box>
     );
 }
 
