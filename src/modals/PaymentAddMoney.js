@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Button,
-  Modal,
   TextField,
   Grid,
   Typography,
@@ -23,17 +21,15 @@ import apiClient from 'src/api/axiosClient';
 import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
 import currencycodejson from 'src/utils/Currency.json';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
   const [loading, setLoading] = useState(false);
-  const [addAmount, setAddAmonut] = useState(false);
   const [currencyCode, setCountryCode] = useState('inr');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [amountError, setAmountError] = useState(null);
-  const [descriptionError, setDescriptionError] = useState(null);
+  const [, setDescriptionError] = useState(null);
 
   const navigate = useNavigate(); // Use useNavigate to handle navigation
 
@@ -47,30 +43,17 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
     }
   };
 
-  function handlAddToggle() {
-    setAddAmonut(() => true);
-  }
 
-  // function handleClose() {
-  //   setOpenAddWalletModal(() => false);
-  //   setAddAmonut(() => false);
-  //   setAmount('');
-  //   setCountryCode('inr');
-  // }
+
   function handleClose() {
     setOpenAddWalletModal(() => false);
-    setAddAmonut(() => false);
     setAmount('');
     setCountryCode('inr');
     setAmountError(null);
     setDescriptionError(null);
   }
 
-  function hideMoneyDetails() {
-    setAmount('');
-    setAddAmonut(() => false);
-  }
-
+ 
   const handleCurrencyCodeChange = (event) => {
     setCountryCode(event.target.value);
   };
@@ -120,11 +103,6 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
       aria-describedby="add-contact-form"
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          height: '400px', 
-        },
-      }}
     >
       <DialogTitle
         sx={{
@@ -132,6 +110,7 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
           justifyContent: 'space-between',
           bgcolor: 'background.paper',
           alignItems: 'baseline',
+          borderBottom: '2px solid #1A4D2E',
         }}
       >
         <Typography variant="h3" component="h3" color="#1A4D2E">
@@ -158,28 +137,17 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
         >
           <Box>Current Balance</Box>
           <Box>:</Box>
-          <Box>₹{walletBalance}</Box>
-          {addAmount ? (
-            <Tooltip title="Close Add Money Box">
-              <CancelIcon
-                color="error"
-                sx={{ fontSize: '40px', cursor: 'pointer' }}
-                onClick={hideMoneyDetails}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Add Money">
-              <AddCircleIcon
-                color="primary"
-                sx={{ fontSize: '40px', cursor: 'pointer' }}
-                onClick={handlAddToggle}
-              />
-            </Tooltip>
-          )}
+          <Box
+          sx ={{
+            paddingRight :"50px"
+          }} 
+          >₹{walletBalance}</Box>
         </Typography>
-
-        {addAmount ? (
-          <>
+          <Box
+          sx ={{
+            marginTop : "60px"
+          }}
+          >
             <form onSubmit={createPaymentRequest}>
               <Stack container spacing={2} sx={{ marginTop: '40px' }}>
                 <FormControl fullWidth>
@@ -297,16 +265,15 @@ const PaymentAddMoney = ({ open, setOpenAddWalletModal, walletBalance }) => {
                 <LoadingButton
                   variant="contained"
                   type="submit"
-                  color="primary"
-                  disabled={loading}
+                  color="primary" 
+                  disabled={loading || !amount}
                   startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
                 >
                   {loading ? 'Checkout...' : 'Checkout'}
                 </LoadingButton>
               </DialogActions>
             </form>
-          </>
-        ) : null}
+            </Box>
       </DialogContent>
     </Dialog>
   );

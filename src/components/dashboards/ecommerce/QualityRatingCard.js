@@ -23,7 +23,7 @@ const QualityRatingCard = ({ isLoading, remainingQuota }) => {
       setQualityRating(fetchedQualityRating);
       setApiStatus(fetchedApiStatus);
       setLoading(false);
-      console.log('QualityRatingCard - qualityRating:', fetchedQualityRating);
+      // console.log('QualityRatingCard - qualityRating:', fetchedQualityRating);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {

@@ -14,7 +14,6 @@ import {
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import apiClient from 'src/api/axiosClient';
-import { LoadingButton } from '@mui/lab';
 import CircularProgress from '@mui/material/CircularProgress';
 import countryCodes from 'src/utils/Countrycode.json';
 
@@ -35,7 +34,7 @@ const EditContactModal = ({
     tag: '',
     cc: '',
   });
-  console.log(editData, 'editData');
+  // console.log(editData, 'editData');
   function handleClose() {
     setEdit(false);
     setEditData({
@@ -92,9 +91,9 @@ const EditContactModal = ({
   };
 
   const handleEdit = async () => {
-    console.log('edit Hande running');
+    // console.log('edit Hande running');
     if (validateFields()) {
-      console.log('indesie edit Hande running');
+      // console.log('indesie edit Hande running');
       try {
         setLoading(true);
         const contactDataEdit = {
@@ -105,7 +104,7 @@ const EditContactModal = ({
         };
 
         const id = selected[0];
-        console.log('id', id);
+        // console.log('id', id);
         await apiClient.patch(`/api/contacts/${id}/`, contactDataEdit);
         toast.success('Contact Edit successfully!', { closeButton: true });
         setEdit(false);

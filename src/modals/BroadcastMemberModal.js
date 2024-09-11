@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -70,7 +70,7 @@ const headCells = [
 ];
 
 const EnhancedTableHead = (props) => {
-  const { order, orderBy, onRequestSort, numSelected, onSelectAllClick, rowCount, selected } =
+  const { order, orderBy, onRequestSort, numSelected, onSelectAllClick, rowCount } =
     props;
   // const isAllSelected = rowCount === numSelected && selected.length === rowCount;
   // const isSomeSelected = numSelected > 0 && numSelected < rowCount;
@@ -145,7 +145,7 @@ const BroadcastMemberModal = ({
   const [selected, setSelected] = useState([]);
   //console.log('....', memberIds);
   //const { toggleOnOff } = useContext(EventContext);
-  const [numSelected, setNumSelected] = useState(0);
+  // const [numSelected, setNumSelected] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState({
     column: '',
     operator: 'contains',
@@ -293,14 +293,14 @@ const BroadcastMemberModal = ({
     setPage(0);
   };
 
-  const handleSelectedMemberStateUpdate = (id) => {
-    // Toggle selection
-    if (selected.includes(id)) {
-      setSelected(selected.filter((item) => item !== id));
-    } else {
-      setSelected([...selected, id]);
-    }
-  };
+  // const handleSelectedMemberStateUpdate = (id) => {
+  //   // Toggle selection
+  //   if (selected.includes(id)) {
+  //     setSelected(selected.filter((item) => item !== id));
+  //   } else {
+  //     setSelected([...selected, id]);
+  //   }
+  // };
 
   // const updateBroadcastMembers = async () => {
   //   try {

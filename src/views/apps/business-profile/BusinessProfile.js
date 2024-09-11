@@ -264,19 +264,6 @@ function BusinessProfile() {
                 animation="wave"
               />
             </Box>
-            {/* <Box 
-             sx= {{
-              display : "flex",
-              justifyContent : "flex-end"
-             }}
-            >
-            <Skeleton
-                variant="rectangular"
-                width={20}
-                height={20}
-                animation="wave"
-              />
-            </Box> */}
           </Box>
         </Box>
       ) : (

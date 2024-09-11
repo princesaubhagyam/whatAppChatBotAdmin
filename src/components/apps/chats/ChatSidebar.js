@@ -12,6 +12,8 @@ const ChatSidebar = ({
   onBroadcastDelete,
   onBroadcastSelect,
   isHistory,
+  setIsBroadcastDeleted,
+  isBroadcastDeleted,
 }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
@@ -34,6 +36,8 @@ const ChatSidebar = ({
         onBroadcastDelete={onBroadcastDelete}
         onBroadcastSelect={onBroadcastSelect}
         isHistory={isHistory}
+        setIsBroadcastDeleted= {setIsBroadcastDeleted}
+        isBroadcastDeleted = {isBroadcastDeleted}
       />
     </Drawer>
   );

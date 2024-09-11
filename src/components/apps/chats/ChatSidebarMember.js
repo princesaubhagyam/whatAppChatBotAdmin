@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer, useMediaQuery } from '@mui/material';
-import ChatListing from './ChatListing';
+// import ChatListing from './ChatListing';
 import ChatListingMember from './ChatListingMember';
 
 const drawerWidth = 320;
@@ -11,6 +11,7 @@ const ChatSidebarMember = ({
   contacts,
   getBroadcastList,
   isHistory,
+  setCallFunctionWhileDeleting
 }) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 

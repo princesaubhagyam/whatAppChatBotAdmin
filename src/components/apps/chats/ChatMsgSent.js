@@ -23,7 +23,6 @@ const ChatMsgSent = ({
   // const { isOn } = useContext(EventContext);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
   const [walletBalance, setWalletBalance] = useState(null);
-
   const id = useSelector((state) => state.chatReducer.chatId);
   const fetchWalletBalance = async () => {
     try {
@@ -70,7 +69,6 @@ const ChatMsgSent = ({
   };
 
   const handleUpdateMembers = (updatedMembers) => {
-    console.log('Updated Members:', updatedMembers);
     getBroadcastList(); // Ensure the broadcast list is refreshed
     onUpdateMembers(updatedMembers); // Update members in the parent component
     dispatch(updateActiveBroadcast(activeBroadcast.id, { members: updatedMembers }));

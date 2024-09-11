@@ -12,12 +12,12 @@ import {
   useTheme,
   Typography,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 const NavItem = ({ item, level, pathDirect, onClick, hideMenu }) => {
   // console.log(item, 'item');
-  const customizer = useSelector((state) => state.customizer);
+  // const customizer = useSelector((state) => state.customizer);
   const Icon = item.icon;
   const theme = useTheme();
   const { t } = useTranslation();

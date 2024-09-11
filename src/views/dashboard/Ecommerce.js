@@ -24,7 +24,7 @@ const Ecommerce = () => {
   const checkFacebookLogin = async () => {
     try {
       const res = await apiClient.get('/auth/user_profile/');
-      console.log(res, "res")
+      // console.log(res, "res")
       if (res.status === 200) {
         const phoneId = res.data.data.facebook_meta_data.phone_id;
         if (!phoneId || phoneId.trim() === '') {
