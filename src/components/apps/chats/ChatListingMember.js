@@ -257,7 +257,7 @@ const ChatListingMember = ({
                             }}
                           >
                             {FirstLetterCapitalOfString(member.name)}
-                            {/* {!isHistory && <Tooltip title="Delete Member">
+                            {!isHistory && <Tooltip title="Delete Member">
                               <IconButton
                                 size="small"
                                 color="error"
@@ -265,8 +265,7 @@ const ChatListingMember = ({
                               >
                                 <DeleteOutline />
                               </IconButton>
-                            </Tooltip>} */}
-
+                            </Tooltip>}
                           </Typography>
                         }
                         secondary={

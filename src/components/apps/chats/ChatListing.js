@@ -50,7 +50,7 @@ const ChatListing = ({
   // const [broadcastData, setBroadcastData] = useState(broadcasts);
   const [broadcastData, setBroadcastData] = useState([]);
   const activeBroadcast = useSelector((state) => state.chatReducer.selectedBroadcast);
-  console.log(activeBroadcast,"activeBroadcast")
+  console.log(activeBroadcast,"broadcastData")
   // const [selectedBroadcastId, setSelectedBroadcastId] = useState(activeBroadcast?.id);
   const [selectedBroadcastId, setSelectedBroadcastId] = useState(isBroadcastDeleted ? null : activeBroadcast?.id);
   const [selectedBroadcast, setSelectedBroadcast] = useState(null);
@@ -119,6 +119,13 @@ const ChatListing = ({
   useEffect(() => {
       getBroadcastsDataApi();
   }, [nextUrl]);
+
+
+useEffect(() => {
+  setBroadcastData(prevItems =>
+    prevItems.map(item => (item.id === activeBroadcast?.id ? activeBroadcast : item))
+  );
+}, [activeBroadcast]);
 
   const handleDeleteBroadcast = () => {
     if (selectedBroadcastId) {
@@ -249,6 +256,7 @@ const ChatListing = ({
                         paddingRight: '10px',
                       }}
                       key={chat.id}
+                      onClick = {getBroadcastsDataApi}
                     >
                       <ListItemButton
                         onClick={() => handleBroadcastClick(chat)}
