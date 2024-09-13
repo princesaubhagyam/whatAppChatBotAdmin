@@ -84,7 +84,8 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
     return isValid;
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (event) => {
+    event.preventDefault();
     if (validateFields()) {
       try {
         setLoading(true);
@@ -123,100 +124,103 @@ const AddContactModal = ({ open, handleClose, onAddContact }) => {
       aria-labelledby="add-contact-modal"
       aria-describedby="add-contact-form"
     >
-      <Box
-        sx={{
-          outline: 'none',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          width: '50%',
-          margin: 'auto',
-          mt: 10,
-        }}
-      >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Add Contact
-        </Typography>
-        <Stack container spacing={2}>
-          <TextField
-            fullWidth
-            label="Name"
-            name="name"
-            value={contactDetails.name}
-            onChange={handleChange}
-            error={!!errors.name}
-            helperText={errors.name}
-            placeholder="Enter name"
-          />
+      <form onSubmit={handleCreate}>
+        <Box
+          sx={{
+            outline: 'none',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: '50%',
+            margin: 'auto',
+            mt: 10,
+          }}
+        >
+          <Typography variant="h5" component="h2" gutterBottom>
+            Add Contact
+          </Typography>
+          <Stack container spacing={2}>
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={contactDetails.name}
+              onChange={handleChange}
+              error={!!errors.name}
+              helperText={errors.name}
+              placeholder="Enter name"
+            />
 
-          <FormControl fullWidth error={!!errors.contact || !!errors.cc}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>
-                <Select
-                  value={countryCode}
-                  onChange={handleCountryCodeChange}
-                  sx={{ width: 'auto', minWidth: '100px' }}
-                >
-                  {countryCodes.map((code) => (
-                    <MenuItem key={code.dial_code} value={code.dial_code}>
-                      {code.code} ({code.dial_code})
-                    </MenuItem>
-                  ))}
-                </Select>
+            <FormControl fullWidth error={!!errors.contact || !!errors.cc}>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item>
+                  <Select
+                    value={countryCode}
+                    onChange={handleCountryCodeChange}
+                    sx={{ width: 'auto', minWidth: '100px' }}
+                  >
+                    {countryCodes.map((code) => (
+                      <MenuItem key={code.dial_code} value={code.dial_code}>
+                        {code.code} ({code.dial_code})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs>
+                  <TextField
+                    fullWidth
+                    label="Contact"
+                    name="contact"
+                    value={contactDetails.contact}
+                    onChange={handleChange}
+                    error={!!errors.contact}
+                    helperText={errors.contact}
+                    placeholder="Enter contact number"
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs>
-                <TextField
-                  fullWidth
-                  label="Contact"
-                  name="contact"
-                  value={contactDetails.contact}
-                  onChange={handleChange}
-                  error={!!errors.contact}
-                  helperText={errors.contact}
-                  placeholder="Enter contact number"
-                />
-              </Grid>
-            </Grid>
-            <FormHelperText>{errors.cc}</FormHelperText>
-          </FormControl>
+              <FormHelperText>{errors.cc}</FormHelperText>
+            </FormControl>
 
-          <TextField
-            fullWidth
-            label="City"
-            name="city"
-            value={contactDetails.city}
-            onChange={handleChange}
-            error={!!errors.city}
-            helperText={errors.city}
-            placeholder="Enter City"
-          />
+            <TextField
+              fullWidth
+              label="City"
+              name="city"
+              value={contactDetails.city}
+              onChange={handleChange}
+              error={!!errors.city}
+              helperText={errors.city}
+              placeholder="Enter City"
+            />
 
-          <TextField
-            fullWidth
-            label="Tag"
-            name="tag"
-            value={contactDetails.tag}
-            onChange={handleChange}
-            error={!!errors.tag}
-            helperText={errors.tag}
-            placeholder="Enter tag"
-          />
-        </Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button
-            onClick={handleCreate}
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {loading ? 'Creating...' : 'Create'}
-          </Button>
-          <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
-            Cancel
-          </Button>
+            <TextField
+              fullWidth
+              label="Tag"
+              name="tag"
+              value={contactDetails.tag}
+              onChange={handleChange}
+              error={!!errors.tag}
+              helperText={errors.tag}
+              placeholder="Enter tag"
+            />
+          </Stack>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button
+              onClick={handleCreate}
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {loading ? 'Creating...' : 'Create'}
+            </Button>
+            <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
+              Cancel
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Modal>
   );
 };

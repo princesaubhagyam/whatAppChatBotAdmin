@@ -333,7 +333,8 @@ const BroadcastMemberModal = ({
   //     toast.error(error?.response?.data?.message ?? 'There was an error!');
   //   }
   // };
-  const updateBroadcastMembers = async () => {
+  const updateBroadcastMembers = async (event) => {
+    event.preventDefault();
     setButtonLoading(true);
     try {
       const res = await apiClient.patch(`/api/broadcasts/${activeBroadcastId}/`, {
@@ -376,166 +377,179 @@ const BroadcastMemberModal = ({
   return (
     <>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <Box
-          sx={{
-            outline: 'none',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            width: '100%',
-            margin: 'auto',
-          }}
-        >
-          <Typography variant="h6" component="h2" mb={2}>
-            Update Broadcast Members
-          </Typography>
-          {loading ? (
-            <Spinner />
-          ) : (
-            <>
-              <Toolbar
-                sx={{ display: 'flex', justifyContent: 'space-between', padding: '0px !important' }}
-              >
-                <Box sx={{ flex: '1 1 100%' }} border={0}>
-                  <TextField
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <IconSearch size="1.1rem" />
-                        </InputAdornment>
-                      ),
-                      sx: { background: 'white', borderRadius: 5 },
-                    }}
-                    placeholder="Search..."
-                    size="small"
-                    value={search}
-                    onChange={handleSearchChange}
-                  />
-                  <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
-                    <FilterAltIcon size="1.1rem" />
-                  </IconButton>
-                </Box>
-                <Stack
-                  direction={'row'}
-                  justifyContent={'end'}
-                  gap={2}
-                  style={{ paddingBlock: '1rem' }}
+        <form onSubmit={updateBroadcastMembers}>
+          <Box
+            sx={{
+              outline: 'none',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              width: '100%',
+              margin: 'auto',
+            }}
+          >
+            <Typography variant="h6" component="h2" mb={2}>
+              Update Broadcast Members
+            </Typography>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <Toolbar
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '0px !important',
+                  }}
                 >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={updateBroadcastMembers}
-                    disabled={buttonLoading}
-                    startIcon={
-                      buttonLoading ? <CircularProgress size={20} color="inherit" /> : null
-                    }
-                  >
-                    {buttonLoading ? 'Updating...' : 'Update'}
-                  </Button>
-                  <Button color="error" variant="contained" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                </Stack>
-              </Toolbar>
-              <Paper
-                sx={{ width: '100%', mb: 2, border: '1px solid #E7EAF0', mt: 2, boxShadow: 'none' }}
-              >
-                <TableContainer>
-                  <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
-                    <EnhancedTableHead
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={handleRequestSort}
-                      numSelected={selected.length}
-                      onSelectAllClick={handleSelectAllClick}
-                      rowCount={paginatedContacts.length}
-                      broadcastContacts={broadcastContacts}
-                      selected={selected}
+                  <Box sx={{ flex: '1 1 100%' }} border={0}>
+                    <TextField
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <IconSearch size="1.1rem" />
+                          </InputAdornment>
+                        ),
+                        sx: { background: 'white', borderRadius: 5 },
+                      }}
+                      placeholder="Search..."
+                      size="small"
+                      value={search}
+                      onChange={handleSearchChange}
                     />
-                    <TableBody>
-                      {paginatedContacts.map((row, idx) => {
-                        const isItemSelected = selected.indexOf(row.id) !== -1;
+                    <IconButton onClick={handleOpenFilterDialog} sx={{ color: '#1A4D2E' }}>
+                      <FilterAltIcon size="1.1rem" />
+                    </IconButton>
+                  </Box>
+                  <Stack
+                    direction={'row'}
+                    justifyContent={'end'}
+                    gap={2}
+                    style={{ paddingBlock: '1rem' }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      type="submit"
+                      onClick={updateBroadcastMembers}
+                      disabled={buttonLoading}
+                      startIcon={
+                        buttonLoading ? <CircularProgress size={20} color="inherit" /> : null
+                      }
+                    >
+                      {buttonLoading ? 'Updating...' : 'Update'}
+                    </Button>
+                    <Button color="error" variant="contained" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                  </Stack>
+                </Toolbar>
+                <Paper
+                  sx={{
+                    width: '100%',
+                    mb: 2,
+                    border: '1px solid #E7EAF0',
+                    mt: 2,
+                    boxShadow: 'none',
+                  }}
+                >
+                  <TableContainer>
+                    <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
+                      <EnhancedTableHead
+                        order={order}
+                        orderBy={orderBy}
+                        onRequestSort={handleRequestSort}
+                        numSelected={selected.length}
+                        onSelectAllClick={handleSelectAllClick}
+                        rowCount={paginatedContacts.length}
+                        broadcastContacts={broadcastContacts}
+                        selected={selected}
+                      />
+                      <TableBody>
+                        {paginatedContacts.map((row, idx) => {
+                          const isItemSelected = selected.indexOf(row.id) !== -1;
 
-                        return (
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.id}
-                            onClick={(event) => handleClick(event, row.id)}
-                            selected={isItemSelected}
-                            sx={{ cursor: 'pointer' }}
-                          >
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                // checked={isItemSelected}
-                                checked={selected.indexOf(row.id) !== -1}
-                                onChange={(event) => handleClick(event, row.id)}
-                                inputProps={{
-                                  'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
-                                }}
-                                color="primary"
-                              />
-                            </TableCell>
-                            <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
-                              <Typography
-                                fontWeight="400 !important"
-                                variant="h6"
-                                fontSize="14px !important"
-                                padding="13px 4px !important"
-                              >
-                                {row.name}
-                              </Typography>
-                            </TableCell>
-                            <TableCell sx={{ padding: '0px' }}>
-                              <Typography
-                                fontWeight="400 !important"
-                                variant="h6"
-                                fontSize="14px !important"
-                                padding="13px 4px !important"
-                              >
-                                {row.full_mobile}
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="left" sx={{ padding: '0px' }}>
-                              <Typography
-                                fontWeight="400 !important"
-                                variant="h6"
-                                fontSize="14px !important"
-                                padding="13px 4px !important"
-                              >
-                                {row.city ? row.city : '-'}
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="left" sx={{ padding: '0px' }}>
-                              <Typography
-                                fontWeight="400 !important"
-                                variant="h6"
-                                fontSize="14px !important"
-                                padding="13px 4px !important"
-                              >
-                                {row.tag ? row.tag : '-'}
-                              </Typography>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50, 100]}
-                  component="div"
-                  count={sortedContacts.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handlePageChange}
-                  onRowsPerPageChange={handleRowsPerPageChange}
-                />
-              </Paper>
-            </>
-          )}
-        </Box>
+                          return (
+                            <TableRow
+                              hover
+                              role="checkbox"
+                              tabIndex={-1}
+                              key={row.id}
+                              onClick={(event) => handleClick(event, row.id)}
+                              selected={isItemSelected}
+                              sx={{ cursor: 'pointer' }}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  // checked={isItemSelected}
+                                  checked={selected.indexOf(row.id) !== -1}
+                                  onChange={(event) => handleClick(event, row.id)}
+                                  inputProps={{
+                                    'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
+                                  }}
+                                  color="primary"
+                                />
+                              </TableCell>
+                              <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
+                                <Typography
+                                  fontWeight="400 !important"
+                                  variant="h6"
+                                  fontSize="14px !important"
+                                  padding="13px 4px !important"
+                                >
+                                  {row.name}
+                                </Typography>
+                              </TableCell>
+                              <TableCell sx={{ padding: '0px' }}>
+                                <Typography
+                                  fontWeight="400 !important"
+                                  variant="h6"
+                                  fontSize="14px !important"
+                                  padding="13px 4px !important"
+                                >
+                                  {row.full_mobile}
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="left" sx={{ padding: '0px' }}>
+                                <Typography
+                                  fontWeight="400 !important"
+                                  variant="h6"
+                                  fontSize="14px !important"
+                                  padding="13px 4px !important"
+                                >
+                                  {row.city ? row.city : '-'}
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="left" sx={{ padding: '0px' }}>
+                                <Typography
+                                  fontWeight="400 !important"
+                                  variant="h6"
+                                  fontSize="14px !important"
+                                  padding="13px 4px !important"
+                                >
+                                  {row.tag ? row.tag : '-'}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                    component="div"
+                    count={sortedContacts.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handlePageChange}
+                    onRowsPerPageChange={handleRowsPerPageChange}
+                  />
+                </Paper>
+              </>
+            )}
+          </Box>
+        </form>
       </Dialog>
       <Dialog
         open={openFilterDialog}

@@ -693,6 +693,12 @@ const TemplateModal = ({
                 }),
           };
         }
+        if (component.type === 'BODY') {
+          return {
+            ...component,
+            text: component.text,
+          };
+        }
         return component;
       }),
     };
@@ -971,14 +977,24 @@ const TemplateModal = ({
 
                                 case 'BODY':
                                   return (
-                                    <Typography key={component.type} variant="body1">
-                                      {component.text.split('\n').map((item, idx) => (
-                                        <span key={idx}>
-                                          {item}
-                                          <br />
-                                        </span>
-                                      ))}
-                                    </Typography>
+                                    // <Typography key={component.type} variant="body1">
+                                    //   {component.text.split('\n').map((item, idx) => (
+                                    //     <span key={idx}>
+                                    //       {item}
+                                    //       <br />
+                                    //     </span>
+                                    //   ))}
+                                    // </Typography>
+                                    <Typography
+                                      key={component?.type}
+                                      variant="body1"
+                                      dangerouslySetInnerHTML={{
+                                        __html: component.text
+                                          .replace(/\*([^*]+)\*/g, '<b>$1</b>') // Convert bold to HTML
+                                          .replace(/_([^_]+)_/g, '<i>$1</i>') // Convert italic to HTML
+                                          .replace(/~([^~]+)~/g, '<s>$1</s>'), // Convert strikethrough to HTML
+                                      }}
+                                    />
                                   );
                                 case 'FOOTER':
                                   return (

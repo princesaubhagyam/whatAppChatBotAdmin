@@ -16,7 +16,7 @@ import { useUser } from 'src/store/apps/UserContext';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import apiClient from 'src/api/axiosClient';
 import PaymentAddMoney from 'src/modals/PaymentAddMoney';
-import defaultProfilePic from 'src/assets/images/backgrounds/download.png';
+import defaultProfilePic from 'src/assets/images/backgrounds/user (2).png';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);

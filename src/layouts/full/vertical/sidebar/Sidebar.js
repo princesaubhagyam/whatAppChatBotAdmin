@@ -110,7 +110,7 @@ const Sidebar = () => {
                 position: 'absolute',
                 bottom: '55px',
                 left: '0px',
-                width: '79px',
+                width: '80px',
               }}
             >
               <Link to="/privacy-policy">
@@ -155,7 +155,7 @@ const Sidebar = () => {
                 position: 'absolute',
                 bottom: '0px',
                 left: '0px',
-                width: '79px',
+                width: '80px',
               }}
             >
               <Link to="/terms-conditions">

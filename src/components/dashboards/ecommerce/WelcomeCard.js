@@ -33,7 +33,7 @@ const WelcomeCard = ({ setIsLoading }) => {
 
   return (
     <Card elevation={0} sx={{ backgroundColor: (theme) => theme.palette.primary.light, py: 0 }}>
-      <CardContent sx={{ py: 2, paddingTop: '27px' }}>
+      <CardContent sx={{ py: 2, paddingTop: '27px', height: '221px' }}>
         <Grid container spacing={3} justifyContent="space-between">
           <Grid item sm={6} display="flex" alignItems="center">
             <Box
@@ -80,7 +80,7 @@ const WelcomeCard = ({ setIsLoading }) => {
                   src={welcomeImg}
                   alt="Welcome"
                   width={'300px'}
-                  style={{ marginTop: '30px', marginBottom: '-30px' }}
+                  style={{ marginTop: '3px', marginBottom: '-30px' }}
                 />
               )}
             </Box>

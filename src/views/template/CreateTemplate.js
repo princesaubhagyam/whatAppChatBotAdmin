@@ -16,7 +16,6 @@ import {
   Autocomplete,
   CircularProgress,
   Tooltip,
-  Slide,
 } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import EmojiPicker from 'emoji-picker-react';
@@ -31,7 +30,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router';
 import CloseIcon from '@mui/icons-material/Close';
-
+import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import img from 'src/assets/images/backgrounds/Template_background.jpg';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -42,6 +41,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import apiClient from 'src/api/axiosClient';
 import countryCodes from '../../utils/Countrycode.json';
 import createMetaAxiosInstance from 'src/api/axiosClientMeta';
+import { IconCircle } from '@tabler/icons';
+
 const BCrumb = [
   { to: '/', title: 'Home' },
   { to: '/templates', title: 'Templates' },
@@ -129,7 +130,7 @@ export default function CreateTemplate() {
   const [buttonIcon, setButtonIcon] = useState(<Reply />);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-
+  const textAreaRef = useRef(null);
   const [preData, setPreData] = useState();
   const [mediaType, setMediaType] = useState('');
   const [mediaContent, setMediaContent] = useState(null);
@@ -169,16 +170,37 @@ export default function CreateTemplate() {
     setVariables([...variables, { id: variables.length + 1, value: '' }]);
     formikTemplate.values.body = formikTemplate.values.body + `{{${variables.length + 1}}}`;
   };
-
+  const buttonRef = useRef(null);
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
 
-  useEffect(() => {
-    if (showEmojiPicker && emojiPickerRef.current) {
-      const { end } = emojiPickerRef.current.getBoundingClientRect();
-      window.scrollTo({ end: end + window.scrollY, behavior: 'smooth' });
+  const handleClickOutside = (event) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target) &&
+      !buttonRef.current.contains(event.target)
+    ) {
+      setShowEmojiPicker(false);
     }
+  };
+
+  // useEffect(() => {
+  //   if (showEmojiPicker && emojiPickerRef.current) {
+  //     const { end } = emojiPickerRef.current.getBoundingClientRect();
+  //     window.scrollTo({ end: end + window.scrollY, behavior: 'smooth' });
+  //   }
+  // }, [showEmojiPicker]);
+  useEffect(() => {
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [showEmojiPicker]);
 
   const handleEmojiClick = (event, emojiObject) => {
@@ -385,11 +407,11 @@ export default function CreateTemplate() {
           language: preData.language,
           category: preData.category,
           components: [
-            {
-              type: 'HEADER',
-              format: HeaderSelect,
-              text: HeaderSelect === 'TEXT' ? values.text : '',
-            },
+            // {
+            //   type: 'HEADER',
+            //   format: HeaderSelect,
+            //   text: HeaderSelect === 'TEXT' ? values.text || '' : '',
+            // },
             {
               type: 'BODY',
               text: values.body,
@@ -399,10 +421,12 @@ export default function CreateTemplate() {
                 },
               }),
             },
-            {
-              type: 'FOOTER',
-              text: values.footer,
-            },
+            ...(values.footer && [
+              {
+                type: 'FOOTER',
+                text: values.footer,
+              },
+            ]),
             ...(validButton && [
               {
                 type: 'BUTTONS',
@@ -430,8 +454,14 @@ export default function CreateTemplate() {
           }
         });
 
-        if (HeaderSelect === 'MEDIA') {
-          reqBody.components[0] = {
+        if (HeaderSelect === 'TEXT' && values.text) {
+          reqBody.components.unshift({
+            type: 'HEADER',
+            format: 'TEXT',
+            text: values.text,
+          });
+        } else if (HeaderSelect === 'MEDIA' && mediaRes) {
+          reqBody.components.unshift({
             type: 'HEADER',
             format:
               mediaType === 'image'
@@ -444,7 +474,24 @@ export default function CreateTemplate() {
             example: {
               header_handle: [mediaRes],
             },
-          };
+          });
+        }
+
+        if (phoneNumber) {
+          reqBody.components.forEach((component) => {
+            if (component.type === 'BUTTONS') {
+              component.buttons[0].type = 'PHONE_NUMBER';
+              component.buttons[0].phone_number = (countryCode + phoneNumber).replace('+', '');
+            }
+          });
+        }
+        if (callToActionURL) {
+          reqBody.components.forEach((component) => {
+            if (component.type === 'BUTTONS') {
+              component.buttons[0].type = 'URL';
+              component.buttons[0].url = callToActionURL;
+            }
+          });
         }
 
         const isFormIsValid = true;
@@ -517,6 +564,7 @@ export default function CreateTemplate() {
   };
 
   const handleRemoveMedia = () => {
+    setMediaType(null);
     setMediaContent(null); // Clear the media content
   };
 
@@ -643,20 +691,44 @@ export default function CreateTemplate() {
     }
   };
 
+  const handleButtonClick = (format) => {
+    const textArea = textAreaRef.current;
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    const selectedText = formikTemplate.values.body.substring(start, end);
+
+    let formattedText = selectedText;
+    if (format === 'bold') {
+      formattedText = `*${selectedText}*`;
+    } else if (format === 'italic') {
+      formattedText = `_${selectedText}_`;
+    } else if (format === 'strike') {
+      formattedText = `~${selectedText}~`;
+    }
+
+    const newValue =
+      formikTemplate.values.body.substring(0, start) +
+      formattedText +
+      formikTemplate.values.body.substring(end);
+
+    formikTemplate.setFieldValue('body', newValue);
+    setInputLength(newValue.length);
+  };
+
   const handleFieldChange = (e) => {
     let num = countPlaceholders(e.target.value);
     if (variables.length < num) {
       setVariables([...variables, { id: variables.length + 1, value: '' }]);
-      console.log('variables<', variables);
+      // console.log('variables<', variables);
     }
     if (variables.length > num) {
-      console.log('variables>', variables);
+      // console.log('variables>', variables);
 
       setVariables(variables.slice(0, -1));
-      console.log('variables>', variables);
+      // console.log('variables>', variables);
     }
     setInputLength(e.target.value.length);
-    console.log('e', e.target.value);
+    // console.log('e', e.target.value);
 
     formikTemplate.handleChange(e);
   };
@@ -780,7 +852,7 @@ export default function CreateTemplate() {
           <ParentCard title="Edit template">
             <form onSubmit={formikTemplate.handleSubmit}>
               <Grid container spacing={3}>
-                <Grid item lg={8} md={12} sm={12}>
+                <Grid item lg={8} md={12} sm={12} paddingTop={'0px !important'}>
                   <CustomFormLabel htmlFor="name">Header</CustomFormLabel>
                   <Typography variant="subtitle1">
                     Add a title or choose which type of media you'll use for this header.
@@ -917,6 +989,7 @@ export default function CreateTemplate() {
                     multiline
                     rows={4}
                     column={2}
+                    inputRef={textAreaRef}
                     inputProps={{
                       maxLength: CHARACTER_LIMIT,
                       sx: {
@@ -933,23 +1006,139 @@ export default function CreateTemplate() {
                           <Typography sx={{ fontSize: '12px !important' }}>
                             {`${formikTemplate.values.body.length}/${CHARACTER_LIMIT}`}
                           </Typography>
-                          <Tooltip title="Add Emoji">
+                          {/* <Tooltip title="Add Emoji">
                             <IconButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
                               <span role="img" aria-label="emoji">
                                 😊
                               </span>
                             </IconButton>
-                          </Tooltip>
+                          </Tooltip> */}
                         </InputAdornment>
                       ),
                     }}
                     required
                   />
-                  <Slide direction="down" in={showEmojiPicker} mountOnEnter unmountOnExit>
+                  {/* <Slide direction="down" in={showEmojiPicker} mountOnEnter unmountOnExit>
                     <Box mt={1} ref={emojiPickerRef}>
                       <EmojiPicker onEmojiClick={handleEmojiClick} />
                     </Box>
-                  </Slide>
+                  </Slide> */}
+                  <Box position="relative" mt={'3px'}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      mb={2}
+                      justifyContent={'end'}
+                      gap={'10px'}
+                    >
+                      <Tooltip
+                        title="Bold"
+                        slotProps={{
+                          popper: {
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, -14],
+                                },
+                              },
+                            ],
+                          },
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleButtonClick('bold')}
+                          sx={{ fontSize: '1.25rem' }}
+                        >
+                          <b>B</b>
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip
+                        title="Italic"
+                        slotProps={{
+                          popper: {
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, -14],
+                                },
+                              },
+                            ],
+                          },
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleButtonClick('italic')}
+                          sx={{ fontSize: '1.25rem' }}
+                        >
+                          <i>I</i>
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip
+                        title="Strikethrough"
+                        slotProps={{
+                          popper: {
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, -14],
+                                },
+                              },
+                            ],
+                          },
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => handleButtonClick('strike')}
+                          sx={{ fontSize: '1.25rem' }}
+                        >
+                          <strike>S</strike>
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip
+                        title="Add Emoji"
+                        slotProps={{
+                          popper: {
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, -14],
+                                },
+                              },
+                            ],
+                          },
+                        }}
+                      >
+                        <IconButton
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                          ref={buttonRef}
+                        >
+                          {/* <span role="img" aria-label="emoji">
+                            😊
+                          </span> */}
+                          <EmojiEmotionsOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Button variant="outlined" color="primary" size="small" onClick={addVariable}>
+                        Add Variable
+                      </Button>
+                    </Box>
+                    {showEmojiPicker && (
+                      <Box
+                        position="absolute"
+                        top="100%"
+                        left="0"
+                        mt={1}
+                        zIndex={10} // Ensures it stays on top of other elements
+                        ref={emojiPickerRef}
+                      >
+                        <EmojiPicker onEmojiClick={handleEmojiClick} />
+                      </Box>
+                    )}
+                  </Box>
                   {variables &&
                     variables.map((variable, index) => (
                       <Box display="flex" alignItems="center" mt={2} key={variable.id}>
@@ -966,12 +1155,16 @@ export default function CreateTemplate() {
                         </IconButton>
                       </Box>
                     ))}
-                  <Box mt={2}>
+                  {/* <Box mt={2}>
                     <Button variant="outlined" color="primary" size="small" onClick={addVariable}>
                       Add Variable
                     </Button>
-                  </Box>
-                  <CustomFormLabel htmlFor="footer">Footer</CustomFormLabel>
+                  </Box> */}
+                  <CustomFormLabel htmlFor="footer">
+                    Footer{' '}
+                    <IconCircle size="3" fill="textSecondary" style={{ margin: '3px 5px' }} />{' '}
+                    <b style={{ color: 'gray', fontWeight: '500' }}>Optional</b>
+                  </CustomFormLabel>
                   <Typography variant="subtitle1">
                     Add footer text. You can add a short, supporting message at the bottom of your
                     template.
@@ -994,16 +1187,19 @@ export default function CreateTemplate() {
                         </InputAdornment>
                       ),
                     }}
-                    required
                   />
                   {formikTemplate.errors.footer && (
                     <FormHelperText error id="footer">
                       {formikTemplate.errors.footer}
                     </FormHelperText>
                   )}
-                  <CustomFormLabel htmlFor="buttonText">Button Text</CustomFormLabel>
+                  <CustomFormLabel htmlFor="buttonText">
+                    Button Text{' '}
+                    <IconCircle size="3" fill="textSecondary" style={{ margin: '3px 5px' }} />{' '}
+                    <b style={{ color: 'gray', fontWeight: '500' }}>Optional</b>
+                  </CustomFormLabel>
                   <Typography variant="subtitle1">
-                    Add a call-to-action button that appears below the body of your message.
+                    Add a button that appears below the body of your message.
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={3}>
@@ -1103,7 +1299,7 @@ export default function CreateTemplate() {
                   </Grid>
                 </Grid>
 
-                <Grid item lg={4} md={12} sm={12}>
+                <Grid item lg={4} md={12} sm={12} pt={'16px !important'}>
                   <Box>
                     <Typography variant="h6" mb={2}>
                       Preview
@@ -1163,7 +1359,7 @@ export default function CreateTemplate() {
                         )} */}
 
                         {HeaderSelect === 'TEXT' ? (
-                          <Typography variant="h6" component="div">
+                          <Typography variant="h6" component="div" fontWeight={500}>
                             {formikTemplate.values.text}
                           </Typography>
                         ) : loading ? ( // Show loading spinner while uploading

@@ -262,7 +262,7 @@ const TemplatesTableList = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPage, setTotalPages] = useState(0);
 
@@ -360,11 +360,11 @@ const TemplatesTableList = () => {
     setConfirmDelete(true);
   };
   const handleConfirmDelete = async () => {
-    setLoading(true);
+    setButtonLoading(true);
     try {
       await handleDeleteApi(currentId, currentName);
     } finally {
-      setLoading(false);
+      setButtonLoading(false);
       setConfirmDelete(false);
     }
   };
@@ -375,11 +375,20 @@ const TemplatesTableList = () => {
 
   const handleDeleteApi = async (id, templateName) => {
     try {
-      const metaAxiosClient = createMetaAxiosClient();
-      await metaAxiosClient.delete(`/message_templates`, {
+      // const metaAxiosClient = createMetaAxiosClient();
+      // await metaAxiosClient.delete(`/message_templates`, {
+      //   params: {
+      //     hsm_id: id,
+      //     name: templateName,
+      //   },
+      // });
+      //const metaAxiosClient = createMetaAxiosClient();
+      const wabaid = localStorage.getItem('whatsapp_business_account_id');
+      await apiClient.delete(`/api/delete_template/`, {
         params: {
-          hsm_id: id,
+          id,
           name: templateName,
+          whatsapp_business_account_id: wabaid,
         },
       });
 
@@ -755,14 +764,24 @@ const TemplatesTableList = () => {
 
                         case 'BODY':
                           return (
-                            <Typography key={component?.type} variant="body1">
-                              {component?.text.split('\n').map((item, idx) => (
-                                <span key={idx}>
-                                  {item}
-                                  <br />
-                                </span>
-                              ))}
-                            </Typography>
+                            <Typography
+                              key={component?.type}
+                              variant="body1"
+                              dangerouslySetInnerHTML={{
+                                __html: component.text
+                                  .replace(/\*([^*]+)\*/g, '<b>$1</b>')
+                                  .replace(/_(.*?)_/g, '<i>$1</i>')
+                                  .replace(/~([^~]+)~/g, '<strike>$1</strike>'),
+                              }}
+                            />
+                            //                         <Typography key={component?.type} variant="body1">
+                            //   {component.text.split('\n').map((item, idx) => (
+                            //     <span key={idx}>
+                            //       {item}
+                            //       <br />
+                            //     </span>
+                            //   ))}
+                            // </Typography>
                           );
 
                         case 'FOOTER':
@@ -847,10 +866,10 @@ const TemplatesTableList = () => {
             color="error"
             variant="contained"
             //loadingPosition="start"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            disabled={buttonLoading}
+            startIcon={buttonLoading ? <CircularProgress size={20} color="inherit" /> : null}
           >
-            {loading ? 'Deleting...' : 'Delete'}
+            {buttonLoading ? 'Deleting...' : 'Delete'}
           </Button>
           <Button onClick={() => setConfirmDelete(false)} color="primary" variant="contained">
             Cancel

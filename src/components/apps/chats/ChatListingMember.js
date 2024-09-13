@@ -247,42 +247,43 @@ const ChatListingMember = ({
                           <Avatar sx={{ width: 42, height: 42 }}>{getInitials(member.name)}</Avatar>
                         </Badge>
                       </ListItemAvatar>
-                      <ListItemText
-                        primary={
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}
+                      >
+                        {/* Name and contact information */}
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                           <Typography
                             variant="subtitle2"
                             fontWeight={600}
                             fontSize={14}
                             lineHeight={1.3}
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                            }}
                           >
                             {FirstLetterCapitalOfString(member.name)}
-                            {!isHistory && (
-                              <Tooltip title="Delete Member">
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() => getCurentID(member)}
-                                >
-                                  <DeleteOutline />
-                                </IconButton>
-                              </Tooltip>
-                            )}
                           </Typography>
-                        }
-                        secondary={
-                          <Typography variant="subtitle1" fontSize={13}>
+                          <Typography variant="subtitle1" fontSize={13} noWrap>
                             {member.full_mobile}
                           </Typography>
-                        }
-                        secondaryTypographyProps={{
-                          noWrap: true,
-                        }}
-                        sx={{ my: 0 }}
-                      />
+                        </Box>
+                        {/* Remove button */}
+                        {!isHistory && (
+                          <Tooltip title="Delete Member">
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => getCurentID(member)}
+                              sx={{ ml: 'auto' }} // Push the delete button to the right
+                            >
+                              <DeleteOutline />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </Box>
+
                       <Box sx={{ flexShrink: '0' }} mt={0.5}></Box>
                     </ListItemButton>
                   </Box>

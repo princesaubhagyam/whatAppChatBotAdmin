@@ -27,8 +27,8 @@ import Spinner from 'src/views/spinner/Spinner';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import toast from 'react-hot-toast';
 import { useUser } from 'src/store/apps/UserContext';
-import defaultProfilePic from 'src/assets/images/backgrounds/download.png';
-// import defaultProfilePic from 'src/assets/images/backgrounds/default_image.png';
+import defaultProfilePic from 'src/assets/images/backgrounds/user (2).png';
+//import defaultProfilePic from 'src/assets/images/backgrounds/default_image.png';
 
 const DeleteDialog = ({ open, handleClose, handleDelete, deleteDialogLoading }) => {
   return (

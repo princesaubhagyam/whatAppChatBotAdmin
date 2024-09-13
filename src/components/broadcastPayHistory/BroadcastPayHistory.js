@@ -197,7 +197,12 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                 <Grid item xs={12} md={4}>
                   <Card variant="outlined" sx={{ padding: 2 }}>
                     <Typography variant="h6">Released Amount</Typography>
-                    <Typography variant="h5">₹{broadcastPayHistoryData.released_amount}</Typography>
+                    <Typography variant="h5">
+                      ₹
+                      {broadcastPayHistoryData.released_amount
+                        ? parseFloat(broadcastPayHistoryData.released_amount).toFixed(2)
+                        : '0.00'}
+                    </Typography>
                   </Card>
                 </Grid>
               </Grid>
@@ -208,12 +213,15 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                   <Card variant="outlined" sx={{ padding: 2 }}>
                     <Typography variant="h6">Cost per message delivered</Typography>
                     <Typography variant="h5">
-                      {broadcastPayHistoryData.delivered === 0 ? (
-                        <>₹{broadcastPayHistoryData.pay_amount / 1} </>
-                      ) : (
+                      {broadcastPayHistoryData.delivered > 0 ? (
                         <>
-                          ₹{broadcastPayHistoryData.pay_amount / broadcastPayHistoryData.delivered}
+                          ₹
+                          {parseFloat(
+                            broadcastPayHistoryData.pay_amount / broadcastPayHistoryData.delivered,
+                          ).toFixed(2)}
                         </>
+                      ) : (
+                        <>₹0.00</>
                       )}
                     </Typography>
                   </Card>
@@ -223,9 +231,9 @@ function BroadcastPayHistory({ setBroadcastPayHistroy }) {
                     <Typography variant="h6">Total Cost</Typography>
                     <Typography variant="h5">
                       {broadcastPayHistoryData.pay_amount > 0 ? (
-                        <>₹{broadcastPayHistoryData.pay_amount}</>
+                        <>₹{parseFloat(broadcastPayHistoryData.pay_amount).toFixed(2)}</>
                       ) : (
-                        <>₹0</>
+                        <>₹0.00</>
                       )}
                     </Typography>
                   </Card>

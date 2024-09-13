@@ -209,58 +209,68 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory, isHistory }) => {
     >
       {broadcastData && (
         <>
-          {broadcastData.broadcast_histories && broadcastData.broadcast_histories.length > 0 &&broadcastData.broadcast_histories.map((history, index) => (
-            <List
-              key={index}
-              sx={{ paddingTop: '0px', paddingBottom: '0px', borderRadius: '5rem !important' }}
-            >
-              <Box sx={{ backgroundColor: '#E9FEEE', padding: '10px', borderRadius: '0px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
-                    {history.template}
-                  </Typography>
-                  {/* <Button
+          {broadcastData.broadcast_histories &&
+            broadcastData.broadcast_histories.length > 0 &&
+            broadcastData.broadcast_histories.map((history, index) => (
+              <List
+                key={index}
+                sx={{ paddingTop: '0px', paddingBottom: '0px', borderRadius: '5rem !important' }}
+              >
+                <Box sx={{ backgroundColor: '#E9FEEE', padding: '10px', borderRadius: '0px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="h4" sx={{ fontSize: '1rem', color: 'rgb(26, 77, 46)' }}>
+                      {history.template}
+                    </Typography>
+                    {/* <Button
                     sx={{ height: '28px', width: '32px !important', minWidth: '30px !important' }}
                     onClick={() => handleOpenModal(history.message_statuses)}
                   >
                     <BarChartIcon />
                   </Button> */}
-                </div>
-                <Typography sx={{ fontSize: '0.80rem' }}>
-                  {truncateText(history.template_body, 10)}
-                </Typography>
-              </Box>
-              <Box sx={{ backgroundColor: '#B8E7CB', padding: '10px', borderRadius: '0px' }}>
-                {history.message_statuses.map((status, idx) => (
-                  <ListItem key={idx} sx={{ padding: 0, marginBottom: '1px' }}>
-                    <ListItemAvatar>
-                      <Typography variant="h6">{status.count} </Typography>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        <Typography
-                          sx={{
-                            fontSize: '0.95rem',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {status.status}
-                          {getStatusIcon(status.status)}
-                        </Typography>
-                      }
-                      secondary={
-                        <Typography
-                          sx={{ fontSize: '0.95rem' }}
-                        >{`${status.percentage}`}</Typography>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </Box>
-            </List>
-          ))}
+                  </div>
+                  <Typography
+                    sx={{ fontSize: '0.80rem' }}
+                    // dangerouslySetInnerHTML={{
+                    //   __html: history.template_body
+                    //     .replace(/\*([^*]+)\*/g, '<b>$1</b>')
+                    //     .replace(/_([^_]+)_/g, '<i>$1</i>')
+                    //     .replace(/~([^~]+)~/g, '<s>$1</s>'),
+                    // }}
+                  >
+                    {truncateText(history.template_body, 10)}
+                  </Typography>
+                </Box>
+                <Box sx={{ backgroundColor: '#B8E7CB', padding: '10px', borderRadius: '0px' }}>
+                  {history.message_statuses.map((status, idx) => (
+                    <ListItem key={idx} sx={{ padding: 0, marginBottom: '1px' }}>
+                      <ListItemAvatar>
+                        <Typography variant="h6">{status.count} </Typography>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Typography
+                            sx={{
+                              fontSize: '0.95rem',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            {status.status}
+                            {getStatusIcon(status.status)}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography
+                            sx={{ fontSize: '0.95rem' }}
+                          >{`${status.percentage}`}</Typography>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </Box>
+              </List>
+            ))}
         </>
       )}
       <Modal open={openModal} onClose={handleCloseModal}>

@@ -18,6 +18,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import apiClient from 'src/api/axiosClient';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
@@ -29,7 +30,7 @@ const ChangePassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const handleClickShowPassword = (field) => {
     switch (field) {
       case 'old':
@@ -80,6 +81,7 @@ const ChangePassword = () => {
         setNewPassword('');
         setConfirmPassword('');
         setErrors({});
+        navigate('/home');
       }
     } catch (error) {
       if (error?.response?.data?.status === false) {

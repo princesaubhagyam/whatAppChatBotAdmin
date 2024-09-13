@@ -57,7 +57,8 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleCreate = async () => {
+  const handleCreate = async (event) => {
+    event.preventDefault();
     if (validateFields()) {
       setLoading(true);
       const formData = new FormData();
@@ -83,49 +84,54 @@ const ImportBroadcastModal = ({ open, handleClose, getBroadcastsData }) => {
   return (
     <Modal open={open} onClose={handleClose} closeAfterTransition>
       <Fade in={open}>
-        <Box
-          sx={{
-            outline: 'none',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            width: '35%',
-            margin: 'auto',
-            mt: 10,
-          }}
-        >
-          <Typography variant="h6" component="h2">
-            Create Broadcast Title
-          </Typography>
-          <FormControl sx={{ marginTop: '15px', width: '100%' }}>
-            <InputLabel htmlFor="component-outlined">Enter Broadcast Title</InputLabel>
-            <OutlinedInput
-              label="Enter Broadcast Title"
-              id="broadcast-title"
-              value={broadcastTitle}
-              onChange={(e) => setBroadcastTitle(e.target.value)}
-              error={!!errors.broadcastTitle}
-            />
-          </FormControl>
-          {errors.broadcastTitle && <Typography color="error">{errors.broadcastTitle}</Typography>}
+        <form onSubmit={handleCreate}>
+          <Box
+            sx={{
+              outline: 'none',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              width: '35%',
+              margin: 'auto',
+              mt: 10,
+            }}
+          >
+            <Typography variant="h6" component="h2">
+              Create Broadcast Title
+            </Typography>
+            <FormControl sx={{ marginTop: '15px', width: '100%' }}>
+              <InputLabel htmlFor="component-outlined">Enter Broadcast Title</InputLabel>
+              <OutlinedInput
+                label="Enter Broadcast Title"
+                id="broadcast-title"
+                value={broadcastTitle}
+                onChange={(e) => setBroadcastTitle(e.target.value)}
+                error={!!errors.broadcastTitle}
+              />
+            </FormControl>
+            {errors.broadcastTitle && (
+              <Typography color="error">{errors.broadcastTitle}</Typography>
+            )}
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              loading={loading}
-              onClick={handleCreate}
-              sx={{ mr: 2 }}
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {loading ? 'Creating...' : 'Create'}
-            </Button>
-            <Button variant="contained" color="error" onClick={handleClose}>
-              Cancel
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                loading={loading}
+                type="submit"
+                onClick={handleCreate}
+                sx={{ mr: 2 }}
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {loading ? 'Creating...' : 'Create'}
+              </Button>
+              <Button variant="contained" color="error" onClick={handleClose}>
+                Cancel
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </form>
       </Fade>
     </Modal>
   );

@@ -33,7 +33,8 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
@@ -65,78 +66,81 @@ const ImportContactModal = ({ open, handleClose, getApiData }) => {
   return (
     <Modal open={open} onClose={handleClose} closeAfterTransition>
       <Fade in={open}>
-        <Box
-          sx={{
-            outline: 'none',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            width: '30%',
-            margin: 'auto',
-            mt: 10,
-          }}
-        >
-          <Typography variant="h6" component="h2">
-            Choose file to import contact
-          </Typography>
-          <Button
-            component="a"
-            href={sampleFileUrl}
-            download="contacts.csv"
+        <form onSubmit={handleSubmit}>
+          <Box
             sx={{
-              backgroundColor: 'transparent',
-              width: '100%',
-              fontWeight: '600',
-              fontSize: '0.95rem',
-              marginTop: '10px',
-              '&:hover': {
-                backgroundColor: `white`,
-                color: 'green',
-              },
+              outline: 'none',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              width: '30%',
+              margin: 'auto',
+              mt: 10,
             }}
           >
-            <IconDownload size={'20'} />
-            Download Sample CSV
-          </Button>
-          <Box sx={{ border: 2, borderColor: '#1A4D2E', py: 0, mt: 2 }} variant="contained">
+            <Typography variant="h6" component="h2">
+              Choose file to import contact
+            </Typography>
             <Button
-              component="label"
-              role={undefined}
-              tabIndex={-1}
-              startIcon={<IconFileImport />}
-              fullWidth
-              style={{
-                padding: '16px',
-                fontSize: '1rem',
-                borderRadius: '4px',
+              component="a"
+              href={sampleFileUrl}
+              download="contacts.csv"
+              sx={{
+                backgroundColor: 'transparent',
+                width: '100%',
+                fontWeight: '600',
+                fontSize: '0.95rem',
+                marginTop: '10px',
+                '&:hover': {
+                  backgroundColor: `white`,
+                  color: 'green',
+                },
               }}
             >
-              Upload file
-              <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+              <IconDownload size={'20'} />
+              Download Sample CSV
             </Button>
+            <Box sx={{ border: 2, borderColor: '#1A4D2E', py: 0, mt: 2 }} variant="contained">
+              <Button
+                component="label"
+                role={undefined}
+                tabIndex={-1}
+                startIcon={<IconFileImport />}
+                fullWidth
+                style={{
+                  padding: '16px',
+                  fontSize: '1rem',
+                  borderRadius: '4px',
+                }}
+              >
+                Upload file
+                <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+              </Button>
+            </Box>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                Selected file: {selectedFile.name}
+              </Typography>
+            )}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mr: 2 }}
+                onClick={handleSubmit}
+                type="submit"
+                //loading={loading}
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+              >
+                {loading ? 'Importing...' : 'Import'}
+              </Button>
+              <Button variant="contained" color="error" onClick={handleClose}>
+                Cancel
+              </Button>
+            </Box>
           </Box>
-          {selectedFile && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              Selected file: {selectedFile.name}
-            </Typography>
-          )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mr: 2 }}
-              onClick={handleSubmit}
-              //loading={loading}
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {loading ? 'Importing...' : 'Import'}
-            </Button>
-            <Button variant="contained" color="error" onClick={handleClose}>
-              Cancel
-            </Button>
-          </Box>
-        </Box>
+        </form>
       </Fade>
     </Modal>
   );

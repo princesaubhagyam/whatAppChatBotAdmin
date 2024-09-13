@@ -69,9 +69,9 @@ const SetUpProfileCard = ({ freeTierUsedCount, freeTierConversation, totalCost, 
                 </Box>
                 <Typography variant="body2">{freeTierConversation}</Typography>
               </Box>
-              <Typography>
+              {/* <Typography>
                 <b>WhatsApp Conversation Credits (WCC):</b> ₹{totalCost}
-              </Typography>
+              </Typography> */}
             </>
           )}
         </div>

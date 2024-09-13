@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { IconMenu2 } from '@tabler/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import { formatDistanceToNowStrict } from 'date-fns';
 import CachedIcon from '@mui/icons-material/Cached';
 import { useState } from 'react';
@@ -26,7 +26,7 @@ import Spinner from 'src/views/spinner/Spinner';
 import { IconReceipt2 } from '@tabler/icons-react';
 import InfoIcon from '@mui/icons-material/Info';
 
-const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcastPayHistroy }) => {
+const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory, setBroadcastPayHistroy }) => {
   // const [open, setOpen] = React.useState(false);
   // const [Graph, setGraph] = React.useState([]);
   // console.log('Graph', Graph);
@@ -48,16 +48,16 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcast
     setRefreshKey((prevKey) => prevKey + 1);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
-    handleClickSamePage()
+    handleClickSamePage();
   };
 
   function analyticsHistroy() {
     setIsAnalytics(() => true);
   }
 
-   function broadcastTransactionHistory(){
-    setBroadcastPayHistroy(()=>true)
-   }
+  function broadcastTransactionHistory() {
+    setBroadcastPayHistroy(() => true);
+  }
   return (
     <Box>
       {activeBroadcast ? (
@@ -78,37 +78,38 @@ const ChatContent = ({ toggleChatSidebar, setIsAnalytics, isHistory,setBroadcast
                     style={{ padding: '0px' }}
                     primary={<Typography variant="h5">{activeBroadcast.title}</Typography>}
                   />
-                  <Tooltip title="Broadcast Transaction History">
-                    <IconButton sx={{ cursor: 'pointer' }}>
-                      {isHistory && (
-                        <IconReceipt2 stroke={2}
-                          onClick={broadcastTransactionHistory}
-                        />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Analytics">
-                    <IconButton sx={{ cursor: 'pointer' }}>
-                      {isHistory && (
+
+                  {isHistory && (
+                    <Tooltip title="Broadcast Transaction History">
+                      <IconButton sx={{ cursor: 'pointer' }}>
+                        <IconReceipt2 stroke={2} onClick={broadcastTransactionHistory} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  {isHistory && (
+                    <Tooltip title="Analytics">
+                      <IconButton sx={{ cursor: 'pointer' }}>
                         <InfoIcon
                           fontSize="medium"
                           sx={{ marginRight: '2px' }}
                           onClick={analyticsHistroy}
                         />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Refresh">
-                    <IconButton sx={{ cursor: 'pointer' }}>
-                      {isHistory && (
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  {isHistory && (
+                    <Tooltip title="Refresh">
+                      <IconButton sx={{ cursor: 'pointer' }}>
                         <CachedIcon
                           fontSize="medium"
                           sx={{ marginRight: '2px' }}
                           onClick={refreshChatHistory}
                         />
-                      )}
-                    </IconButton>
-                  </Tooltip>
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </ListItem>
                 <Stack direction={'row'}></Stack>
               </Box>
