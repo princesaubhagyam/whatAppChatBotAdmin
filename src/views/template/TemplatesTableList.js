@@ -425,12 +425,12 @@ const TemplatesTableList = () => {
         setTotalPages(response?.data?.data?.total_pages);
 
         setRows(allData);
-        setPage(1);
+        setPage(0);
       } catch (error) {
         console.error('Error fetching search results', error);
       }
     } else {
-      setPage(1);
+      setPage(0);
       getApiData();
     }
   };
