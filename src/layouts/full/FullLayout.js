@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { styled, Container, Box, useTheme, Alert } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
-import { fetchQualityRating } from 'src/store/apps/chat/ChatSlice';
+
+// import { fetchQualityRating } from 'src/store/apps/chat/ChatSlice';
 import Header from './vertical/header/Header';
 import HorizontalHeader from '../full/horizontal/header/Header';
 import Sidebar from './vertical/sidebar/Sidebar';
 import Customizer from './shared/customizer/Customizer';
-import Navigation from './horizontal/navbar/Navbar';
 
 const MainWrapper = styled('div')(() => ({
   display: 'flex',

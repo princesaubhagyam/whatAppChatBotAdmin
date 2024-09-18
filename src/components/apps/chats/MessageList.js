@@ -6,7 +6,6 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Button,
   Modal,
 } from '@mui/material';
 import apiClient from 'src/api/axiosClient';
@@ -15,7 +14,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
-import BarChartIcon from '@mui/icons-material/BarChart';
+
 import EventContext from 'src/BroadcastContext';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -92,14 +91,14 @@ const MessageList = ({ id, refreshKey, checkBroadcastHistory, isHistory }) => {
     checkBroadcastHistory();
   }, [id, isOn]);
 
-  const handleOpenModal = (data) => {
-    const formattedData = data.map((item) => ({
-      ...item,
-      percentage: Math.round(item.percentage),
-    }));
-    // setChartData(formattedData);
-    setOpenModal(true);
-  };
+  // const handleOpenModal = (data) => {
+  //   const formattedData = data.map((item) => ({
+  //     ...item,
+  //     percentage: Math.round(item.percentage),
+  //   }));
+  //   // setChartData(formattedData);
+  //   setOpenModal(true);
+  // };
 
   const handleCloseModal = () => setOpenModal(false);
 
