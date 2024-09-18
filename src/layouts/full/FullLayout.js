@@ -28,12 +28,12 @@ const PageWrapper = styled('div')(() => ({
 
 const FullLayout = () => {
   const customizer = useSelector((state) => state.customizer);
-  const qualityRating = useSelector((state) => state.chatReducer?.qualityRating);
-  const dispatch = useDispatch();
-  // console.log('green', qualityRating);
-  useEffect(() => {
-    dispatch(fetchQualityRating());
-  }, [qualityRating]);
+  // const qualityRating = useSelector((state) => state.chatReducer?.qualityRating);
+  // const dispatch = useDispatch();
+  // // console.log('green', qualityRating);
+  // useEffect(() => {
+  //   dispatch(fetchQualityRating());
+  // }, [qualityRating]);
   const theme = useTheme();
 
   // useEffect(() => {

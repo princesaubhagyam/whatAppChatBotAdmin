@@ -18,7 +18,9 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
     borderRadius: `${customizer.borderRadius}px`,
     marginBottom: level > 1 ? '3px' : '0px',
     color:
-      level > 1 && pathDirect === item.href ? `${theme.palette.primary.main}!important` :  theme.palette.text.secondary,
+      level > 1 && pathDirect === item.href
+        ? `${theme.palette.primary.main}!important`
+        : theme.palette.text.secondary,
     //backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
     '&:hover': {
       backgroundColor: theme.palette.primary.light,

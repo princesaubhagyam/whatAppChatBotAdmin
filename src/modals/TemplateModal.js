@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IconMessage2Share, IconUpload } from '@tabler/icons';
+import { IconMessage2Share } from '@tabler/icons';
 
 import { useSelector } from 'react-redux';
 import apiClient from 'src/api/axiosClient';
@@ -600,7 +600,7 @@ const TemplateModal = ({
         }
       }
     } catch (err) {
-      toast.error('There was an error fetching the template details!');
+      console.error('Error details:', err);
     } finally {
       setLoading(false); // Stop loading
     }
@@ -693,12 +693,12 @@ const TemplateModal = ({
                 }),
           };
         }
-        if (component.type === 'BODY') {
-          return {
-            ...component,
-            text: component.text,
-          };
-        }
+        // if (component.type === 'BODY') {
+        //   return {
+        //     ...component,
+        //     text: component.text,
+        //   };
+        // }
         return component;
       }),
     };
@@ -807,24 +807,29 @@ const TemplateModal = ({
             <Typography variant="h6" component="h2" mb={2}>
               Templates
             </Typography>
-            <FormControl fullWidth>
-              <InputLabel>Select template</InputLabel>
-              <Select
-                value={broadcastDetails.template}
-                fullWidth
-                // displayEmpty
-                name="template"
-                onChange={handleFieldChange}
-                sx={{ marginBottom: '2rem' }}
-                label="Select Template"
-              >
-                {templates?.map((temp) => (
-                  <MenuItem key={temp.id} value={temp.id}>
-                    {temp.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {templates && templates.length > 0 ? (
+              <FormControl fullWidth sx={{ marginBottom: '2rem' }}>
+                <InputLabel>Select template</InputLabel>
+                <Select
+                  value={broadcastDetails.template}
+                  fullWidth
+                  name="template"
+                  onChange={handleFieldChange}
+                  label="Select Template"
+                >
+                  {templates.map((temp) => (
+                    <MenuItem key={temp.id} value={temp.id}>
+                      {temp.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              // Render error message if no templates are available
+              <Typography color="error" variant="body1">
+                No templates available. Please try again later.
+              </Typography>
+            )}
             {loading ? (
               <Box
                 minWidth={'650px'}
@@ -844,43 +849,33 @@ const TemplateModal = ({
                   <Grid item xs={12} sm={6}>
                     <Stack gap={2}>
                       {broadcastDetails?.template &&
-                        (templateDetails?.components?.[0]?.type === 'HEADER' ? (
-                          <>
-                            {' '}
-                            <HeaderComponent
-                              componentData={templateDetails?.components?.[0]}
-                              updateHeaderLink={updateHeaderLink}
-                              handleFileChange={handleFileChange}
-                              handleFileUpload={handleFileUpload}
-                              isLoading={isLoading}
-                              previewLink={previewLink}
-                              mediaLink={mediaLink}
-                            />
-                            {/* <VisuallyHiddenInput
-                          type="file"
-                          accept="image/*,video/*,.pdf"
-                          onChange={handleFileChange}
-                          id="media-upload"
+                      templateDetails?.components?.some(
+                        (component) => component.type === 'HEADER',
+                      ) ? (
+                        <HeaderComponent
+                          componentData={templateDetails?.components?.find(
+                            (component) => component.type === 'HEADER',
+                          )}
+                          updateHeaderLink={updateHeaderLink}
+                          handleFileChange={handleFileChange}
+                          handleFileUpload={handleFileUpload}
+                          isLoading={isLoading}
+                          previewLink={previewLink}
+                          mediaLink={mediaLink}
                         />
-                        <label htmlFor="media-upload">
-                          <IconButton color="primary" component="span">
-                            <IconUpload />
-                          </IconButton>
-                          <Typography variant="body2">Upload Media</Typography>
-                        </label> */}
-                          </>
-                        ) : (
-                          <></>
-                        ))}
+                      ) : null}
+
                       {broadcastDetails?.template &&
-                        (templateDetails?.components?.[1]?.type === 'BODY' ? (
-                          <BodyVariableComponent
-                            bodyData={templateDetails?.components?.[1]}
-                            updateBodyVariable={updateBodyParameter}
-                          />
-                        ) : (
-                          <></>
-                        ))}
+                      templateDetails?.components?.some(
+                        (component) => component.type === 'BODY',
+                      ) ? (
+                        <BodyVariableComponent
+                          bodyData={templateDetails?.components?.find(
+                            (component) => component.type === 'BODY',
+                          )}
+                          updateBodyVariable={updateBodyParameter}
+                        />
+                      ) : null}
                     </Stack>
                   </Grid>
                   <Grid item xs={12} sm={6} lg={6}>

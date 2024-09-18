@@ -423,49 +423,52 @@ const ChatListing = ({
         aria-labelledby="edit-broadcast-modal"
         aria-describedby="edit-broadcast-modal-description"
       >
-        <Box
-          sx={{
-            outline: 'none',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            width: '30%',
-            margin: 'auto',
-            mt: 10,
-          }}
-        >
-          <Typography variant="h6" id="edit-broadcast-modal">
-            Edit Broadcast Title
-          </Typography>
-          <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="broadcast-name"
-              label="Broadcast Name"
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={newBroadcastName}
-              onChange={(e) => setNewBroadcastName(e.target.value)}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button
-                onClick={handleEditBroadcast}
-                color="primary"
-                variant="contained"
-                sx={{ mr: 1 }}
-                disabled={loading}
-                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-              >
-                {loading ? 'Saving...' : 'Save'}
-              </Button>
-              <Button onClick={handleCloseEditDialog} color="error" variant="contained">
-                Cancel
-              </Button>
+        <form onSubmit={handleEditBroadcast}>
+          <Box
+            sx={{
+              outline: 'none',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              width: '30%',
+              margin: 'auto',
+              mt: 10,
+            }}
+          >
+            <Typography variant="h6" id="edit-broadcast-modal">
+              Edit Broadcast Title
+            </Typography>
+            <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="broadcast-name"
+                label="Broadcast Name"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={newBroadcastName}
+                onChange={(e) => setNewBroadcastName(e.target.value)}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Button
+                  onClick={handleEditBroadcast}
+                  color="primary"
+                  variant="contained"
+                  sx={{ mr: 1 }}
+                  type="submit"
+                  disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {loading ? 'Saving...' : 'Save'}
+                </Button>
+                <Button onClick={handleCloseEditDialog} color="error" variant="contained">
+                  Cancel
+                </Button>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        </form>
       </Modal>
     </div>
   );

@@ -34,7 +34,6 @@ import { DeleteOutline } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import { IconEye, IconMessage2Share, IconSearch, IconTrash } from '@tabler/icons';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import createMetaAxiosClient from 'src/api/axiosClientMeta';
 
 import CachedIcon from '@mui/icons-material/Cached';
 import toast from 'react-hot-toast';
@@ -259,7 +258,7 @@ const TemplatesTableList = () => {
   const [dialogTitle, setDialogTitle] = React.useState('');
   const [currentId, setCurrentId] = useState(null);
   const [currentName, setCurrentName] = useState('');
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  // const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -316,7 +315,7 @@ const TemplatesTableList = () => {
       setTotalCount(response?.data?.data?.count);
       setTotalPages(response?.data?.data?.total_pages);
       setRows(allData); // Update rows with the fetched data
-      // setAllRows(allData);  // (Uncomment if needed)
+      // setAllRows(allData);
     } catch (error) {
       console.error('Error fetching data from API:', error);
     } finally {
@@ -538,7 +537,7 @@ const TemplatesTableList = () => {
                 <TableBody>
                   {rows.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} align="center">
+                      <TableCell colSpan={6} align="center">
                         <Nodatainsearch />
                       </TableCell>
                     </TableRow>

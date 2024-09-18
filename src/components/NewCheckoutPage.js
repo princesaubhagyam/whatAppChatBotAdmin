@@ -1,5 +1,5 @@
-import React,{useEffect} from 'react';
-import { useLocation,useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
@@ -10,11 +10,10 @@ const NewCheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { clientSecret, amount } = location.state || {};
-  console.log(clientSecret,"clientSecret===new checkout ")
-
+  // console.log(clientSecret,"clientSecret===new checkout ")
 
   useEffect(() => {
-    if (!clientSecret) {   
+    if (!clientSecret) {
       navigate('/home', { replace: true });
     }
   }, [clientSecret, navigate]);
@@ -22,7 +21,7 @@ const NewCheckoutPage = () => {
     clientSecret: clientSecret,
     //theme: 'stripe',
     // mode: 'payment',
-    
+
     // amount: 10000, // 100 INR in paise
     // currency: 'inr',
     // description: 'Payment for digital services', // Add this line
@@ -35,7 +34,7 @@ const NewCheckoutPage = () => {
       </Elements>
     );
   }
-  return null; 
+  return null;
 };
 
 export default NewCheckoutPage;

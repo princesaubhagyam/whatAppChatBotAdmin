@@ -35,6 +35,7 @@ import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { selectBroadcast, setBroadcastList } from 'src/store/apps/chat/ChatSlice';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import Nodatainsearch from 'src/components/noData/Nodatainsearch';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -465,75 +466,84 @@ const BroadcastMemberModal = ({
                         broadcastContacts={broadcastContacts}
                         selected={selected}
                       />
-                      <TableBody>
-                        {paginatedContacts.map((row, idx) => {
-                          const isItemSelected = selected.indexOf(row.id) !== -1;
+                      {paginatedContacts.length === 0 ? (
+                        // Render the error page or component
+                        <TableRow>
+                          <TableCell colSpan={6} align="center">
+                            <Nodatainsearch />
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        <TableBody>
+                          {paginatedContacts.map((row, idx) => {
+                            const isItemSelected = selected.indexOf(row.id) !== -1;
 
-                          return (
-                            <TableRow
-                              hover
-                              role="checkbox"
-                              tabIndex={-1}
-                              key={row.id}
-                              onClick={(event) => handleClick(event, row.id)}
-                              selected={isItemSelected}
-                              sx={{ cursor: 'pointer' }}
-                            >
-                              <TableCell padding="checkbox">
-                                <Checkbox
-                                  // checked={isItemSelected}
-                                  checked={selected.indexOf(row.id) !== -1}
-                                  onChange={(event) => handleClick(event, row.id)}
-                                  inputProps={{
-                                    'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
-                                  }}
-                                  color="primary"
-                                />
-                              </TableCell>
-                              <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
-                                <Typography
-                                  fontWeight="400 !important"
-                                  variant="h6"
-                                  fontSize="14px !important"
-                                  padding="13px 4px !important"
-                                >
-                                  {row.name}
-                                </Typography>
-                              </TableCell>
-                              <TableCell sx={{ padding: '0px' }}>
-                                <Typography
-                                  fontWeight="400 !important"
-                                  variant="h6"
-                                  fontSize="14px !important"
-                                  padding="13px 4px !important"
-                                >
-                                  {row.full_mobile}
-                                </Typography>
-                              </TableCell>
-                              <TableCell align="left" sx={{ padding: '0px' }}>
-                                <Typography
-                                  fontWeight="400 !important"
-                                  variant="h6"
-                                  fontSize="14px !important"
-                                  padding="13px 4px !important"
-                                >
-                                  {row.city ? row.city : '-'}
-                                </Typography>
-                              </TableCell>
-                              <TableCell align="left" sx={{ padding: '0px' }}>
-                                <Typography
-                                  fontWeight="400 !important"
-                                  variant="h6"
-                                  fontSize="14px !important"
-                                  padding="13px 4px !important"
-                                >
-                                  {row.tag ? row.tag : '-'}
-                                </Typography>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
+                            return (
+                              <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row.id}
+                                onClick={(event) => handleClick(event, row.id)}
+                                selected={isItemSelected}
+                                sx={{ cursor: 'pointer' }}
+                              >
+                                <TableCell padding="checkbox">
+                                  <Checkbox
+                                    // checked={isItemSelected}
+                                    checked={selected.indexOf(row.id) !== -1}
+                                    onChange={(event) => handleClick(event, row.id)}
+                                    inputProps={{
+                                      'aria-labelledby': `enhanced-table-checkbox-${row.id}`,
+                                    }}
+                                    color="primary"
+                                  />
+                                </TableCell>
+                                <TableCell sx={{ padding: '0px', minWidth: '120px' }}>
+                                  <Typography
+                                    fontWeight="400 !important"
+                                    variant="h6"
+                                    fontSize="14px !important"
+                                    padding="13px 4px !important"
+                                  >
+                                    {row.name}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell sx={{ padding: '0px' }}>
+                                  <Typography
+                                    fontWeight="400 !important"
+                                    variant="h6"
+                                    fontSize="14px !important"
+                                    padding="13px 4px !important"
+                                  >
+                                    {row.full_mobile}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell align="left" sx={{ padding: '0px' }}>
+                                  <Typography
+                                    fontWeight="400 !important"
+                                    variant="h6"
+                                    fontSize="14px !important"
+                                    padding="13px 4px !important"
+                                  >
+                                    {row.city ? row.city : '-'}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell align="left" sx={{ padding: '0px' }}>
+                                  <Typography
+                                    fontWeight="400 !important"
+                                    variant="h6"
+                                    fontSize="14px !important"
+                                    padding="13px 4px !important"
+                                  >
+                                    {row.tag ? row.tag : '-'}
+                                  </Typography>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      )}
                     </Table>
                   </TableContainer>
                   <TablePagination

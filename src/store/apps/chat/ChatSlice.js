@@ -132,27 +132,27 @@ export const fetchChatHistoryByPhoneNo = (phoneNo) => async (dispatch) => {
   }
 };
 
-export const fetchQualityRating = () => async (dispatch) => {
-  try {
-    // const metaClient = createMetaAxiosInstance({ addBAId: false });
-    // const phoneId = localStorage.getItem('phone_id');
-    // if (phoneId !== null) {
-    //   const response = await metaClient.get(`${phoneId}`);
-    //   const fetchedQualityRating = response?.data?.quality_rating;
-    //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
-    //   dispatch(setQualityRating(fetchedQualityRating));
-    // }
-    const phoneId = localStorage.getItem('phone_id');
-    if (phoneId !== null) {
-      const response = await apiClient.get(`/auth/account_details/${phoneId}`);
-      const fetchedQualityRating = response?.data?.quality_rating;
-      //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
-      dispatch(setQualityRating(fetchedQualityRating));
-    }
-  } catch (error) {
-    console.error('Failed to fetch quality rating:', error);
-  }
-};
+// export const fetchQualityRating = () => async (dispatch) => {
+//   try {
+//     // const metaClient = createMetaAxiosInstance({ addBAId: false });
+//     // const phoneId = localStorage.getItem('phone_id');
+//     // if (phoneId !== null) {
+//     //   const response = await metaClient.get(`${phoneId}`);
+//     //   const fetchedQualityRating = response?.data?.quality_rating;
+//     //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
+//     //   dispatch(setQualityRating(fetchedQualityRating));
+//     // }
+//     const phoneId = localStorage.getItem('phone_id');
+//     if (phoneId !== null) {
+//       const response = await apiClient.get(`/auth/account_details/${phoneId}`);
+//       const fetchedQualityRating = response?.data?.quality_rating;
+//       //   // console.log('Redux - Fetched qualityRating:', fetchedQualityRating);
+//       dispatch(setQualityRating(fetchedQualityRating));
+//     }
+//   } catch (error) {
+//     console.error('Failed to fetch quality rating:', error);
+//   }
+// };
 
 const sendMessage = async (msg, to) => {
   const META_MSG_SEND_URL = `${process.env.REACT_APP_WHAP_APP_MANAGE_API_BASE_URL}/${process.env.REACT_APP_MSG_PHONE_NUMBER_ID}/messages`;

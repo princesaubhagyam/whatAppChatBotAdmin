@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, InputBase, Box, Button, Tooltip } from '@mui/material';
-import { IconSend, IconUserPlus } from '@tabler/icons';
+import { Box, Button, Tooltip } from '@mui/material';
+import { IconSend } from '@tabler/icons';
 import { sendMsg, updateActiveBroadcast } from 'src/store/apps/chat/ChatSlice';
 import TemplateModal from 'src/modals/TemplateModal';
 import BroadcastMemberModal from 'src/modals/BroadcastMemberModal';
 import apiClient from 'src/api/axiosClient';
-import EventContext from 'src/BroadcastContext';
 
 const ChatMsgSent = ({
   checkBroadcastHistory,
@@ -60,9 +59,9 @@ const ChatMsgSent = ({
     setOpenModal(false);
   };
 
-  const handleOpenMemberModal = () => {
-    setIsMemberModalOpen(true);
-  };
+  // const handleOpenMemberModal = () => {
+  //   setIsMemberModalOpen(true);
+  // };
 
   const handleCloseMemberModal = () => {
     setIsMemberModalOpen(false);

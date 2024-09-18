@@ -754,11 +754,13 @@ export default function CreateTemplate() {
       <Breadcrumb title="Create Template" items={BCrumb} />
       {/* end breadcrumb */}
       {step === 0 && (
-        <ParentCard title="New message template">
+        <ParentCard>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item lg={6} md={12} sm={12}>
-                <CustomFormLabel htmlFor="name">Display name</CustomFormLabel>
+              <Grid item lg={6} md={12} sm={12} pt={'0px !important'}>
+                <CustomFormLabel htmlFor="name" sx={{ color: '#1A4D2E' }}>
+                  Display name
+                </CustomFormLabel>
                 <Typography variant="subtitle1">Name your message template.</Typography>
                 <CustomTextField
                   fullWidth
@@ -766,13 +768,19 @@ export default function CreateTemplate() {
                   name="name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
+                  sx={{
+                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+                    borderRadius: '8px',
+                  }}
                 />
                 {formik.errors.name && (
                   <FormHelperText error id="name">
                     {formik.errors.name}
                   </FormHelperText>
                 )}
-                <CustomFormLabel htmlFor="category">Select Category</CustomFormLabel>
+                <CustomFormLabel htmlFor="category" sx={{ color: '#1A4D2E' }}>
+                  Select Category
+                </CustomFormLabel>
                 <Typography variant="subtitle1">
                   Choose a category that best describes your message template.
                 </Typography>
@@ -783,6 +791,10 @@ export default function CreateTemplate() {
                   variant="outlined"
                   value={formik.values.category}
                   onChange={formik.handleChange}
+                  sx={{
+                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+                    borderRadius: '8px',
+                  }}
                 >
                   {category.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -795,7 +807,9 @@ export default function CreateTemplate() {
                     {formik.errors.category}
                   </FormHelperText>
                 )}
-                <CustomFormLabel htmlFor="language">Select language</CustomFormLabel>
+                <CustomFormLabel htmlFor="language" sx={{ color: '#1A4D2E' }}>
+                  Select language
+                </CustomFormLabel>
                 <Typography variant="subtitle1">
                   Choose languages for your message template. You can delete or add more languages
                   later.
@@ -806,6 +820,10 @@ export default function CreateTemplate() {
                   variant="outlined"
                   size="small"
                   name="language"
+                  sx={{
+                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+                    borderRadius: '8px',
+                  }}
                   options={languages}
                   getOptionLabel={(option) => option.flagname}
                   onChange={(event, value) => formik.setFieldValue('language', value.value)}
@@ -849,11 +867,15 @@ export default function CreateTemplate() {
       {step === 1 && (
         <>
           {' '}
-          <ParentCard title="Edit template">
+          <ParentCard>
             <form onSubmit={formikTemplate.handleSubmit}>
               <Grid container spacing={3}>
                 <Grid item lg={8} md={12} sm={12} paddingTop={'0px !important'}>
-                  <CustomFormLabel htmlFor="name">Header</CustomFormLabel>
+                  <CustomFormLabel htmlFor="name" sx={{ color: '#1A4D2E' }}>
+                    Header{' '}
+                    <IconCircle size="3" fill="textSecondary" style={{ margin: '3px 5px' }} />{' '}
+                    <b style={{ color: 'gray', fontWeight: '500' }}>Optional</b>
+                  </CustomFormLabel>
                   <Typography variant="subtitle1">
                     Add a title or choose which type of media you'll use for this header.
                   </Typography>
@@ -893,7 +915,7 @@ export default function CreateTemplate() {
                                 </InputAdornment>
                               ),
                             }}
-                            required
+                            // required
                           />
 
                           {formikTemplate.errors.text && (
@@ -973,7 +995,9 @@ export default function CreateTemplate() {
                       )}
                     </Grid>
                   </Grid>
-                  <CustomFormLabel htmlFor="body">Body</CustomFormLabel>
+                  <CustomFormLabel htmlFor="body" sx={{ color: '#1A4D2E' }}>
+                    Body
+                  </CustomFormLabel>
                   <Typography variant="subtitle1">
                     The main part of your message, containing the message text.
                   </Typography>
@@ -1160,7 +1184,7 @@ export default function CreateTemplate() {
                       Add Variable
                     </Button>
                   </Box> */}
-                  <CustomFormLabel htmlFor="footer">
+                  <CustomFormLabel htmlFor="footer" sx={{ color: '#1A4D2E' }}>
                     Footer{' '}
                     <IconCircle size="3" fill="textSecondary" style={{ margin: '3px 5px' }} />{' '}
                     <b style={{ color: 'gray', fontWeight: '500' }}>Optional</b>
@@ -1193,7 +1217,7 @@ export default function CreateTemplate() {
                       {formikTemplate.errors.footer}
                     </FormHelperText>
                   )}
-                  <CustomFormLabel htmlFor="buttonText">
+                  <CustomFormLabel htmlFor="buttonText" sx={{ color: '#1A4D2E' }}>
                     Button Text{' '}
                     <IconCircle size="3" fill="textSecondary" style={{ margin: '3px 5px' }} />{' '}
                     <b style={{ color: 'gray', fontWeight: '500' }}>Optional</b>

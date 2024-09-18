@@ -75,7 +75,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     }
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (event) => {
+    event.preventDefault();
     if (validateForm()) {
       setLoading(true);
       await signInAPICall(credentials);

@@ -4,9 +4,17 @@ import {
   IconLayoutDashboard,
   IconUser,
   IconCreditCard,
+  IconChecklist,
 } from '@tabler/icons';
 import { uniqueId } from 'lodash';
 import ContactsOutlined from '@mui/icons-material/ContactsOutlined';
+
+const phoneId = localStorage.getItem('phone_id');
+// const isPhoneIdAvailable = phoneId && phoneId.trim() !== '';
+const isPhoneIdAvailable = JSON.parse(phoneId) !== null;
+console.log('Phone ID:', phoneId || 'No Phone ID');
+console.log('Is Phone ID Available:', isPhoneIdAvailable);
+
 const Menuitems = [
   {
     id: uniqueId(),
@@ -16,6 +24,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: 'Guidelines',
+    icon: IconChecklist,
+    href: '/guidelines',
+  },
+  {
+    id: uniqueId(),
+    disabled: !isPhoneIdAvailable,
     title: 'B-Profile',
     icon: IconUser,
     href: '/business-profile',

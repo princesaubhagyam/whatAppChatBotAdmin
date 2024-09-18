@@ -15,6 +15,8 @@ import PaymentHistory from 'src/views/PaymentHistory';
 import CreateTemplate from 'src/views/template/CreateTemplate';
 import Templates from 'src/views/template/templates';
 
+import GuidelinesTemplate from 'src/views/apps/GuidelinesTemplate';
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -170,6 +172,7 @@ const Router = [
       { path: '/settings', element: <Maintenance /> },
       { path: '/broadcast/:id', element: <BroadcastsDetail /> },
       { path: '/templates/:id', element: <TemplateInsights /> },
+      { path: '/guidelines', element: <GuidelinesTemplate /> },
       { path: '/payment', element: <NewCheckoutPage /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },

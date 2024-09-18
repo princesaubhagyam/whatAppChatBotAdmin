@@ -90,7 +90,8 @@ const EditContactModal = ({
     return isValid;
   };
 
-  const handleEdit = async () => {
+  const handleEdit = async (event) => {
+    event.preventDefault();
     // console.log('edit Hande running');
     if (validateFields()) {
       // console.log('indesie edit Hande running');
@@ -132,99 +133,102 @@ const EditContactModal = ({
       aria-labelledby="add-contact-modal"
       aria-describedby="add-contact-form"
     >
-      <Box
-        sx={{
-          outline: 'none',
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 4,
-          width: '50%',
-          margin: 'auto',
-          mt: 10,
-        }}
-      >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Edit Contact
-        </Typography>
+      <form onSubmit={handleEdit}>
+        <Box
+          sx={{
+            outline: 'none',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            width: '50%',
+            margin: 'auto',
+            mt: 10,
+          }}
+        >
+          <Typography variant="h5" component="h2" gutterBottom>
+            Edit Contact
+          </Typography>
 
-        <Stack container spacing={2}>
-          <TextField
-            fullWidth
-            label="Name"
-            name="name"
-            value={editData.name}
-            onChange={handleChange}
-            error={!!errors.name}
-            helperText={errors.name}
-            placeholder="Enter name"
-          />
-          <FormControl fullWidth error={!!errors.contact}>
-            <Grid container spacing={1} alignItems="center">
-              <Grid item>
-                <Select
-                  value={editData.cc}
-                  onChange={handleCountryCodeChange}
-                  sx={{ width: 'auto', minWidth: '100px' }}
-                >
-                  {countryCodes.map((code) => (
-                    <MenuItem key={code.dial_code} value={code.dial_code}>
-                      {code.code} ({code.dial_code})
-                    </MenuItem>
-                  ))}
-                </Select>
+          <Stack container spacing={2}>
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={editData.name}
+              onChange={handleChange}
+              error={!!errors.name}
+              helperText={errors.name}
+              placeholder="Enter name"
+            />
+            <FormControl fullWidth error={!!errors.contact}>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item>
+                  <Select
+                    value={editData.cc}
+                    onChange={handleCountryCodeChange}
+                    sx={{ width: 'auto', minWidth: '100px' }}
+                  >
+                    {countryCodes.map((code) => (
+                      <MenuItem key={code.dial_code} value={code.dial_code}>
+                        {code.code} ({code.dial_code})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+                <Grid item xs>
+                  <TextField
+                    fullWidth
+                    label="Contact"
+                    name="contact"
+                    value={editData.contact}
+                    onChange={handleChange}
+                    error={!!errors.contact}
+                    helperText={errors.contact}
+                    placeholder="91952XXXXXXX"
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs>
-                <TextField
-                  fullWidth
-                  label="Contact"
-                  name="contact"
-                  value={editData.contact}
-                  onChange={handleChange}
-                  error={!!errors.contact}
-                  helperText={errors.contact}
-                  placeholder="91952XXXXXXX"
-                />
-              </Grid>
-            </Grid>
-          </FormControl>
+            </FormControl>
 
-          <TextField
-            fullWidth
-            label="City"
-            name="city"
-            value={editData.city}
-            onChange={handleChange}
-            error={!!errors.city}
-            helperText={errors.city}
-            placeholder="Enter City"
-          />
+            <TextField
+              fullWidth
+              label="City"
+              name="city"
+              value={editData.city}
+              onChange={handleChange}
+              error={!!errors.city}
+              helperText={errors.city}
+              placeholder="Enter City"
+            />
 
-          <TextField
-            fullWidth
-            label="Tag"
-            name="tag"
-            value={editData.tag}
-            onChange={handleChange}
-            error={!!errors.tag}
-            helperText={errors.tag}
-            placeholder="Enter tag"
-          />
-        </Stack>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button
-            onClick={handleEdit}
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {loading ? 'Editing...' : 'Edit'}
-          </Button>
-          <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
-            Cancel
-          </Button>
+            <TextField
+              fullWidth
+              label="Tag"
+              name="tag"
+              value={editData.tag}
+              onChange={handleChange}
+              error={!!errors.tag}
+              helperText={errors.tag}
+              placeholder="Enter tag"
+            />
+          </Stack>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button
+              onClick={handleEdit}
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              type="submit"
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
+            >
+              {loading ? 'Editing...' : 'Edit'}
+            </Button>
+            <Button onClick={handleClose} variant="contained" color="error" sx={{ ml: 2 }}>
+              Cancel
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </form>
     </Modal>
   );
 };
